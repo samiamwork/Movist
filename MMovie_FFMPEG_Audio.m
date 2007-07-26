@@ -241,7 +241,7 @@
                 exit(-1);
             }
             while (/*[self defaultFuncCondition] && */!_quitRequested && [_audioDataQueue[trackId] freeSize] < dataSize) {
-                if (_reservedCommand == COMMAND_SEEK) {
+                if (_reservedCommand == COMMAND_SEEK || ![mTrack isEnabled]) {
                     break;
                 }
                 [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
