@@ -1,0 +1,505 @@
+//
+//  Movist
+//
+//  Created by dckim <cocoable@gmail.com>
+//  Copyright 2006 cocoable. All rights reserved.
+//
+
+#import "Movist.h"
+#import "MSubtitle.h"
+
+#pragma mark notifications: movie
+
+NSString* MMovieRateChangeNotification         = @"MMovieRateChangeNotification";
+NSString* MMovieCurrentTimeNotification        = @"MMovieCurrentTimeNotification";
+NSString* MMovieEndNotification                = @"MMovieEndNotification";
+
+#pragma mark notifications: etc
+
+NSString* MMovieRectUpdateNotification         = @"MMovieRectUpdateNotification";
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation NSWindow (Movist)
+
+- (void)setMovieURL:(NSURL*)movieURL
+{
+    if (!movieURL) {
+        [self setTitleWithRepresentedFilename:@""];
+        [self setTitle:NSLocalizedString(@"Movist", nil)];
+    }
+    else if ([movieURL isFileURL]) {
+        [self setTitleWithRepresentedFilename:[movieURL path]];
+    }
+    else {
+        [self setTitleWithRepresentedFilename:@""];
+        [self setTitle:[[movieURL absoluteString] lastPathComponent]];
+    }
+}
+
+- (void)fadeAnimationWithEffect:(NSString*)effect
+                   blockingMode:(NSAnimationBlockingMode)blockingMode
+                       duration:(float)duration
+{
+    NSArray* array = [NSArray arrayWithObjects:
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            self, NSViewAnimationTargetKey,
+            effect, NSViewAnimationEffectKey,
+            nil],
+        nil];
+    NSViewAnimation* animation = [[NSViewAnimation alloc] initWithViewAnimations:array];
+    [animation setAnimationBlockingMode:blockingMode];
+    [animation setDuration:duration];
+    [animation startAnimation];
+    [animation release];
+}
+
+- (NSColor*)makeHUDBackgroundColor
+{
+    //NSLog(@"%s", __PRETTY_FUNCTION__);
+    NSView* cv = [self contentView];
+    NSSize bgSize = [cv convertSize:[self frame].size fromView:nil];
+    NSImage* bg = [[NSImage alloc] initWithSize:bgSize];
+    [bg lockFocus];
+
+    float radius = 6.0;
+    float titlebarHeight = 19.0;
+
+    // make background
+    NSBezierPath* bgPath = [NSBezierPath bezierPath];
+    NSRect bgRect = NSMakeRect(0, 0, bgSize.width, bgSize.height - titlebarHeight);
+    bgRect = [cv convertRect:bgRect fromView:nil];
+    int minX = NSMinX(bgRect), midX = NSMidX(bgRect), maxX = NSMaxX(bgRect);
+    int minY = NSMinY(bgRect), midY = NSMidY(bgRect), maxY = NSMaxY(bgRect);
+    
+    [bgPath moveToPoint:NSMakePoint(midX, minY)];
+    [bgPath appendBezierPathWithArcFromPoint:NSMakePoint(maxX, minY) 
+                                     toPoint:NSMakePoint(maxX, midY) 
+                                      radius:radius];
+    [bgPath lineToPoint:NSMakePoint(maxX, maxY)];
+    [bgPath lineToPoint:NSMakePoint(minX, maxY)];
+    [bgPath appendBezierPathWithArcFromPoint:NSMakePoint(minX, maxY) 
+                                     toPoint:NSMakePoint(minX, midY) 
+                                      radius:radius];
+    [bgPath appendBezierPathWithArcFromPoint:bgRect.origin 
+                                     toPoint:NSMakePoint(midX, minY) 
+                                      radius:radius];
+    [bgPath closePath];
+
+    [[NSColor colorWithCalibratedWhite:0.1 alpha:0.75] set];
+    [bgPath fill];
+
+    // make titlebar
+    NSBezierPath* titlePath = [NSBezierPath bezierPath];
+    NSRect titlebarRect = NSMakeRect(0, bgSize.height - titlebarHeight, bgSize.width, titlebarHeight);
+    titlebarRect = [cv convertRect:titlebarRect fromView:nil];
+    minX = NSMinX(titlebarRect), midX = NSMidX(titlebarRect), maxX = NSMaxX(titlebarRect);
+    minY = NSMinY(titlebarRect), midY = NSMidY(titlebarRect), maxY = NSMaxY(titlebarRect);
+
+    [titlePath moveToPoint:NSMakePoint(minX, minY)];
+    [titlePath lineToPoint:NSMakePoint(maxX, minY)];
+    [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(maxX, maxY) 
+                                        toPoint:NSMakePoint(midX, maxY) 
+                                         radius:radius];
+    [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(minX, maxY) 
+                                        toPoint:NSMakePoint(minX, minY) 
+                                         radius:radius];
+    [titlePath closePath];
+
+    [[NSColor colorWithCalibratedWhite:0.25 alpha:0.75] set];
+    [titlePath fill];
+
+    [bg unlockFocus];
+
+    return [NSColor colorWithPatternImage:[bg autorelease]];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation NSString (Movist)
+
+- (BOOL)hasAnyExtension:(NSArray*)extensions
+{
+    //NSLog(@"%s %@", __PRETTY_FUNCTION__, self);
+    NSString* ext = [self pathExtension];
+    if (![ext isEqualToString:@""]) {
+        NSString* type;
+        NSEnumerator* enumerator = [extensions objectEnumerator];
+        while (type = [enumerator nextObject]) {
+            if ([type caseInsensitiveCompare:ext] == NSOrderedSame) {
+                return TRUE;
+            }
+        }
+    }
+    return FALSE;
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation NSFileManager (Movist)
+
+- (BOOL)isVisibleFileAtPath:(NSString*)path isDirectory:(BOOL*)isDirectory
+{
+    if (![self fileExistsAtPath:path isDirectory:isDirectory]) {
+        return FALSE;
+    }
+    if ([[path lastPathComponent] hasPrefix:@"."] || [path hasSuffix:@".app"]) {
+        return FALSE;
+    }
+    FSRef possibleInvisibleFile;
+    FSCatalogInfo catalogInfo;
+    if (noErr != FSPathMakeRef((const UInt8*)[path fileSystemRepresentation],
+                               &possibleInvisibleFile, nil)) {
+        return FALSE;
+    }
+    FSGetCatalogInfo(&possibleInvisibleFile, kFSCatInfoFinderInfo, 
+                     &catalogInfo, nil, nil, nil);
+    if (((FileInfo*)catalogInfo.finderInfo)->finderFlags & kIsInvisible) {
+        return FALSE;
+    }
+    NSString* hiddenFile = [NSString stringWithContentsOfFile:@"/.hidden"];
+    NSArray* dotHiddens = [hiddenFile componentsSeparatedByString:@"\n"];
+    if ([dotHiddens containsObject:[path lastPathComponent]] ||
+        [path isEqualToString:@"/Network"] ||
+        [path isEqualToString:@"/automount"] ||
+        [path isEqualToString:@"/etc"] ||
+        [path isEqualToString:@"/tmp"] ||
+        [path isEqualToString:@"/var"]) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+NSString* NSStringFromMovieTime(float time)
+{
+    BOOL positive = (0.0 <= time) ? TRUE : (time = -time, FALSE);
+    int totalSeconds = (int)time;
+    int totalMinutes = totalSeconds / 60;
+    return [NSString stringWithFormat:
+            positive ? @"%02d:%02d:%02d" : @"-%02d:%02d:%02d",
+            totalMinutes / 60, totalMinutes % 60, totalSeconds % 60];
+}
+
+void runAlertPanelForOpenError(NSError* error, NSURL* url)
+{
+    NSString* s = [NSString stringWithFormat:@"%@\n\n%@",
+        error,//[error localizedDescription],
+        [url isFileURL] ? [url path] : [url absoluteString]];
+    NSRunAlertPanel(NSLocalizedString(@"Movist", nil), s,
+                    NSLocalizedString(@"OK", nil), nil, nil);
+}
+
+unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)
+{
+    NSString* type = [pboard availableTypeFromArray:MOVIST_DRAG_TYPES];
+    if (!type) {
+        return DRAG_ACTION_NONE;
+    }
+    else if ([type isEqualToString:NSFilenamesPboardType]) {
+        NSArray* filenames = [pboard propertyListForType:NSFilenamesPboardType];
+        if ([filenames count] == 1 &&
+            [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle subtitleTypes]]) {
+            return DRAG_ACTION_REPLACE_SUBTITLE_FILE;
+        }
+        else {
+            return (defaultPlay) ? DRAG_ACTION_PLAY_FILES : DRAG_ACTION_ADD_FILES;
+        }
+    }
+    else if ([type isEqualToString:NSURLPboardType]) {
+        NSString* s = [[NSURL URLFromPasteboard:pboard] absoluteString];
+        if ([s hasAnyExtension:[MSubtitle subtitleTypes]]) {
+            return DRAG_ACTION_REPLACE_SUBTITLE_URL;
+        }
+        else {
+            return (defaultPlay) ? DRAG_ACTION_PLAY_URL : DRAG_ACTION_ADD_URL;
+        }
+    }
+    else if ([type isEqualToString:MPlaylistItemDataType]) {
+        return DRAG_ACTION_REORDER_PLAYLIST;
+    }
+    return DRAG_ACTION_NONE;
+}
+
+void initSubtitleEncodingMenu(NSMenu* menu, SEL action)
+{
+    int cfEncoding[] = {
+        // Korean
+        kCFStringEncodingISO_2022_KR,
+        kCFStringEncodingMacKorean,
+        kCFStringEncodingDOSKorean,
+        //kCFStringEncodingWindowsKoreanJohab,
+        //kCFStringEncodingKSC_5601_87,
+        //kCFStringEncodingKSC_5601_92_Johab,
+        //kCFStringEncodingEUC_KR,
+
+        kCFStringEncodingInvalidId, // for separator
+
+        // UNICODE
+        kCFStringEncodingUTF8,
+        //kCFStringEncodingUTF16,
+        //kCFStringEncodingUTF16BE,
+        //kCFStringEncodingUTF16LE,
+        //kCFStringEncodingUTF32,
+        //kCFStringEncodingUTF32BE,
+        //kCFStringEncodingUTF32LE,
+        //kCFStringEncodingUnicode,
+
+        kCFStringEncodingInvalidId, // for separator
+
+        // Western
+        kCFStringEncodingISOLatin1,
+        kCFStringEncodingMacRoman,
+        //kCFStringEncodingISOLatin3,
+        //kCFStringEncodingISOLatin9,
+        //kCFStringEncodingMacRomanLatin1,
+        //kCFStringEncodingDOSLatin1,
+        //kCFStringEncodingWindowsLatin1,
+        //kCFStringEncodingNextStepLatin,
+        //kCFStringEncodingMacVT100,
+        //kCFStringEncodingASCII,
+        //kCFStringEncodingANSEL,
+        //kCFStringEncodingEBCDIC_US,
+        //kCFStringEncodingEBCDIC_CP037,
+        //kCFStringEncodingNextStepLatin,
+        //kCFStringEncodingASCII,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Japanese
+        kCFStringEncodingShiftJIS,
+        kCFStringEncodingISO_2022_JP,
+        kCFStringEncodingEUC_JP,
+        kCFStringEncodingShiftJIS_X0213_00,
+        //kCFStringEncodingMacJapanese,
+        //kCFStringEncodingDOSJapanese,
+        //kCFStringEncodingShiftJIS_X0213_MenKuTen,
+        //kCFStringEncodingJIS_X0201_76,
+        //kCFStringEncodingJIS_X0208_83,
+        //kCFStringEncodingJIS_X0208_90,
+        //kCFStringEncodingJIS_X0212_90,
+        //kCFStringEncodingJIS_C6226_78,
+        //kCFStringEncodingISO_2022_JP_2,
+        //kCFStringEncodingISO_2022_JP_1,
+        //kCFStringEncodingISO_2022_JP_3,
+        //kCFStringEncodingNextStepJapanese,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Chinese Traditional
+        kCFStringEncodingBig5,
+        kCFStringEncodingBig5_HKSCS_1999,
+        kCFStringEncodingDOSChineseTrad,
+        //kCFStringEncodingMacChineseTrad,
+        //kCFStringEncodingBig5_E,
+        //kCFStringEncodingEUC_TW,
+        //kCFStringEncodingCNS_11643_92_P1,
+        //kCFStringEncodingCNS_11643_92_P2,
+        //kCFStringEncodingCNS_11643_92_P3,
+        //kCFStringEncodingISO_2022_CN,
+        //kCFStringEncodingISO_2022_CN_EXT,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Arabic
+        kCFStringEncodingISOLatinArabic,
+        kCFStringEncodingWindowsArabic,
+        //kCFStringEncodingMacArabic,
+        //kCFStringEncodingMacExtArabic,
+        //kCFStringEncodingDOSArabic,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Hebrew
+        kCFStringEncodingISOLatinHebrew,
+        kCFStringEncodingWindowsHebrew,
+        //kCFStringEncodingMacHebrew,
+        //kCFStringEncodingDOSHebrew,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Greek
+        kCFStringEncodingISOLatinGreek,
+        kCFStringEncodingWindowsGreek,
+        //kCFStringEncodingMacGreek,
+        //kCFStringEncodingDOSGreek,
+        //kCFStringEncodingDOSGreek1,
+        //kCFStringEncodingDOSGreek2,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Cyrillic
+        kCFStringEncodingISOLatinCyrillic,
+        kCFStringEncodingMacCyrillic,
+        kCFStringEncodingKOI8_R,
+        kCFStringEncodingWindowsCyrillic,
+        kCFStringEncodingKOI8_U,
+        //kCFStringEncodingMacUkrainian,
+        //kCFStringEncodingDOSCyrillic,
+        //kCFStringEncodingDOSRussian,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Thai
+        kCFStringEncodingDOSThai,
+        //kCFStringEncodingMacThai,
+        //kCFStringEncodingISOLatinThai,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Chinese Simplified
+        kCFStringEncodingGB_2312_80,
+        kCFStringEncodingHZ_GB_2312,
+        kCFStringEncodingGB_18030_2000,
+        //kCFStringEncodingMacChineseSimp,
+        //kCFStringEncodingDOSChineseSimplif,
+        //kCFStringEncodingEUC_CN,
+        //kCFStringEncodingGBK_95,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Central European
+        kCFStringEncodingISOLatin2,
+        kCFStringEncodingMacCentralEurRoman,
+        kCFStringEncodingWindowsLatin2,
+        //kCFStringEncodingDOSLatin2,
+        //kCFStringEncodingDOSLatinUS,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Vietnamese
+        kCFStringEncodingMacVietnamese,
+        kCFStringEncodingWindowsVietnamese,
+        
+        kCFStringEncodingInvalidId, // for separator
+        
+        // Turkish
+        kCFStringEncodingISOLatin5,
+        kCFStringEncodingWindowsLatin5,
+        //kCFStringEncodingMacTurkish,
+        //kCFStringEncodingDOSTurkish,
+        
+        kCFStringEncodingInvalidId, // for separator
+
+        // Baltic
+        kCFStringEncodingISOLatin4,
+        kCFStringEncodingWindowsBalticRim,
+        //kCFStringEncodingDOSBalticRim,
+        //kCFStringEncodingISOLatin7,
+        
+        //kCFStringEncodingInvalidId, // for separator
+        
+        // Icelandic
+        //kCFStringEncodingMacIcelandic,
+        //kCFStringEncodingDOSIcelandic,
+        
+        //kCFStringEncodingInvalidId, // for separator
+
+        // Nordic
+        //kCFStringEncodingDOSNordic,
+        //kCFStringEncodingISOLatin6,
+        
+        //kCFStringEncodingInvalidId, // for separator
+
+        // Celtic
+        //kCFStringEncodingMacCeltic,
+        //kCFStringEncodingISOLatin8,
+        
+        //kCFStringEncodingInvalidId, // for separator
+
+        // Romanian
+        //kCFStringEncodingMacRomanian,
+        //kCFStringEncodingISOLatin10,
+        
+        //kCFStringEncodingInvalidId, // for separator
+        
+        //kCFStringEncodingNonLossyASCII,
+        
+        //kCFStringEncodingInvalidId, // for separator
+        
+        // Etc.
+        //kCFStringEncodingMacDevanagari,
+        //kCFStringEncodingMacGurmukhi,
+        //kCFStringEncodingMacGujarati,
+        //kCFStringEncodingMacOriya,
+        //kCFStringEncodingMacBengali,
+        //kCFStringEncodingMacTamil,
+        //kCFStringEncodingMacTelugu,
+        //kCFStringEncodingMacKannada,
+        //kCFStringEncodingDOSCanadianFrench,
+        //kCFStringEncodingMacMalayalam,
+        //kCFStringEncodingMacSinhalese,
+        //kCFStringEncodingMacBurmese,
+        //kCFStringEncodingMacKhmer,
+        //kCFStringEncodingMacLaotian,
+        //kCFStringEncodingMacGeorgian,
+        //kCFStringEncodingMacArmenian,
+        //kCFStringEncodingMacTibetan,
+        //kCFStringEncodingMacMongolian,
+        //kCFStringEncodingMacEthiopic,
+        //kCFStringEncodingMacCroatian,
+        //kCFStringEncodingMacGaelic,
+        //kCFStringEncodingMacFarsi,
+        //kCFStringEncodingDOSPortuguese,
+        //kCFStringEncodingMacSymbol,
+        //kCFStringEncodingMacDingbats,
+        //kCFStringEncodingMacInuit,
+        //kCFStringEncodingVISCII,
+    };
+
+    // remove all items
+    while (0 < [menu numberOfItems]) {
+        [menu removeItemAtIndex:0];
+    }
+
+    NSMenuItem* item;
+    // FIXME: add system default...
+    //item = [menu addItemWithTitle:NSLocalizedString(@"System Default", nil)
+    //                       action:action keyEquivalent:@""];
+    //[item setTag:systemDefaultCFEncoding];
+    //[menu addItem:[NSMenuItem separatorItem]];
+
+    NSString* encodingString;
+    NSStringEncoding nsEncoding;
+    int i, count = sizeof(cfEncoding) / sizeof(cfEncoding[0]);
+    for (i = 0; i < count; i++) {
+        if (cfEncoding[i] == kCFStringEncodingInvalidId) {  // separator
+            [menu addItem:[NSMenuItem separatorItem]];
+            //NSLog(@"separator ===============================");
+        }
+        else {
+            nsEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding[i]);
+            encodingString = [NSString localizedNameOfStringEncoding:nsEncoding];
+            if (0 < [encodingString length]) {
+                item = [menu addItemWithTitle:encodingString action:action keyEquivalent:@""];
+                [item setTag:cfEncoding[i]];
+            }
+            //NSLog(@"encoding:[0x%08x] => [0x%08x]:\"%@\"",
+            //      cfEncoding[i], nsEncoding, encodingString);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+#if defined(DEBUG)
+void TRACE(NSString* format, ...)
+{
+    va_list arg;
+    va_start(arg, format);
+    NSLogv(format, arg);
+    va_end(arg);
+}
+#endif

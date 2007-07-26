@@ -1,0 +1,347 @@
+//
+//  Movist
+//
+//  Created by dckim <cocoable@gmail.com>
+//  Copyright 2006 cocoable. All rights reserved.
+//
+
+#import "AppController.h"
+
+#import "MMovie.h"
+#import "Playlist.h"
+
+#import "MMovieView.h"
+#import "CustomControls.h"  // for SeekSlider
+
+@implementation AppController (Playback)
+
+- (void)play
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie && [_movie rate] == 0.0) {
+        [_movieView setMessage:NSLocalizedString(@"Play", nil)];
+        [_movie setRate:_playRate];
+    }
+}
+
+- (void)pause
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie && [_movie rate] != 0.0) {
+        [_movieView setMessage:NSLocalizedString(@"Pause", nil)];
+        [_movie setRate:0.0];
+    }
+}
+
+- (void)gotoBeginning
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie) {
+        [_movieView setMessage:NSLocalizedString(@"Beginning", nil)];
+        [_movie gotoBeginning];
+    }
+}
+
+- (void)gotoEnd
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie) {
+        [_movieView setMessage:NSLocalizedString(@"End", nil)];
+        //[_movie gotoEnd];
+        // call gotoTime with (duration - 0.01)
+        // not to next movie by movieEnded notification
+        [_movie gotoTime:[_movie duration] - 0.01];
+    }
+}
+
+- (void)gotoTime:(float)time
+{
+    TRACE(@"%s %f sec", __PRETTY_FUNCTION__, time);
+    if (_movie) {
+        [_movieView setMessage:[NSString stringWithFormat:@"%@/%@",
+                                NSStringFromMovieTime(time),
+                                NSStringFromMovieTime(time - [_movie duration])]];
+        [_movie gotoTime:time];
+    }
+}
+
+- (void)seekBackward:(unsigned int)indexOfValue
+{
+    TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
+    if (_movie) {
+        float dt = _seekInterval[indexOfValue];
+        float t = MAX(0, [_movie currentTime] - dt);
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@",
+            [NSString stringWithFormat:NSLocalizedString(@"Backward %d sec.", nil), (int)dt],
+            NSStringFromMovieTime(t), NSStringFromMovieTime(t - [_movie duration])]];
+        [_movie gotoTime:t];
+    }
+}
+
+- (void)seekForward:(unsigned int)indexOfValue
+{
+    TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
+    if (_movie) {
+        float dt = _seekInterval[indexOfValue];
+        float t = MIN([_movie currentTime] + dt, [_movie duration]);
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@",
+            [NSString stringWithFormat:NSLocalizedString(@"Forward %d sec.", nil), (int)dt],
+            NSStringFromMovieTime(t), NSStringFromMovieTime(t - [_movie duration])]];
+        [_movie gotoTime:t];
+    }
+}
+
+- (void)stepBackward
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie) {
+        [_movieView setMessage:NSLocalizedString(@"Previous Frame", nil)];
+        [_movie setRate:0.0];
+        [_movie stepBackward];
+    }
+}
+
+- (void)stepForward
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie) {
+        [_movieView setMessage:NSLocalizedString(@"Next Frame", nil)];
+        [_movie setRate:0.0];
+        [_movie stepForward];
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark notifications
+
+- (void)movieRateChanged:(NSNotification*)notification
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self updatePlayUI];
+    [_playlistController updateUI];
+}
+
+- (void)movieCurrentTimeChanged:(NSNotification*)notification
+{
+    //TRACE(@"%s %.2f", __PRETTY_FUNCTION__, [_movie currentTime]);
+    if ([_movie rate] != 0.0 &&
+        [_seekSlider repeatEnabled] &&
+        [_seekSlider repeatEnd] < [_movie currentTime]) {
+        if (notification) {
+            [self performSelectorOnMainThread:@selector(movieCurrentTimeChanged:)
+                                   withObject:nil waitUntilDone:FALSE];   // don't wait
+        }
+        else {
+            [_movie gotoTime:[_seekSlider repeatBeginning]];
+        }
+    }
+    [self updateTimeUI];
+}
+
+- (void)movieEnded:(NSNotification*)notification
+{
+    if (notification) {
+        [self performSelectorOnMainThread:@selector(movieEnded:)
+                               withObject:nil waitUntilDone:FALSE];   // don't wait
+    }
+    else {
+        TRACE(@"%s", __PRETTY_FUNCTION__);
+        [self updateTimeUI];
+        [self updatePlayUI];
+        [_playlistController updateUI];
+
+        if (![self openNextPlaylistItem]) {
+            if ([self isFullScreen]) {
+                [self endFullScreen];
+            }
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark UI
+
+- (void)updateTimeUI
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie) {
+        if (![_seekSlider isEnabled]) {
+            [_seekSlider setEnabled:TRUE];
+            [_panelSeekSlider setEnabled:TRUE];
+        }
+        float dt = ABS([_movie currentTime] - _prevMovieTime);
+        if (1.0 <= dt * [_seekSlider bounds].size.width / [_movie duration]) {
+            [_seekSlider setFloatValue:[_movie currentTime]];
+            [_panelSeekSlider setFloatValue:[_movie currentTime]];
+            _prevMovieTime = [_movie currentTime];
+        }
+
+        float time = [_movie currentTime];
+        NSString* s = NSStringFromMovieTime(time);
+        if (![s isEqualToString:[_lTimeTextField stringValue]]) {
+            [_lTimeTextField setStringValue:s];
+            [_panelLTimeTextField setStringValue:s];
+        }
+        time = [_movie currentTime] - [_movie duration];
+        s = NSStringFromMovieTime(time);
+        if (![s isEqualToString:[_rTimeTextField stringValue]]) {
+            [_rTimeTextField setStringValue:s];
+            [_panelRTimeTextField setStringValue:s];
+        }
+    }
+    else {
+        [_seekSlider setEnabled:FALSE];
+        [_seekSlider setFloatValue:0.0];
+        [_panelSeekSlider setEnabled:FALSE];
+        [_panelSeekSlider setFloatValue:0.0];
+
+        [_lTimeTextField setStringValue:@"--:--:--"];
+        [_rTimeTextField setStringValue:@"--:--:--"];
+        [_panelLTimeTextField setStringValue:@"--:--:--"];
+        [_panelRTimeTextField setStringValue:@"--:--:--"];
+    }
+}
+
+- (void)updatePlayUI
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie) {
+        if ([_movie rate] != 0) {
+            [_playMenuItem setTitle:NSLocalizedString(@"Pause_space", nil)];
+            [_playButton setImage:[NSImage imageNamed:@"MainPause"]];
+            [_playButton setAlternateImage:[NSImage imageNamed:@"MainPausePressed"]];
+            [_panelPlayButton setImage:[NSImage imageNamed:@"FSPause"]];
+            [_panelPlayButton setAlternateImage:[NSImage imageNamed:@"FSPausePressed"]];
+        }
+        else {
+            [_playMenuItem setTitle:NSLocalizedString(@"Play_space", nil)];
+            [_playButton setImage:[NSImage imageNamed:@"MainPlay"]];
+            [_playButton setAlternateImage:[NSImage imageNamed:@"MainPlayPressed"]];
+            [_panelPlayButton setImage:[NSImage imageNamed:@"FSPlay"]];
+            [_panelPlayButton setAlternateImage:[NSImage imageNamed:@"FSPlayPressed"]];
+        }
+    }
+    else {
+        [_playButton setImage:[NSImage imageNamed:@"MainPlay"]];
+        [_panelPlayButton setImage:[NSImage imageNamed:@"FSPlay"]];
+    }
+}
+
+- (void)setPlayRate:(float)rate
+{
+    TRACE(@"%s %.1f", __PRETTY_FUNCTION__, rate);
+    _playRate = rate;
+    [_movieView setMessage:[NSString stringWithFormat:
+        NSLocalizedString(@"Play Rate %.1fx", nil), _playRate]];
+    if ([_movie rate] != 0.0) {
+        [_movie setRate:0.0];
+        [_movie setRate:_playRate];
+    }
+}
+
+- (void)setSeekInterval:(float)interval atIndex:(unsigned int)index
+{
+    TRACE(@"%s [%d]:%.1f sec", __PRETTY_FUNCTION__, index, interval);
+    _seekInterval[index] = interval;
+
+    NSMenuItem* backwardItem[3] = {
+        _seekBackward1MenuItem, _seekBackward2MenuItem, _seekBackward3MenuItem
+    };
+    NSMenuItem* forwardItem[3] = {
+        _seekForward1MenuItem, _seekForward2MenuItem, _seekForward3MenuItem
+    };
+    [backwardItem[index] setTitle:[NSString stringWithFormat:
+        NSLocalizedString(@"Backward %d sec.", nil), (int)_seekInterval[index]]];
+    [forwardItem[index] setTitle:[NSString stringWithFormat:
+        NSLocalizedString(@"Forward %d sec.", nil), (int)_seekInterval[index]]];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark IB actions
+
+- (IBAction)playAction:(id)sender
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_movie) {
+        if ([_movie rate] == 0.0) {
+            if ([_seekSlider repeatEnabled] &&
+                ([_movie currentTime] < [_seekSlider repeatBeginning] ||
+                 [_seekSlider repeatEnd] < [_movie currentTime])) {
+                [_movie gotoTime:[_seekSlider repeatBeginning]];
+            }
+            [_movie setRate:_playRate];
+            [_movieView setMessage:NSLocalizedString(@"Play", nil)];
+        }
+        else {
+            [_movie setRate:0.0];
+            [_movieView setMessage:NSLocalizedString(@"Pause", nil)];
+        }
+    }
+    else if ([_playlist count] == 0) {
+        [self openFileAction:self];
+    }
+    else {
+        if (![_playlist currentItem]) {
+            [_playlist setNextItem];
+        }
+        [self openCurrentPlaylistItem];
+    }
+}
+
+- (IBAction)seekAction:(id)sender
+{
+    TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
+    switch ([sender tag]) {
+        case -100 : [self gotoBeginning];       break;
+        case  -30 : [self seekBackward:2];      break;
+        case  -20 : [self seekBackward:1];      break;
+        case  -10 : [self seekBackward:0];      break;
+        case   -1 : [self stepBackward];        break;
+        case    0 :
+            if ([[NSApp currentEvent] type] != NSLeftMouseUp) {
+                [self gotoTime:[sender floatValue]];
+            }
+            break;
+        case   +1 : [self stepForward];         break;
+        case  +10 : [self seekForward:0];       break;
+        case  +20 : [self seekForward:1];       break;
+        case  +30 : [self seekForward:2];       break;
+        case +100 : [self gotoEnd];             break;
+    }
+}
+
+- (IBAction)rangeRepeatAction:(id)sender
+{
+    if ([sender tag] < 0) {
+        float beginning = [_movie currentTime];
+        [_seekSlider setRepeatBeginning:beginning];
+        [_panelSeekSlider setRepeatBeginning:beginning];
+
+        [_repeatBeginningTextField setStringValue:
+            NSStringFromMovieTime([_seekSlider repeatBeginning])];
+        [_repeatEndTextField setStringValue:
+            NSStringFromMovieTime([_seekSlider repeatEnd])];
+    }
+    else if (0 < [sender tag]) {
+        float end = [_movie currentTime];
+        [_seekSlider setRepeatEnd:end];
+        [_panelSeekSlider setRepeatEnd:end];
+        
+        [_repeatBeginningTextField setStringValue:
+            NSStringFromMovieTime([_seekSlider repeatBeginning])];
+        [_repeatEndTextField setStringValue:
+            NSStringFromMovieTime([_seekSlider repeatEnd])];
+    }
+    else {
+        [_seekSlider clearRepeat];
+        [_panelSeekSlider clearRepeat];
+
+        [_repeatBeginningTextField setStringValue:@"--:--:--"];
+        [_repeatEndTextField setStringValue:@"--:--:--"];
+    }
+}
+
+@end

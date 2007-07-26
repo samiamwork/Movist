@@ -1,0 +1,66 @@
+/* App General */
+"Movist" = "Movist";
+
+/* Menu: Controls */
+"Play_space" = "Play          space";
+"Pause_space" = "Pause        space";
+"Backward %d sec." = "Backward %d sec.";
+"Forward %d sec." = "Forward %d sec.";
+
+/* MainMenu : Movie */
+"no audio" = "no audio";
+
+/* MainMenu : Subtitle */
+"Show Subtitle" = "Show Subtitle";
+"Hide Subtitle" = "Hide Subtitle";
+"no subtitle" = "no subtitle";
+"no name" = "no name";
+
+/* Message : Playback */
+"Play" = "Play";
+"Pause" = "Pause";
+"Beginning" = "Beginning";
+"End" = "End";
+"Previous Frame" = "Previous Frame";
+"Next Frame" = "Next Frame";
+"Volume %.1f" = "Volume %.1f";
+"Play Rate %.1fx" = "Play Rate %.1fx";
+
+/* Message : Audio */
+"Mute" = "Mute";
+"Unmute" = "Unmute";
+"Sound Track %@ selected" = "%@ selected";
+"Sound Track %@ enabled" = "%@ enabled";
+"Sound Track %@ disabled" = "%@ disabled";
+
+/* Message : Video */
+"Never" = "Never";
+"Brightness %.1f" = "Brightness %.1f";
+"Saturation %.1f" = "Saturation %.1f";
+"Contrast %.1f" = "Contrast %.1f";
+"Hue %.1f" = "Hue %.1f";
+
+/* Message: Subtitle */
+"Display Subtitle on Letter Box" = "Display Subtitle on Letter Box";
+"Display Subtitle on Movie" = "Display Subtitle on Movie";
+"Min. Letter Box Height %d" = "Min. Letter Box Height %d";
+"Subtitle HMargin %.1f %%" = "Subtitle HMargin %.1f %%";
+"Subtitle VMargin %.1f %%" = "Subtitle VMargin %.1f %%";
+"Subtitle Size %.1f" = "Subtitle Size %.1f";
+"Subtitle Sync %.1f sec." = "Subtitle Sync %.1f sec";
+"Subtitle Language %@ selected" = "Subtitle Language %@ selected";
+"Subtitle Language %@ enabled" = "Subtitle Language %@ enabled";
+"Subtitle Language %@ disabled" = "Subtitle Language %@ disabled";
+
+/* Preferences */
+"General" = "General";
+"Video" = "Video";
+"Audio" = "Audio";
+"Subtitle" = "Subtitle";
+"Advanced" = "Advanced";
+
+/* Playlist */
+"%d items" = "%d items";
+
+/* Properties */
+"External Subtitle %d" = "External Subtitle %d";

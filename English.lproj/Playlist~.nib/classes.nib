@@ -1,0 +1,19 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {addAction = id; closeAction = id; modeAction = id; removeAction = id; }; 
+            CLASS = PlaylistController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                "_modeButton" = NSButton; 
+                "_removeButton" = NSButton; 
+                "_statusTextField" = NSTextField; 
+                "_tableView" = NSTableView; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {CLASS = PlaylistItem; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
