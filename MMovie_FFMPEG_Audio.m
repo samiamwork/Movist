@@ -6,8 +6,8 @@
 {
     int _bitRate;
     UInt8* _data;
-    NSLock* _mutex;
-    float _time;
+    NSRecursiveLock* _mutex;
+    double _time;
     unsigned int _capacity;
     unsigned int _front;
     unsigned int _rear;
@@ -22,7 +22,7 @@
     self = [super init];
     if (self) {
         _data = malloc(sizeof(UInt8) * capacity);
-        _mutex = [[NSLock alloc] init];
+        _mutex = [[NSRecursiveLock alloc] init];
         _capacity = capacity;
         _front = 0;
         _rear = 0;
@@ -50,7 +50,10 @@
 
 - (int)dataSize
 {
-    return (_capacity + _rear - _front) % _capacity;
+    [_mutex lock];
+    int size = (_capacity + _rear - _front) % _capacity;
+    [_mutex unlock];
+    return size;
 }
 
 - (int)freeSize
@@ -63,9 +66,11 @@
     _bitRate = bitRate;
 }
 
-- (BOOL)putData:(UInt8*)data size:(int)size time:(float)time;
+- (BOOL)putData:(UInt8*)data size:(int)size time:(double)time;
 {
+    [_mutex lock];
     if ([self freeSize] < size) {
+        [_mutex unlock];
         return FALSE;
     }
     int i;
@@ -74,7 +79,6 @@
         _data[rear] = data[i];
         rear = (rear + 1) % _capacity;
     }
-    [_mutex lock];
     _time = time + 1. * size / _bitRate;
     _rear = rear;
     [_mutex unlock];
@@ -83,32 +87,52 @@
 
 - (BOOL)getData:(UInt8*)data size:(int)size time:(float*)time;
 {
+    [_mutex lock];
     if ([self dataSize] < size) {
+        [_mutex unlock];
         return FALSE;
     }
-    [_mutex lock];
     *time = _time -  1. * ([self dataSize] - size)/ _bitRate;
-    [_mutex unlock];
     int i;
     for (i = 0; i < size; i++) {
         data[i] = _data[_front];
         _front = (_front + 1) % _capacity;
     }
+    [_mutex unlock];
     return TRUE;
 }
 
 - (void)removeDataDuring:(float)dt time:(float*)time;
 {
     int size = 1. * dt * _bitRate;
+    [_mutex lock];
     int dataSize = [self dataSize];
     if (dataSize < size) {
         size = dataSize;
     }
-    [_mutex lock];
     _front = (_front + size) % _capacity;
     *time = _time - 1. * ([self dataSize] - size) / _bitRate;
     [_mutex unlock];
 }
+
+/*
+- (void)removeDate:(float)upTo time:(float*)time;
+{
+    [_mutex lock];
+    if (_time <= upTo) {
+        [_mutex unlock];
+        return;
+    }    
+    int size = (_time - upTo) * _bitRate;
+    int dataSize = [self dataSize];
+    if (dataSize < size) {
+        size = dataSize;
+    }
+    _front = (_front + size) % _capacity;
+    *time = _time - 1. * ([self dataSize] - size) / _bitRate;
+    [_mutex unlock];
+}
+*/
 
 - (void)getFirstTime:(float*)time;
 {
@@ -125,6 +149,9 @@
 
 - (BOOL) initAudioPlayback:(int*)errorCode
 {
+    if (_audioStreamCount <= 0) {
+        return true;
+    }
     _decodedAudioTime = 0;
     _audioStreamId = 1;
     _speakerCount = 2;
@@ -143,97 +170,87 @@
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, false);
     }
     [[_audioTracks objectAtIndex:0] setEnabled:TRUE];
-    [NSThread detachNewThreadSelector:@selector(audioDecodeThreadFunc:)
-                             toTarget:self withObject:nil];
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
     return true;
 }
 
 - (void)cleanupAudioPlayback
 {   
-    verify_noerr (AudioOutputUnitStop(_audioUnit[0]));
-    OSStatus err = AudioUnitUninitialize(_audioUnit[0]);
+    TRACE(@"%s", __PRETTY_FUNCTION__);    int i;
+    for (i = 0; i < _audioStreamCount; i++) {
+        verify_noerr (AudioOutputUnitStop(_audioUnit[i]));
+        OSStatus err = AudioUnitUninitialize(_audioUnit[i]);
     if (err) {
         TRACE(@"AudioUnitUninitialize=%ld", err);
         return;
     }
-    int i;
+        CloseComponent(_audioUnit[i]);
+    }
+    while (_playThreading) {
+        [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+    }
     for (i = 0; i < _audioStreamCount; i++) {
-        [_audioPacketQueue[i] release], _audioPacketQueue[i] = 0;
         [_audioDataQueue[i] release], _audioDataQueue[i] = 0;
     }
-    
-    TRACE(@"%s", __PRETTY_FUNCTION__);
 }
 
-- (void)audioDecodeThreadFunc:(id)anObject
+- (void)decodeAudio:(AVPacket*)packet trackId:(int)trackId
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    MTrack_FFMPEG* mTrack = [_audioTracks objectAtIndex:trackId];
+    if (![mTrack isEnabled]) {
+        return;
+    }
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    int i;
-    UInt8 audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    AVPacket packet;
-	UInt8* packetPtr;
-	int packetSize, dataSize, decodedSize;
-    float decodedAudioTime;
-    double pts;
-    MTrack_FFMPEG* mTrack;
-    while (1) {
-        for (i = 0; i < _audioStreamCount; i++) {
-            mTrack = [_audioTracks objectAtIndex:i];
-            if (![mTrack isEnabled]) {
-                while ([_audioPacketQueue[i] getPacket:&packet]);
-                continue;
+    if (packet->data == _flushPacket.data) {
+        avcodec_flush_buffers(_audioContext(trackId));
+        return;
+    }
+    if (packet->stream_index != _audioStreamIndex[trackId]) {
+        TRACE(@"packet.stream_index != _audioStreamIndex");
+        exit(-1);
+    }
+    UInt8* packetPtr = packet->data;
+    int packetSize = packet->size;
+    int16_t audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+    int dataSize, decodedSize, pts;
+    double decodedAudioTime;
+    while (0 < packetSize) {
+        dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+        decodedSize = avcodec_decode_audio2(_audioContext(trackId),
+                                            audioBuf, &dataSize,
+                                            packetPtr, packetSize);
+        if (decodedSize < 0) { 
+            // error => skip the frame
+            TRACE(@"decodedSize < 0");
+            exit(-1);
+            break;
+        }
+        packetPtr  += decodedSize;
+        packetSize -= decodedSize;
+        pts = 0;
+        if (packet->dts != AV_NOPTS_VALUE) {
+            pts = packet->dts;
+        }
+        else {//if (_videoFrame->opaque && *(uint64_t*)_videoFrame->opaque != AV_NOPTS_VALUE) {
+            TRACE(@"packet.dts == AV_NOPTS_VALUE");
+            exit(-1);
+        }
+        decodedAudioTime = 1. * pts * av_q2d(_audioStream(trackId)->time_base);
+        if (0 < dataSize) {
+            if (AVCODEC_MAX_AUDIO_FRAME_SIZE < dataSize) {
+                exit(-1);
             }
-            if (![_audioPacketQueue[i] getPacket:&packet]) {
-                continue;
-            }
-            if (packet.data == _flushPacket.data) {
-                avcodec_flush_buffers(_audioContext(i));
-                continue;
-            }
-            if (packet.stream_index != _audioStreamIndex[i]) {
-                TRACE(@"packet.stream_index != _audioStreamIndex");
-            }
-            packetPtr = packet.data;
-            packetSize = packet.size;
-            while (0 < packetSize) {
-                dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;   // FIXME
-                decodedSize = avcodec_decode_audio2(_audioContext(i),
-                                                    (int16_t*)audioBuf, &dataSize,
-                                                    packetPtr, packetSize);
-                if (decodedSize < 0) { 
-                    // error => skip the frame
-                    TRACE(@"decodedSize < 0");
-					exit(-1);
+            while (/*[self defaultFuncCondition] && */!_quitRequested && [_audioDataQueue[trackId] freeSize] < dataSize) {
+                if (_reservedCommand == COMMAND_SEEK) {
                     break;
                 }
-                packetPtr  += decodedSize;
-                packetSize -= decodedSize;
-                pts = 0;
-                if (packet.dts != AV_NOPTS_VALUE) {
-                    pts = packet.dts;
-                }
-                else {//if (_videoFrame->opaque && *(uint64_t*)_videoFrame->opaque != AV_NOPTS_VALUE) {
-                    assert(FALSE);
-                }
-                decodedAudioTime = (float)(pts * av_q2d(_audioStream(i)->time_base));
-                if (0 < dataSize) {
-					if (AVCODEC_MAX_AUDIO_FRAME_SIZE < dataSize) {
-						exit(-1);
-					}
-                    while ([_audioDataQueue[i] freeSize] < dataSize) {
-                        [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
-                    }
-                    [_audioDataQueue[i] putData:audioBuf size:dataSize time:decodedAudioTime];
-                }
-                }
+                [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
             }
+            [_audioDataQueue[trackId] putData:(UInt8*)audioBuf size:dataSize time:decodedAudioTime];
         }
+    }
     [pool release];
-    TRACE(@"%s finished", __PRETTY_FUNCTION__);
-    
-    } 
+}
 
 - (void)makeEmptyAudio:(int16_t**)buf channelNumber:(int)channelNumber bufSize:(int)bufSize
 {
@@ -261,25 +278,29 @@
 		dst[i] = ioData->mBuffers[i].mData;
 	}
     
-    if (![mTrack isEnabled]) {
+    if (![mTrack isEnabled] || _command != COMMAND_PLAY) {
         //[_audioDataQueue[streamId] clear];
         [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
         return;
     }
     float currentAudioTime = 1. * timeStamp->mHostTime / 1000 / 1000 / 1000;
-    float currentTime = _currentTime + (currentAudioTime - _prevVideoTime);
+    [_avSyncMutex lock];
+    float currentTime = _currentTime + (currentAudioTime - _hostTime);
+    [_avSyncMutex unlock];
     
     if (currentTime < _nextDecodedAudioTime[streamId]) {
         if (currentTime + 0.1 < _nextDecodedAudioTime[streamId]) {
             [_audioDataQueue[streamId] getFirstTime:&_nextDecodedAudioTime[streamId]];
         }
         [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
-        //TRACE(@"currentTime < audioTime[%d]", streamId);
+        TRACE(@"DEBUG:currentTime(%f) < audioTime[%d] %f", currentTime, streamId, _nextDecodedAudioTime[streamId]);
         return;
     }
     else if (_nextDecodedAudioTime[streamId] != 0 && _nextDecodedAudioTime[streamId] + 0.1 < currentTime) {
         float gap = currentTime - _nextDecodedAudioTime[streamId];
-        [_audioDataQueue[streamId] removeDataDuring:gap time:&_nextDecodedAudioTime[streamId]];
+        //[_audioDataQueue[streamId] removeDataDuring:gap time:&_nextDecodedAudioTime[streamId]];
+        //TRACE(@"delete audio data %f", currentTime);
+        TRACE(@"DEBUG:currentTime(%f) > audioTime[%d] %f", currentTime, streamId, _nextDecodedAudioTime[streamId]);
         if ([_audioDataQueue[streamId] dataSize] < requestSize) {
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             return;

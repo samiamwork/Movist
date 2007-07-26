@@ -30,6 +30,8 @@
 - (NSString*)name;
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
+- (float)volume;
+- (void)setVolume:(float)volume;
 - (int)streamId;
 - (MMovie_FFMPEG*)movie;
 
@@ -93,9 +95,18 @@
     #define _audioContext(i)    _audioStream(i)->codec
 
     // playback: control
+    enum {
+        COMMAND_NONE,
+        COMMAND_STEP_BACKWARD,
+        COMMAND_STEP_FORWARD,
+        COMMAND_SEEK,
+        COMMAND_PLAY,
+        COMMAND_PAUSE,
+    };
     int _command;
     int _reservedCommand;
     NSConditionLock* _commandLock;
+    NSLock* _avSyncMutex;
     BOOL _quitRequested;
     BOOL _dispatchPacket;
     BOOL _playThreading;
@@ -111,25 +122,20 @@
     
     // playback: decoding
     PacketQueue* _videoQueue;
-    PacketQueue* _audioPacketQueue[MAX_AUDIO_STREAM_COUNT];
     AudioUnit _audioUnit[MAX_AUDIO_STREAM_COUNT];
     AVFrame* _videoFrame;    // for decoding
     AVFrame* _videoFrameRGB; // for display
     AudioDataQueue* _audioDataQueue[MAX_AUDIO_STREAM_COUNT];
-    UInt8 _audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE];
     #define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
     struct SwsContext* _scalerContext;
     AVPacket _flushPacket;
     BOOL _imageDecoded;
-    BOOL _audioDecoded;
     float _currentTime;
     float _decodedImageTime;
     float _decodedAudioTime;
     float _nextDecodedAudioTime[MAX_AUDIO_STREAM_COUNT];
-    float _prevVideoTime;
+    float _hostTime;
     float _waitTime;
-    int _decodedAudioDataSize;
-    int _usedAudioDataSize;
 }
 
 @end
@@ -146,6 +152,7 @@
 
 @interface MMovie_FFMPEG (Playback)
 
+- (BOOL)defaultFuncCondition;
 - (BOOL)initPlayback:(int*)errorCode;
 - (void)cleanupPlayback;
 
@@ -155,11 +162,13 @@
 
 - (BOOL)initAudioPlayback:(int*)errorCode;
 - (void)cleanupAudioPlayback;
+- (void)decodeAudio:(AVPacket*)packet trackId:(int)trackId;
 - (void)nextAudio:(MTrack_FFMPEG*)mTrack
         timeStamp:(const AudioTimeStamp*)timeStamp 
         busNumber:(UInt32)busNumber
       frameNumber:(UInt32)frameNumber
         audioData:(AudioBufferList*)ioData;
+- (void)makeEmptyAudio:(int16_t**)buf channelNumber:(int)channelNumber bufSize:(int)bufSize;
 
 @end
 

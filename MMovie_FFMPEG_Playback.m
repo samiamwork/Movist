@@ -66,16 +66,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-enum {
-    COMMAND_NONE,
-    COMMAND_STEP_BACKWARD,
-    COMMAND_STEP_FORWARD,
-    COMMAND_SEEK,
-    COMMAND_PLAY,
-    COMMAND_PAUSE,
-};
 
 @implementation MMovie_FFMPEG (Playback)
+
+- (BOOL)defaultFuncCondition 
+{ 
+    return !_quitRequested && _reservedCommand == COMMAND_NONE; 
+}
 
 - (BOOL)initPlayback:(int*)errorCode;
 {
@@ -85,13 +82,12 @@ enum {
     _command = COMMAND_NONE;
     _reservedCommand = COMMAND_NONE;
     _commandLock = [[NSConditionLock alloc] initWithCondition:0];
+    _avSyncMutex = [[NSLock alloc] init];
 
-    _videoQueue = [[PacketQueue alloc] initWithCapacity:30 * 5];  // 30 fps * 5 sec.
+    _videoQueue = [[PacketQueue alloc] initWithCapacity:30];  // 30 fps * 5 sec.
     int i;
     for (i = 0; i < _audioStreamCount; i++) {
-		// FIXME
-		_audioPacketQueue[i] = [[PacketQueue alloc] initWithCapacity:100]; 
-		_audioDataQueue[i] = [[AudioDataQueue alloc] initWithCapacity:AVCODEC_MAX_AUDIO_FRAME_SIZE * 2];
+        _audioDataQueue[i] = [[AudioDataQueue alloc] initWithCapacity:AVCODEC_MAX_AUDIO_FRAME_SIZE * 5];
     }
     av_init_packet(&_flushPacket);
     _flushPacket.data = (uint8_t*)"FLUSH";
@@ -99,7 +95,7 @@ enum {
     _currentTime = 0;
     _decodedImageTime = 0;
     _waitTime = 0;
-    _prevVideoTime = 0;
+    _hostTime = 0;
 
     _rate = 1.0;
     _playAfterSeek = FALSE;
@@ -115,7 +111,6 @@ enum {
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     // quit and wait for play-thread is finished
-    _quitRequested = TRUE;
 
     if (_command == COMMAND_NONE) { // awake if waiting for command
         TRACE(@"%s awake", __PRETTY_FUNCTION__);
@@ -133,6 +128,8 @@ enum {
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+#define DEFAULT_FUNC_CONDITION  (!_quitRequested && _reservedCommand == COMMAND_NONE)
+
 - (BOOL)readFrame
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -144,30 +141,28 @@ enum {
     PacketQueue* queue = nil;
     if (packet.stream_index == _videoStreamIndex) {
         queue = _videoQueue;
-    }
-    else {
-        int i;
-        for (i = 0; i < _audioStreamCount; i++) {
-            if (packet.stream_index == _audioStreamIndex[i]) {
-                queue = _audioPacketQueue[i];
-                break;
-            }
+        if (!queue) {
+            av_free_packet(&packet);
+            return TRUE;
         }
-    }
-    if (!queue) {
-        av_free_packet(&packet);
+        
+        av_dup_packet(&packet);
+        while (!_quitRequested && ![queue putPacket:&packet]) {
+            //TRACE(@"%s queue full => retry", __PRETTY_FUNCTION__);
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+        }
         return TRUE;
     }
-
-    av_dup_packet(&packet);
-    while (!_quitRequested && ![queue putPacket:&packet]) {
-        //TRACE(@"%s queue full => retry", __PRETTY_FUNCTION__);
-        [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    
+    int i;
+    for (i = 0; i < _audioStreamCount; i++) {
+        if (packet.stream_index == _audioStreamIndex[i]) {
+            [self decodeAudio:&packet trackId:i];
+            break;
+        }
     }
     return TRUE;
 }
-
-#define DEFAULT_FUNC_CONDITION  (!_quitRequested && _reservedCommand == COMMAND_NONE)
 
 - (void)waitForQueueEmpty:(PacketQueue*)queue
 {
@@ -216,18 +211,20 @@ enum {
     [_videoQueue putPacket:&_flushPacket];
     int i;
     for (i = 0; i < _audioStreamCount; i++) {
-        [_audioPacketQueue[i] clear];
-        [_audioPacketQueue[i] putPacket:&_flushPacket];
+        //[_audioPacketQueue[i] putPacket:&_flushPacket]; // need to flush audio
         [_audioDataQueue[i] clear];
         _nextDecodedAudioTime[i] = 0;
     }
-
     _seekTime = _reservedSeekTime;
+    int mode = 0;
+    if (_seekTime < _currentTime) {
+        mode |= AVSEEK_FLAG_BACKWARD;
+    }
     int64_t pos = av_rescale_q((int64_t)(_seekTime * AV_TIME_BASE),
                                AV_TIME_BASE_Q, _videoStream->time_base);
     //TRACE(@"%s rescaled pos = %lld", __PRETTY_FUNCTION__, pos);
     int ret = av_seek_frame(_formatContext, _videoStreamIndex,
-                            pos, AVSEEK_FLAG_BACKWARD);
+                            pos, mode);
     if (ret < 0) {
         TRACE(@"%s error while seeking", __PRETTY_FUNCTION__);
     }
@@ -253,7 +250,7 @@ enum {
 - (void)playFunc
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    _prevVideoTime = 0;
+    //_hostTime = 0;
     _playAfterSeek = TRUE;
     _dispatchPacket = TRUE;
     while (DEFAULT_FUNC_CONDITION) {
@@ -388,7 +385,7 @@ enum {
         }
     }
 
-    _playThreading = FALSE;
+    _playThreading--;
     [pool release];
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
@@ -456,7 +453,7 @@ enum {
     #if RGB_PIXEL_FORMAT == PIX_FMT_BGRA
     // convert BGRA to ARGB
     unsigned int* p = (unsigned int*)_videoFrameRGB->data[0];
-    unsigned int* e = p + _videoWidth * _videoHeight;
+    unsigned int* e = p + (_videoWidth + 17) * _videoHeight;
     while (p < e) {
         #if defined(__i386__) && defined(__GNUC__)
         __asm__("bswap %0" : "+r" (*p));
@@ -510,8 +507,8 @@ enum {
     }
 
     //float videoTime = (float)timeStamp->videoTime / timeStamp->videoTimeScale;
-    float videoTime = (float)timeStamp->hostTime / 1000 / 1000 / 1000;
-    float dt = videoTime - _prevVideoTime;
+    float hostTime = (float)timeStamp->hostTime / 1000 / 1000 / 1000;
+    float dt = hostTime - _hostTime;
     if (dt < _waitTime) {
         if (_waitTime < -1 || 1 < _waitTime) {
             _waitTime = 0;
@@ -523,14 +520,17 @@ enum {
     if (_waitTime < -1 || 1 < _waitTime) {
         _waitTime = 0;
     }
-    _prevVideoTime = videoTime;
+    
+    [_avSyncMutex lock];
+    _hostTime = hostTime;
+    _currentTime = _decodedImageTime;
+    [_avSyncMutex unlock];
 
     return [self convertImage];
 }
 
 - (BOOL)getDecodedImage:(CVPixelBufferRef*)bufferRef
 {
-    _currentTime = _decodedImageTime;
 
     int ret = CVPixelBufferCreateWithBytes(0, _videoWidth, _videoHeight, k32ARGBPixelFormat,
                                            _videoFrameRGB->data[0], _videoFrameRGB->linesize[0],

@@ -164,9 +164,9 @@
         return FALSE;
     }
 
-    int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, _videoWidth, _videoHeight);
+    int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, _videoWidth + 17 , _videoHeight);
     avpicture_fill((AVPicture*)_videoFrameRGB, malloc(bufferSize),
-                   RGB_PIXEL_FORMAT, _videoWidth, _videoHeight);
+                   RGB_PIXEL_FORMAT, _videoWidth + 17, _videoHeight);
 
     return TRUE;
 }
@@ -203,6 +203,19 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
                    AudioBufferList* ioData)
 {
     MTrack_FFMPEG* mTrack = (MTrack_FFMPEG*)inRefCon;
+    if (![[mTrack movie] defaultFuncCondition]) {
+        const int MAX_AUDIO_CHANNEL_SIZE = 8;
+        int16_t* dst[MAX_AUDIO_CHANNEL_SIZE];
+        int channelNumber = ioData->mNumberBuffers;
+        int i;
+        for (i = 0; i < channelNumber; i++) {
+            dst[i] = ioData->mBuffers[i].mData;
+        }
+        [[mTrack movie] makeEmptyAudio:dst 
+                         channelNumber:channelNumber
+                               bufSize:inNumberFrames];
+        return noErr;
+    }
     [[mTrack movie] nextAudio:mTrack
                     timeStamp:inTimeStamp 
                     busNumber:inBusNumber 
@@ -335,7 +348,6 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         *errorCode = ERROR_FFMPEG_AUDIO_UNIT_CREATE_FAILED;
         return FALSE;
     }
-    
     _audioStreamIndex[_audioStreamCount++] = audioStreamIndex;
     return TRUE;
 }
@@ -344,10 +356,8 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     //SDL_CloseAudio();
-
     int i;
     for (i = 0; i < _audioStreamCount; i++) {
-        CloseComponent(_audioUnit[i]);
         avcodec_close(_audioContext(i));
         _audioStreamIndex[i] = -1;
     }

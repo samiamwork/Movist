@@ -81,8 +81,9 @@
 - (void)cleanup
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self cleanupAudioPlayback];
+    _quitRequested = TRUE;
     [self cleanupPlayback];
+    [self cleanupAudioPlayback];
     [self cleanupFFMPEG];
     [super cleanup];
 }
