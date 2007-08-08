@@ -106,26 +106,13 @@
 #pragma mark -
 #pragma mark volume
 
-- (float)volume
-{
-    TRACE(@"%s is not impleneted yet", __PRETTY_FUNCTION__);
-    return 0;
-}
-
-- (BOOL)muted
-{
-    TRACE(@"%s is not implemented yet", __PRETTY_FUNCTION__);
-    return FALSE;
-}
-
+- (float)preferredVolume { return 1; }
+- (float)volume { return _volume;}
+- (BOOL)muted { return _muted; }
+- (void)setMuted:(BOOL)muted { _muted = muted; }
 - (void)setVolume:(float)volume
-{
-    TRACE(@"%s is not implemented yet", __PRETTY_FUNCTION__);
-}
-
-- (void)setMuted:(BOOL)muted
-{
-    TRACE(@"%s is not implemented yet", __PRETTY_FUNCTION__);
+{ 
+    _volume = volume;
 }
 
 @end

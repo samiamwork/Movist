@@ -87,7 +87,7 @@
     _videoQueue = [[PacketQueue alloc] initWithCapacity:30];  // 30 fps * 5 sec.
     int i;
     for (i = 0; i < _audioStreamCount; i++) {
-        _audioDataQueue[i] = [[AudioDataQueue alloc] initWithCapacity:AVCODEC_MAX_AUDIO_FRAME_SIZE * 5];
+        _audioDataQueue[i] = [[AudioDataQueue alloc] initWithCapacity:AVCODEC_MAX_AUDIO_FRAME_SIZE * 20];
     }
     av_init_packet(&_flushPacket);
     _flushPacket.data = (uint8_t*)"FLUSH";

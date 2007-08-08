@@ -90,7 +90,6 @@
     #define MAX_AUDIO_STREAM_COUNT  8
     int _audioStreamCount;
     int _audioStreamIndex[MAX_AUDIO_STREAM_COUNT];
-    int _audioStreamId;
     #define _audioStream(i)     _formatContext->streams[_audioStreamIndex[i]]
     #define _audioContext(i)    _audioStream(i)->codec
 
@@ -132,10 +131,13 @@
     BOOL _imageDecoded;
     float _currentTime;
     float _decodedImageTime;
-    float _decodedAudioTime;
     float _nextDecodedAudioTime[MAX_AUDIO_STREAM_COUNT];
     float _hostTime;
     float _waitTime;
+    
+    // audio
+    float _volume;
+    bool _muted;
 }
 
 @end
@@ -147,6 +149,8 @@
 
 - (BOOL)initFFMPEGWithMovieURL:(NSURL*)movieURL errorCode:(int*)errorCode;
 - (void)cleanupFFMPEG;
+- (BOOL)initDecoder:(AVCodecContext*)context codec:(AVCodec*)codec
+           forVideo:(BOOL)forVideo;
 
 @end
 
@@ -160,15 +164,19 @@
 
 @interface MMovie_FFMPEG (Audio)
 
+- (BOOL)initAudio:(int)audioStreamIndex errorCode:(int*)errorCode;
+- (void)cleanupAudio;
 - (BOOL)initAudioPlayback:(int*)errorCode;
 - (void)cleanupAudioPlayback;
 - (void)decodeAudio:(AVPacket*)packet trackId:(int)trackId;
+/*
 - (void)nextAudio:(MTrack_FFMPEG*)mTrack
         timeStamp:(const AudioTimeStamp*)timeStamp 
         busNumber:(UInt32)busNumber
       frameNumber:(UInt32)frameNumber
         audioData:(AudioBufferList*)ioData;
-- (void)makeEmptyAudio:(int16_t**)buf channelNumber:(int)channelNumber bufSize:(int)bufSize;
+*/
+//- (void)makeEmptyAudio:(int16_t**)buf channelNumber:(int)channelNumber bufSize:(int)bufSize;
 
 @end
 

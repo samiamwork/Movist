@@ -2,6 +2,8 @@
 
 #import "MMovie_FFMPEG.h"
 
+#define _USE_AUDIO_DATA_FLOAT_BIT
+
 @interface AudioDataQueue : NSObject
 {
     int _bitRate;
@@ -144,16 +146,165 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
+                   const AudioTimeStamp* inTimeStamp,
+                   UInt32 inBusNumber, UInt32 inNumberFrames,
+                   AudioBufferList* ioData);
+
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 
 @implementation MMovie_FFMPEG (Audio)
+
+- (BOOL)createAudioUnit:(AudioUnit*)audioUnit
+          audioStreamId:(int)audioStreamId
+             sampleRate:(Float64)sampleRate audioFormat:(UInt32)formatID
+            formatFlags:(UInt32)formatFlags bytesPerPacket:(UInt32)bytesPerPacket
+        framesPerPacket:(UInt32)framesPerPacket bytesPerFrame:(UInt32)bytesPerFrame
+       channelsPerFrame:(SInt32)channelsPerFrame bitsPerChannel:(UInt32)bitsPerChannel
+{
+    ComponentDescription desc;
+    desc.componentType = kAudioUnitType_Output;
+    desc.componentSubType = kAudioUnitSubType_DefaultOutput;
+    desc.componentManufacturer = kAudioUnitManufacturer_Apple;
+    desc.componentFlags = 0;
+    desc.componentFlagsMask = 0;
+    
+    Component component = FindNextComponent(0, &desc);
+    if (!component) {
+        TRACE(@"%s FindNextComponent() failed", __PRETTY_FUNCTION__);
+        return FALSE;
+    }
+    OSStatus err = OpenAComponent(component, audioUnit);
+    if (!component) {
+        TRACE(@"%s OpenAComponent() failed : %ld\n", err);
+        return FALSE;
+    }
+    
+    AURenderCallbackStruct input;
+    input.inputProc = audioProc;
+    input.inputProcRefCon = [_audioTracks objectAtIndex:audioStreamId];
+    err = AudioUnitSetProperty(*audioUnit,
+                               kAudioUnitProperty_SetRenderCallback,
+                               kAudioUnitScope_Input,
+                               0, &input, sizeof(input));
+    if (err != noErr) {
+        TRACE(@"%s AudioUnitSetProperty(callback) failed : %ld\n", __PRETTY_FUNCTION__, err);
+        return FALSE;
+    }
+    
+    AudioStreamBasicDescription streamFormat;
+    streamFormat.mSampleRate = sampleRate;
+    streamFormat.mFormatID = formatID;
+    streamFormat.mFormatFlags = formatFlags;
+    streamFormat.mBytesPerPacket = bytesPerPacket;
+    streamFormat.mFramesPerPacket = framesPerPacket;
+    streamFormat.mBytesPerFrame = bytesPerFrame;
+    streamFormat.mChannelsPerFrame = channelsPerFrame;
+    streamFormat.mBitsPerChannel = bitsPerChannel;
+    err = AudioUnitSetProperty(*audioUnit,
+                               kAudioUnitProperty_StreamFormat,
+                               kAudioUnitScope_Input,
+                               0, &streamFormat, sizeof(streamFormat));
+    if (err != noErr) {
+        TRACE(@"%s AudioUnitSetProperty(streamFormat) failed : %ld\n", __PRETTY_FUNCTION__, err);
+        return FALSE;
+    }
+    
+    // Initialize unit
+    err = AudioUnitInitialize(*audioUnit);
+    if (err) {
+        TRACE(@"AudioUnitInitialize=%ld", err);
+        return FALSE;
+    }
+    
+    Float64 outSampleRate;
+    UInt32 size = sizeof(Float64);
+    err = AudioUnitGetProperty (*audioUnit,
+                                kAudioUnitProperty_SampleRate,
+                                kAudioUnitScope_Output,
+                                0,
+                                &outSampleRate,
+                                &size);
+    if (err) {
+        TRACE(@"AudioUnitSetProperty-GF=%4.4s, %ld", (char*)&err, err);
+        return FALSE;
+    }
+    return TRUE;
+}
+
+- (BOOL)initAudio:(int)audioStreamIndex errorCode:(int*)errorCode
+{
+    TRACE(@"%s %d", __PRETTY_FUNCTION__, audioStreamIndex);
+    
+    [_audioTracks addObject:[[[MTrack_FFMPEG alloc] 
+                              initWithStreamId:_audioStreamCount movie:self] 
+        autorelease]];
+    //AVCodecContext* audioContext = _audioContext(_audioStreamCount);
+    AVCodecContext* audioContext = _formatContext->streams[audioStreamIndex]->codec;
+    
+    // find decoder for audio-stream
+    AVCodec* codec = avcodec_find_decoder(audioContext->codec_id);
+    if (!codec) {
+        *errorCode = ERROR_FFMPEG_DECODER_NOT_FOUND;
+        return FALSE;
+    }
+    if (![self initDecoder:audioContext codec:codec forVideo:FALSE]) {
+        *errorCode = ERROR_FFMPEG_CODEC_OPEN_FAILED;
+        return FALSE;
+    }
+	UInt32 formatFlags, bytesPerFrame, bytesInAPacket, bitsPerChannel;
+    assert(audioContext->sample_fmt == SAMPLE_FMT_S16);
+#ifdef _USE_AUDIO_DATA_FLOAT_BIT
+    formatFlags =  kAudioFormatFlagsNativeFloatPacked
+                                | kAudioFormatFlagIsNonInterleaved;
+    bytesPerFrame = 4;
+    bytesInAPacket = 4;
+    bitsPerChannel = 32;    
+#else
+    formatFlags =  kLinearPCMFormatFlagIsSignedInteger
+								| kAudioFormatFlagsNativeEndian
+								| kLinearPCMFormatFlagIsPacked
+								| kAudioFormatFlagIsNonInterleaved;
+    bytesPerFrame = 2;
+    bytesInAPacket = 2;
+    bitsPerChannel = 16;    
+#endif
+    // create audio unit
+    if (![self createAudioUnit:&_audioUnit[_audioStreamCount]
+                 audioStreamId:_audioStreamCount
+                    sampleRate:audioContext->sample_rate
+				   audioFormat:kAudioFormatLinearPCM
+                   formatFlags:formatFlags
+                bytesPerPacket:bytesInAPacket
+               framesPerPacket:1
+                 bytesPerFrame:bytesPerFrame
+              channelsPerFrame:audioContext->channels
+                bitsPerChannel:bitsPerChannel]) {
+        *errorCode = ERROR_FFMPEG_AUDIO_UNIT_CREATE_FAILED;
+        return FALSE;
+    }
+    _audioStreamIndex[_audioStreamCount++] = audioStreamIndex;
+    return TRUE;
+}
+
+- (void)cleanupAudio
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //SDL_CloseAudio();
+    int i;
+    for (i = 0; i < _audioStreamCount; i++) {
+        avcodec_close(_audioContext(i));
+        _audioStreamIndex[i] = -1;
+    }
+}
 
 - (BOOL) initAudioPlayback:(int*)errorCode
 {
     if (_audioStreamCount <= 0) {
         return true;
     }
-    _decodedAudioTime = 0;
-    _audioStreamId = 1;
     _speakerCount = 2;
     
     int i;
@@ -241,7 +392,9 @@
                 exit(-1);
             }
             while (/*[self defaultFuncCondition] && */!_quitRequested && [_audioDataQueue[trackId] freeSize] < dataSize) {
-                if (_reservedCommand == COMMAND_SEEK || ![mTrack isEnabled]) {
+                if (//_reservedCommand == COMMAND_PAUSE ||
+                    _reservedCommand == COMMAND_SEEK || 
+                    ![mTrack isEnabled]) {
                     break;
                 }
                 [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
@@ -252,11 +405,17 @@
     [pool release];
 }
 
-- (void)makeEmptyAudio:(int16_t**)buf channelNumber:(int)channelNumber bufSize:(int)bufSize
+#ifdef _USE_AUDIO_DATA_FLOAT_BIT
+    #define AUDIO_DATA_TYPE float
+#else
+    #define AUDIO_DATA_TYPE int16_t
+#endif
+
+- (void)makeEmptyAudio:(AUDIO_DATA_TYPE**)buf channelNumber:(int)channelNumber bufSize:(int)bufSize
 {
     int i;
     for (i = 0; i < channelNumber; i++) {
-        memset(buf[i], 0, bufSize * sizeof(UInt16));
+        memset(buf[i], 0, bufSize * sizeof(AUDIO_DATA_TYPE));
     }
 }
 
@@ -273,7 +432,7 @@
     int channelNumber = ioData->mNumberBuffers;
 	int16_t audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE * 2];
 	int requestSize = frameNumber * frameSize * channelNumber;
-    int16_t* dst[MAX_AUDIO_CHANNEL_SIZE];
+    AUDIO_DATA_TYPE* dst[MAX_AUDIO_CHANNEL_SIZE];
 	for (i = 0; i < channelNumber; i++) {
 		dst[i] = ioData->mBuffers[i].mData;
 	}
@@ -288,19 +447,18 @@
     float currentTime = _currentTime + (currentAudioTime - _hostTime);
     [_avSyncMutex unlock];
     
-    if (currentTime < _nextDecodedAudioTime[streamId]) {
-        if (currentTime + 0.1 < _nextDecodedAudioTime[streamId]) {
-            [_audioDataQueue[streamId] getFirstTime:&_nextDecodedAudioTime[streamId]];
-        }
+    if (currentTime + 0.05 < _nextDecodedAudioTime[streamId]) {
+        [_audioDataQueue[streamId] getFirstTime:&_nextDecodedAudioTime[streamId]];
         [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
-        TRACE(@"DEBUG:currentTime(%f) < audioTime[%d] %f", currentTime, streamId, _nextDecodedAudioTime[streamId]);
+        TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, _nextDecodedAudioTime[streamId]);
         return;
     }
-    else if (_nextDecodedAudioTime[streamId] != 0 && _nextDecodedAudioTime[streamId] + 0.1 < currentTime) {
+    else if (_nextDecodedAudioTime[streamId] != 0 && _nextDecodedAudioTime[streamId] + 0.05 < currentTime) {
         float gap = currentTime - _nextDecodedAudioTime[streamId];
-        //[_audioDataQueue[streamId] removeDataDuring:gap time:&_nextDecodedAudioTime[streamId]];
+        gap = 0.05; // FIXME
+        [_audioDataQueue[streamId] removeDataDuring:gap time:&_nextDecodedAudioTime[streamId]];
         //TRACE(@"delete audio data %f", currentTime);
-        TRACE(@"DEBUG:currentTime(%f) > audioTime[%d] %f", currentTime, streamId, _nextDecodedAudioTime[streamId]);
+        TRACE(@"currentTime(%f) > audioTime[%d] %f", currentTime, streamId, _nextDecodedAudioTime[streamId]);
         if ([_audioDataQueue[streamId] dataSize] < requestSize) {
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             return;
@@ -311,13 +469,15 @@
         [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
 		return;
 	}
-    
-    
 	[_audioDataQueue[streamId] getData:(UInt8*)audioBuf size:requestSize time:&_nextDecodedAudioTime[streamId]];
-	for (i = 0; i < frameNumber; i++) {
+    for (i = 0; i < frameNumber; i++) { 
 		for (j = 0; j < channelNumber; j++) {
+#ifdef _USE_AUDIO_DATA_FLOAT_BIT
+            dst[j][i] = 1. * _volume * audioBuf[channelNumber * i + j] / INT16_MAX;			
+#else
             dst[j][i] = audioBuf[channelNumber * i + j];			
-        }
+#endif
+        } 
 	}
     if (_speakerCount == 2 && channelNumber == 6) {
         for (i = 0; i < frameNumber; i++) {
@@ -325,10 +485,36 @@
             dst[1][i] += dst[5][i] + (dst[2][i] + dst[3][i]) / 2;
         }
     }
-    //_nextDecodedAudioTime[i] += 1. * requestSize / frameSize / channelNumber / 
-    //                              _audioContext(streamId)->sample_rate;
 }
 
 @end
+
+
+OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
+                   const AudioTimeStamp* inTimeStamp,
+                   UInt32 inBusNumber, UInt32 inNumberFrames,
+                   AudioBufferList* ioData)
+{
+    MTrack_FFMPEG* mTrack = (MTrack_FFMPEG*)inRefCon;
+    if (![[mTrack movie] defaultFuncCondition]) {
+        const int MAX_AUDIO_CHANNEL_SIZE = 8;
+        AUDIO_DATA_TYPE* dst[MAX_AUDIO_CHANNEL_SIZE];
+        int channelNumber = ioData->mNumberBuffers;
+        int i;
+        for (i = 0; i < channelNumber; i++) {
+            dst[i] = ioData->mBuffers[i].mData;
+        }
+        [[mTrack movie] makeEmptyAudio:dst 
+                         channelNumber:channelNumber
+                               bufSize:inNumberFrames];
+        return noErr;
+    }
+    [[mTrack movie] nextAudio:mTrack
+                    timeStamp:inTimeStamp 
+                    busNumber:inBusNumber 
+                  frameNumber:inNumberFrames
+                    audioData:ioData];
+    return noErr;
+}
 
 #endif  // _SUPPORT_FFMPEG
