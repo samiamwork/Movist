@@ -23,11 +23,18 @@
 		AF05D7360C0E022700773A47 /* FullScreener.m in Sources */ = {isa = PBXBuildFile; fileRef = AF05D7350C0E022700773A47 /* FullScreener.m */; };
 		AF07C1F00C4BAF900007D17B /* MImageOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = AF07C1EF0C4BAF900007D17B /* MImageOSD.m */; };
 		AF07D2160BE71FD400D7EC30 /* Preferences.nib in Resources */ = {isa = PBXBuildFile; fileRef = AF07D2140BE71FD400D7EC30 /* Preferences.nib */; };
+		AF0C4F100C5CAC9900199932 /* AppController_Remote.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */; };
+		AF0C51270C5CDB5800199932 /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C511A0C5CDB5800199932 /* AppleRemote.m */; };
+		AF0C51280C5CDB5800199932 /* GlobalKeyboardDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C511C0C5CDB5800199932 /* GlobalKeyboardDevice.m */; };
+		AF0C51290C5CDB5800199932 /* HIDRemoteControlDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C511E0C5CDB5800199932 /* HIDRemoteControlDevice.m */; };
+		AF0C512A0C5CDB5800199932 /* KeyspanFrontRowControl.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51200C5CDB5800199932 /* KeyspanFrontRowControl.m */; };
+		AF0C512B0C5CDB5800199932 /* MultiClickRemoteBehavior.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51220C5CDB5800199932 /* MultiClickRemoteBehavior.m */; };
+		AF0C512C0C5CDB5800199932 /* RemoteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51240C5CDB5800199932 /* RemoteControl.m */; };
+		AF0C512D0C5CDB5800199932 /* RemoteControlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */; };
 		AF16C7F90C296F7400AC0A4B /* ControlPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = AF16C7F80C296F7400AC0A4B /* ControlPanel.m */; };
 		AF1C72100BDCF4C60056BAB8 /* MSubtitleParser_SMI.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */; };
 		AF1C73B40C51AAB50088B3CA /* FullNavColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1C73B10C51AAB50088B3CA /* FullNavColumns.m */; };
 		AF1C73B50C51AAB50088B3CA /* FullNavItems.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1C73B30C51AAB50088B3CA /* FullNavItems.m */; };
-		AF1D1D130C2829C700D239EA /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1D1D120C2829C700D239EA /* AppleRemote.m */; };
 		AF1D1D3A0C2836A200D239EA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF1D1D390C2836A200D239EA /* IOKit.framework */; };
 		AF30E2A60C2EB114009DB59C /* MMovieView_Subtitle.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E2A30C2EB114009DB59C /* MMovieView_Subtitle.m */; };
 		AF30E2A70C2EB114009DB59C /* MMovieView_Message.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */; };
@@ -169,6 +176,21 @@
 		AF07C1EE0C4BAF900007D17B /* MImageOSD.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MImageOSD.h; sourceTree = "<group>"; };
 		AF07C1EF0C4BAF900007D17B /* MImageOSD.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MImageOSD.m; sourceTree = "<group>"; };
 		AF07D2150BE71FD400D7EC30 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Preferences.nib; sourceTree = "<group>"; };
+		AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Remote.m; sourceTree = "<group>"; };
+		AF0C51190C5CDB5800199932 /* AppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = AppleRemote.h; path = AppleRemote/AppleRemote.h; sourceTree = "<group>"; };
+		AF0C511A0C5CDB5800199932 /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = AppleRemote.m; path = AppleRemote/AppleRemote.m; sourceTree = "<group>"; };
+		AF0C511B0C5CDB5800199932 /* GlobalKeyboardDevice.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = GlobalKeyboardDevice.h; path = AppleRemote/GlobalKeyboardDevice.h; sourceTree = "<group>"; };
+		AF0C511C0C5CDB5800199932 /* GlobalKeyboardDevice.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = GlobalKeyboardDevice.m; path = AppleRemote/GlobalKeyboardDevice.m; sourceTree = "<group>"; };
+		AF0C511D0C5CDB5800199932 /* HIDRemoteControlDevice.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = HIDRemoteControlDevice.h; path = AppleRemote/HIDRemoteControlDevice.h; sourceTree = "<group>"; };
+		AF0C511E0C5CDB5800199932 /* HIDRemoteControlDevice.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = HIDRemoteControlDevice.m; path = AppleRemote/HIDRemoteControlDevice.m; sourceTree = "<group>"; };
+		AF0C511F0C5CDB5800199932 /* KeyspanFrontRowControl.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = KeyspanFrontRowControl.h; path = AppleRemote/KeyspanFrontRowControl.h; sourceTree = "<group>"; };
+		AF0C51200C5CDB5800199932 /* KeyspanFrontRowControl.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = KeyspanFrontRowControl.m; path = AppleRemote/KeyspanFrontRowControl.m; sourceTree = "<group>"; };
+		AF0C51210C5CDB5800199932 /* MultiClickRemoteBehavior.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = MultiClickRemoteBehavior.h; path = AppleRemote/MultiClickRemoteBehavior.h; sourceTree = "<group>"; };
+		AF0C51220C5CDB5800199932 /* MultiClickRemoteBehavior.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = MultiClickRemoteBehavior.m; path = AppleRemote/MultiClickRemoteBehavior.m; sourceTree = "<group>"; };
+		AF0C51230C5CDB5800199932 /* RemoteControl.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = RemoteControl.h; path = AppleRemote/RemoteControl.h; sourceTree = "<group>"; };
+		AF0C51240C5CDB5800199932 /* RemoteControl.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControl.m; path = AppleRemote/RemoteControl.m; sourceTree = "<group>"; };
+		AF0C51250C5CDB5800199932 /* RemoteControlContainer.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = RemoteControlContainer.h; path = AppleRemote/RemoteControlContainer.h; sourceTree = "<group>"; };
+		AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControlContainer.m; path = AppleRemote/RemoteControlContainer.m; sourceTree = "<group>"; };
 		AF16C7F70C296F7400AC0A4B /* ControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = ControlPanel.h; sourceTree = "<group>"; };
 		AF16C7F80C296F7400AC0A4B /* ControlPanel.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = ControlPanel.m; sourceTree = "<group>"; };
 		AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SMI.m; sourceTree = "<group>"; };
@@ -176,8 +198,6 @@
 		AF1C73B10C51AAB50088B3CA /* FullNavColumns.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = FullNavColumns.m; sourceTree = "<group>"; };
 		AF1C73B20C51AAB50088B3CA /* FullNavItems.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = FullNavItems.h; sourceTree = "<group>"; };
 		AF1C73B30C51AAB50088B3CA /* FullNavItems.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = FullNavItems.m; sourceTree = "<group>"; };
-		AF1D1D110C2829C700D239EA /* AppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = AppleRemote.h; sourceTree = "<group>"; };
-		AF1D1D120C2829C700D239EA /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppleRemote.m; sourceTree = "<group>"; };
 		AF1D1D390C2836A200D239EA /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		AF30E2A30C2EB114009DB59C /* MMovieView_Subtitle.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovieView_Subtitle.m; sourceTree = "<group>"; };
 		AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovieView_Message.m; sourceTree = "<group>"; };
@@ -451,6 +471,27 @@
 			name = OSD;
 			sourceTree = "<group>";
 		};
+		AF0C4ED50C5CAB0700199932 /* AppleRemote */ = {
+			isa = PBXGroup;
+			children = (
+				AF0C51190C5CDB5800199932 /* AppleRemote.h */,
+				AF0C511A0C5CDB5800199932 /* AppleRemote.m */,
+				AF0C511B0C5CDB5800199932 /* GlobalKeyboardDevice.h */,
+				AF0C511C0C5CDB5800199932 /* GlobalKeyboardDevice.m */,
+				AF0C511D0C5CDB5800199932 /* HIDRemoteControlDevice.h */,
+				AF0C511E0C5CDB5800199932 /* HIDRemoteControlDevice.m */,
+				AF0C511F0C5CDB5800199932 /* KeyspanFrontRowControl.h */,
+				AF0C51200C5CDB5800199932 /* KeyspanFrontRowControl.m */,
+				AF0C51210C5CDB5800199932 /* MultiClickRemoteBehavior.h */,
+				AF0C51220C5CDB5800199932 /* MultiClickRemoteBehavior.m */,
+				AF0C51230C5CDB5800199932 /* RemoteControl.h */,
+				AF0C51240C5CDB5800199932 /* RemoteControl.m */,
+				AF0C51250C5CDB5800199932 /* RemoteControlContainer.h */,
+				AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */,
+			);
+			name = AppleRemote;
+			sourceTree = "<group>";
+		};
 		AF31CEDF0B7EE50A00676AC6 /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -536,8 +577,7 @@
 				AF5A29A70C2CF35B00483AEB /* AppController_Playback.m */,
 				AF5A29EA0C2CF84F00483AEB /* AppController_Audio.m */,
 				AF5A29AE0C2CF64D00483AEB /* AppController_Video.m */,
-				AF1D1D110C2829C700D239EA /* AppleRemote.h */,
-				AF1D1D120C2829C700D239EA /* AppleRemote.m */,
+				AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */,
 				AFFA4D410B80B6FB0024700D /* PreferenceController.h */,
 				AFFA4D420B80B6FB0024700D /* PreferenceController.m */,
 				AF34929A0C48851700CBDA34 /* PreferenceController_General.m */,
@@ -586,6 +626,7 @@
 				AF16C7F80C296F7400AC0A4B /* ControlPanel.m */,
 				AF07C1BB0C4BAA570007D17B /* OSD */,
 				AF07C1B90C4BAA490007D17B /* FullScreen */,
+				AF0C4ED50C5CAB0700199932 /* AppleRemote */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -754,7 +795,6 @@
 				AF05D7360C0E022700773A47 /* FullScreener.m in Sources */,
 				AF010C150C0F190600CA9913 /* PlayPanel.m in Sources */,
 				AFF4A8670C1B1E3F00B4F481 /* UserDefaults.m in Sources */,
-				AF1D1D130C2829C700D239EA /* AppleRemote.m in Sources */,
 				AF16C7F90C296F7400AC0A4B /* ControlPanel.m in Sources */,
 				AF5A29430C2CEC0D00483AEB /* AppController_Open.m in Sources */,
 				AF5A29930C2CF05000483AEB /* AppController_Subtitle.m in Sources */,
@@ -783,6 +823,14 @@
 				AFFA0B090C50837600FCBE18 /* MMovie_FFMPEG_Audio.m in Sources */,
 				AF1C73B40C51AAB50088B3CA /* FullNavColumns.m in Sources */,
 				AF1C73B50C51AAB50088B3CA /* FullNavItems.m in Sources */,
+				AF0C4F100C5CAC9900199932 /* AppController_Remote.m in Sources */,
+				AF0C51270C5CDB5800199932 /* AppleRemote.m in Sources */,
+				AF0C51280C5CDB5800199932 /* GlobalKeyboardDevice.m in Sources */,
+				AF0C51290C5CDB5800199932 /* HIDRemoteControlDevice.m in Sources */,
+				AF0C512A0C5CDB5800199932 /* KeyspanFrontRowControl.m in Sources */,
+				AF0C512B0C5CDB5800199932 /* MultiClickRemoteBehavior.m in Sources */,
+				AF0C512C0C5CDB5800199932 /* RemoteControl.m in Sources */,
+				AF0C512D0C5CDB5800199932 /* RemoteControlContainer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

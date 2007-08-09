@@ -148,7 +148,7 @@
     if (_updateMask & UPDATE_FONT) {
         _updateMask &= ~UPDATE_FONT;
         [_font release];
-        float size = MAX(10.0, [self autoSize:_fontSize]);
+        float size = MAX(15.0, [self autoSize:_fontSize]);
         _font = [[NSFont fontWithName:_fontName size:size] retain];
         //TRACE(@"font recreated: name=\"%@\" size=%g", _fontName, [_font pointSize]);
     }

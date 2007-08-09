@@ -268,3 +268,19 @@
 }
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation MainWindow (NSMenuValidation)
+
+- (BOOL)validateMenuItem:(NSMenuItem*)menuItem
+{
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [menuItem title]);
+    if ([menuItem action] == @selector(performClose:)) {
+        return [self isVisible];
+    }
+    return TRUE;
+}
+
+@end

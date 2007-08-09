@@ -125,7 +125,7 @@ typedef struct _SMITag {
 - (MSubtitle*)addSubtitleClass:(NSString*)class
 {
     TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, class);
-    MSubtitle* subtitle = [[[MSubtitle alloc] init] autorelease];
+    MSubtitle* subtitle = [[[MSubtitle alloc] initWithType:@"SMI"] autorelease];
     [_subtitles addObject:subtitle];
     [_classes setObject:subtitle forKey:class];
     return subtitle;
@@ -330,11 +330,18 @@ extern NSString* MFontBoldAttributeName;
         [mas fixAttributesInRange:NSMakeRange(0, [mas length])];
     }
 
-    if ([_subtitles count] == 0) {
-        [self addSubtitleClass:(class) ? class : @"unnamed"];
+    if (!class) {
+        class = NSLocalizedString(@"no name", nil);
     }
-    MSubtitle* subtitle = (class) ? [_classes objectForKey:class] :
-                                     [_subtitles objectAtIndex:0];
+    MSubtitle* subtitle = [_classes objectForKey:class];
+    if (!subtitle) {
+        if ([_classes count] == 0) {
+            subtitle = [self addSubtitleClass:class];
+        }
+        else {
+            subtitle = [_subtitles objectAtIndex:0];
+        }
+    }
     [subtitle addString:mas time:time];
 }
 
@@ -395,6 +402,16 @@ extern NSString* MFontBoldAttributeName;
     }
 
     [_source release];
+
+    // remove empty subtitle if exist
+    int i;
+    MSubtitle* subtitle;
+    for (i = [_subtitles count] - 1; 0 <= i; i--) {
+        subtitle = [_subtitles objectAtIndex:i];
+        if ([subtitle isEmpty]) {
+            [_subtitles removeObjectAtIndex:i];
+        }
+    }
 
     return _subtitles;
 }

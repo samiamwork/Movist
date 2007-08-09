@@ -109,11 +109,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (id)init
+- (id)initWithType:(NSString*)type
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    TRACE(@"%s %@", __PRETTY_FUNCTION__, type);
     if (self = [super init]) {
-        _name = NSLocalizedString(@"no name", nil);
+        _type = [type retain];
+        _name = [NSLocalizedString(@"no name", nil) retain];
+        _enabled = TRUE;
         _strings = [[NSMutableArray alloc] init];
 
         _lastLoadedIndex = -1;     // for initial comparison
@@ -128,6 +130,7 @@
     [_strings removeAllObjects];
     [_strings release];
     [_name release];
+    [_type release];
     [_emptyString release];
     [super dealloc];
 }
@@ -135,12 +138,18 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (NSString*)type { return _type; }
 - (NSString*)name { return _name; }
+
 - (void)setName:(NSString*)name
 {
     TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, name);
-    _name = [name retain];
+    [name retain], [_name release], _name = name;
 }
+
+- (BOOL)isEmpty { return ([_strings count] == 0); }
+- (BOOL)isEnabled { return _enabled; }
+- (void)setEnabled:(BOOL)enabled { _enabled = enabled; }
 
 - (void)addString:(NSMutableAttributedString*)string time:(float)time
 {
@@ -173,6 +182,10 @@
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, time);
     int index = (_lastLoadedIndex < 0) ? 0 : _lastLoadedIndex;
+    if (index < 0 || [_strings count] <= index) {
+        return nil;
+    }
+
     MSubtitleString* ss = (MSubtitleString*)[_strings objectAtIndex:index];
     if (time < [ss beginTime]) {
         while (0 < index--) {         // find in previous strings

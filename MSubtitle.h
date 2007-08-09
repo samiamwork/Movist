@@ -9,7 +9,9 @@
 
 @interface MSubtitle : NSObject
 {
+    NSString* _type;
     NSString* _name;
+    BOOL _enabled;
     NSMutableArray* _strings;   // for MSubtitleString
 
     // for performance of -nextString:
@@ -22,7 +24,12 @@
 + (Class)subtitleParserClassForType:(NSString*)type;
 
 #pragma mark -
+- (id)initWithType:(NSString*)type;
+- (NSString*)type;
 - (NSString*)name;
+- (BOOL)isEmpty;
+- (BOOL)isEnabled;
+- (void)setEnabled:(BOOL)enabled;
 - (void)setName:(NSString*)name;
 - (void)addString:(NSMutableAttributedString*)string time:(float)time;
 - (NSMutableAttributedString*)nextString:(float)time;
