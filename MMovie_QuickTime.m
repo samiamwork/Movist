@@ -11,6 +11,7 @@
 
 - (id)initWithQTTrack:(QTTrack*)qtTrack
 {
+    TRACE(@"%s %@", __PRETTY_FUNCTION__, qtTrack);
     if (self = [super init]) {
         _qtTrack = [qtTrack retain];
     }
@@ -19,6 +20,7 @@
 
 - (void)dealloc
 {
+    TRACE(@"%s", __PRETTY_FUNCTION__);
     [_qtTrack release];
     [super dealloc];
 }
@@ -30,14 +32,58 @@
 
 - (NSString*)format
 {
-    NSString* type = (NSString*)[_qtTrack attributeForKey:QTTrackMediaTypeAttribute];
-    if ([type isEqualToString:QTMediaTypeVideo]) {
-        NSRect rect = [[_qtTrack attributeForKey:QTTrackBoundsAttribute] rectValue];
-        return [NSString stringWithFormat:@"%g x %g", rect.size.width, rect.size.height];
+    NSString* result = @"";
+
+    ImageDescriptionHandle idh;
+    idh = (ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
+    GetMediaSampleDescription([[_qtTrack media] quickTimeMedia], 1,
+                              (SampleDescriptionHandle)idh);
+
+    NSString* mediaType = [_qtTrack attributeForKey:QTTrackMediaTypeAttribute];
+    if ([mediaType isEqualToString:QTMediaTypeVideo]) {
+        CFStringRef summary;
+        if (noErr == ICMImageDescriptionGetProperty(idh,
+                        kQTPropertyClass_ImageDescription,
+                        kICMImageDescriptionPropertyID_SummaryString,
+                        sizeof(CFStringRef), &summary, 0)) {
+            result = [NSString stringWithString:(NSString*)summary];
+            CFRelease(summary);
+            return result;
+        }
     }
-    else {
-        return @"";
+    else if ([mediaType isEqualToString:QTMediaTypeMPEG]) {
+        NSRect rc = [[_qtTrack attributeForKey:QTTrackBoundsAttribute] rectValue];
+        result = [NSString stringWithFormat:@"%@, %g x %g",
+            /*FIXME*/[self name], rc.size.width, rc.size.height];
     }
+    else if ([mediaType isEqualToString:QTMediaTypeSound]) {
+        CFStringRef summary;
+        if (noErr == ICMImageDescriptionGetProperty(idh,
+                                                    kQTPropertyClass_ImageDescription,
+                                                    kICMImageDescriptionPropertyID_SummaryString,
+                                                    sizeof(CFStringRef), &summary, 0)) {
+            TRACE(@"format: %@", (NSString*)summary);
+            result = [NSString stringWithString:(NSString*)summary];
+            CFRelease(summary);
+            return result;
+        }
+    }
+    DisposeHandle((Handle)idh);
+    return result;
+
+/*
+    ImageDescriptionHandle idh;
+    idh = (ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
+    GetMediaSampleDescription([[_qtTrack media] quickTimeMedia], 1,
+                              (SampleDescriptionHandle)idh);
+    ImageDescription* desc = *idh;
+    CodecInfo codecInfo;
+    GetCodecInfo(&codecInfo, desc->cType, 0);
+    DisposeHandle((Handle)desc);
+
+    NSString* name = (codecInfo.typeName[0] == '\0') ? [self name] :
+                        [NSString stringWithUTF8String:codecInfo.typeName];
+*/
 }
 
 - (BOOL)isEnabled { return [_qtTrack isEnabled]; }
@@ -68,18 +114,22 @@
         }
         // init video tracks
         QTTrack* track;
-        NSArray* tracks = [_qtMovie tracksOfMediaType:QTMediaTypeVideo];
+        NSString* mediaType;
+        NSArray* tracks = [_qtMovie tracks];
         NSEnumerator* enumerator = [tracks objectEnumerator];
         while (track = [enumerator nextObject]) {
-            [_videoTracks addObject:[[[MTrack_QuickTime alloc]
+            mediaType = [track attributeForKey:QTTrackMediaTypeAttribute];
+            if ([mediaType isEqualToString:QTMediaTypeVideo] ||
+                [mediaType isEqualToString:QTMediaTypeMPEG]/* ||
+                [mediaType isEqualToString:QTMediaTypeMovie]*/) {
+                [_videoTracks addObject:[[[MTrack_QuickTime alloc]
                                         initWithQTTrack:track] autorelease]];
-        }
-        // init audio tracks
-        tracks = [_qtMovie tracksOfMediaType:QTMediaTypeSound];
-        enumerator = [tracks objectEnumerator];
-        while (track = [enumerator nextObject]) {
-            [_audioTracks addObject:[[[MTrack_QuickTime alloc]
+            }
+            else if ([mediaType isEqualToString:QTMediaTypeSound]/* ||
+                     [mediaType isEqualToString:QTMediaTypeMusic]*/) {
+                [_audioTracks addObject:[[[MTrack_QuickTime alloc]
                                         initWithQTTrack:track] autorelease]];
+            }
         }
     }
     return self;

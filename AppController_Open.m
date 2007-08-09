@@ -149,17 +149,32 @@
     _movie = [movie retain];
 
     // open subtitle
-    NSArray* subtitles = nil;
     if (subtitleURL && [_defaults boolForKey:MSubtitleEnableKey]) {
-        subtitles = [self subtitleFromURL:subtitleURL withEncoding:subtitleEncoding error:&error];
+        NSArray* subtitles = [self subtitleFromURL:subtitleURL
+                                      withEncoding:subtitleEncoding error:&error];
         if (!subtitles) {
             runAlertPanelForOpenError(error, subtitleURL);
             // continue... subtitle is not necessary for movie.
         }
         else {
             _subtitles = [subtitles retain];
-            subtitles =     // select first language by default
-                [NSArray arrayWithObject:[_subtitles objectAtIndex:0]];
+
+            int i;
+            MSubtitle* subtitle;
+            if ([_subtitleNameSet count] == 0) {
+                // select first language by default
+                for (i = 0; i < [_subtitles count]; i++) {
+                    subtitle = [_subtitles objectAtIndex:i];
+                    [subtitle setEnabled:(i == 0)];
+                }
+            }
+            else {
+                // select previous selected language
+                for (i = 0; i < [_subtitles count]; i++) {
+                    subtitle = [_subtitles objectAtIndex:i];
+                    [subtitle setEnabled:[_subtitleNameSet containsObject:[subtitle name]]];
+                }
+            }
         }
     }
 
@@ -168,7 +183,7 @@
     [_movie setVolume:[movie preferredVolume]];
     [_movie setMuted:([_muteButton state] == NSOnState)];
     [_movieView setMovie:_movie];
-    [_movieView setSubtitles:subtitles];
+    [_movieView setSubtitles:_subtitles];
     [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForWideMovieKey] forWideMovie:TRUE];
     [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForStdMovieKey] forWideMovie:FALSE];
     [_seekSlider setMinValue:0];
@@ -192,6 +207,8 @@
     // show message
     NSString* name = ([movieURL isFileURL]) ? [[movieURL path] lastPathComponent] :
                                               [[movieURL absoluteString] lastPathComponent];
+    NSStringEncoding encoding = [NSString defaultCStringEncoding];
+    name = [NSString stringWithCString:[name cStringUsingEncoding:encoding] encoding:encoding];
     NSString* decoder = ([_movie isMemberOfClass:[MMovie_QuickTime class]]) ? @"QuickTime" : @"FFMPEG";
     [_movieView setMessage:name info:decoder];
 
@@ -222,6 +239,10 @@
 - (BOOL)openFiles:(NSArray*)filenames updatePlaylist:(BOOL)updatePlaylist
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (![_mainWindow isVisible]) {
+        [_mainWindow makeKeyAndOrderFront:self];
+    }
+
     if ([filenames count] == 1 &&
         [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle subtitleTypes]]) {
         if (_movie) {   // reopen subtitle
@@ -340,6 +361,16 @@
         // don't clear _audioTrackIndexSet.
         // _audioTrackIndexSet will be used in next open.
 
+        // init _subtitleNameSet for next open.
+        [_subtitleNameSet removeAllObjects];
+        MSubtitle* subtitle;
+        NSEnumerator* enumerator = [_subtitles objectEnumerator];
+        while (subtitle = [enumerator nextObject]) {
+            if ([subtitle isEnabled]) {
+                [_subtitleNameSet addObject:[subtitle name]];
+            }
+        }
+
         [_playlistController updateUI];
 
         [[NSNotificationCenter defaultCenter]
@@ -361,11 +392,15 @@
 - (IBAction)openFileAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self clearPureArrowKeyEquivalents];
+
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     [panel setCanChooseDirectories:TRUE];
     if (NSOKButton == [panel runModalForTypes:[MMovie movieTypes]]) {
         [self openFile:[panel filename] updatePlaylist:TRUE];
     }
+
+    [self setPureArrowKeyEquivalents];
 }
 
 - (IBAction)openURLAction:(id)sender
@@ -412,9 +447,10 @@
 
 - (int)numberOfRowsInTableView:(NSTableView*)tableView
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     int count = 0;
     if (_movie) {
-        count += 1;  // video track
+        count += [[_movie videoTracks] count];
         count += [[_movie audioTracks] count];
         if (_subtitles) {
             count += [_subtitles count];
@@ -426,7 +462,7 @@
 - (id)tableView:(NSTableView*)tableView
     objectValueForTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
 {
-    TRACE(@"%s %@:%d", __PRETTY_FUNCTION__, [tableColumn identifier], rowIndex);
+    //TRACE(@"%s %@:%d", __PRETTY_FUNCTION__, [tableColumn identifier], rowIndex);
     int videoCount = [[_movie videoTracks] count];
     int audioCount = [[_movie audioTracks] count];
     int videoIndex = rowIndex;
@@ -446,8 +482,7 @@
             return [NSNumber numberWithBool:state];
         }
         else {
-            MSubtitle* subtitle = [_subtitles objectAtIndex:subtitleIndex];
-            BOOL state = [[_movieView subtitles] containsObject:subtitle];
+            BOOL state = [[_subtitles objectAtIndex:subtitleIndex] isEnabled];
             return [NSNumber numberWithBool:state];
         }
     }
@@ -472,7 +507,8 @@
             return [[[_movie audioTracks] objectAtIndex:audioIndex] format];
         }
         else {
-            return [[_subtitles objectAtIndex:subtitleIndex] name];
+            MSubtitle* subtitle = [_subtitles objectAtIndex:subtitleIndex];
+            return [NSString stringWithFormat:@"%@, %@", [subtitle type], [subtitle name]];
         }
     }
     return nil;
@@ -492,7 +528,7 @@
 - (void)tableView:(NSTableView*)tableView setObjectValue:(id)object
    forTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
 {
-    TRACE(@"%s %@ %@ %d", __PRETTY_FUNCTION__, object, [tableColumn identifier], rowIndex);
+    //TRACE(@"%s %@ %@ %d", __PRETTY_FUNCTION__, object, [tableColumn identifier], rowIndex);
     NSString* identifier = [tableColumn identifier];
     if ([identifier isEqualToString:@"enable"]) {
         int videoCount = [[_movie videoTracks] count];
@@ -519,7 +555,7 @@
 
 - (IBAction)moviePropertyAction:(id)sender
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, sender);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, sender);
 }
 
 @end

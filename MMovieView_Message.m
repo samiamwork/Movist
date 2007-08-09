@@ -22,18 +22,20 @@
 - (void)setMessage:(NSString*)s info:(NSString*)info
 {
     //TRACE(@"%s \"%@\", \"%@\"", __PRETTY_FUNCTION__, s, info);
+    NSMutableAttributedString* mas;
     if (info) {
         NSString* msg = [NSString stringWithFormat:@"%@ (%@)", s, info];
         NSDictionary* attrs = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                     [NSColor colorWithCalibratedRed:0.7 green:0.7 blue:0.7 alpha:1.0],
                     NSForegroundColorAttributeName, nil];
-        NSMutableAttributedString* mas = [[NSMutableAttributedString alloc] initWithString:msg];
+        mas = [[NSMutableAttributedString alloc] initWithString:msg];
         [mas setAttributes:attrs range:NSMakeRange([s length] + 1, 1 + [info length] + 1)];
-        [self setAttributedMessage:mas];
+        //[mas fixAttributesInRange:NSMakeRange(0, [mas length])];
     }
     else {
-        [self setAttributedMessage:[[NSMutableAttributedString alloc] initWithString:s]];
+        mas = [[NSMutableAttributedString alloc] initWithString:s];
     }
+    [self setAttributedMessage:[mas autorelease]];
 }
 
 - (void)setAttributedMessage:(NSMutableAttributedString*)s

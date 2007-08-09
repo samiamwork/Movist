@@ -21,7 +21,7 @@
     [_drawLock lock];
     [subtitles retain], [_subtitles release], _subtitles = subtitles;
     [_subtitleOSD clearContent];
-    
+
     MSubtitle* subtitle;
     NSEnumerator* enumerator = [_subtitles objectEnumerator];
     while (subtitle = [enumerator nextObject]) {
@@ -41,7 +41,7 @@
     NSEnumerator* enumerator = [_subtitles objectEnumerator];
     while (subtitle = [enumerator nextObject]) {
         s = [subtitle nextString:currentTime];
-        if (s) {
+        if (s && [subtitle isEnabled]) {
             [_subtitleOSD setString:s forName:[subtitle name]];
         }
     }
@@ -131,6 +131,7 @@
 - (float)minLetterBoxHeight { return _minLetterBoxHeight; }
 - (float)subtitleHMargin { return [_subtitleOSD hMargin]; }
 - (float)subtitleVMargin { return [_subtitleOSD vMargin]; }
+- (float)subtitleSync { return _subtitleSync; }
 
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox
 {
@@ -195,36 +196,12 @@
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark sync
-
-- (float)subtitleSync { return _subtitleSync; }
-
 - (void)setSubtitleSync:(float)sync
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _subtitleSync = sync;
     [self updateSubtitleString];
     [self setNeedsDisplay:TRUE];
-}
-
-- (void)revertSubtitleSync
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self setSubtitleSync:0.0];
-}
-
-- (void)increaseSubtitleSync
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self setSubtitleSync:_subtitleSync + 0.1];
-}
-
-- (void)decreaseSubtitleSync
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self setSubtitleSync:_subtitleSync - 0.1];
 }
 
 @end

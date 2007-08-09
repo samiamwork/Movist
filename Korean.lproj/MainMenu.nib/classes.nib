@@ -24,9 +24,11 @@
                 repeatAction = id; 
                 seekAction = id; 
                 subtitleDisplayOnLetterBoxAction = id; 
+                subtitleFontSizeAction = id; 
                 subtitleLanguageAction = id; 
                 subtitleLetterBoxHeightAction = id; 
                 subtitleSyncAction = id; 
+                subtitleVMarginAction = id; 
                 subtitleVisibleAction = id; 
                 volumeAction = id; 
             }; 
@@ -81,9 +83,6 @@
         {
             ACTIONS = {
                 playbackRateAction = id; 
-                subtitleSizeAction = id; 
-                subtitleSyncAction = id; 
-                subtitleVMarginAction = id; 
                 videoColorControlsAction = id; 
                 videoColorControlsDefaultsAction = id; 
             }; 
@@ -91,6 +90,7 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 "_appController" = AppController; 
+                "_filenameTextField" = NSTextField; 
                 "_movieView" = MMovieView; 
                 "_playbackRateSlider" = NSSlider; 
                 "_tabView" = NSTabView; 

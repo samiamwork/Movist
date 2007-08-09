@@ -73,6 +73,19 @@
 - (void)showPanel { [self orderFront:self]; }
 - (void)hidePanel { [self orderOut:self]; }
 
+- (void)setMovieURL:(NSURL*)movieURL
+{
+    if (!movieURL) {
+        [_filenameTextField setStringValue:@""];
+    }
+    else if ([movieURL isFileURL]) {
+        [_filenameTextField setStringValue:[[movieURL path] lastPathComponent]];
+    }
+    else {
+        [_filenameTextField setStringValue:[[movieURL absoluteString] lastPathComponent]];
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark video
@@ -132,58 +145,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark subtitle
-
-- (IBAction)subtitleSizeAction:(id)sender
-{
-    //TRACE(@"%s %d", __PRETTY_FUNCTION__);
-    float size;
-    if ([sender tag] == 0) {    // default
-        size = [[NSUserDefaults standardUserDefaults] floatForKey:MSubtitleFontSizeKey];
-    }
-    else if ([sender tag] < 0) {
-        size = [_movieView subtitleFontSize] - 1.0;
-        size = MAX(1.0, size);
-    }
-    else {
-        size = [_movieView subtitleFontSize] + 1.0;
-        size = MIN(size, 50.0);
-    }
-    [_movieView setSubtitleFontName:[_movieView subtitleFontName] size:size];
-
-    [_movieView setMessage:[NSString localizedStringWithFormat:
-        NSLocalizedString(@"Subtitle Size %.1f", nil), [_movieView subtitleFontSize]]];
-}
-
-- (IBAction)subtitleVMarginAction:(id)sender
-{
-    float margin;
-    if ([sender tag] == 0) {    // default
-        margin = [[NSUserDefaults standardUserDefaults] floatForKey:MSubtitleVMarginKey];
-    }
-    else if ([sender tag] < 0) {
-        margin = [_movieView subtitleVMargin] - 1.0;
-        margin = MAX(0.0, margin);
-    }
-    else {
-        margin = [_movieView subtitleVMargin] + 1.0;
-        margin = MIN(margin, 10.0);
-    }
-    [_appController setSubtitleVMargin:margin];
-}
-
-- (IBAction)subtitleSyncAction:(id)sender
-{
-    //TRACE(@"%s %d", __PRETTY_FUNCTION__);
-    if ([sender tag] == 0) {    // default
-        [_appController revertSubtitleSync];
-    }
-    else if ([sender tag] < 0) {// later
-        [_appController decreaseSubtitleSync];
-    }
-    else {                      // earlier
-        [_appController increaseSubtitleSync];
-    }
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

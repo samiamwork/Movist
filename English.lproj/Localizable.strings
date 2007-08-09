@@ -25,6 +25,10 @@
 "Next Frame" = "Next Frame";
 "Volume %.1f" = "Volume %.1f";
 "Play Rate %.1fx" = "Play Rate %.1fx";
+"Range Repeat 10 sec." = "Range Repeat 10 sec.";
+"Range Repeat Beginning %@" = "Range Repeat Beginning %@";
+"Range Repeat End %@" = "Range Repeat End %@";
+"Range Repeat Clear" = "Range Repeat Clear";
 
 /* Message : Audio */
 "Mute" = "Mute";

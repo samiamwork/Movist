@@ -30,6 +30,9 @@
 
     // Playback
     IBOutlet NSSlider* _playbackRateSlider;
+
+    // Properties
+    IBOutlet NSTextField* _filenameTextField;
 }
 
 - (void)showPanel;
@@ -50,13 +53,10 @@
 #pragma mark -
 #pragma mark subtitle
 
-- (IBAction)subtitleSizeAction:(id)sender;
-- (IBAction)subtitleVMarginAction:(id)sender;
-- (IBAction)subtitleSyncAction:(id)sender;
-
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark playback
+
 - (IBAction)playbackRateAction:(id)sender;
 
 @end

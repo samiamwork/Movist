@@ -315,30 +315,47 @@
 
 - (IBAction)rangeRepeatAction:(id)sender
 {
-    if ([sender tag] < 0) {
+    if ([sender tag] == -100) {
+        float beginning = [_movie currentTime];
+        float end = beginning + 10;
+        if ([_movie duration] < end) {
+            end = [_movie duration];
+        }
+        [_seekSlider setRepeatBeginning:beginning];
+        [_panelSeekSlider setRepeatBeginning:beginning];
+        [_seekSlider setRepeatEnd:end];
+        [_panelSeekSlider setRepeatEnd:end];
+        [_movieView setMessage:NSLocalizedString(@"Range Repeat 10 sec.", nil)];
+    }
+    else if ([sender tag] < 0) {
         float beginning = [_movie currentTime];
         [_seekSlider setRepeatBeginning:beginning];
         [_panelSeekSlider setRepeatBeginning:beginning];
-
-        [_repeatBeginningTextField setStringValue:
-            NSStringFromMovieTime([_seekSlider repeatBeginning])];
-        [_repeatEndTextField setStringValue:
-            NSStringFromMovieTime([_seekSlider repeatEnd])];
+        [_movieView setMessage:[NSString stringWithFormat:
+            NSLocalizedString(@"Range Repeat Beginning %@", nil),
+            NSStringFromMovieTime([_seekSlider repeatBeginning])]];
     }
     else if (0 < [sender tag]) {
         float end = [_movie currentTime];
         [_seekSlider setRepeatEnd:end];
         [_panelSeekSlider setRepeatEnd:end];
-        
+        [_movieView setMessage:[NSString stringWithFormat:
+            NSLocalizedString(@"Range Repeat End %@", nil),
+            NSStringFromMovieTime([_seekSlider repeatEnd])]];
+    }
+    else {
+        [_seekSlider clearRepeat];
+        [_panelSeekSlider clearRepeat];
+        [_movieView setMessage:NSLocalizedString(@"Range Repeat Clear", nil)];
+    }
+
+    if ([_seekSlider repeatEnabled]) {
         [_repeatBeginningTextField setStringValue:
             NSStringFromMovieTime([_seekSlider repeatBeginning])];
         [_repeatEndTextField setStringValue:
             NSStringFromMovieTime([_seekSlider repeatEnd])];
     }
     else {
-        [_seekSlider clearRepeat];
-        [_panelSeekSlider clearRepeat];
-
         [_repeatBeginningTextField setStringValue:@"--:--:--"];
         [_repeatEndTextField setStringValue:@"--:--:--"];
     }

@@ -152,9 +152,6 @@
 
 - (float)subtitleSync;
 - (void)setSubtitleSync:(float)sync;
-- (void)revertSubtitleSync;
-- (void)increaseSubtitleSync;
-- (void)decreaseSubtitleSync;
 
 @end
 

@@ -15,6 +15,9 @@
 @class PlaylistController;
 @class PreferenceController;
 
+@class MultiClickRemoteBehavior;
+@class RemoteControlContainer;
+
 @class MMovieView;
 @class MainWindow;
 @class FullScreener;
@@ -29,6 +32,8 @@
 
 @interface AppController : NSObject
 {
+    MultiClickRemoteBehavior* _remoteControlBehavior;
+    RemoteControlContainer* _remoteControlContainer;
     PreferenceController* _preferenceController;
     PlaylistController* _playlistController;
     NSUserDefaults* _defaults;
@@ -60,6 +65,7 @@
     IBOutlet NSMenu* _audioTrackMenu;
     IBOutlet NSTableView* _propertiesView;
     NSMutableIndexSet* _audioTrackIndexSet;
+    NSMutableSet* _subtitleNameSet;
     FullScreener* _fullScreener;
     NSLock* _fullScreenLock;
 
@@ -110,16 +116,6 @@
 
 - (IBAction)controlPanelAction:(id)sender;
 - (IBAction)preferencePanelAction:(id)sender;
-
-- (void)appleRemotePlus:(BOOL)pressed;
-- (void)appleRemoteMinus:(BOOL)pressed;
-- (void)appleRemoteLeft:(BOOL)pressed;
-- (void)appleRemoteLeftHold:(BOOL)pressed;
-- (void)appleRemoteRight:(BOOL)pressed;
-- (void)appleRemoteRightHold:(BOOL)pressed;
-- (void)appleRemotePlay:(BOOL)pressed;
-- (void)appleRemoteMenu:(BOOL)pressed;
-- (void)appleRemoteMenuHold:(BOOL)pressed;
 
 @end
 
@@ -249,26 +245,47 @@
 
 - (void)setSubtitleEnable:(BOOL)enable;
 
+- (void)setSubtitleFontSize:(float)size;
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox;
 - (void)setMinLetterBoxHeight:(float)minLetterBoxHeight;
-- (void)revertLetterBoxHeight;
-- (void)increaseLetterBoxHeight;
-- (void)decreaseLetterBoxHeight;
-
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
 
-- (void)revertSubtitleSync;
-- (void)increaseSubtitleSync;
-- (void)decreaseSubtitleSync;
-
 - (void)setSubtitle:(MSubtitle*)subtitle enabled:(BOOL)enabled;
+- (void)setSubtitleSync:(float)sync;
 - (void)updateSubtitleLanguageMenu;
 
 - (IBAction)subtitleVisibleAction:(id)sender;
 - (IBAction)subtitleLanguageAction:(id)sender;
-- (IBAction)subtitleDisplayOnLetterBoxAction:(id)sender;
+- (IBAction)subtitleFontSizeAction:(id)sender;
+- (IBAction)subtitleVMarginAction:(id)sender;
 - (IBAction)subtitleLetterBoxHeightAction:(id)sender;
+- (IBAction)subtitleDisplayOnLetterBoxAction:(id)sender;
 - (IBAction)subtitleSyncAction:(id)sender;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@interface AppController (Remote)
+
+- (void)initRemoteControl;
+- (void)cleanupRemoteControl;
+
+- (void)startRemoteControl;
+- (void)stopRemoteControl;
+
+- (void)appleRemotePlus:(BOOL)pressed;
+- (void)appleRemotePlusHold;
+- (void)appleRemoteMinus:(BOOL)pressed;
+- (void)appleRemoteMinusHold;
+- (void)appleRemoteLeft:(BOOL)pressed;
+- (void)appleRemoteLeftHold;
+- (void)appleRemoteRight:(BOOL)pressed;
+- (void)appleRemoteRightHold;
+- (void)appleRemotePlay:(BOOL)pressed;
+- (void)appleRemotePlayHold;
+- (void)appleRemoteMenu:(BOOL)pressed;
+- (void)appleRemoteMenuHold;
 
 @end

@@ -33,6 +33,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (void)setSubtitleFontSize:(float)size
+{
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__);
+    size = (size < 1.0) ? 1.0 : (50.0 < size) ? 50.0 : size;
+    [_movieView setSubtitleFontName:[_movieView subtitleFontName] size:size];
+    
+    [_movieView setMessage:[NSString localizedStringWithFormat:
+        NSLocalizedString(@"Subtitle Size %.1f", nil), [_movieView subtitleFontSize]]];
+}
+
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox
 {
     [_movieView setSubtitleDisplayOnLetterBox:displayOnLetterBox];
@@ -44,19 +54,6 @@
     [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
 }
 
-- (void)performLetterBoxHeightSelector:(SEL)selector
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_movieView performSelector:selector];
-    [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Min. Letter Box Height %d", nil),
-        (int)[_movieView minLetterBoxHeight]]];
-}
-
-- (void)revertLetterBoxHeight   { [self performLetterBoxHeightSelector:@selector(revertLetterBoxHeight)]; }
-- (void)increaseLetterBoxHeight { [self performLetterBoxHeightSelector:@selector(increaseLetterBoxHeight)]; }
-- (void)decreaseLetterBoxHeight { [self performLetterBoxHeightSelector:@selector(decreaseLetterBoxHeight)]; }
-
 - (void)setMinLetterBoxHeight:(float)minLetterBoxHeight
 {
     [_movieView setMinLetterBoxHeight:minLetterBoxHeight];
@@ -67,6 +64,7 @@
 
 - (void)setSubtitleHMargin:(float)hMargin
 {
+    hMargin = (hMargin < 0.0) ? 0.0 : (10.0 < hMargin) ? 10.0 : hMargin;
     [_movieView setSubtitleHMargin:hMargin];
     [_movieView setMessage:[NSString localizedStringWithFormat:
         NSLocalizedString(@"Subtitle HMargin %.1f %%", nil), hMargin]];
@@ -74,45 +72,36 @@
 
 - (void)setSubtitleVMargin:(float)vMargin
 {
+    vMargin = (vMargin < 0.0) ? 0.0 : (10.0 < vMargin) ? 10.0 : vMargin;
     [_movieView setSubtitleVMargin:vMargin];
     [_movieView setMessage:[NSString localizedStringWithFormat:
         NSLocalizedString(@"Subtitle VMargin %.1f %%", nil), vMargin]];
 }
 
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-- (void)performSubtitleSyncSelector:(SEL)selector
+- (void)setSubtitleSync:(float)sync
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_movieView performSelector:selector];
+    [_movieView setSubtitleSync:sync];
     [_movieView setMessage:[NSString localizedStringWithFormat:
         NSLocalizedString(@"Subtitle Sync %.1f sec.", nil), [_movieView subtitleSync]]];
 }
-
-- (void)revertSubtitleSync   { [self performSubtitleSyncSelector:@selector(revertSubtitleSync)]; }
-- (void)increaseSubtitleSync { [self performSubtitleSyncSelector:@selector(increaseSubtitleSync)]; }
-- (void)decreaseSubtitleSync { [self performSubtitleSyncSelector:@selector(decreaseSubtitleSync)]; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
 - (void)setSubtitle:(MSubtitle*)subtitle enabled:(BOOL)enabled
 {
-    NSMutableArray* subtitles = [NSMutableArray arrayWithArray:[_movieView subtitles]];
+    [subtitle setEnabled:enabled];
     if (enabled) {
-        [subtitles addObject:subtitle];
         [_movieView setMessage:[NSString stringWithFormat:
             NSLocalizedString(@"Subtitle Language %@ enabled", nil),
             [subtitle name]]];
     }
     else {
-        [subtitles removeObject:subtitle];
         [_movieView setMessage:[NSString stringWithFormat:
             NSLocalizedString(@"Subtitle Language %@ disabled", nil),
             [subtitle name]]];
     }
-    [_movieView setSubtitles:subtitles];
+    [_movieView setSubtitles:_subtitles];   // for update
     [self updateSubtitleLanguageMenu];
 }
 
@@ -142,7 +131,7 @@
                               action:@selector(subtitleLanguageAction:)
                        keyEquivalent:@""];
             [item setTag:i];
-            [item setState:[[_movieView subtitles] containsObject:subtitle]];
+            [item setState:[subtitle isEnabled]];
             [item setKeyEquivalent:[NSString stringWithFormat:@"%d", i + 1]];
             [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSControlKeyMask];
         }
@@ -173,12 +162,55 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     // enable selected subtitle only
-    MSubtitle* subtitle = [_subtitles objectAtIndex:[sender tag]];
-    [_movieView setSubtitles:[NSArray arrayWithObject:subtitle]];
+    int i, index = [sender tag];
+    for (i = 0; i < [_subtitles count]; i++) {
+        [[_subtitles objectAtIndex:i] setEnabled:(i == index)];
+    }
+    [_movieView setSubtitles:_subtitles];   // for update
     [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Subtitle Language %@ selected", nil), [subtitle name]]];
+        NSLocalizedString(@"Subtitle Language %@ selected", nil),
+        [[_subtitles objectAtIndex:index] name]]];
     [self updateSubtitleLanguageMenu];
     [_propertiesView reloadData];
+}
+
+- (IBAction)subtitleFontSizeAction:(id)sender
+{
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__);
+    switch ([sender tag]) {
+        case -1 : [self setSubtitleFontSize:[_movieView subtitleFontSize] - 1.0];           break;
+        case  0 : [self setSubtitleFontSize:[_defaults floatForKey:MSubtitleFontSizeKey]];  break;
+        case +1 : [self setSubtitleFontSize:[_movieView subtitleFontSize] + 1.0];           break;
+    }
+}
+
+- (IBAction)subtitleVMarginAction:(id)sender
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    switch ([sender tag]) {
+        case -1 : [self setSubtitleVMargin:[_movieView subtitleVMargin] - 1.0];          break;
+        case  0 : [self setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]]; break;
+        case +1 : [self setSubtitleVMargin:[_movieView subtitleVMargin] + 1.0];          break;
+    }
+}
+
+- (IBAction)subtitleLetterBoxHeightAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (sender == _preferenceController) {
+        float height = [_defaults floatForKey:MSubtitleMinLetterBoxHeightKey];
+        [self setMinLetterBoxHeight:height];
+    }
+    else {
+        switch ([sender tag]) {
+            case -1 : [_movieView decreaseLetterBoxHeight]; break;
+            case  0 : [_movieView revertLetterBoxHeight];   break;
+            case +1 : [_movieView increaseLetterBoxHeight]; break;
+        }
+        [_movieView setMessage:[NSString stringWithFormat:
+            NSLocalizedString(@"Min. Letter Box Height %d", nil),
+            (int)[_movieView minLetterBoxHeight]]];
+    }
 }
 
 - (IBAction)subtitleDisplayOnLetterBoxAction:(id)sender
@@ -194,30 +226,15 @@
     [self setSubtitleDisplayOnLetterBox:display];
 }
 
-- (IBAction)subtitleLetterBoxHeightAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (sender == _preferenceController) {
-        float height = [_defaults floatForKey:MSubtitleMinLetterBoxHeightKey];
-        [self setMinLetterBoxHeight:height];
-    }
-    else {
-        switch ([sender tag]) {
-            case -1 : [self decreaseLetterBoxHeight];   break;
-            case  0 : [self revertLetterBoxHeight];     break;
-            case +1 : [self increaseLetterBoxHeight];   break;
-        }
-    }
-}
-
 - (IBAction)subtitleSyncAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     switch ([sender tag]) {
-        case -1 : [self decreaseSubtitleSync];     break;
-        case  0 : [self revertSubtitleSync];       break;
-        case +1 : [self increaseSubtitleSync];     break;
+        case -1 : [self setSubtitleSync:[_movieView subtitleSync] - 0.1];    break;
+        case  0 : [self setSubtitleSync:0.0];           break;
+        case +1 : [self setSubtitleSync:[_movieView subtitleSync] + 0.1];    break;
     }
+    
 }
 
 @end
