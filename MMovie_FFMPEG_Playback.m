@@ -95,6 +95,7 @@
     _currentTime = 0;
     _decodedImageTime = 0;
     _waitTime = 0;
+    _avFineTuningTime = 0;
     _hostTime = 0;
 
     _rate = 1.0;
@@ -501,7 +502,7 @@
             if (_decodedImageTime < 0) {
                 return FALSE;
             }
-            _waitTime += _decodedImageTime - _currentTime;
+            _waitTime += _decodedImageTime - _currentTime - _avFineTuningTime / 15;
         }
         _imageDecoded = TRUE;
     }

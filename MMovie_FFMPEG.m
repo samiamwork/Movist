@@ -10,40 +10,6 @@
 
 #import "MMovie_FFMPEG.h"
 
-@implementation MTrack_FFMPEG
-
-- (id)initWithStreamId:(int)streamId movie:(MMovie_FFMPEG*)movie
-{
-    if (self = [super init]) {
-        _streamId = streamId;
-        _movie = movie;
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    [super dealloc];
-}
-
-- (NSString*)name
-{
-    return @"...";
-    //TRACE(@"%s not implemented yet", __PRETTY_FUNCTION__);
-}
-
-- (BOOL)isEnabled { return _enable; }
-- (void)setEnabled:(BOOL)enabled { _enable = enabled; }
-- (float)volume { return _volume; }
-- (void)setVolume:(float)volume { _volume = volume; }
-- (int)streamId { return _streamId; }
-- (MMovie_FFMPEG*)movie { return _movie; }
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
 @implementation MMovie_FFMPEG
 
 + (void)initialize

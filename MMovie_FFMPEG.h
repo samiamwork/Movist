@@ -26,7 +26,6 @@
 }
 
 - (id)initWithStreamId:(int)streamId movie:(MMovie_FFMPEG*)movie;
-
 - (NSString*)name;
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
@@ -90,6 +89,7 @@
     #define MAX_AUDIO_STREAM_COUNT  8
     int _audioStreamCount;
     int _audioStreamIndex[MAX_AUDIO_STREAM_COUNT];
+    int _firstAudioStreamId;
     #define _audioStream(i)     _formatContext->streams[_audioStreamIndex[i]]
     #define _audioContext(i)    _audioStream(i)->codec
 
@@ -134,6 +134,7 @@
     float _nextDecodedAudioTime[MAX_AUDIO_STREAM_COUNT];
     float _hostTime;
     float _waitTime;
+    float _avFineTuningTime;
     
     // audio
     float _volume;
@@ -169,14 +170,7 @@
 - (BOOL)initAudioPlayback:(int*)errorCode;
 - (void)cleanupAudioPlayback;
 - (void)decodeAudio:(AVPacket*)packet trackId:(int)trackId;
-/*
-- (void)nextAudio:(MTrack_FFMPEG*)mTrack
-        timeStamp:(const AudioTimeStamp*)timeStamp 
-        busNumber:(UInt32)busNumber
-      frameNumber:(UInt32)frameNumber
-        audioData:(AudioBufferList*)ioData;
-*/
-//- (void)makeEmptyAudio:(int16_t**)buf channelNumber:(int)channelNumber bufSize:(int)bufSize;
+- (void)updateFirstAudioStreamId;
 
 @end
 
