@@ -240,10 +240,15 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     
     [_audioTracks addObject:[[[MTrack_FFMPEG alloc] 
                               initWithStreamId:_audioStreamCount movie:self] 
-        autorelease]];
+                             autorelease]];
     //AVCodecContext* audioContext = _audioContext(_audioStreamCount);
     AVCodecContext* audioContext = _formatContext->streams[audioStreamIndex]->codec;
     
+    // FIXME: hack for AC3, DTS;
+    if (audioContext->channels > 2 && _speakerCount == 2) {
+        TRACE(@"downmix to 2");
+        audioContext->channels = 2;
+    }    
     // find decoder for audio-stream
     AVCodec* codec = avcodec_find_decoder(audioContext->codec_id);
     if (!codec) {
@@ -314,10 +319,10 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         /*if (i != _audioStreamId) {
         continue;
         } */
-        [_audioDataQueue[i] setBitRate: 2 * _audioContext(i)->sample_rate * _audioContext(i)->channels];
+        [_audioDataQueue[i] setBitRate: sizeof(int16_t) * _audioContext(i)->sample_rate * _audioContext(i)->channels];
         _nextDecodedAudioTime[i] = 0;
-        err = AudioOutputUnitStart (_audioUnit[i]);
-        if (err) { printf ("AudioOutputUnitStart=%ld\n", err); return FALSE; }
+        verify_noerr(AudioOutputUnitStart (_audioUnit[i]));
+//        if (err) { printf ("AudioOutputUnitStart=%ld\n", err); return FALSE; }
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, false);
     }
     [[_audioTracks objectAtIndex:0] setEnabled:TRUE];
@@ -329,12 +334,8 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
 {   
     TRACE(@"%s", __PRETTY_FUNCTION__);    int i;
     for (i = 0; i < _audioStreamCount; i++) {
-        verify_noerr (AudioOutputUnitStop(_audioUnit[i]));
-        OSStatus err = AudioUnitUninitialize(_audioUnit[i]);
-    if (err) {
-        TRACE(@"AudioUnitUninitialize=%ld", err);
-        return;
-    }
+        verify_noerr(AudioOutputUnitStop(_audioUnit[i]));
+        verify_noerr(AudioUnitUninitialize(_audioUnit[i]));
         CloseComponent(_audioUnit[i]);
     }
     while (_playThreading) {
@@ -357,14 +358,15 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         return;
     }
     if (packet->stream_index != _audioStreamIndex[trackId]) {
-        TRACE(@"packet.stream_index != _audioStreamIndex");
-        exit(-1);
+        NSLog(@"packet.stream_index != _audioStreamIndex");
+        assert(FALSE);
     }
     UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
     int16_t audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE];
-    int dataSize, decodedSize, pts;
+    int dataSize, decodedSize, pts, nextPts;
     double decodedAudioTime;
+    BOOL newPacket = true;
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
         decodedSize = avcodec_decode_audio2(_audioContext(trackId),
@@ -372,28 +374,34 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
                                             packetPtr, packetSize);
         if (decodedSize < 0) { 
             // error => skip the frame
-            TRACE(@"decodedSize < 0");
-            exit(-1);
+            NSLog(@"decodedSize < 0");
             break;
         }
         packetPtr  += decodedSize;
         packetSize -= decodedSize;
-        pts = 0;
-        if (packet->dts != AV_NOPTS_VALUE) {
-            pts = packet->dts;
+        if (newPacket) {
+            newPacket = FALSE;
+            if (packet->dts != AV_NOPTS_VALUE) {
+                pts = packet->dts;
+                nextPts = pts;
+            }
+            else {
+                NSLog(@"packet.dts == AV_NOPTS_VALUE");
+                assert(FALSE);
+            }
         }
-        else {//if (_videoFrame->opaque && *(uint64_t*)_videoFrame->opaque != AV_NOPTS_VALUE) {
-            TRACE(@"packet.dts == AV_NOPTS_VALUE");
-            exit(-1);
+        if (dataSize > 0) {
+            nextPts = pts +  1. * dataSize / [_audioDataQueue[trackId] bitRate] / av_q2d(_audioStream(trackId)->time_base);
         }
         decodedAudioTime = 1. * pts * av_q2d(_audioStream(trackId)->time_base);
+        pts = nextPts;
         if (0 < dataSize) {
             if (AVCODEC_MAX_AUDIO_FRAME_SIZE < dataSize) {
-                exit(-1);
+                NSLog(@"AVCODEC_MAX_AUDIO_FRAME_SIZE < dataSize");
+                assert(FALSE);
             }
-            while (/*[self defaultFuncCondition] && */!_quitRequested && [_audioDataQueue[trackId] freeSize] < dataSize) {
-                if (//_reservedCommand == COMMAND_PAUSE ||
-                    _reservedCommand == COMMAND_SEEK || 
+            while (!_quitRequested && [_audioDataQueue[trackId] freeSize] < dataSize) {
+                if (_reservedCommand == COMMAND_SEEK || 
                     ![mTrack isEnabled]) {
                     break;
                 }
@@ -401,6 +409,9 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
             }
             [_audioDataQueue[trackId] putData:(UInt8*)audioBuf size:dataSize time:decodedAudioTime];
         }
+    }
+    if (packet->data) {
+        av_free_packet(packet);
     }
     [pool release];
 }
@@ -425,51 +436,58 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
       frameNumber:(UInt32)frameNumber
         audioData:(AudioBufferList*)ioData
 {
-    int streamId = [mTrack streamId];
-	const int MAX_AUDIO_CHANNEL_SIZE = 8;
+    const int MAX_AUDIO_CHANNEL_SIZE = 8;
+    const int AUDIO_BUF_SIZE = 44000 * MAX_AUDIO_CHANNEL_SIZE / 30;
+
 	int i, j;
-	int frameSize = sizeof(int16_t);  // int16
+    int frameSize = sizeof(int16_t);  // int16
+    int streamId = [mTrack streamId];
+    float* audioTime = &_nextDecodedAudioTime[streamId];
+    AudioDataQueue* dataQueue = _audioDataQueue[streamId];
     int channelNumber = ioData->mNumberBuffers;
-	int16_t audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE * 2];
+	int16_t audioBuf[AUDIO_BUF_SIZE];
 	int requestSize = frameNumber * frameSize * channelNumber;
     AUDIO_DATA_TYPE* dst[MAX_AUDIO_CHANNEL_SIZE];
+    assert(AUDIO_BUF_SIZE > requestSize);
 	for (i = 0; i < channelNumber; i++) {
 		dst[i] = ioData->mBuffers[i].mData;
+        assert(ioData->mBuffers[i].mDataByteSize == 4 * frameNumber);
+        assert(ioData->mBuffers[i].mNumberChannels == 1);
 	}
-    
+
     if (![mTrack isEnabled] || _command != COMMAND_PLAY) {
-        //[_audioDataQueue[streamId] clear];
         [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
+        [dataQueue getFirstTime:audioTime];
         return;
     }
     float currentAudioTime = 1. * timeStamp->mHostTime / 1000 / 1000 / 1000;
     [_avSyncMutex lock];
     float currentTime = _currentTime + (currentAudioTime - _hostTime);
     [_avSyncMutex unlock];
-    
-    if (currentTime + 0.05 < _nextDecodedAudioTime[streamId]) {
-        [_audioDataQueue[streamId] getFirstTime:&_nextDecodedAudioTime[streamId]];
+
+    if (currentTime + 0.05 < *audioTime) {
+        [dataQueue getFirstTime:audioTime];
         [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
-        TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, _nextDecodedAudioTime[streamId]);
+        TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, *audioTime);
         return;
     }
-    else if (_nextDecodedAudioTime[streamId] != 0 && _nextDecodedAudioTime[streamId] + 0.05 < currentTime) {
-        float gap = currentTime - _nextDecodedAudioTime[streamId];
-        gap = 0.05; // FIXME
-        [_audioDataQueue[streamId] removeDataDuring:gap time:&_nextDecodedAudioTime[streamId]];
+    else if (*audioTime != 0 && *audioTime + 0.05 < currentTime) {
+        float gap = currentTime - *audioTime;
+        gap = 0.1; // FIXME
+        TRACE(@"currentTime(%f) > audioTime[%d] %f", currentTime, streamId, *audioTime);
+        [dataQueue removeDataDuring:gap time:audioTime];
         //TRACE(@"delete audio data %f", currentTime);
-        TRACE(@"currentTime(%f) > audioTime[%d] %f", currentTime, streamId, _nextDecodedAudioTime[streamId]);
-        if ([_audioDataQueue[streamId] dataSize] < requestSize) {
+        if ([dataQueue dataSize] < requestSize) {
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             return;
         }
     }
-	if ([_audioDataQueue[streamId] dataSize] < requestSize) {
+	if ([dataQueue dataSize] < requestSize) {
         //		TRACE(@"audio data is empty");
         [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
 		return;
 	}
-	[_audioDataQueue[streamId] getData:(UInt8*)audioBuf size:requestSize time:&_nextDecodedAudioTime[streamId]];
+	[dataQueue getData:(UInt8*)audioBuf size:requestSize time:audioTime];
     for (i = 0; i < frameNumber; i++) { 
 		for (j = 0; j < channelNumber; j++) {
 #ifdef _USE_AUDIO_DATA_FLOAT_BIT
