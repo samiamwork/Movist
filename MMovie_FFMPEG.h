@@ -117,6 +117,7 @@
     // playback: seek
     float _seekTime;
     float _reservedSeekTime;
+    BOOL _needKeyFrame;
     BOOL _seekKeyFrame;
     
     // playback: decoding

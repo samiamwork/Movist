@@ -275,11 +275,20 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
 
     AVCodecContext* audioContext = _formatContext->streams[audioStreamIndex]->codec;
     
-    // FIXME: hack for AC3, DTS;
-    if (audioContext->channels > 2 && _speakerCount == 2) {
-        TRACE(@"downmix to 2");
+    // FIXME: hack for DTS;
+    if (audioContext->codec_id == CODEC_ID_DTS && 
+        audioContext->channels == 5) {
+        TRACE(@"dts audio channel is 5? maybe 6...");
+        audioContext->channels = 6;
+    }  
+    /*
+    if (audioContext->codec_id == CODEC_ID_DTS && 
+        audioContext->channels > 2 && 
+        _speakerCount == 2) {
+        TRACE(@"dts audio downmix to 2");
         audioContext->channels = 2;
-    }    
+    } 
+    */
     AVCodec* codec = avcodec_find_decoder(audioContext->codec_id);
     if (!codec) {
         *errorCode = ERROR_FFMPEG_DECODER_NOT_FOUND;
@@ -467,7 +476,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     if (streamId == _firstAudioStreamId) {
         _avFineTuningTime = time;
         if (time != 0) {
-            TRACE(@"finetuning %f", time);
+            //TRACE(@"finetuning %f", time);
         }
     }
 }
@@ -515,7 +524,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         if (currentTime + 0.2 < *audioTime) {
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             [self setAvFineTuning:streamId fineTuningTime:0];
-            TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, *audioTime);
+            //TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, *audioTime);
             return;
         }
         float dt = *audioTime - currentTime;
@@ -524,7 +533,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     else if (*audioTime != 0 && *audioTime + 0.05 < currentTime) {
         if (*audioTime + 0.2 < currentTime) {
             float gap = 0.1; // FIXME
-            TRACE(@"currentTime(%f) > audioTime[%d] %f", currentTime, streamId, *audioTime);
+            //TRACE(@"currentTime(%f) > audioTime[%d] %f", currentTime, streamId, *audioTime);
             [dataQueue removeDataDuring:gap time:audioTime];
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             [self setAvFineTuning:streamId fineTuningTime:0];

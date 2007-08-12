@@ -97,6 +97,7 @@
     _waitTime = 0;
     _avFineTuningTime = 0;
     _hostTime = 0;
+    _needKeyFrame = FALSE;
 
     _rate = 1.0;
     _playAfterSeek = FALSE;
@@ -135,10 +136,25 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     AVPacket packet;
-    if (av_read_frame(_formatContext, &packet) < 0) {
-        TRACE(@"%s read-error or end-of-file", __PRETTY_FUNCTION__);
-        return FALSE;
-    }
+#ifdef _FIND_KEY
+    BOOL first = TRUE;
+    do {
+        if (!first) {
+            av_free_packet(&packet);
+            av_init_packet(&packet);
+        }
+#endif
+        if (av_read_frame(_formatContext, &packet) < 0) {
+            TRACE(@"%s read-error or end-of-file", __PRETTY_FUNCTION__);
+            return FALSE;
+        }
+#ifdef _FIND_KEY
+        first = FALSE;
+    } while (_needKeyFrame && (packet.stream_index != _videoStreamIndex || 
+                               !(packet.flags & PKT_FLAG_KEY)));
+#endif
+    _needKeyFrame = FALSE;
+    
     PacketQueue* queue = nil;
     if (packet.stream_index == _videoStreamIndex) {
         queue = _videoQueue;
@@ -212,8 +228,8 @@
     [_videoQueue putPacket:&_flushPacket];
     int i;
     for (i = 0; i < _audioStreamCount; i++) {
-        //[_audioPacketQueue[i] putPacket:&_flushPacket]; // need to flush audio
         [_audioDataQueue[i] clear];
+        [self decodeAudio:&_flushPacket trackId:i];
         _nextDecodedAudioTime[i] = 0;
     }
     _seekTime = _reservedSeekTime;
@@ -232,6 +248,7 @@
     else {
         _imageDecoded = FALSE;
         _dispatchPacket = TRUE;
+        _needKeyFrame = TRUE;
         while (DEFAULT_FUNC_CONDITION && _dispatchPacket) {
             if (![_videoQueue isFull]) {
                 if (![self readFrame]) {
