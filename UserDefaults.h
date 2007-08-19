@@ -38,6 +38,7 @@ extern NSString* MFullScreenUnderScanKey;
 
 #pragma mark -
 #pragma mark prefs: audio
+extern NSString* MVolumeKey;
 
 #pragma mark -
 #pragma mark prefs: subtitle
@@ -45,6 +46,8 @@ extern NSString* MSubtitleEnableKey;
 extern NSString* MSubtitleEncodingKey;
 extern NSString* MSubtitleFontNameKey;
 extern NSString* MSubtitleFontSizeKey;
+extern NSString* MSubtitleAutoFontSizeKey;
+extern NSString* MSubtitleAutoFontSizeCharsKey;
 extern NSString* MSubtitleTextColorKey;
 extern NSString* MSubtitleStrokeColorKey;
 extern NSString* MSubtitleStrokeWidthKey;

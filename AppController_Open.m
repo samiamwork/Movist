@@ -18,6 +18,18 @@
 
 @implementation AppController (Open)
 
+- (void)setMessageWithURL:(NSURL*)url info:(NSString*)info
+{
+    NSString* name = ([url isFileURL]) ? [[url path] lastPathComponent] :
+                                         [[url absoluteString] lastPathComponent];
+    NSStringEncoding encoding = [NSString defaultCStringEncoding];
+    const char* cString = [name cStringUsingEncoding:encoding];
+    if (cString) {
+        name = [NSString stringWithCString:cString encoding:encoding];
+    }
+    [_movieView setMessage:name info:info];
+}
+
 - (MMovie*)movieFromURL:(NSURL*)movieURL withMovieClass:(Class)movieClass
                    error:(NSError**)error
 {
@@ -180,7 +192,8 @@
 
     // update movie & UI
     [self autoenableAudioTracks];
-    [_movie setVolume:[movie preferredVolume]];
+    //[_movie setVolume:[movie preferredVolume]];
+    [_movie setVolume:[_defaults floatForKey:MVolumeKey]];
     [_movie setMuted:([_muteButton state] == NSOnState)];
     [_movieView setMovie:_movie];
     [_movieView setSubtitles:_subtitles];
@@ -205,12 +218,7 @@
                name:MMovieEndNotification object:_movie];
 
     // show message
-    NSString* name = ([movieURL isFileURL]) ? [[movieURL path] lastPathComponent] :
-                                              [[movieURL absoluteString] lastPathComponent];
-    NSStringEncoding encoding = [NSString defaultCStringEncoding];
-    name = [NSString stringWithCString:[name cStringUsingEncoding:encoding] encoding:encoding];
-    NSString* decoder = ([_movie isMemberOfClass:[MMovie_QuickTime class]]) ? @"QuickTime" : @"FFMPEG";
-    [_movieView setMessage:name info:decoder];
+    [self setMessageWithURL:movieURL info:[[_movie class] name]];
 
     // add to recent-menu
     [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[self movieURL]];
@@ -329,9 +337,14 @@
     [self updateSubtitleLanguageMenu];
 
     [_movie gotoBeginning];
-    [_movieView setMessage:([subtitleURL isFileURL]) ?
-                            [[subtitleURL path] lastPathComponent] :
-                            [[subtitleURL absoluteString] lastPathComponent]];
+
+    if (encoding == kCFStringEncodingInvalidId) {
+        encoding = [_defaults integerForKey:MSubtitleEncodingKey];
+    }
+    NSStringEncoding nsEncoding = CFStringConvertEncodingToNSStringEncoding(encoding);
+    NSString* encodingString = [NSString localizedNameOfStringEncoding:nsEncoding];
+    [self setMessageWithURL:subtitleURL info:encodingString];
+
     return TRUE;
 }
 

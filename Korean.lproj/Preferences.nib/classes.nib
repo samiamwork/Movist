@@ -81,6 +81,8 @@
                 removeGreenBoxAction = id; 
                 seekIntervalAction = id; 
                 subtitleAttributesAction = id; 
+                subtitleAutoFontSizeAction = id; 
+                subtitleAutoFontSizeCharsAction = id; 
                 subtitleEnbleAction = id; 
                 subtitleEncodingAction = id; 
                 subtitleFontAction = id; 
@@ -109,6 +111,10 @@
                 "_seekInterval1TextField" = NSTextField; 
                 "_seekInterval2Stepper" = NSStepper; 
                 "_seekInterval2TextField" = NSTextField; 
+                "_subtitleAutoFontSizeButton" = NSButton; 
+                "_subtitleAutoFontSizeLabelTextField" = NSTextField; 
+                "_subtitleAutoFontSizeStepper" = NSStepper; 
+                "_subtitleAutoFontSizeTextField" = NSTextField; 
                 "_subtitleDisplayOnLetterBoxButton" = NSButton; 
                 "_subtitleEnableButton" = NSButton; 
                 "_subtitleEncodingPopUpButton" = NSPopUpButton; 

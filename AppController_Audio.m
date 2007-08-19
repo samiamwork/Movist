@@ -25,6 +25,7 @@
     [_movie setVolume:volume];
     [_movieView setMessage:[NSString stringWithFormat:
                                 NSLocalizedString(@"Volume %.1f", nil), volume]];
+    [_defaults setFloat:volume forKey:MVolumeKey];
     [self updateVolumeUI];
 }
 
@@ -40,7 +41,7 @@
 - (void)updateVolumeUI
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    float volume = (_movie) ? [_movie volume] : 0;
+    float volume = (_movie) ? [_movie volume] : [_defaults floatForKey:MVolumeKey];
     BOOL muted = (_movie) ? [_movie muted] : FALSE;
     
     int state = (muted) ? NSOnState : NSOffState;

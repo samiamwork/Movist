@@ -41,6 +41,10 @@
     IBOutlet NSButton*      _subtitleEnableButton;
     IBOutlet NSPopUpButton* _subtitleEncodingPopUpButton;
     IBOutlet NSButton*      _subtitleFontButton;
+    IBOutlet NSButton*      _subtitleAutoFontSizeButton;
+    IBOutlet NSTextField*   _subtitleAutoFontSizeLabelTextField;
+    IBOutlet NSTextField*   _subtitleAutoFontSizeTextField;
+    IBOutlet NSStepper*     _subtitleAutoFontSizeStepper;
     IBOutlet NSColorWell*   _subtitleTextColorWell;
     IBOutlet NSSlider*      _subtitleTextOpacitySlider;
     IBOutlet NSTextField*   _subtitleTextOpacityTextField;
@@ -132,11 +136,13 @@
 - (IBAction)subtitleEnbleAction:(id)sender;
 - (IBAction)subtitleEncodingAction:(id)sender;
 - (IBAction)subtitleFontAction:(id)sender;
+- (IBAction)subtitleAutoFontSizeAction:(id)sender;
+- (IBAction)subtitleAutoFontSizeCharsAction:(id)sender;
 - (IBAction)subtitleAttributesAction:(id)sender;
 - (IBAction)subtitlePositionAction:(id)sender;
 - (IBAction)subtitleReplaceNLWithBRAction:(id)sender;
 - (void)initSubtitleEncodingPopUpButton;
-- (void)updateSubtitleFontButtonUI;
+- (void)updateSubtitleFontAndSizeUI;
 
 @end
 

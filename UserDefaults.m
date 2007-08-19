@@ -30,6 +30,7 @@ NSString* MFullScreenUnderScanKey           = @"FullScreenUnderScan";
 
 #pragma mark -
 #pragma mark prefs: audio
+NSString* MVolumeKey                        = @"Volume";
 
 #pragma mark -
 #pragma mark prefs: subtitle
@@ -37,6 +38,8 @@ NSString* MSubtitleEnableKey                = @"SubtitleEnable";
 NSString* MSubtitleEncodingKey              = @"SubtitleEncoding";
 NSString* MSubtitleFontNameKey              = @"SubtitleFontName";
 NSString* MSubtitleFontSizeKey              = @"SubtitleFontSize";
+NSString* MSubtitleAutoFontSizeKey          = @"SubtitleAutoFontSize";
+NSString* MSubtitleAutoFontSizeCharsKey     = @"SubtitleAutoFontSizeChars";
 NSString* MSubtitleTextColorKey             = @"SubtitleTextColor";
 NSString* MSubtitleStrokeColorKey           = @"SubtitleStrokeColor";
 NSString* MSubtitleStrokeWidthKey           = @"SubtitleStrokeWidth";
@@ -86,12 +89,15 @@ NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MFullScreenUnderScanKey];
 
     // prefs: audio
+    [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MVolumeKey];
 
     // prefs: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleEnableKey];
     [dict setObject:[NSNumber numberWithInt:kCFStringEncodingDOSKorean] forKey:MSubtitleEncodingKey];
     [dict setObject:[[NSFont boldSystemFontOfSize:1.0] fontName] forKey:MSubtitleFontNameKey];
     [dict setObject:[NSNumber numberWithFloat:24.0] forKey:MSubtitleFontSizeKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleAutoFontSizeKey];
+    [dict setObject:[NSNumber numberWithInt:26] forKey:MSubtitleAutoFontSizeCharsKey];
     NSColor* color = [NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:1.0];
     [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleTextColorKey];
     color = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];

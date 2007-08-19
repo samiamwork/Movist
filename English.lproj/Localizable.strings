@@ -2,8 +2,8 @@
 "Movist" = "Movist";
 
 /* Menu: Controls */
-"Play_space" = "Play          space";
-"Pause_space" = "Pause        space";
+"Play_space"  = "Play               space";
+"Pause_space" = "Pause              space";
 "Backward %d sec." = "Backward %d sec.";
 "Forward %d sec." = "Forward %d sec.";
 
@@ -62,6 +62,7 @@
 "Audio" = "Audio";
 "Subtitle" = "Subtitle";
 "Advanced" = "Advanced";
+"SubtitleTestChar" = "*";
 
 /* Playlist */
 "%d items" = "%d items";

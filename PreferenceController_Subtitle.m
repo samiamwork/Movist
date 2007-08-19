@@ -18,7 +18,8 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleEnableButton setState:[_defaults boolForKey:MSubtitleEnableKey]];
     [self initSubtitleEncodingPopUpButton];
-    [self updateSubtitleFontButtonUI];
+
+    [self updateSubtitleFontAndSizeUI];
 
     NSColor* textColor = [_defaults colorForKey:MSubtitleTextColorKey];
     [_subtitleTextColorWell setColor:textColor];
@@ -80,6 +81,8 @@
 - (IBAction)subtitleFontAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [[self window] makeFirstResponder:nil];
+
     NSFont* font = [NSFont fontWithName:[_defaults stringForKey:MSubtitleFontNameKey]
                                    size:[_defaults floatForKey:MSubtitleFontSizeKey]];
 
@@ -89,15 +92,107 @@
     [fontManager setSelectedFont:font isMultiple:FALSE];
 }
 
+- (float)fontSizeForAutoFontSizeChars:(int)chars
+{
+    /*
+    NSFont* font;
+    NSString* fontName = [_defaults stringForKey:MSubtitleFontNameKey];
+    float fontSize = 10;
+    float hMargin = [_defaults floatForKey:MSubtitleHMarginKey] / 100.0;    // percentage
+    float width, maxWidth = 640.0 - (640.0 * hMargin) * 2;
+    while (TRUE) {
+        font = [NSFont fontWithName:fontName size:fontSize];
+        width = [font boundingRectForFont].size.width * chars;
+        if (maxWidth < width) {
+            fontSize--;
+            break;
+        }
+        fontSize++;
+    };
+
+    return fontSize;
+     */
+
+    NSString* testChar = NSLocalizedString(@"SubtitleTestChar", nil);
+    NSMutableString* s = [NSMutableString stringWithCapacity:100];
+    int i;
+    for (i = 0; i < chars; i++) {
+        [s appendString:testChar];
+    }
+    NSMutableAttributedString* mas = [[NSMutableAttributedString alloc] initWithString:s];
+    NSRange range = NSMakeRange(0, [s length]);
+
+    NSFont* font;
+    NSSize maxSize = NSMakeSize(10000, 10000);
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
+                                     NSStringDrawingUsesFontLeading |
+                                     NSStringDrawingUsesDeviceMetrics;
+    NSString* fontName = [_defaults stringForKey:MSubtitleFontNameKey];
+    float fontSize = 10;
+    float hMargin = [_defaults floatForKey:MSubtitleHMarginKey] / 100.0;    // percentage
+    float width, maxWidth = 640.0 - (640.0 * hMargin) * 2;
+    while (TRUE) {
+        font = [NSFont fontWithName:fontName size:fontSize];
+        [mas addAttribute:NSFontAttributeName value:font range:range];
+        width = [mas boundingRectWithSize:maxSize options:options].size.width;
+        if (maxWidth < width) {
+            fontSize--;
+            break;
+        }
+        fontSize++;
+    };
+    [mas release];
+
+    return fontSize;
+}
+
+- (void)updateFontSizeForAutoFontSizeChars
+{
+    int chars = [_defaults integerForKey:MSubtitleAutoFontSizeCharsKey];
+    float fontSize = [self fontSizeForAutoFontSizeChars:chars];
+    [_defaults setFloat:fontSize forKey:MSubtitleFontSizeKey];
+
+    [self updateSubtitleFontAndSizeUI];
+
+    [_movieView setSubtitleFontName:[_defaults stringForKey:MSubtitleFontNameKey]
+                               size:[_defaults floatForKey:MSubtitleFontSizeKey]];
+}
+
+- (IBAction)subtitleAutoFontSizeAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL autoFontSize = [_subtitleAutoFontSizeButton state];
+    [_defaults setBool:autoFontSize forKey:MSubtitleAutoFontSizeKey];
+
+    if (autoFontSize) {
+        [self updateFontSizeForAutoFontSizeChars];
+    }
+    else {
+        [self updateSubtitleFontAndSizeUI];
+    }
+}
+
+- (IBAction)subtitleAutoFontSizeCharsAction:(id)sender
+{
+    [_defaults setInteger:[sender intValue] forKey:MSubtitleAutoFontSizeCharsKey];
+
+    [self updateFontSizeForAutoFontSizeChars];
+}
+
 - (void)changeFont:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSFont* font = [NSFont fontWithName:[_defaults stringForKey:MSubtitleFontNameKey]
                                    size:[_defaults floatForKey:MSubtitleFontSizeKey]];
     font = [sender convertFont:font];
+
+    float fontSize = [font pointSize];
+    if ([_defaults boolForKey:MSubtitleAutoFontSizeKey]) {
+        fontSize = [_defaults floatForKey:MSubtitleFontSizeKey];
+    }
     [_defaults setObject:[font fontName] forKey:MSubtitleFontNameKey];
-    [_defaults setFloat:[font pointSize] forKey:MSubtitleFontSizeKey];
-    [self updateSubtitleFontButtonUI];
+    [_defaults setFloat:fontSize forKey:MSubtitleFontSizeKey];
+    [self updateSubtitleFontAndSizeUI];
 
     [_movieView setSubtitleFontName:[_defaults stringForKey:MSubtitleFontNameKey]
                                size:[_defaults floatForKey:MSubtitleFontSizeKey]];
@@ -208,6 +303,9 @@
             [_subtitleHMarginTextField setFloatValue:hMargin];
             [_defaults setFloat:hMargin forKey:MSubtitleHMarginKey];
             [_appController setSubtitleHMargin:hMargin];
+            if ([_defaults boolForKey:MSubtitleAutoFontSizeKey]) {
+                [self updateFontSizeForAutoFontSizeChars];
+            }
             break;
         }
         case SUBTITLE_V_MARGIN : {
@@ -235,15 +333,43 @@
     [_subtitleEncodingPopUpButton selectItemWithTag:[_defaults integerForKey:MSubtitleEncodingKey]];
 }
 
-- (void)updateSubtitleFontButtonUI
+- (void)updateSubtitleFontAndSizeUI
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSMutableDictionary* attrs = [NSMutableDictionary dictionaryWithCapacity:3];
+
+    NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setAlignment:NSCenterTextAlignment];
+    [attrs setObject:[paragraphStyle autorelease] forKey:NSParagraphStyleAttributeName];
+
     float fontSize = [_defaults floatForKey:MSubtitleFontSizeKey];
     NSFont* font = [NSFont fontWithName:[_defaults stringForKey:MSubtitleFontNameKey]
                                    size:MIN(fontSize, 20.0)];
-    [_subtitleFontButton setFont:font];
-    [_subtitleFontButton setTitle:
-        [NSString localizedStringWithFormat:@"%@ %g", [font displayName], fontSize]];
+    [attrs setObject:font forKey:NSFontAttributeName];
+
+    NSString* title = [NSString localizedStringWithFormat:
+                                        @"%@ %g", [font displayName], fontSize];
+    NSMutableAttributedString* mas = [[NSMutableAttributedString alloc]
+                                            initWithString:title attributes:attrs];
+    BOOL autoFontSize = [_defaults boolForKey:MSubtitleAutoFontSizeKey];
+    if (autoFontSize) {
+        NSRange range;
+        range.location = [[font displayName] length] + 1;
+        range.length = [title length] - range.location;
+        [mas addAttribute:NSForegroundColorAttributeName
+                    value:[NSColor disabledControlTextColor]
+                    range:range];
+    }
+    [_subtitleFontButton setAttributedTitle:[mas autorelease]];
+
+    int chars = [_defaults integerForKey:MSubtitleAutoFontSizeCharsKey];
+    [_subtitleAutoFontSizeButton setState:autoFontSize];
+    [_subtitleAutoFontSizeLabelTextField setTextColor:
+        autoFontSize ? [NSColor controlTextColor] : [NSColor disabledControlTextColor]];
+    [_subtitleAutoFontSizeTextField setEnabled:autoFontSize];
+    [_subtitleAutoFontSizeTextField setIntValue:chars];
+    [_subtitleAutoFontSizeStepper setEnabled:autoFontSize];
+    [_subtitleAutoFontSizeStepper setIntValue:chars];
 }
 
 @end
