@@ -54,14 +54,23 @@
     }
 }
 
+- (void)gotoTime:(float)time message:(NSString*)message
+{
+    NSMutableString* s = [NSMutableString stringWithCapacity:64];
+    if (message) {
+        [s appendFormat:@"%@ ", message];
+    }
+    [s appendFormat:@"%@/%@", NSStringFromMovieTime(time),
+                              NSStringFromMovieTime([_movie duration])];
+    [_movieView setMessage:s];
+    [_movie gotoTime:time];
+}
+
 - (void)gotoTime:(float)time
 {
     TRACE(@"%s %f sec", __PRETTY_FUNCTION__, time);
     if (_movie) {
-        [_movieView setMessage:[NSString stringWithFormat:@"%@/%@",
-                                NSStringFromMovieTime(time),
-                                NSStringFromMovieTime(time - [_movie duration])]];
-        [_movie gotoTime:time];
+        [self gotoTime:time message:nil];
     }
 }
 
@@ -71,10 +80,8 @@
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
         float t = MAX(0, [_movie currentTime] - dt);
-        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@",
-            [NSString stringWithFormat:NSLocalizedString(@"Backward %d sec.", nil), (int)dt],
-            NSStringFromMovieTime(t), NSStringFromMovieTime(t - [_movie duration])]];
-        [_movie gotoTime:t];
+        [self gotoTime:t message:[NSString stringWithFormat:
+            NSLocalizedString(@"Backward %d sec.", nil), (int)dt]];
     }
 }
 
@@ -84,10 +91,8 @@
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
         float t = MIN([_movie currentTime] + dt, [_movie duration]);
-        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@",
-            [NSString stringWithFormat:NSLocalizedString(@"Forward %d sec.", nil), (int)dt],
-            NSStringFromMovieTime(t), NSStringFromMovieTime(t - [_movie duration])]];
-        [_movie gotoTime:t];
+        [self gotoTime:t message:[NSString stringWithFormat:
+            NSLocalizedString(@"Forward %d sec.", nil), (int)dt]];
     }
 }
 
@@ -224,6 +229,7 @@
         }
     }
     else {
+        [_playMenuItem setTitle:NSLocalizedString(@"Play_space", nil)];
         [_playButton setImage:[NSImage imageNamed:@"MainPlay"]];
         [_panelPlayButton setImage:[NSImage imageNamed:@"FSPlay"]];
     }
