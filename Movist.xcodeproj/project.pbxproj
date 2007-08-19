@@ -16,6 +16,7 @@
 		AF0204AA0C31D01F008F7D03 /* FSPausePressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A60C31D01F008F7D03 /* FSPausePressed.tiff */; };
 		AF0204AB0C31D01F008F7D03 /* FSPlay.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A70C31D01F008F7D03 /* FSPlay.tiff */; };
 		AF0204AC0C31D01F008F7D03 /* FSPlayPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A80C31D01F008F7D03 /* FSPlayPressed.tiff */; };
+		AF0344520C71E0E400915EAB /* MSubtitleParser_SRT.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */; };
 		AF03F1870BDE3E2D0066B086 /* MMovieOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */; };
 		AF0439910BEA14EA0016091F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF0439900BEA14EA0016091F /* Carbon.framework */; };
 		AF05B3740C31780F00E56B25 /* Default.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF05B3720C31780F00E56B25 /* Default.tiff */; };
@@ -165,6 +166,7 @@
 		AF0204A60C31D01F008F7D03 /* FSPausePressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPausePressed.tiff; path = Images/FSPausePressed.tiff; sourceTree = "<group>"; };
 		AF0204A70C31D01F008F7D03 /* FSPlay.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPlay.tiff; path = Images/FSPlay.tiff; sourceTree = "<group>"; };
 		AF0204A80C31D01F008F7D03 /* FSPlayPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPlayPressed.tiff; path = Images/FSPlayPressed.tiff; sourceTree = "<group>"; };
+		AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SRT.m; sourceTree = "<group>"; };
 		AF03F1850BDE3E2D0066B086 /* MMovieOSD.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MMovieOSD.h; sourceTree = "<group>"; };
 		AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovieOSD.m; sourceTree = "<group>"; };
 		AF0439900BEA14EA0016091F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -606,6 +608,7 @@
 				AFFA4D430B80B6FB0024700D /* MSubtitle.h */,
 				AFFA4D440B80B6FB0024700D /* MSubtitle.m */,
 				AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */,
+				AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */,
 			);
 			name = "Movie & Subtitle";
 			sourceTree = "<group>";
@@ -831,6 +834,7 @@
 				AF0C512B0C5CDB5800199932 /* MultiClickRemoteBehavior.m in Sources */,
 				AF0C512C0C5CDB5800199932 /* RemoteControl.m in Sources */,
 				AF0C512D0C5CDB5800199932 /* RemoteControlContainer.m in Sources */,
+				AF0344520C71E0E400915EAB /* MSubtitleParser_SRT.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -893,7 +897,10 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DEBUG,
+					_SUPPORT_FFMPEG,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (

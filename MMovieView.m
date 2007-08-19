@@ -193,16 +193,16 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
     NSRect bounds = [self bounds];
     if ([_iconOSD hasContent]) {
-        //[_iconOSD drawInViewBounds:bounds];
+        [_iconOSD drawInViewBounds:bounds];
+    }
+    if (_subtitleVisible && [_subtitleOSD hasContent]) {
+        [_subtitleOSD drawInViewBounds:bounds];
     }
     if ([_barOSD hasContent]) {
         [_barOSD drawInViewBounds:bounds];
     }
     if ([_messageOSD hasContent]) {
         [_messageOSD drawInViewBounds:bounds];
-    }
-    if (_subtitleVisible && [_subtitleOSD hasContent]) {
-        [_subtitleOSD drawInViewBounds:bounds];
     }
 
     // restore OpenGL status

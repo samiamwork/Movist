@@ -300,7 +300,8 @@
     }
 
     // Controls
-    if ([menuItem action] == @selector(seekAction:)) {
+    if ([menuItem action] == @selector(seekAction:) ||
+        [menuItem action] == @selector(rangeRepeatAction:)) {
         return (_movie != nil);
     }
     if ([menuItem action] == @selector(prevNextMovieAction:)) {

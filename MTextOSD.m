@@ -14,7 +14,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         _paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-        [_paragraphStyle setAlignment:NSCenterTextAlignment];
+        //[_paragraphStyle setAlignment:NSCenterTextAlignment];
         [_paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
         //[_paragraphStyle setLineSpacing:0.5];
         //[_paragraphStyle setParagraphSpacing:0.1];
@@ -237,8 +237,8 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
     NSSize maxSize = _movieRect.size;
     maxSize.width -= (_movieRect.size.width * _hMargin) * 2;
     NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
-        NSStringDrawingUsesFontLeading |
-        NSStringDrawingUsesDeviceMetrics;
+                                     NSStringDrawingUsesFontLeading |
+                                     NSStringDrawingUsesDeviceMetrics;
     _contentSize = [_string boundingRectWithSize:maxSize options:options].size;
     _drawingSize.width  = _contentSize.width  + DRAWING_LT_MARGIN + DRAWING_RB_MARGIN;
     _drawingSize.height = _contentSize.height + DRAWING_LT_MARGIN;
