@@ -423,7 +423,7 @@ extern NSString* MFontBoldAttributeName;
 
 @implementation NSString (MSubtitleParser_SMI)
 
-SMITag MMakeTag(int type, int location, int length, NSString* attr)
+SMITag MMakeSMITag(int type, int location, int length, NSString* attr)
 {
     SMITag tag;
     tag.type = type;
@@ -440,7 +440,7 @@ SMITag MMakeTag(int type, int location, int length, NSString* attr)
     if (or.location == NSNotFound) {
         range->location = [self length];
         range->length = 0;
-        return MMakeTag(TAG_NONE, NSNotFound, 0, nil);
+        return MMakeSMITag(TAG_NONE, NSNotFound, 0, nil);
     }
 
     NSRange cr;
@@ -448,7 +448,7 @@ SMITag MMakeTag(int type, int location, int length, NSString* attr)
         [self rangeOfString:@"--" rangePtr:range];
         [self rangeOfString:@"--" rangePtr:range];
         cr = [self rangeOfString:@">" rangePtr:range];
-        return MMakeTag(TAG_COMMENT, or.location, NSMaxRange(cr) - or.location, nil);
+        return MMakeSMITag(TAG_COMMENT, or.location, NSMaxRange(cr) - or.location, nil);
     }
     cr = [self rangeOfString:@">" rangePtr:range];
 
@@ -477,12 +477,12 @@ SMITag MMakeTag(int type, int location, int length, NSString* attr)
     };
     for (i = 0; i < sizeof(nameType) / sizeof(nameType[0]); i++) {
         if (![self compare:nameType[i].name options:NSCaseInsensitiveSearch range:nr]) {
-            return MMakeTag(nameType[i].type[c],
-                             or.location, NSMaxRange(cr) - or.location,
-                             (0 < ar.length) ? [self substringWithRange:ar] : nil);
+            return MMakeSMITag(nameType[i].type[c],
+                               or.location, NSMaxRange(cr) - or.location,
+                               (0 < ar.length) ? [self substringWithRange:ar] : nil);
         }
     }
-    return MMakeTag(TAG_UNKNOWN, NSNotFound, 0, nil);
+    return MMakeSMITag(TAG_UNKNOWN, NSNotFound, 0, nil);
 }
 
 @end

@@ -32,6 +32,8 @@
 - (void)setEnabled:(BOOL)enabled;
 - (void)setName:(NSString*)name;
 - (void)addString:(NSMutableAttributedString*)string time:(float)time;
+- (void)addString:(NSMutableAttributedString*)string
+        beginTime:(float)beginTime endTime:(float)endTime;
 - (NSMutableAttributedString*)nextString:(float)time;
 - (void)clearCache;
 

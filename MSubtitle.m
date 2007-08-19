@@ -82,7 +82,7 @@
 #pragma mark -
 
 @class MSubtitleParser_SMI;
-//@class MSubtitleParser_SRT;
+@class MSubtitleParser_SRT;
 //@class MSubtitleParser_SUB;
 
 @implementation MSubtitle
@@ -91,7 +91,7 @@
 {
     return [NSDictionary dictionaryWithObjectsAndKeys:
                             [MSubtitleParser_SMI class], @"smi",
-                            //[MSubtitleParser_SRT class], @"srt",
+                            [MSubtitleParser_SRT class], @"srt",
                             //[MSubtitleParser_SUB class], @"sub",
                             nil];
 }
@@ -175,6 +175,72 @@
         ss = [[MSubtitleString alloc] initWithString:string
                                             beginTime:time endTime:-1.0];
         [_strings insertObject:ss atIndex:index + 1];
+    }
+}
+
+- (void)addString:(NSMutableAttributedString*)string
+        beginTime:(float)beginTime endTime:(float)endTime
+{
+    //TRACE(@"%s \"%@\" %g", __PRETTY_FUNCTION__, [string string], time);
+    int index;
+    MSubtitleString* ss;
+    for (index = [_strings count] - 1; 0 <= index; index--) {
+        ss = [_strings objectAtIndex:index];
+        if ([ss beginTime] <= beginTime) {
+            break;
+        }
+    }
+    if (index < 0) {
+        if (0 < [_strings count]) {
+            ss = [_strings objectAtIndex:0];
+            if ([ss beginTime] < endTime) {
+                NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
+                [[ss string] appendAttributedString:[as autorelease]];
+                [[ss string] appendAttributedString:string];
+                endTime = [ss beginTime];
+            }
+        }
+        ss = [[MSubtitleString alloc] initWithString:string
+                                           beginTime:beginTime endTime:endTime];
+        [_strings insertObject:ss atIndex:0];
+    }
+    else if ([ss endTime] <= beginTime) {
+        ss = [[MSubtitleString alloc] initWithString:string
+                                           beginTime:beginTime endTime:endTime];
+        [_strings insertObject:ss atIndex:index + 1];
+    }
+    else if ([ss beginTime] == beginTime) {
+        if (endTime == [ss endTime]) {
+            NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
+            [[ss string] appendAttributedString:[as autorelease]];
+            [[ss string] appendAttributedString:string];
+        }
+        else if (endTime < [ss endTime]) {
+            [ss setBeginTime:endTime];
+
+            NSMutableAttributedString* mas = [[ss string] mutableCopy];
+            NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
+            [mas appendAttributedString:[as autorelease]];
+            [mas appendAttributedString:string];
+            ss = [[MSubtitleString alloc] initWithString:mas
+                                               beginTime:beginTime endTime:endTime];
+            [_strings insertObject:ss atIndex:index];
+        }
+        else {
+            NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
+            [[ss string] appendAttributedString:[as autorelease]];
+            [[ss string] appendAttributedString:string];
+            [self addString:string beginTime:[ss endTime] endTime:endTime];
+        }
+    }
+    else if ([ss beginTime] < beginTime) {
+        float bt = [ss beginTime];
+        [ss setBeginTime:beginTime];
+        NSMutableAttributedString* mas = [[ss string] copy];
+        ss = [[MSubtitleString alloc] initWithString:mas
+                                           beginTime:bt endTime:beginTime];
+        [_strings insertObject:ss atIndex:index];
+        [self addString:string beginTime:beginTime endTime:endTime];
     }
 }
 
