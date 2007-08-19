@@ -98,6 +98,8 @@
 
 @implementation MMovie_QuickTime
 
++ (NSString*)name { return @"QuickTime"; }
+
 - (id)initWithURL:(NSURL*)url error:(NSError**)error
 {
     TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);

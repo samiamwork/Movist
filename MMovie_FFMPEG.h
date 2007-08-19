@@ -73,6 +73,15 @@
 
 @class AudioDataQueue;
 
+enum {
+    COMMAND_NONE,
+    COMMAND_STEP_BACKWARD,
+    COMMAND_STEP_FORWARD,
+    COMMAND_SEEK,
+    COMMAND_PLAY,
+    COMMAND_PAUSE,
+};
+
 @interface MMovie_FFMPEG : MMovie
 {
     AVFormatContext* _formatContext;
@@ -94,14 +103,6 @@
     #define _audioContext(i)    _audioStream(i)->codec
 
     // playback: control
-    enum {
-        COMMAND_NONE,
-        COMMAND_STEP_BACKWARD,
-        COMMAND_STEP_FORWARD,
-        COMMAND_SEEK,
-        COMMAND_PLAY,
-        COMMAND_PAUSE,
-    };
     int _command;
     int _reservedCommand;
     NSConditionLock* _commandLock;
@@ -141,6 +142,8 @@
     float _volume;
     bool _muted;
 }
+
++ (NSString*)name;
 
 @end
 

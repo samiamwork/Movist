@@ -31,4 +31,6 @@
     QTMovie* _qtMovie;
 }
 
++ (NSString*)name;
+
 @end

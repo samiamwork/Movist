@@ -43,6 +43,8 @@
         nil];
 }
 
++ (NSString*)name { return @""; }
+
 - (id)initWithURL:(NSURL*)url error:(NSError**)error
 {
     TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [url absoluteString]);

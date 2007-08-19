@@ -34,6 +34,7 @@
 }
 
 + (NSArray*)movieTypes;
++ (NSString*)name;
 
 - (id)initWithURL:(NSURL*)url error:(NSError**)error;
 - (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
