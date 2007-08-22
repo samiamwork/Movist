@@ -118,6 +118,12 @@
     _playAfterSeek = FALSE;
     _seekKeyFrame = TRUE;
 
+    _needImage = TRUE;
+    
+    [[_videoTracks objectAtIndex:0] setEnabled:TRUE];
+    _playThreading = 0;
+    [NSThread detachNewThreadSelector:@selector(videoDecodeThreadFunc:)
+                             toTarget:self withObject:nil];
     [NSThread detachNewThreadSelector:@selector(playThreadFunc:)
                              toTarget:self withObject:nil];
 
@@ -261,7 +267,6 @@
         TRACE(@"%s error while seeking", __PRETTY_FUNCTION__);
     }
     else {
-        _imageDecoded = FALSE;
         _dispatchPacket = TRUE;
         _needKeyFrame = TRUE;
         while (DEFAULT_FUNC_CONDITION && _dispatchPacket) {
@@ -375,7 +380,7 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    _playThreading = TRUE;
+    _playThreading++;
 
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     int prevCommand = COMMAND_NONE;
@@ -423,14 +428,16 @@
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+
 
 - (float)decodeVideo
 {
     AVPacket packet;
     if (![_videoQueue getPacket:&packet]) {
-        TRACE(@"%s no more packet", __PRETTY_FUNCTION__);
+        //TRACE(@"%s no more packet", __PRETTY_FUNCTION__);
         return -1;
     }
     assert(packet.stream_index == _videoStreamIndex);
@@ -482,7 +489,7 @@
         TRACE(@"%s sws_scale() failed : %d", __PRETTY_FUNCTION__, ret);
         return FALSE;
     }
-
+/*
     #if RGB_PIXEL_FORMAT == PIX_FMT_BGRA
     // convert BGRA to ARGB
     unsigned int* p = (unsigned int*)_videoFrameRGB->data[0];
@@ -499,46 +506,15 @@
         p++;
     }
     #endif
-    return TRUE;
+ */ 
+ return TRUE;
 }
 
 - (BOOL)isNewImageAvailable:(const CVTimeStamp*)timeStamp
 {
-    if (!_dispatchPacket || [_videoQueue isEmpty]) {
-        //TRACE(@"%s video-queue is empty", __PRETTY_FUNCTION__);
+    if (_needImage) {
         return FALSE;
     }
-    
-    if (!_imageDecoded) {
-        if (_command == COMMAND_SEEK) {
-            BOOL seekComplete = FALSE;
-            while (DEFAULT_FUNC_CONDITION && !seekComplete) {
-                _decodedImageTime = [self decodeVideo];
-                if (_decodedImageTime < 0) {
-                    return FALSE;
-                }
-                if (_seekKeyFrame || _seekTime <= _decodedImageTime) {
-                    TRACE(@"%s seek complete", __PRETTY_FUNCTION__);
-                    seekComplete = TRUE;
-                    _dispatchPacket = FALSE;
-                    _waitTime = 0;
-                }
-                //TRACE(@"%s seeking (%g < %g)", __PRETTY_FUNCTION__, _decodedImageTime, _seekTime);
-            }
-            if (!seekComplete) {    // quit requested or command reserved
-                return FALSE;
-            }
-        }
-        else {
-            _decodedImageTime = [self decodeVideo];
-            if (_decodedImageTime < 0) {
-                return FALSE;
-            }
-            _waitTime += _decodedImageTime - _currentTime - _avFineTuningTime / 15;
-        }
-        _imageDecoded = TRUE;
-    }
-
     //float videoTime = (float)timeStamp->videoTime / timeStamp->videoTimeScale;
     float hostTime = (float)timeStamp->hostTime / 1000 / 1000 / 1000;
     float dt = hostTime - _hostTime;
@@ -546,33 +522,31 @@
         if (_waitTime < -1 || 1 < _waitTime) {
             _waitTime = 0;
         }
-        //TRACE(@"%s not yet", __PRETTY_FUNCTION__);
         return FALSE;
     }
     _waitTime -= dt;
     if (_waitTime < -1 || 1 < _waitTime) {
         _waitTime = 0;
     }
-    
-    [_avSyncMutex lock];
-    _hostTime = hostTime;
-    _currentTime = _decodedImageTime;
-    [_avSyncMutex unlock];
+    return TRUE;
+}
 
-    return [self convertImage];
+void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
+{
+    BOOL* needImage = (BOOL*)releaseRefCon;
+    *needImage = TRUE;
 }
 
 - (BOOL)getDecodedImage:(CVPixelBufferRef*)bufferRef
 {
-
-    int ret = CVPixelBufferCreateWithBytes(0, _videoWidth, _videoHeight, k32ARGBPixelFormat,
+    int ret = CVPixelBufferCreateWithBytes(0, _videoWidth, _videoHeight, kYUVSPixelFormat,
                                            _videoFrameRGB->data[0], _videoFrameRGB->linesize[0],
-                                           0, 0, 0, bufferRef);
+                                           pixelBufferReleaseCallback, &_needImage, 0, 
+                                           bufferRef);
     if (ret != kCVReturnSuccess) {
         TRACE(@"%s CVPixelBufferCreateWithBytes() failed : %d", __PRETTY_FUNCTION__, ret);
         return FALSE;
     }
-	_imageDecoded = FALSE;
     return TRUE;
 }
 
@@ -581,14 +555,52 @@
     if (![self isNewImageAvailable:timeStamp]) {
         return 0;
     }
-
     CVPixelBufferRef bufferRef = 0;
     if ([self getDecodedImage:&bufferRef]) {
-        //TRACE(@"video %2.1f %llu", _currentTime, timeStamp->hostTime / 1000000000);
         [[NSNotificationCenter defaultCenter]
             postNotificationName:MMovieCurrentTimeNotification object:self];
     }
+    
+    float hostTime = (float)timeStamp->hostTime / 1000 / 1000 / 1000;
+    [_avSyncMutex lock];
+    _hostTime = hostTime;
+    _currentTime = _decodedImageTime;
+    [_avSyncMutex unlock];
+    
     return bufferRef;
+}
+
+- (void)videoDecodeThreadFunc:(id)anObject
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    _playThreading++;
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];    
+    while (!_quitRequested) {
+        if (!_needImage || !_dispatchPacket) {
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+            continue;
+        }
+        _decodedImageTime = [self decodeVideo];
+        if (_decodedImageTime < 0) {
+            continue;
+        }
+        [self convertImage];
+        if (_command == COMMAND_SEEK) {
+            if (_seekKeyFrame || _seekTime <= _decodedImageTime) {
+                TRACE(@"%s seek complete", __PRETTY_FUNCTION__);
+                _dispatchPacket = FALSE;
+                _waitTime = 0;
+                _needImage = FALSE;
+            }
+        }
+        else {
+            _waitTime += _decodedImageTime - _currentTime - _avFineTuningTime / 15;
+            _needImage = FALSE;
+        }
+    }
+    [pool release];
+    _playThreading--;
+    TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 
 @end

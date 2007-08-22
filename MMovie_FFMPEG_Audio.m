@@ -44,12 +44,19 @@
     [_movie updateFirstAudioStreamId];
 }
 
+- (NSString*)name 
+{ 
+    if (_streamId < 0) { // video
+        return [NSString stringWithFormat:@"video track %d", -_streamId]; 
+    }
+    return [NSString stringWithFormat:@"audio track %d", _streamId + 1];
+}
+
 - (void)dealloc { [super dealloc]; }
 - (BOOL)isEnabled { return _enable; }
 - (float)volume { return _volume; }
 - (void)setVolume:(float)volume { _volume = volume; }
 - (int)streamId { return _streamId; }
-- (NSString*)name { return @"Sound Track"; }
 - (MMovie_FFMPEG*)movie { return _movie; }
 
 @end
@@ -499,7 +506,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     if (streamId == _firstAudioStreamId) {
         _avFineTuningTime = time;
         if (time != 0) {
-            //TRACE(@"finetuning %f", time);
+            TRACE(@"finetuning %f", time);
         }
     }
 }

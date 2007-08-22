@@ -162,26 +162,29 @@
         *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
         return FALSE;
     }
-    
-    _videoFrameRGB = avcodec_alloc_frame();
-    if (_videoFrameRGB == 0) {
-        *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
-        return FALSE;
-    }
 
     // init sw-scaler context
     _scalerContext = sws_getContext(_videoWidth, _videoHeight, _videoContext->pix_fmt,
                                     _videoWidth, _videoHeight, RGB_PIXEL_FORMAT,
-                                    SWS_BICUBIC, 0, 0, 0);
+                                    SWS_FAST_BILINEAR, 0, 0, 0);
     if (!_scalerContext) {
         TRACE(@"cannot initialize conversion context");
         *errorCode = ERROR_FFMPEG_SW_SCALER_INIT_FAILED;
         return FALSE;
     }
 
-    int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, _videoWidth + 17 , _videoHeight);
+    [_videoTracks addObject:[[[MTrack_FFMPEG alloc] 
+                              initWithStreamId:-1 movie:self] 
+                             autorelease]];
+    
+    _videoFrameRGB = avcodec_alloc_frame();
+    if (_videoFrameRGB == 0) {
+        *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
+        return FALSE;
+    }    
+    int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, _videoWidth + 32 , _videoHeight);
     avpicture_fill((AVPicture*)_videoFrameRGB, malloc(bufferSize),
-                   RGB_PIXEL_FORMAT, _videoWidth + 17, _videoHeight);
+                   RGB_PIXEL_FORMAT, _videoWidth + 32, _videoHeight);
 
     return TRUE;
 }
