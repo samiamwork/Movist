@@ -37,6 +37,7 @@
         [self setMuted:FALSE];
     }
     volume = MIN(MAX(0.0, volume), MAX_VOLUME);
+    volume = (float)(int)(volume * 10) / 10;    // make "x.x"
     [_movie setVolume:volume];
     [_movieView setMessage:[NSString stringWithFormat:
                                 NSLocalizedString(@"Volume %.1f", nil), volume]];
@@ -210,7 +211,7 @@
     }
     else {  // volume slider
         // make x.x : perian passthrough works for exact volume "1.0" only.
-        [self setVolume:(float)(int)([sender floatValue] * 10) / 10];
+        [self setVolume:[sender floatValue]];
 
         [_volumeSlider setFloatValue:[sender floatValue]];
         [_panelVolumeSlider setFloatValue:[sender floatValue]];
