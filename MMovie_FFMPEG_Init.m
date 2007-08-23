@@ -97,6 +97,75 @@
     }
 }
 
+- (NSString*)streamName:(BOOL)isVideo streamId:(int)streamId
+{
+    /*
+    char buf[256];
+    if (isVideo) {
+        avcodec_string(buf, sizeof(buf), _videoContext, 1);
+    }
+    else {
+        avcodec_string(buf, sizeof(buf), _audioContext(streamId), 1);
+    }
+    NSStringEncoding encoding = [NSString defaultCStringEncoding]; 
+    NSMutableString* string = [NSMutableString stringWithCString:buf encoding:encoding];
+    NSRange range = [string rangeOfString:@":"];
+    range.length = range.location;
+    range.location = 0;
+    return [string substringWithRange:range];
+    */
+    if (isVideo) {
+        return @"Video";
+    }
+    else {
+        return @"Audio";        
+    }
+}
+
+- (NSString*)streamFormat:(BOOL)isVideo streamId:(int)streamId
+{
+    char buf[256];
+    if (isVideo) {
+        avcodec_string(buf, sizeof(buf), _videoContext, 1);
+    }
+    else {
+        avcodec_string(buf, sizeof(buf), _audioContext(streamId), 1);
+    }
+    char result[256];
+    int i, pos = 0;
+    for (i = 0; i < strlen(buf); i++) {
+        if (strncmp(&buf[i], "Audio: ", 7) == 0 ||
+            strncmp(&buf[i], "Video: ", 7) == 0) {
+            i += 7;
+        }
+        if (buf[i] == '/') {
+            i++;
+        }
+        if (strncmp(&buf[i], " 0x", 3) == 0 ||
+            pos == 0 && strncmp(&buf[i], "0x", 2) == 0) {
+            i += 3;
+            while('0' <= buf[i] && buf[i] <= '9') {
+                i++;
+            }
+            if (strncmp(&buf[i], ", ", 2) == 0) {
+                i += 2;
+            }
+        }
+        if (strncmp(&buf[i], "yuv420p, ", 7) == 0) {
+            i += 9;
+        }
+        result[pos++] = buf[i];
+    }
+    result[pos] = 0;
+    return [NSString stringWithCString:result];
+    NSStringEncoding encoding = [NSString defaultCStringEncoding]; 
+    NSMutableString* string = [NSMutableString stringWithCString:buf encoding:encoding];
+    NSRange range = [string rangeOfString:@":"];
+    range.location += 2;
+    range.length = [string length] - range.location;
+    return [string substringWithRange:range];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark common utils.
@@ -176,6 +245,9 @@
     [_videoTracks addObject:[[[MTrack_FFMPEG alloc] 
                               initWithStreamId:-1 movie:self] 
                              autorelease]];
+    
+    MTrack_FFMPEG* track = [_videoTracks objectAtIndex:0];
+    [track setEnabled:TRUE];
     
     _videoFrameRGB = avcodec_alloc_frame();
     if (_videoFrameRGB == 0) {

@@ -100,9 +100,13 @@
     _avSyncMutex = [[NSLock alloc] init];
 
     _videoQueue = [[PacketQueue alloc] initWithCapacity:30];  // 30 fps * 5 sec.
+    _audioDataQueue = [[NSMutableArray alloc] initWithCapacity:MAX_AUDIO_STREAM_COUNT];
     int i;
+    AudioDataQueue* audioQ;
     for (i = 0; i < _audioStreamCount; i++) {
-        _audioDataQueue[i] = [[AudioDataQueue alloc] initWithCapacity:AVCODEC_MAX_AUDIO_FRAME_SIZE * 20];
+        audioQ = [[AudioDataQueue alloc] initWithCapacity:AVCODEC_MAX_AUDIO_FRAME_SIZE * 20];
+        [_audioDataQueue addObject:audioQ];
+        [audioQ release];
     }
     av_init_packet(&_flushPacket);
     _flushPacket.data = (uint8_t*)"FLUSH";
@@ -119,8 +123,7 @@
     _seekKeyFrame = TRUE;
 
     _needImage = TRUE;
-    
-    [[_videoTracks objectAtIndex:0] setEnabled:TRUE];
+
     _playThreading = 0;
     [NSThread detachNewThreadSelector:@selector(videoDecodeThreadFunc:)
                              toTarget:self withObject:nil];
@@ -249,7 +252,7 @@
     [_videoQueue putPacket:&_flushPacket];
     int i;
     for (i = 0; i < _audioStreamCount; i++) {
-        [_audioDataQueue[i] clear];
+        [[_audioDataQueue objectAtIndex:i] clear];
         [self decodeAudio:&_flushPacket trackId:i];
         _nextDecodedAudioTime[i] = 0;
     }
@@ -270,10 +273,12 @@
         _dispatchPacket = TRUE;
         _needKeyFrame = TRUE;
         while (DEFAULT_FUNC_CONDITION && _dispatchPacket) {
-            if (![_videoQueue isFull]) {
-                if (![self readFrame]) {
-                    break;
-                }
+            if ([_videoQueue isFull]) {
+                [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+                continue;
+            }
+            if (![self readFrame]) {
+                break;
             }
         }
         _dispatchPacket = FALSE;
@@ -292,6 +297,10 @@
     _playAfterSeek = TRUE;
     _dispatchPacket = TRUE;
     while (DEFAULT_FUNC_CONDITION) {
+        if ([_videoQueue isFull]) {
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+            continue;
+        }
         if (![self readFrame]) {
             TRACE(@"%s read failed : no more frame", __PRETTY_FUNCTION__);
             break;
@@ -489,41 +498,46 @@
         TRACE(@"%s sws_scale() failed : %d", __PRETTY_FUNCTION__, ret);
         return FALSE;
     }
-/*
-    #if RGB_PIXEL_FORMAT == PIX_FMT_BGRA
-    // convert BGRA to ARGB
-    unsigned int* p = (unsigned int*)_videoFrameRGB->data[0];
-    unsigned int* e = p + (_videoWidth + 17) * _videoHeight;
-    while (p < e) {
-        #if defined(__i386__) && defined(__GNUC__)
-        __asm__("bswap %0" : "+r" (*p));
-        #elif defined(__ppc__) && defined(__GNUC__)
-        __asm__("lwbrx %0,0,%1" : "=r" (*p) : "r" (p), "m" (*p));
-        #else
-        *p = ((*p >> 24) & 0x000000FF) | ((*p >> 8) & 0x0000FF00) |
-             ((*p << 24) & 0xFF000000) | ((*p << 8) & 0x00FF0000);
-        #endif
-        p++;
+    
+    if (RGB_PIXEL_FORMAT == PIX_FMT_BGRA) {
+        // convert BGRA to ARGB
+        unsigned int* p = (unsigned int*)_videoFrameRGB->data[0];
+        unsigned int* e = p + (_videoWidth + 17) * _videoHeight;
+        while (p < e) {
+#if defined(__i386__) && defined(__GNUC__)
+            __asm__("bswap %0" : "+r" (*p));
+#elif defined(__ppc__) && defined(__GNUC__)
+            __asm__("lwbrx %0,0,%1" : "=r" (*p) : "r" (p), "m" (*p));
+#else
+            *p = ((*p >> 24) & 0x000000FF) | ((*p >> 8) & 0x0000FF00) |
+                ((*p << 24) & 0xFF000000) | ((*p << 8) & 0x00FF0000);
+#endif
+            p++;
+        }
     }
-    #endif
- */ 
- return TRUE;
+    return TRUE;
 }
 
 - (BOOL)isNewImageAvailable:(const CVTimeStamp*)timeStamp
 {
     if (_needImage) {
+        //TRACE(@"not decoded");
         return FALSE;
     }
     //float videoTime = (float)timeStamp->videoTime / timeStamp->videoTimeScale;
     float hostTime = (float)timeStamp->hostTime / 1000 / 1000 / 1000;
     float dt = hostTime - _hostTime;
-    if (dt < _waitTime) {
+    if (dt + 0.002 < _waitTime) {
         if (_waitTime < -1 || 1 < _waitTime) {
             _waitTime = 0;
         }
+        //TRACE(@"wait");
         return FALSE;
     }
+    if (dt < _waitTime) {
+        TRACE(@"not the time, but near");
+    }
+    //TRACE(@"draw");
     _waitTime -= dt;
     if (_waitTime < -1 || 1 < _waitTime) {
         _waitTime = 0;
@@ -539,7 +553,15 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
 
 - (BOOL)getDecodedImage:(CVPixelBufferRef*)bufferRef
 {
-    int ret = CVPixelBufferCreateWithBytes(0, _videoWidth, _videoHeight, kYUVSPixelFormat,
+    OSType CV_PIXEL_FORMAT;
+    if (RGB_PIXEL_FORMAT == PIX_FMT_BGRA) {
+        CV_PIXEL_FORMAT = k32ARGBPixelFormat;
+    }
+    else {
+        CV_PIXEL_FORMAT = kYUVSPixelFormat;
+    }
+    
+    int ret = CVPixelBufferCreateWithBytes(0, _videoWidth, _videoHeight, CV_PIXEL_FORMAT,
                                            _videoFrameRGB->data[0], _videoFrameRGB->linesize[0],
                                            pixelBufferReleaseCallback, &_needImage, 0, 
                                            bufferRef);

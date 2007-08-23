@@ -138,12 +138,12 @@ enum {
     
     // playback: decoding
     #define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
-//    #define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
+    //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
     PacketQueue* _videoQueue;
     AudioUnit _audioUnit[MAX_AUDIO_STREAM_COUNT];
     AVFrame* _videoFrame;    // for decoding
     AVFrame* _videoFrameRGB; // for display
-    AudioDataQueue* _audioDataQueue[MAX_AUDIO_STREAM_COUNT];
+    NSMutableArray* _audioDataQueue;
     struct SwsContext* _scalerContext;
     AVPacket _flushPacket;
     BOOL _needImage;
@@ -172,6 +172,8 @@ enum {
 - (void)cleanupFFMPEG;
 - (BOOL)initDecoder:(AVCodecContext*)context codec:(AVCodec*)codec
            forVideo:(BOOL)forVideo;
+- (NSString*)streamName:(BOOL)isVideo streamId:(int)streamId;
+- (NSString*)streamFormat:(BOOL)isVideo streamId:(int)streamId;
 
 @end
 
