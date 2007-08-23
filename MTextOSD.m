@@ -228,7 +228,9 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
     [self applyUserFontAttributes:MFontBoldAttributeName fontTrait:NSBoldFontMask];
 
     [_string addAttribute:NSStrokeColorAttributeName value:_strokeColor range:range];
-    [_string addAttribute:NSStrokeWidthAttributeName value:_strokeWidth range:range];
+    if ([_strokeWidth floatValue] != 0.0) {
+        [_string addAttribute:NSStrokeWidthAttributeName value:_strokeWidth range:range];
+    }
     [_string addAttribute:NSShadowAttributeName value:_shadow range:range];
 
     [_string addAttribute:NSParagraphStyleAttributeName value:_paragraphStyle range:range];
