@@ -186,20 +186,26 @@
         else {
             _subtitles = [subtitles retain];
 
-            int i;
             MSubtitle* subtitle;
-            if ([_subtitleNameSet count] == 0) {
+            int i, enabledCount = 0;
+            if (0 < [_subtitleNameSet count]) {
+                // select previous selected language
+                for (i = 0; i < [_subtitles count]; i++) {
+                    subtitle = [_subtitles objectAtIndex:i];
+                    if ([_subtitleNameSet containsObject:[subtitle name]]) {
+                        [subtitle setEnabled:TRUE];
+                        enabledCount++;
+                    }
+                    else {
+                        [subtitle setEnabled:FALSE];
+                    }
+                }
+            }
+            if (enabledCount == 0) {
                 // select first language by default
                 for (i = 0; i < [_subtitles count]; i++) {
                     subtitle = [_subtitles objectAtIndex:i];
                     [subtitle setEnabled:(i == 0)];
-                }
-            }
-            else {
-                // select previous selected language
-                for (i = 0; i < [_subtitles count]; i++) {
-                    subtitle = [_subtitles objectAtIndex:i];
-                    [subtitle setEnabled:[_subtitleNameSet containsObject:[subtitle name]]];
                 }
             }
         }
@@ -208,7 +214,7 @@
     // update movie & UI
     [self autoenableAudioTracks];
     //[_movie setVolume:[movie preferredVolume]];
-    [_movie setVolume:[_defaults floatForKey:MVolumeKey]];
+    [_movie setVolume:(float)(int)([_defaults floatForKey:MVolumeKey] * 10) / 10];
     [_movie setMuted:([_muteButton state] == NSOnState)];
     [_movieView setMovie:_movie];
     [_movieView setSubtitles:_subtitles];
@@ -499,19 +505,21 @@
 
     NSString* identifier = [tableColumn identifier];
     if ([identifier isEqualToString:@"enable"]) {
-        // the first video track is always enable.
-        [[tableColumn dataCellForRow:rowIndex] setEnabled:(rowIndex != 0)];
-
         if (videoIndex < videoCount) {
+            // video track cannot be unchecked.
+            [[tableColumn dataCellForRow:rowIndex] setEnabled:FALSE];
             return [NSNumber numberWithBool:TRUE];
         }
-        else if (audioIndex < audioCount) {
-            BOOL state = [_audioTrackIndexSet containsIndex:audioIndex];
-            return [NSNumber numberWithBool:state];
-        }
         else {
-            BOOL state = [[_subtitles objectAtIndex:subtitleIndex] isEnabled];
-            return [NSNumber numberWithBool:state];
+            [[tableColumn dataCellForRow:rowIndex] setEnabled:TRUE];
+            if (audioIndex < audioCount) {
+                BOOL state = [_audioTrackIndexSet containsIndex:audioIndex];
+                return [NSNumber numberWithBool:state];
+            }
+            else {
+                BOOL state = [[_subtitles objectAtIndex:subtitleIndex] isEnabled];
+                return [NSNumber numberWithBool:state];
+            }
         }
     }
     else if ([identifier isEqualToString:@"name"]) {
