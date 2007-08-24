@@ -214,7 +214,7 @@
     // update movie & UI
     [self autoenableAudioTracks];
     //[_movie setVolume:[movie preferredVolume]];
-    [_movie setVolume:(float)(int)([_defaults floatForKey:MVolumeKey] * 10) / 10];
+    [_movie setVolume:normalizedVolume([_defaults floatForKey:MVolumeKey])];
     [_movie setMuted:([_muteButton state] == NSOnState)];
     [_movieView hideLogo];
     [_movieView setMovie:_movie];

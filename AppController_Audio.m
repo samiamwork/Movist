@@ -36,8 +36,7 @@
     if ([_muteButton state] == NSOnState) {
         [self setMuted:FALSE];
     }
-    volume = MIN(MAX(0.0, volume), MAX_VOLUME);
-    volume = (float)(int)(volume * 10) / 10;    // make "x.x"
+    volume = normalizedVolume(MIN(MAX(0.0, volume), MAX_VOLUME));
     [_movie setVolume:volume];
     [_movieView setMessage:[NSString stringWithFormat:
                                 NSLocalizedString(@"Volume %.1f", nil), volume]];
@@ -59,7 +58,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     float volume = (_movie) ? [_movie volume] : [_defaults floatForKey:MVolumeKey];
     BOOL muted = (_movie) ? [_movie muted] : FALSE;
-    
+
     int state = (muted) ? NSOnState : NSOffState;
     if ([_muteMenuItem state] != state) {
         [_muteMenuItem setState:state];
@@ -210,7 +209,6 @@
         [self volumeUp];
     }
     else {  // volume slider
-        // make x.x : perian passthrough works for exact volume "1.0" only.
         [self setVolume:[sender floatValue]];
 
         [_volumeSlider setFloatValue:[sender floatValue]];

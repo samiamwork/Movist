@@ -333,8 +333,7 @@
         return (_movie != nil);
     }
     if ([menuItem action] == @selector(fullScreenUnderScanAction:)) {
-        float underScan = [_defaults floatForKey:MFullScreenUnderScanKey];
-        return (_movie && 0 < (float)(int)(underScan * 10) / 10);   // make "x.x"
+        return (_movie && 0 < [_defaults floatForKey:MFullScreenUnderScanKey]);
     }
     if ([menuItem action] == @selector(audioTrackAction:)) {
         return (_movie && 0 <= [menuItem tag]);

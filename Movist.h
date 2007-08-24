@@ -118,6 +118,7 @@ extern NSString* MMovieRectUpdateNotification;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+float normalizedVolume(float volume);
 NSString* NSStringFromMovieTime(float time);
 void runAlertPanelForOpenError(NSError* error, NSURL* url);
 

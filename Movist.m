@@ -197,6 +197,11 @@ NSString* MMovieRectUpdateNotification         = @"MMovieRectUpdateNotification"
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+float normalizedVolume(float volume)
+{
+    return (float)(int)((volume + 0.05f) * 10) / 10;  // make "x.x"
+}
+
 NSString* NSStringFromMovieTime(float time)
 {
     BOOL positive = (0.0 <= time) ? TRUE : (time = -time, FALSE);
