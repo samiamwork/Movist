@@ -580,10 +580,11 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
 
     int16_t audioBuf[AUDIO_BUF_SIZE];
     [dataQueue getData:(UInt8*)audioBuf size:requestSize time:audioTime];
+    float volume = _muted ? 0 : _volume;
     for (i = 0; i < frameNumber; i++) { 
 		for (j = 0; j < channelNumber; j++) {
 #ifdef _USE_AUDIO_DATA_FLOAT_BIT
-            dst[j][i] = 1. * _volume * audioBuf[channelNumber * i + j] / INT16_MAX;			
+            dst[j][i] = 1. * volume * audioBuf[channelNumber * i + j] / INT16_MAX;			
 #else
             dst[j][i] = audioBuf[channelNumber * i + j];			
 #endif

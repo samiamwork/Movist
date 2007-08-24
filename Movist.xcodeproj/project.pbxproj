@@ -907,11 +907,7 @@
 					ffmpeg/libogg.a,
 					ffmpeg/libvorbis.a,
 					ffmpeg/libfaad.a,
-					ffmpeg/libfaac.a,
 					ffmpeg/libtheora.a,
-					ffmpeg/libxvidcore.a,
-					ffmpeg/libx264.a,
-					ffmpeg/libmp3lame.a,
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
 					ffmpeg/libavformat.a,
@@ -932,14 +928,22 @@
 					ppc,
 				);
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = _SUPPORT_FFMPEG;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = (
+					ffmpeg/libogg.a,
+					ffmpeg/libvorbis.a,
+					ffmpeg/libfaad.a,
+					ffmpeg/libtheora.a,
+					ffmpeg/liba52.a,
+					ffmpeg/libavcodec.a,
+					ffmpeg/libavformat.a,
+					ffmpeg/libavutil.a,
+					/usr/lib/libz.dylib,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Movist;
 				SEPARATE_STRIP = YES;
@@ -951,10 +955,7 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
+				ARCHS = i386;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
