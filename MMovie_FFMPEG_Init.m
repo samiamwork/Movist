@@ -254,9 +254,10 @@
         *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
         return FALSE;
     }    
-    int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, _videoWidth + 32 , _videoHeight);
+	int bufWidth = _videoWidth < 512 + 32 ? 512 + 32 : _videoWidth;
+    int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , _videoHeight);
     avpicture_fill((AVPicture*)_videoFrameRGB, malloc(bufferSize),
-                   RGB_PIXEL_FORMAT, _videoWidth + 32, _videoHeight);
+                   RGB_PIXEL_FORMAT, bufWidth, _videoHeight);
 
     return TRUE;
 }
