@@ -22,7 +22,8 @@
 
 #import "MainWindow.h"
 
-#import "MMovie.h"
+#import "MMovie_QuickTime.h"
+#import "MMovie_FFMPEG.h"
 #import "AppController.h"       // for NSApp's delegate
 
 #import "MMovieView.h"
@@ -64,12 +65,28 @@
     frame.origin.x = sr.origin.x + (sr.size.width - frame.size.width) / 2;
     frame.origin.y = sr.origin.y + (sr.size.height- frame.size.height) * 2 / 3;
     [self setFrame:frame display:TRUE];
+
+    // create image view for decoder
+    NSButton* closeButton = [self standardWindowButton:NSWindowCloseButton];
+    NSRect rc = [closeButton frame];
+    rc.size.width = 16;
+    rc.size.height = 16;
+    rc.origin.x = NSMaxX([[closeButton superview] bounds]) - rc.origin.x - rc.size.width;
+    rc.origin.y++;
+    _decoderImageView = [[NSImageView alloc] initWithFrame:rc];
+    [_decoderImageView setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
+    [_decoderImageView setImageFrameStyle:NSImageFrameNone];
+    [_decoderImageView setImageAlignment:NSImageAlignCenter];
+    [_decoderImageView setImageScaling:NSScaleNone];
+    [_decoderImageView setImage:nil];
+    [[closeButton superview] addSubview:_decoderImageView];
 }
 
 - (void)dealloc
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_decoderImageView release];
     [super dealloc];
 }
 
@@ -89,6 +106,19 @@
 #pragma mark -
 
 - (MMovieView*)movieView { return _movieView; }
+
+- (void)setDecoder:(NSString*)decoder
+{
+    if (!decoder) {
+        [_decoderImageView setImage:nil];
+    }
+    else if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
+        [_decoderImageView setImage:[NSImage imageNamed:@"QuickTime16"]];
+    }
+    else {  // [decoder isEqualToString:[MMovie_FFMPEG name]]
+        [_decoderImageView setImage:[NSImage imageNamed:@"FFMPEG16"]];
+    }
+}
 
 - (BOOL)alwaysOnTop { return _alwaysOnTop; }
 

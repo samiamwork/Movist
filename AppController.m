@@ -196,8 +196,10 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSURL* movieURL = [self movieURL];
     [_mainWindow setMovieURL:movieURL];
+    [_mainWindow setDecoder:[[_movie class] name]];
     [_fullScreener setMovieURL:movieURL];
     [_controlPanel setMovieURL:movieURL];
+    [_controlPanel setDecoder:[[_movie class] name]];
     [_propertiesView reloadData];
     [self updateFullScreenFillMenu];
     [self updateAspectRatioMenu];

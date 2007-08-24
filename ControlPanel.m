@@ -25,6 +25,8 @@
 #import "MMovieView.h"
 #import "AppController.h"
 #import "UserDefaults.h"
+#import "MMovie_QuickTime.h"
+#import "MMovie_FFMPEG.h"
 
 @implementation WindowMoveTextField
 
@@ -98,6 +100,19 @@
     }
     else {
         [_filenameTextField setStringValue:[[movieURL absoluteString] lastPathComponent]];
+    }
+}
+
+- (void)setDecoder:(NSString*)decoder
+{
+    if (!decoder) {
+        [_decoderImageView setImage:nil];
+    }
+    else if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
+        [_decoderImageView setImage:[NSImage imageNamed:@"QuickTime16"]];
+    }
+    else {  // [decoder isEqualToString:[MMovie_FFMPEG name]]
+        [_decoderImageView setImage:[NSImage imageNamed:@"FFMPEG16"]];
     }
 }
 

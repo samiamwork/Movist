@@ -90,6 +90,7 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 "_appController" = AppController; 
+                "_decoderImageView" = NSImageView; 
                 "_filenameTextField" = NSTextField; 
                 "_movieView" = MMovieView; 
                 "_playbackRateSlider" = NSSlider; 

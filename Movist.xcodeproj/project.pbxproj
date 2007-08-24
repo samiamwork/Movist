@@ -33,6 +33,8 @@
 		AF0C512C0C5CDB5800199932 /* RemoteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51240C5CDB5800199932 /* RemoteControl.m */; };
 		AF0C512D0C5CDB5800199932 /* RemoteControlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */; };
 		AF16C7F90C296F7400AC0A4B /* ControlPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = AF16C7F80C296F7400AC0A4B /* ControlPanel.m */; };
+		AF1AF9EC0C7F5E4900B89068 /* FFMPEG16.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF1AF9EA0C7F5E4900B89068 /* FFMPEG16.tiff */; };
+		AF1AF9ED0C7F5E4900B89068 /* QuickTime16.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF1AF9EB0C7F5E4900B89068 /* QuickTime16.tiff */; };
 		AF1C72100BDCF4C60056BAB8 /* MSubtitleParser_SMI.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */; };
 		AF1C73B40C51AAB50088B3CA /* FullNavColumns.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1C73B10C51AAB50088B3CA /* FullNavColumns.m */; };
 		AF1C73B50C51AAB50088B3CA /* FullNavItems.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1C73B30C51AAB50088B3CA /* FullNavItems.m */; };
@@ -195,6 +197,8 @@
 		AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControlContainer.m; path = AppleRemote/RemoteControlContainer.m; sourceTree = "<group>"; };
 		AF16C7F70C296F7400AC0A4B /* ControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = ControlPanel.h; sourceTree = "<group>"; };
 		AF16C7F80C296F7400AC0A4B /* ControlPanel.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = ControlPanel.m; sourceTree = "<group>"; };
+		AF1AF9EA0C7F5E4900B89068 /* FFMPEG16.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FFMPEG16.tiff; path = Images/FFMPEG16.tiff; sourceTree = "<group>"; };
+		AF1AF9EB0C7F5E4900B89068 /* QuickTime16.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = QuickTime16.tiff; path = Images/QuickTime16.tiff; sourceTree = "<group>"; };
 		AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SMI.m; sourceTree = "<group>"; };
 		AF1C73B00C51AAB50088B3CA /* FullNavColumns.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = FullNavColumns.h; sourceTree = "<group>"; };
 		AF1C73B10C51AAB50088B3CA /* FullNavColumns.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = FullNavColumns.m; sourceTree = "<group>"; };
@@ -564,6 +568,8 @@
 				AF05B3730C31780F00E56B25 /* DefaultPressed.tiff */,
 				AFC7D1030C36B9A000F5EA5C /* UnderConstruction1.gif */,
 				AFC7D1040C36B9A000F5EA5C /* UnderConstruction2.gif */,
+				AF1AF9EB0C7F5E4900B89068 /* QuickTime16.tiff */,
+				AF1AF9EA0C7F5E4900B89068 /* FFMPEG16.tiff */,
 			);
 			name = Images;
 			sourceTree = "<group>";
@@ -769,6 +775,8 @@
 				AF863AC00C53A00A00FCD386 /* FSSelectionLeft.png in Resources */,
 				AF863AC10C53A00A00FCD386 /* FSSelectionMiddle.png in Resources */,
 				AF863AC20C53A00A00FCD386 /* FSSelectionRight.png in Resources */,
+				AF1AF9EC0C7F5E4900B89068 /* FFMPEG16.tiff in Resources */,
+				AF1AF9ED0C7F5E4900B89068 /* QuickTime16.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
