@@ -81,6 +81,8 @@
 - (MMovie*)movie;
 - (NSRect)movieRect;
 - (void)setMovie:(MMovie*)movie;
+- (void)showLogo;
+- (void)hideLogo;
 - (void)updateMovieRect:(BOOL)display;
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect;
 

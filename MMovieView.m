@@ -330,18 +330,30 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                                                   Z:[_movie size].width - 2.0
                                                   W:[_movie size].height - 2.0]
                        forKey:@"inputRectangle"];
-        [_iconOSD clearContent];
         [_messageOSD setMovieSize:[_movie adjustedSize]];
         [_subtitleOSD setMovieSize:[_movie adjustedSize]];
         [_barOSD setMovieSize:[_movie adjustedSize]];
-    }
-    else {
-        [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
     }
     [_subtitleOSD clearContent];
     [_barOSD clearContent];
     [_drawLock unlock];
     [self updateMovieRect:TRUE];
+}
+
+- (void)showLogo
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_drawLock lock];
+    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
+    [_drawLock unlock];
+}
+
+- (void)hideLogo
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_drawLock lock];
+    [_iconOSD clearContent];
+    [_drawLock unlock];
 }
 
 - (void)updateMovieRect:(BOOL)display

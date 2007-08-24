@@ -74,9 +74,9 @@
     else if ([mediaType isEqualToString:QTMediaTypeSound]) {
         CFStringRef summary;
         if (noErr == ICMImageDescriptionGetProperty(idh,
-                                                    kQTPropertyClass_ImageDescription,
-                                                    kICMImageDescriptionPropertyID_SummaryString,
-                                                    sizeof(CFStringRef), &summary, 0)) {
+                        kQTPropertyClass_ImageDescription,
+                        kICMImageDescriptionPropertyID_SummaryString,
+                        sizeof(CFStringRef), &summary, 0)) {
             TRACE(@"format: %@", (NSString*)summary);
             result = [NSString stringWithString:(NSString*)summary];
             CFRelease(summary);

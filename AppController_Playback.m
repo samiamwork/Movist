@@ -175,6 +175,7 @@
             if ([self isFullScreen]) {
                 [self endFullScreen];
             }
+            [_movieView showLogo];
         }
     }
 }

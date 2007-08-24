@@ -216,6 +216,7 @@
     //[_movie setVolume:[movie preferredVolume]];
     [_movie setVolume:(float)(int)([_defaults floatForKey:MVolumeKey] * 10) / 10];
     [_movie setMuted:([_muteButton state] == NSOnState)];
+    [_movieView hideLogo];
     [_movieView setMovie:_movie];
     [_movieView setSubtitles:_subtitles];
     [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForWideMovieKey] forWideMovie:TRUE];

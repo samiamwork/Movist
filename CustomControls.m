@@ -327,7 +327,7 @@ void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
     NSImage* image = [NSImage imageNamed:
         (![self isEnabled])     ? @"MainVolumeSliderKnobDisabled" :
         ([self mouseDownFlags]) ? @"MainVolumeSliderKnobPressed" :
-        @"MainVolumeSliderKnob"];
+                                  @"MainVolumeSliderKnob"];
     [image setFlipped:TRUE];
     NSPoint p = NSMakePoint(knobRect.origin.x, knobRect.origin.y + 2);
     [image drawAtPoint:p fromRect:NSZeroRect
