@@ -26,6 +26,7 @@
 #import "PlaylistController.h"
 
 #import "MainWindow.h"
+#import "MMovieView.h"
 
 @implementation AppController (Playlist)
 
@@ -140,11 +141,14 @@
 - (IBAction)prevNextMovieAction:(id)sender
 {
     TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
-    if ([sender tag] < 0) {
-        [self openPrevPlaylistItem];
-    }
-    else {
-        [self openNextPlaylistItem];
+    BOOL ret = ([sender tag] < 0) ? [self openPrevPlaylistItem] :
+                                    [self openNextPlaylistItem];
+    if (!ret) {
+        if ([self isFullScreen]) {
+            [self endFullScreen];
+        }
+        [_movieView setMessage:@""];
+        [_movieView showLogo];
     }
 }
 
