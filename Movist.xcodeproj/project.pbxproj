@@ -904,14 +904,14 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
-					ffmpeg/libogg.a,
-					ffmpeg/libvorbis.a,
-					ffmpeg/libfaad.a,
-					ffmpeg/libtheora.a,
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
 					ffmpeg/libavformat.a,
 					ffmpeg/libavutil.a,
+					ffmpeg/libfaad.a,
+					ffmpeg/libogg.a,
+					ffmpeg/libtheora.a,
+					ffmpeg/libvorbis.a,
 					/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
@@ -934,14 +934,14 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
-					ffmpeg/libogg.a,
-					ffmpeg/libvorbis.a,
-					ffmpeg/libfaad.a,
-					ffmpeg/libtheora.a,
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
 					ffmpeg/libavformat.a,
 					ffmpeg/libavutil.a,
+					ffmpeg/libfaad.a,
+					ffmpeg/libogg.a,
+					ffmpeg/libtheora.a,
+					ffmpeg/libvorbis.a,
 					/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
@@ -957,7 +957,10 @@
 			buildSettings = {
 				ARCHS = i386;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					DEBUG,
+					_SUPPORT_FFMPEG,
+				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -967,18 +970,14 @@
 					../ffmpeg/libswscale,
 				);
 				OTHER_LDFLAGS = (
-					ffmpeg/libogg.a,
-					ffmpeg/libvorbis.a,
-					ffmpeg/libfaad.a,
-					ffmpeg/libfaac.a,
-					ffmpeg/libtheora.a,
-					ffmpeg/libxvidcore.a,
-					ffmpeg/libx264.a,
-					ffmpeg/libmp3lame.a,
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
 					ffmpeg/libavformat.a,
 					ffmpeg/libavutil.a,
+					ffmpeg/libfaad.a,
+					ffmpeg/libogg.a,
+					ffmpeg/libtheora.a,
+					ffmpeg/libvorbis.a,
 					/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
@@ -998,6 +997,7 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = _SUPPORT_FFMPEG;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1007,18 +1007,14 @@
 					../ffmpeg/libswscale,
 				);
 				OTHER_LDFLAGS = (
-					ffmpeg/libogg.a,
-					ffmpeg/libvorbis.a,
-					ffmpeg/libfaad.a,
-					ffmpeg/libfaac.a,
-					ffmpeg/libtheora.a,
-					ffmpeg/libxvidcore.a,
-					ffmpeg/libx264.a,
-					ffmpeg/libmp3lame.a,
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
 					ffmpeg/libavformat.a,
 					ffmpeg/libavutil.a,
+					ffmpeg/libfaad.a,
+					ffmpeg/libogg.a,
+					ffmpeg/libtheora.a,
+					ffmpeg/libvorbis.a,
 					/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
