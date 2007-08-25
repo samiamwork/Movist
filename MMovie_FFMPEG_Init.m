@@ -249,19 +249,22 @@
     MTrack_FFMPEG* track = [_videoTracks objectAtIndex:0];
     [track setEnabled:TRUE];
     
-    _videoFrameRGB = avcodec_alloc_frame();
-    if (_videoFrameRGB == 0) {
-        *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
-        return FALSE;
-    }    
-	int bufWidth = _videoWidth + 37;
-    if (bufWidth < 512) {
-        bufWidth = 512 + 37;
-    }
-    int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , _videoHeight);
-    avpicture_fill((AVPicture*)_videoFrameRGB, malloc(bufferSize),
-                   RGB_PIXEL_FORMAT, bufWidth, _videoHeight);
+    int i;
+    for (i = 0; i < MAX_VIDEO_DATA_BUF_SIZE; i++) {
+        _videoFrameData[i] = avcodec_alloc_frame();
+        if (_videoFrameData[i] == 0) {
+            *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
+            return FALSE;
+        }    
+        int bufWidth = _videoWidth + 37;
+        if (bufWidth < 512) {
+            bufWidth = 512 + 37;
+        }
+        int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , _videoHeight);
+        avpicture_fill((AVPicture*)_videoFrameData[i], malloc(bufferSize),
+                       RGB_PIXEL_FORMAT, bufWidth, _videoHeight);
 
+    }
     return TRUE;
 }
 
@@ -272,10 +275,13 @@
         av_free(_scalerContext);
         _scalerContext = 0;
     }
-    if (_videoFrameRGB) {
-        free(_videoFrameRGB->data[0]);
-        av_free(_videoFrameRGB);
-        _videoFrameRGB = 0;
+    int i;
+    for (i = 0; i < MAX_VIDEO_DATA_BUF_SIZE; i++) {
+        if (_videoFrameData[i]) {
+            free(_videoFrameData[i]->data[0]);
+            av_free(_videoFrameData[i]);
+            _videoFrameData[i] = 0;
+        }
     }
     if (_videoFrame) {
         av_free(_videoFrame);

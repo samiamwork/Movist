@@ -125,6 +125,7 @@ enum {
     BOOL _quitRequested;
     BOOL _dispatchPacket;
     BOOL _playThreading;
+    BOOL _fileEnded;
 
     // playback: play
     float _rate;
@@ -139,19 +140,23 @@ enum {
     // playback: decoding
     #define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
     //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
+    #define MAX_VIDEO_DATA_BUF_SIZE 4
     PacketQueue* _videoQueue;
     AudioUnit _audioUnit[MAX_AUDIO_STREAM_COUNT];
     AVFrame* _videoFrame;    // for decoding
-    AVFrame* _videoFrameRGB; // for display
+    AVFrame* _videoFrameData[MAX_VIDEO_DATA_BUF_SIZE]; // for display
     NSMutableArray* _audioDataQueue;
     struct SwsContext* _scalerContext;
     AVPacket _flushPacket;
-    BOOL _needImage;
+    int _decodedImageCount;
+    int _decodedImageBufCount;
     float _currentTime;
-    float _decodedImageTime;
+    float _decodedImageTime[MAX_VIDEO_DATA_BUF_SIZE];
+    int _videoDataBufId;
+    int _nextVideoBufId;
     float _nextDecodedAudioTime[MAX_AUDIO_STREAM_COUNT];
     float _hostTime;
-    float _waitTime;
+    float _hostTime0point;
     float _avFineTuningTime;
     
     // audio

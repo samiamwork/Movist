@@ -40,7 +40,16 @@
 
 - (void)setEnabled:(BOOL)enabled
 { 
-    _enable = enabled; 
+    _enable = enabled;
+    if (_streamId < 0) { // video
+        return;
+    }
+    if (enabled) {
+        [_movie startAudio:_streamId];
+    }
+    else {
+        [_movie stopAudio:_streamId];
+    }
     [_movie updateFirstAudioStreamId];
 }
 
@@ -301,9 +310,6 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     TRACE(@"%s %d", __PRETTY_FUNCTION__, audioStreamIndex);
 
     _speakerCount = 2;
-    [_audioTracks addObject:[[[MTrack_FFMPEG alloc] 
-                              initWithStreamId:_audioStreamCount movie:self] 
-                             autorelease]];
 
     AVCodecContext* audioContext = _formatContext->streams[audioStreamIndex]->codec;
     
@@ -330,7 +336,12 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         *errorCode = ERROR_FFMPEG_CODEC_OPEN_FAILED;
         return FALSE;
     }
-	UInt32 formatFlags, bytesPerFrame, bytesInAPacket, bitsPerChannel;
+	
+    [_audioTracks addObject:[[[MTrack_FFMPEG alloc] 
+                              initWithStreamId:_audioStreamCount movie:self] 
+        autorelease]];        
+    
+    UInt32 formatFlags, bytesPerFrame, bytesInAPacket, bitsPerChannel;
     assert(audioContext->sample_fmt == SAMPLE_FMT_S16);
 #ifdef _USE_AUDIO_DATA_FLOAT_BIT
     formatFlags =  kAudioFormatFlagsNativeFloatPacked
@@ -359,6 +370,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
               channelsPerFrame:audioContext->channels
                 bitsPerChannel:bitsPerChannel]) {
         *errorCode = ERROR_FFMPEG_AUDIO_UNIT_CREATE_FAILED;
+        assert(FALSE);
         return FALSE;
     }
     _audioStreamIndex[_audioStreamCount++] = audioStreamIndex;
@@ -375,7 +387,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     }
 }
 
-- (BOOL) initAudioPlayback:(int*)errorCode
+- (BOOL)initAudioPlayback:(int*)errorCode
 {
     if (_audioStreamCount <= 0) {
         return true;
@@ -384,10 +396,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     for (i = 0 ; i < _audioStreamCount; i++) {
         [[_audioDataQueue objectAtIndex:i] setBitRate: sizeof(int16_t) * _audioContext(i)->sample_rate * _audioContext(i)->channels];
         _nextDecodedAudioTime[i] = 0;
-        verify_noerr(AudioOutputUnitStart (_audioUnit[i]));
-        CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, false);
     }
-    [[_audioTracks objectAtIndex:0] setEnabled:TRUE];
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
     return true;
 }
@@ -396,9 +405,15 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
 {   
     TRACE(@"%s", __PRETTY_FUNCTION__);    int i;
     for (i = 0; i < _audioStreamCount; i++) {
-        verify_noerr(AudioOutputUnitStop(_audioUnit[i]));
-        verify_noerr(AudioUnitUninitialize(_audioUnit[i]));
-        CloseComponent(_audioUnit[i]);
+        while (AudioOutputUnitStop(_audioUnit[i]) != 0) {
+            assert(FALSE);
+        }
+        while (AudioUnitUninitialize(_audioUnit[i]) != 0) {
+            assert(FALSE);
+        }
+        while (CloseComponent(_audioUnit[i]) != 0) {
+            assert(FALSE);
+        }
     }
     while (_playThreading) {
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
@@ -495,6 +510,20 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     _firstAudioStreamId = -1;
 }
 
+- (void)startAudio:(int)streamId
+{
+    while (AudioOutputUnitStart(_audioUnit[streamId]) != 0) {
+        assert(FALSE);
+    }       
+}
+
+- (void)stopAudio:(int)streamId
+{
+    while (AudioOutputUnitStop(_audioUnit[streamId]) != 0) {
+        assert(FALSE);
+    }   
+}
+
 - (void)makeEmptyAudio:(AUDIO_DATA_TYPE**)buf channelNumber:(int)channelNumber bufSize:(int)bufSize
 {
     int i;
@@ -548,7 +577,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     
     float currentAudioTime = 1. * timeStamp->mHostTime / 1000 / 1000 / 1000;
     [_avSyncMutex lock];
-    float currentTime = _currentTime + (currentAudioTime - _hostTime);
+    float currentTime = currentAudioTime - _hostTime0point;
     [_avSyncMutex unlock];    
     [dataQueue getFirstTime:audioTime];
     
@@ -556,7 +585,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         if (currentTime + 0.2 < *audioTime) {
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             [self setAvFineTuning:streamId fineTuningTime:0];
-            TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, *audioTime);
+            //TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, *audioTime);
             return;
         }
         float dt = *audioTime - currentTime;
@@ -565,7 +594,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     else if (*audioTime != 0 && *audioTime + 0.05 < currentTime) {
         if (*audioTime + 0.2 < currentTime) {
             float gap = 0.2/*currentTime - *audioTime*/; // FIXME
-            TRACE(@"currentTime(%f) > audioTime[%d] %f", currentTime, streamId, *audioTime);
+            //TRACE(@"currentTime(%f) > audioTime[%d] %f", currentTime, streamId, *audioTime);
             [dataQueue removeDataDuring:gap time:audioTime];
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             [self setAvFineTuning:streamId fineTuningTime:0];
