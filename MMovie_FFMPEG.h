@@ -155,6 +155,7 @@ enum {
     int _videoDataBufId;
     int _nextVideoBufId;
     float _nextDecodedAudioTime[MAX_AUDIO_STREAM_COUNT];
+    double _hostTimeFreq;
     float _hostTime;
     float _hostTime0point;
     float _avFineTuningTime;

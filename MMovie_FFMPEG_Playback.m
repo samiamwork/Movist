@@ -117,6 +117,8 @@
         _decodedImageTime[i] = 0;
     }
     _avFineTuningTime = 0;
+    _hostTimeFreq = CVGetHostClockFrequency( );
+    TRACE(@"host time frequency %f", _hostTimeFreq);
     _hostTime = 0;
     _hostTime0point = 0;
     _needKeyFrame = FALSE;
@@ -466,7 +468,7 @@
     //TRACE(@"%s(%d) %d %d", __PRETTY_FUNCTION__, _nextVideoBufId, _decodedImageCount, _decodedImageBufCount);
     AVPacket packet;
     if (![_videoQueue getPacket:&packet]) {
-        TRACE(@"%s no more packet", __PRETTY_FUNCTION__);
+        //TRACE(@"%s no more packet", __PRETTY_FUNCTION__);
         return -1;
     }
     if (packet.stream_index != _videoStreamIndex) {
@@ -521,15 +523,15 @@
 - (BOOL)isNewImageAvailable:(const CVTimeStamp*)timeStamp
 {
     if (_decodedImageCount < 1) {
-        TRACE(@"not decoded");
+        //NSLog(@"not decoded %f", current);
         return FALSE;
     }
     //float videoTime = (float)timeStamp->videoTime / timeStamp->videoTimeScale;
-    float hostTime = (float)timeStamp->hostTime / 1000 / 1000 / 1000;
+    float hostTime = (float)timeStamp->hostTime / _hostTimeFreq;
     float current = hostTime - _hostTime0point;
     float imageTime = _decodedImageTime[_videoDataBufId];
     if (imageTime + 1 < current || current + 1 < imageTime) {
-        TRACE(@"reset av sync");
+        TRACE(@"reset av sync %f %f", current, imageTime);
         _hostTime0point = hostTime - imageTime;
         current = imageTime;
     }
@@ -539,7 +541,7 @@
     }
     _decodedImageCount--;
     _hostTime0point -= _avFineTuningTime;
-    //TRACE(@"draw(%d)", _videoDataBufId);
+    //TRACE(@"draw(%d) %f %f", _videoDataBufId, current, imageTime);
     return TRUE;
 }
 
@@ -582,7 +584,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
             postNotificationName:MMovieCurrentTimeNotification object:self];
     }
     
-    float hostTime = (float)timeStamp->hostTime / 1000 / 1000 / 1000;
+    float hostTime = (float)timeStamp->hostTime / _hostTimeFreq;
     [_avSyncMutex lock];
     _hostTime = hostTime;
     _currentTime = _decodedImageTime[_videoDataBufId];

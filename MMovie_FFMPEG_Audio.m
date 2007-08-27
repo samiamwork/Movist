@@ -450,7 +450,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
                                             audioBuf, &dataSize,
                                             packetPtr, packetSize);
         if (decodedSize < 0) { 
-            NSLog(@"decodedSize < 0");
+            TRACE(@"decodedSize < 0");
             break;
         }
         packetPtr  += decodedSize;
@@ -575,7 +575,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         return;
     }
     
-    float currentAudioTime = 1. * timeStamp->mHostTime / 1000 / 1000 / 1000;
+    float currentAudioTime = 1. * timeStamp->mHostTime / _hostTimeFreq;
     [_avSyncMutex lock];
     float currentTime = currentAudioTime - _hostTime0point;
     [_avSyncMutex unlock];    
