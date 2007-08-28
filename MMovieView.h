@@ -46,7 +46,6 @@
     CGRect _imageRect;
     int _fullScreenFill;
     float _fullScreenUnderScan;
-    BOOL _removeGreenBox;
 
     MMovie* _movie;
     NSArray* _subtitles;
@@ -108,9 +107,6 @@
 - (void)setSaturation:(float)saturation;
 - (void)setContrast:(float)contrast;
 - (void)setHue:(float)hue;
-
-- (BOOL)removesGreenBox;
-- (void)setRemoveGreenBox:(BOOL)remove;
 
 @end
 

@@ -172,7 +172,6 @@
     [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
     
     // initial update preferences: advanced
-    [_movieView setRemoveGreenBox:[_defaults boolForKey:MRemoveGreenBoxKey]];
 
     BOOL displayOnLetterBox = [_movieView subtitleDisplayOnLetterBox];
     [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];

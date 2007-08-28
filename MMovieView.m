@@ -82,7 +82,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_colorFilter setDefaults];
     [_hueFilter setDefaults];
     _fullScreenFill = FS_FILL_NEVER;
-    _removeGreenBox = FALSE;
 
     // OSD: icon, message, subtitle & bar
     NSRect rect = [self bounds];
@@ -269,10 +268,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
         if (_image) {
             CIImage* img = [CIImage imageWithCVImageBuffer:_image];
-            if (_removeGreenBox) {
-                [_cropFilter setValue:img forKey:@"inputImage"];
-                img = [_cropFilter valueForKey:@"outputImage"];
-            }
+            // always crop!!!
+            [_cropFilter setValue:img forKey:@"inputImage"];
+            img = [_cropFilter valueForKey:@"outputImage"];
+
             if ([self brightness] != 0.0 ||
                 [self saturation] != 1.0 ||
                 [self contrast] != 1.0) {
@@ -371,10 +370,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         _imageRect.origin.y = 0;
         _imageRect.size.width = [_movie size].width;
         _imageRect.size.height = [_movie size].height;
-        if (_removeGreenBox) {
-            _imageRect.origin.x++, _imageRect.size.width  -= 2;
-            _imageRect.origin.y++, _imageRect.size.height -= 2;
-        }
+        // always crop!!!
+        _imageRect.origin.x++, _imageRect.size.width  -= 2;
+        _imageRect.origin.y++, _imageRect.size.height -= 2;
+
         if ([[NSApp delegate] isFullScreen] && _fullScreenFill == FS_FILL_CROP) {
             if (bs.width / bs.height < ms.width / ms.height) {
                 float mw = ms.width * bs.height / ms.height;
@@ -534,14 +533,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                   forKey:@"inputAngle"];
     [_drawLock unlock];
     [self setNeedsDisplay:TRUE];
-}
-
-- (BOOL)removesGreenBox { return _removeGreenBox; }
-
-- (void)setRemoveGreenBox:(BOOL)remove
-{
-    _removeGreenBox = remove;
-    [self updateMovieRect:TRUE];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

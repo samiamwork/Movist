@@ -70,7 +70,6 @@ NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 #pragma mark -
 #pragma mark prefs: advanced
 NSString* MDefaultDecoderKey                = @"DefaultDecoder";
-NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -130,7 +129,6 @@ NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
 
     // prefs: advanced
     [dict setObject:[NSNumber numberWithInt:DECODER_QUICKTIME] forKey:MDefaultDecoderKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MRemoveGreenBoxKey];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
     //TRACE(@"registering defaults: %@", dict);

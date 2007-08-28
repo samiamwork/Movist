@@ -199,6 +199,8 @@ enum {
 - (void)cleanupAudioPlayback;
 - (void)decodeAudio:(AVPacket*)packet trackId:(int)trackId;
 - (void)updateFirstAudioStreamId;
+- (void)startAudio:(int)streamId;
+- (void)stopAudio:(int)streamId;
 
 @end
 

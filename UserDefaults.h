@@ -78,4 +78,3 @@ extern NSString* MSubtitleReplaceNLWithBRKey;
 #pragma mark -
 #pragma mark prefs: advanced
 extern NSString* MDefaultDecoderKey;
-extern NSString* MRemoveGreenBoxKey;

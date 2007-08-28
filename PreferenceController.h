@@ -87,7 +87,6 @@
     // advanced
     IBOutlet NSView* _advancedPane;
     IBOutlet NSPopUpButton* _defaultDecoderPopUpButton;
-    IBOutlet NSButton* _removeGreenBoxButton;
 
     NSUserDefaults* _defaults;
     AppController* _appController;
@@ -169,6 +168,5 @@
 
 - (void)initAdvancedPane;
 - (IBAction)defaultDecoderAction:(id)sender;
-- (IBAction)removeGreenBoxAction:(id)sender;
 
 @end

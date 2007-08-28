@@ -222,18 +222,7 @@
     cr.size.width = movieSize.width + _movieViewMarginSize.width;
     cr.size.height= movieSize.height+ _movieViewMarginSize.height;
     NSSize size = [self frameRectForContentRect:cr].size;
-    /*
-    // if too big, then shrink to screen size
-    NSSize ss = [[self screen] visibleFrame].size;
-    if (ss.width < size.width) {
-        size.height = ss.width * size.height / size.width;
-        size.width = ss.width;
-    }
-    if (ss.height < size.height) {
-        size.width = ss.height * size.width / size.height;
-        size.height = ss.height;
-    }
-     */
+
     // if too small, then expand to minimum size
     NSSize minSize = [self minSize];
     if (size.width < minSize.width) {
