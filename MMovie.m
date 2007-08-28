@@ -176,6 +176,7 @@
 - (void)gotoBeginning { TRACE(@"%s", __PRETTY_FUNCTION__); }
 - (void)gotoEnd { TRACE(@"%s", __PRETTY_FUNCTION__); }
 - (void)gotoTime:(float)time { TRACE(@"%s %g", __PRETTY_FUNCTION__, time); }
+- (void)seekByTime:(float)dt { TRACE(@"%s %g", __PRETTY_FUNCTION__, dt); }
 - (CVOpenGLTextureRef)nextImage:(const CVTimeStamp*)timeStamp
   { TRACE(@"%s", __PRETTY_FUNCTION__); return 0; }
 - (void)idleTask { /*TRACE(@"%s", __PRETTY_FUNCTION__);*/ }

@@ -69,23 +69,14 @@
     }
 }
 
-- (void)gotoTime:(float)time message:(NSString*)message
-{
-    NSMutableString* s = [NSMutableString stringWithCapacity:64];
-    if (message) {
-        [s appendFormat:@"%@ ", message];
-    }
-    [s appendFormat:@"%@/%@", NSStringFromMovieTime(time),
-                              NSStringFromMovieTime([_movie duration])];
-    [_movieView setMessage:s];
-    [_movie gotoTime:time];
-}
-
 - (void)gotoTime:(float)time
 {
     TRACE(@"%s %f sec", __PRETTY_FUNCTION__, time);
     if (_movie) {
-        [self gotoTime:time message:nil];
+        [_movieView setMessage:[NSString stringWithFormat:
+            @"%@/%@", NSStringFromMovieTime(time),
+                      NSStringFromMovieTime([_movie duration])]];
+        [_movie gotoTime:time];
     }
 }
 
@@ -95,8 +86,10 @@
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
         float t = MAX(0, [_movie currentTime] - dt);
-        [self gotoTime:t message:[NSString stringWithFormat:
-            NSLocalizedString(@"Backward %d sec.", nil), (int)dt]];
+        [_movie seekByTime:-dt];
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@",
+            [NSString stringWithFormat:NSLocalizedString(@"Backward %d sec.", nil), (int)dt],
+            NSStringFromMovieTime(t), NSStringFromMovieTime([_movie duration])]];
     }
 }
 
@@ -106,8 +99,10 @@
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
         float t = MIN([_movie currentTime] + dt, [_movie duration]);
-        [self gotoTime:t message:[NSString stringWithFormat:
-            NSLocalizedString(@"Forward %d sec.", nil), (int)dt]];
+        [_movie seekByTime:+dt];
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@",
+            [NSString stringWithFormat:NSLocalizedString(@"Forward %d sec.", nil), (int)dt],
+            NSStringFromMovieTime(t), NSStringFromMovieTime([_movie duration])]];
     }
 }
 

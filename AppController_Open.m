@@ -48,9 +48,9 @@
 - (MMovie*)movieFromURL:(NSURL*)movieURL withMovieClass:(Class)movieClass
                    error:(NSError**)error
 {
-#if defined(_SUPPORT_FFMPEG)
     TRACE(@"%s \"%@\" with \"%@\"", __PRETTY_FUNCTION__,
           [movieURL absoluteString], movieClass);
+#if defined(_SUPPORT_FFMPEG)
     NSArray* classes;
     if (movieClass) {
         // if movieClass is specified, then try it only

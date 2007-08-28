@@ -85,6 +85,7 @@
 - (void)gotoBeginning;
 - (void)gotoEnd;
 - (void)gotoTime:(float)time;
+- (void)seekByTime:(float)dt;
 - (CVOpenGLTextureRef)nextImage:(const CVTimeStamp*)timeStamp;
 - (void)idleTask;
 

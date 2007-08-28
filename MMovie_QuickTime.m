@@ -297,6 +297,14 @@
     }
 }
 
+- (void)seekByTime:(float)dt
+{
+    TRACE(@"%s %g", __PRETTY_FUNCTION__, dt);
+    float time = [self currentTime] + dt;
+    time = (dt < 0) ? MAX(0, time) : MIN(time, [self duration]);
+    [self gotoTime:time];
+}
+
 - (CVOpenGLTextureRef)nextImage:(const CVTimeStamp*)timeStamp
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);

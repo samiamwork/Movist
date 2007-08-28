@@ -400,6 +400,11 @@
     [self reserveCommand:COMMAND_SEEK];
 }
 
+- (void)seekByTime:(float)dt
+{
+    TRACE(@"%s %g", __PRETTY_FUNCTION__, dt);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
