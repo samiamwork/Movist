@@ -132,26 +132,33 @@
 
 - (void)movieRateChanged:(NSNotification*)notification
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self updatePlayUI];
-    [_playlistController updateUI];
+    if (notification) {
+        [self performSelectorOnMainThread:@selector(movieRateChanged:)
+                               withObject:nil waitUntilDone:FALSE];   // don't wait
+    }
+    else {
+        TRACE(@"%s", __PRETTY_FUNCTION__);
+        [self updatePlayUI];
+        [_playlistController updateUI];
+    }
 }
 
 - (void)movieCurrentTimeChanged:(NSNotification*)notification
 {
-    //TRACE(@"%s %.2f", __PRETTY_FUNCTION__, [_movie currentTime]);
-    if ([_movie rate] != 0.0 &&
-        [_seekSlider repeatEnabled] &&
-        [_seekSlider repeatEnd] < [_movie currentTime]) {
-        if (notification) {
-            [self performSelectorOnMainThread:@selector(movieCurrentTimeChanged:)
-                                   withObject:nil waitUntilDone:FALSE];   // don't wait
-        }
-        else {
+    if (notification) {
+        [self performSelectorOnMainThread:@selector(movieCurrentTimeChanged:)
+                               withObject:nil waitUntilDone:FALSE];   // don't wait
+    }
+    else {
+        //TRACE(@"%s %.2f", __PRETTY_FUNCTION__, [_movie currentTime]);
+        if ([_movie rate] != 0.0 &&
+            [_seekSlider repeatEnabled] &&
+            [_seekSlider repeatEnd] < [_movie currentTime]) {
             [_movie gotoTime:[_seekSlider repeatBeginning]];
         }
+        [self performSelectorOnMainThread:@selector(updateTimeUI)
+                               withObject:nil waitUntilDone:FALSE];   // don't wait
     }
-    [self updateTimeUI];
 }
 
 - (void)movieEnded:(NSNotification*)notification

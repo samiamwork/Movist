@@ -108,7 +108,7 @@ void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
              operation:NSCompositeSourceOver fraction:1.0];
 
     // repeat range
-    if (0 <= repeatBeginning && 0 <= repeatBeginning) {
+    if (0 <= repeatBeginning) {
         [[NSColor colorWithCalibratedWhite:0.5 alpha:0.7] set];
         NSBezierPath* path = [NSBezierPath bezierPath];
         float bx = trackRect.size.width * repeatBeginning / (maxValue - minValue) + knobSize / 2;
