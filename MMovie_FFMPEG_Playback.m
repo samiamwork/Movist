@@ -37,6 +37,7 @@
         _front = 0;
         _rear = 0;
     }
+    _mutex = [[NSRecursiveLock alloc] init];
     return self;
 }
 
@@ -44,15 +45,22 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     free(_packet);
+    [_mutex dealloc];
     [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (void)clear { _rear = _front; }
 - (BOOL)isEmpty { return (_front == _rear); }
 - (BOOL)isFull { return (_front == (_rear + 1) % _capacity); }
+
+- (void)clear 
+{ 
+    [_mutex lock];
+    _rear = _front; 
+    [_mutex unlock];
+}
 
 - (BOOL)putPacket:(const AVPacket*)packet
 {
@@ -68,11 +76,14 @@
 - (BOOL)getPacket:(AVPacket*)packet
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_mutex lock];
     if ([self isEmpty]) {
+        [_mutex unlock];
         return FALSE;
     }
     *packet = _packet[_front];
     _front = (_front + 1) % _capacity;
+    [_mutex unlock];
     return TRUE;
 }
 
@@ -118,7 +129,7 @@
     }
     _avFineTuningTime = 0;
     _hostTimeFreq = CVGetHostClockFrequency( );
-    TRACE(@"host time frequency %f", _hostTimeFreq);
+    //NSLog(@"host time frequency %f", _hostTimeFreq);
     _hostTime = 0;
     _hostTime0point = 0;
     _needKeyFrame = FALSE;
@@ -127,6 +138,7 @@
     _playAfterSeek = FALSE;
     _seekKeyFrame = TRUE;
 
+    _lastDecodedTime = 0;
     _decodedImageCount = 0;
     _decodedImageBufCount = 0;
     _videoDataBufId = 0;
@@ -166,25 +178,15 @@
 
 - (BOOL)readFrame
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_videoQueue isFull]) {
+        assert(FALSE);
+        return TRUE;
+    }
     AVPacket packet;
-#ifdef _FIND_KEY
-    BOOL first = TRUE;
-    do {
-        if (!first) {
-            av_free_packet(&packet);
-            av_init_packet(&packet);
-        }
-#endif
-        if (av_read_frame(_formatContext, &packet) < 0) {
-            TRACE(@"%s read-error or end-of-file", __PRETTY_FUNCTION__);
-            return FALSE;
-        }
-#ifdef _FIND_KEY
-        first = FALSE;
-    } while (_needKeyFrame && (packet.stream_index != _videoStreamIndex || 
-                               !(packet.flags & PKT_FLAG_KEY)));
-#endif
+    if (av_read_frame(_formatContext, &packet) < 0) {
+        TRACE(@"%s read-error or end-of-file", __PRETTY_FUNCTION__);
+        return FALSE;
+    }
     _needKeyFrame = FALSE;
     
     PacketQueue* queue = nil;
@@ -193,13 +195,9 @@
         if (!queue) {
             av_free_packet(&packet);
             return TRUE;
-        }
-        
+        }        
         av_dup_packet(&packet);
-        while (!_quitRequested && ![queue putPacket:&packet]) {
-            //TRACE(@"%s queue full => retry", __PRETTY_FUNCTION__);
-            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-        }
+        [queue putPacket:&packet];
         return TRUE;
     }
     
@@ -255,6 +253,7 @@
 
 - (void)seekFunc
 {
+    _seekTime = _reservedSeekTime;
     TRACE(@"%s seek to %g", __PRETTY_FUNCTION__, _seekTime);
     [_videoQueue clear];
     [_videoQueue putPacket:&_flushPacket];
@@ -264,46 +263,37 @@
         [self decodeAudio:&_flushPacket trackId:i];
         _nextDecodedAudioTime[i] = 0;
     }
-    _seekTime = _reservedSeekTime;
-    int mode = 0;
-    if (_seekTime < _currentTime) {
-        mode |= AVSEEK_FLAG_BACKWARD;
+    if ([self duration] < _seekTime) {
+        TRACE(@"file end %f < %f", [self duration], _seekTime);
+        _fileEnded = TRUE;
+        return;
     }
+    int mode = _lastDecodedTime < _seekTime ? 0 : AVSEEK_FLAG_BACKWARD;
     int64_t pos = av_rescale_q((int64_t)(_seekTime * AV_TIME_BASE),
                                AV_TIME_BASE_Q, _videoStream->time_base);
-    //TRACE(@"%s rescaled pos = %lld", __PRETTY_FUNCTION__, pos);
-    int ret = av_seek_frame(_formatContext, _videoStreamIndex,
-                            pos, mode);
+    int ret = av_seek_frame(_formatContext, _videoStreamIndex, pos, mode);
     if (ret < 0) {
         TRACE(@"%s error while seeking", __PRETTY_FUNCTION__);
-        if (DEFAULT_FUNC_CONDITION) {
-            _fileEnded = TRUE;
+        _fileEnded = TRUE;
+        return;
+    }
+    _dispatchPacket = TRUE;
+    _seekComplete = FALSE;
+    while (!_quitRequested && !_seekComplete) {
+        if ([_videoQueue isFull]) {
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+            continue;
+        }
+        if (![self readFrame]) {
+            return;
         }
     }
-    else {
-        /*
-        _dispatchPacket = TRUE;
-        _needKeyFrame = TRUE;
-        while (DEFAULT_FUNC_CONDITION && _dispatchPacket) {
-            if ([_videoQueue isFull]) {
-                [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-                continue;
-            }
-            if (![self readFrame]) {
-                break;
-            }
-        }
-        _dispatchPacket = FALSE;
-        */
-        while (DEFAULT_FUNC_CONDITION && 
-               [_videoQueue isFull]) {
-            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-        }
-        [self readFrame];
-        if (_playAfterSeek) {
-            TRACE(@"%s continue play", __PRETTY_FUNCTION__);
-            [self setRate:_rate];
-        }
+    _seekComplete = FALSE;
+    _dispatchPacket = FALSE;
+    if (_playAfterSeek && _reservedCommand == COMMAND_NONE) {
+        TRACE(@"%s continue play", __PRETTY_FUNCTION__);
+        [self setRate:_rate];
+        [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.03]];
     }
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
@@ -326,7 +316,6 @@
     }
     if (!_quitRequested) {
         [self waitForQueueEmpty:_videoQueue];
-        _dispatchPacket = FALSE;
     }
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
@@ -386,23 +375,27 @@
 - (void)gotoTime:(float)time
 {
     if (_command == COMMAND_SEEK) {
-        if (_reservedSeekTime == time || _seekTime == time) {
+        if ((int)_reservedSeekTime == (int)time || 
+            (int)_seekTime == (int)time) {
             TRACE(@"%s %g : currently seeking to same time => ignored", __PRETTY_FUNCTION__, time);
             return;
         }
-        if ([_videoQueue isFull]) {     // seeking can be pended to put a packet
-            _dispatchPacket = FALSE;    // stop pending to continue new seek
-            [_videoQueue clear];
-        }
     }
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, time);
+    //NSLog(@"%s %g", __PRETTY_FUNCTION__, time);
     _reservedSeekTime = time;
     [self reserveCommand:COMMAND_SEEK];
 }
 
 - (void)seekByTime:(float)dt
-{
+{    
     TRACE(@"%s %g", __PRETTY_FUNCTION__, dt);
+    float time = _lastDecodedTime + dt;
+    if (time < 0) {
+        time = 0;
+    }
+    //time = (dt < 0) ? MAX(0, time) : MIN(time, [self duration]);
+    [self gotoTime:time];
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, dt);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -572,7 +565,8 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
                                            pixelBufferReleaseCallback, &_decodedImageBufCount, 0, 
                                            bufferRef);
     if (ret != kCVReturnSuccess) {
-        TRACE(@"%s CVPixelBufferCreateWithBytes() failed : %d", __PRETTY_FUNCTION__, ret);
+        NSLog(@"%s CVPixelBufferCreateWithBytes() failed : %d", __PRETTY_FUNCTION__, ret);
+        assert(FALSE);
         return FALSE;
     }
     return TRUE;
@@ -583,19 +577,18 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     if (![self isNewImageAvailable:timeStamp]) {
         return 0;
     }
+    float hostTime = (float)timeStamp->hostTime / _hostTimeFreq;
+    [_avSyncMutex lock];
+    _hostTime = hostTime;
+    _currentTime = _decodedImageTime[_videoDataBufId];
+    [_avSyncMutex unlock];
     CVPixelBufferRef bufferRef = 0;
     if ([self getDecodedImage:&bufferRef]) {
         [[NSNotificationCenter defaultCenter]
             postNotificationName:MMovieCurrentTimeNotification object:self];
     }
-    
-    float hostTime = (float)timeStamp->hostTime / _hostTimeFreq;
-    [_avSyncMutex lock];
-    _hostTime = hostTime;
-    _currentTime = _decodedImageTime[_videoDataBufId];
-    _videoDataBufId = (_videoDataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;
-    [_avSyncMutex unlock];
-    
+    //NSLog(@"display(%d) %f", _videoDataBufId, _currentTime);
+    _videoDataBufId = (_videoDataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;    
     return bufferRef;
 }
 
@@ -605,8 +598,12 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     _playThreading++;
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     while (!_quitRequested) {
-        if (_decodedImageBufCount >= MAX_VIDEO_DATA_BUF_SIZE) {
-            //TRACE(@"%s sleep", __PRETTY_FUNCTION__);
+        if (_decodedImageBufCount >= MAX_VIDEO_DATA_BUF_SIZE - 1 ||
+            !_dispatchPacket) {
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+            continue;
+        }
+        if (_command == COMMAND_SEEK && _seekComplete) {
             [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
             continue;
         }
@@ -616,11 +613,13 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
         }
         [self convertImage];
         if (_command == COMMAND_SEEK) {
-            if (_seekKeyFrame || _seekTime <= _decodedImageTime[_nextVideoBufId]) {
-                TRACE(@"%s seek complete", __PRETTY_FUNCTION__);
-                _dispatchPacket = FALSE;
-            }
+            _seekComplete = TRUE;
         }
+        _lastDecodedTime = _decodedImageTime[_nextVideoBufId];
+        //NSLog(@"decoded(%d,%d:%d) %f", _decodedImageBufCount, 
+        //                               _decodedImageCount, 
+        //                               _nextVideoBufId, 
+        //                               _lastDecodedTime);
         _decodedImageBufCount++;
         _decodedImageCount++;
         _nextVideoBufId = (_nextVideoBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;

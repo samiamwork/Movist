@@ -60,6 +60,7 @@
     unsigned int _capacity;
     unsigned int _front;
     unsigned int _rear;
+    NSLock* _mutex;
 }
 
 - (id)initWithCapacity:(unsigned int)capacity;
@@ -124,6 +125,7 @@ enum {
     NSLock* _avSyncMutex;
     BOOL _quitRequested;
     BOOL _dispatchPacket;
+    BOOL _seekComplete;
     BOOL _playThreading;
     BOOL _fileEnded;
 
@@ -134,6 +136,7 @@ enum {
     // playback: seek
     float _seekTime;
     float _reservedSeekTime;
+    float _lastDecodedTime;
     BOOL _needKeyFrame;
     BOOL _seekKeyFrame;
     
