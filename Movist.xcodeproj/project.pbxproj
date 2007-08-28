@@ -367,8 +367,10 @@
 				AF079E570BDAC1FE00A3EE52 /* Movist.h */,
 				AF9569810BFEEABF002A60BE /* Movist.m */,
 				AFE099B70C328E9D00EB3877 /* App */,
-				AFE099BB0C328EB100EB3877 /* Movie & Subtitle */,
+				AFE099BB0C328EB100EB3877 /* Movie */,
+				AF6735670C84013E00E16021 /* Subtitle */,
 				AFE099BE0C328F7700EB3877 /* Playlist */,
+				AF6735660C84007600E16021 /* Preference */,
 				AFE099BC0C328ED500EB3877 /* UI */,
 			);
 			name = Classes;
@@ -574,6 +576,31 @@
 			name = Images;
 			sourceTree = "<group>";
 		};
+		AF6735660C84007600E16021 /* Preference */ = {
+			isa = PBXGroup;
+			children = (
+				AFFA4D410B80B6FB0024700D /* PreferenceController.h */,
+				AFFA4D420B80B6FB0024700D /* PreferenceController.m */,
+				AF34929A0C48851700CBDA34 /* PreferenceController_General.m */,
+				AF34929C0C48851700CBDA34 /* PreferenceController_Video.m */,
+				AF3492990C48851700CBDA34 /* PreferenceController_Audio.m */,
+				AF34929B0C48851700CBDA34 /* PreferenceController_Subtitle.m */,
+				AF3492980C48851700CBDA34 /* PreferenceController_Advanced.m */,
+			);
+			name = Preference;
+			sourceTree = "<group>";
+		};
+		AF6735670C84013E00E16021 /* Subtitle */ = {
+			isa = PBXGroup;
+			children = (
+				AFFA4D430B80B6FB0024700D /* MSubtitle.h */,
+				AFFA4D440B80B6FB0024700D /* MSubtitle.m */,
+				AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */,
+				AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */,
+			);
+			name = Subtitle;
+			sourceTree = "<group>";
+		};
 		AFE099B70C328E9D00EB3877 /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -586,20 +613,13 @@
 				AF5A29EA0C2CF84F00483AEB /* AppController_Audio.m */,
 				AF5A29AE0C2CF64D00483AEB /* AppController_Video.m */,
 				AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */,
-				AFFA4D410B80B6FB0024700D /* PreferenceController.h */,
-				AFFA4D420B80B6FB0024700D /* PreferenceController.m */,
-				AF34929A0C48851700CBDA34 /* PreferenceController_General.m */,
-				AF34929C0C48851700CBDA34 /* PreferenceController_Video.m */,
-				AF3492990C48851700CBDA34 /* PreferenceController_Audio.m */,
-				AF34929B0C48851700CBDA34 /* PreferenceController_Subtitle.m */,
-				AF3492980C48851700CBDA34 /* PreferenceController_Advanced.m */,
 				AFF4A8650C1B1E3F00B4F481 /* UserDefaults.h */,
 				AFF4A8660C1B1E3F00B4F481 /* UserDefaults.m */,
 			);
 			name = App;
 			sourceTree = "<group>";
 		};
-		AFE099BB0C328EB100EB3877 /* Movie & Subtitle */ = {
+		AFE099BB0C328EB100EB3877 /* Movie */ = {
 			isa = PBXGroup;
 			children = (
 				AF494D860B902DB400EDDB8A /* MMovie.h */,
@@ -611,12 +631,8 @@
 				AFFA0B080C50837600FCBE18 /* MMovie_FFMPEG_Audio.m */,
 				AF494D880B902DB400EDDB8A /* MMovie_QuickTime.h */,
 				AF494D890B902DB400EDDB8A /* MMovie_QuickTime.m */,
-				AFFA4D430B80B6FB0024700D /* MSubtitle.h */,
-				AFFA4D440B80B6FB0024700D /* MSubtitle.m */,
-				AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */,
-				AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */,
 			);
-			name = "Movie & Subtitle";
+			name = Movie;
 			sourceTree = "<group>";
 		};
 		AFE099BC0C328ED500EB3877 /* UI */ = {
