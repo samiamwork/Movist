@@ -63,7 +63,6 @@
                         sizeof(CFStringRef), &summary, 0)) {
             result = [NSString stringWithString:(NSString*)summary];
             CFRelease(summary);
-            return result;
         }
     }
     else if ([mediaType isEqualToString:QTMediaTypeMPEG]) {
@@ -72,33 +71,28 @@
             /*FIXME*/[self name], rc.size.width, rc.size.height];
     }
     else if ([mediaType isEqualToString:QTMediaTypeSound]) {
+        // temporary impl. : how to get audio properties?
         CFStringRef summary;
         if (noErr == ICMImageDescriptionGetProperty(idh,
                         kQTPropertyClass_ImageDescription,
                         kICMImageDescriptionPropertyID_SummaryString,
                         sizeof(CFStringRef), &summary, 0)) {
-            TRACE(@"format: %@", (NSString*)summary);
             result = [NSString stringWithString:(NSString*)summary];
+            // remove strange contents after codec name.
+            NSRange range = [result rangeOfString:@", "];
+            result = [result substringToIndex:range.location];
             CFRelease(summary);
-            return result;
         }
+        /*
+        ImageDescription* desc = *idh;
+        CodecInfo codecInfo;
+        GetCodecInfo(&codecInfo, desc->cType, 0);
+        result = (codecInfo.typeName[0] == '\0') ? [self name] :
+                            [NSString stringWithUTF8String:codecInfo.typeName];
+         */
     }
     DisposeHandle((Handle)idh);
     return result;
-
-/*
-    ImageDescriptionHandle idh;
-    idh = (ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
-    GetMediaSampleDescription([[_qtTrack media] quickTimeMedia], 1,
-                              (SampleDescriptionHandle)idh);
-    ImageDescription* desc = *idh;
-    CodecInfo codecInfo;
-    GetCodecInfo(&codecInfo, desc->cType, 0);
-    DisposeHandle((Handle)desc);
-
-    NSString* name = (codecInfo.typeName[0] == '\0') ? [self name] :
-                        [NSString stringWithUTF8String:codecInfo.typeName];
-*/
 }
 
 - (BOOL)isEnabled { return [_qtTrack isEnabled]; }
