@@ -518,6 +518,14 @@
     return TRUE;
 }
 
+- (void)discardImage
+{
+    _decodedImageCount--;
+    _decodedImageBufCount--;
+    _videoDataBufId = (_videoDataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;
+    NSLog(@"discard image");
+}
+
 - (BOOL)isNewImageAvailable:(const CVTimeStamp*)timeStamp
 {
     if (_decodedImageCount < 1) {
@@ -532,6 +540,15 @@
         TRACE(@"reset av sync %f %f", current, imageTime);
         _hostTime0point = hostTime - imageTime;
         current = imageTime;
+    }
+    while (imageTime + 1. / 60 < current) {
+        if (_decodedImageCount > 0) {
+            [self discardImage];
+            imageTime = _decodedImageTime[_videoDataBufId];
+        }
+        else {
+            return FALSE;
+        }
     }
     if (current + 0.002 < imageTime) {
         //TRACE(@"wait(%d) %f < %f", _videoDataBufId, current, imageTime);
@@ -597,6 +614,11 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _playThreading++;
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+/*
+    NSLog(@"cur thread priority %f", [NSThread threadPriority]);
+    [NSThread setThreadPriority:0.9];
+    NSLog(@"set thread priority %f", [NSThread threadPriority]);
+*/
     while (!_quitRequested) {
         if (_decodedImageBufCount >= MAX_VIDEO_DATA_BUF_SIZE - 1 ||
             !_dispatchPacket) {

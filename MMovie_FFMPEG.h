@@ -143,7 +143,7 @@ enum {
     // playback: decoding
     #define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
     //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
-    #define MAX_VIDEO_DATA_BUF_SIZE 4
+    #define MAX_VIDEO_DATA_BUF_SIZE 6
     PacketQueue* _videoQueue;
     AudioUnit _audioUnit[MAX_AUDIO_STREAM_COUNT];
     AVFrame* _videoFrame;    // for decoding
