@@ -162,6 +162,7 @@
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [[_mainWindow contentView] addSubview:_movieView];
     [_movieView setFrame:_movieViewRect];
+    [_mainWindow disableScreenUpdatesUntilFlush];
     [_mainWindow makeFirstResponder:_movieView];
     [_mainWindow makeKeyAndOrderFront:nil];
 

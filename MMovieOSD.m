@@ -33,6 +33,7 @@
         _updateMask = 0;
 
         _shadow = [[NSShadow alloc] init];
+        _shadowNone = [[NSShadow alloc] init];
 
         _hAlign = OSD_HALIGN_CENTER;
         _vAlign = OSD_VALIGN_CENTER;
@@ -49,6 +50,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_shadowColor release];
     [_shadow release];
+    [_shadowNone release];
     [self makeTexture:CGLGetCurrentContext()];  // delete texture
     [super dealloc];
 }

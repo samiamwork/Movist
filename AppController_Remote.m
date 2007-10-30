@@ -77,7 +77,7 @@
     switch (buttonIdentifier) {
         case kRemoteButtonPlus          : [self appleRemotePlus:pressed];   break;
         case kRemoteButtonPlus_Hold     : [self appleRemotePlusHold];       break;
-        case kRemoteButtonMinus         : [self appleRemotePlus:pressed];   break;
+        case kRemoteButtonMinus         : [self appleRemoteMinus:pressed];   break;
         case kRemoteButtonMinus_Hold    : [self appleRemoteMinusHold];      break;
         case kRemoteButtonLeft          : [self appleRemoteLeft:pressed];   break;
         case kRemoteButtonLeft_Hold     : [self appleRemoteLeftHold];       break;

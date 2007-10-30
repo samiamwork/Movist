@@ -231,7 +231,6 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
     if ([_strokeWidth floatValue] != 0.0) {
         [_string addAttribute:NSStrokeWidthAttributeName value:_strokeWidth range:range];
     }
-    [_string addAttribute:NSShadowAttributeName value:_shadow range:range];
 
     [_string addAttribute:NSParagraphStyleAttributeName value:_paragraphStyle range:range];
     //[_string addAttribute:NSKernAttributeName value:_kern range:range];
@@ -276,11 +275,12 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
     drawingRect.size = _contentSize;
 
     // at first, draw with outline & shadow
+    [_shadow set];
     [_string drawInRect:drawingRect];
 
     // redraw with new-outline & no-shadow for sharpness
     NSRange range = NSMakeRange(0, [_string length]);
-    [_string removeAttribute:NSShadowAttributeName range:range];
+    [_shadowNone set];
     [_string addAttribute:NSStrokeWidthAttributeName
                     value:_strokeWidth2 range:range];
     [_string fixAttributesInRange:range];

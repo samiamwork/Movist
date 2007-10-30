@@ -54,6 +54,7 @@ enum {  // for _updateMask
     NSColor* _shadowColor;
     float _shadowBlur;         // for 640-width-of-movie
     float _shadowOffset;       // for 640-width-of-movie
+    NSShadow* _shadowNone;
 
     NSSize _contentSize;
     NSSize _drawingSize;
