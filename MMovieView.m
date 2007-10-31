@@ -449,6 +449,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
 }
 
+- (void)lockDraw   { [_drawLock lock]; }
+- (void)unlockDraw { [_drawLock unlock]; }
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark display-link
@@ -457,7 +460,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    
+
     [_drawLock lock];
     if (_movie) {
         CVOpenGLTextureRef image = [_movie nextImage:timeStamp];
@@ -467,7 +470,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             }
             _image = image;
             [self updateSubtitleString];
-            [self drawRect:NSZeroRect];
+            if ([self canDraw]) {
+                [self drawRect:NSZeroRect];
+            }
         }
     }
     [_drawLock unlock];

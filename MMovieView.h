@@ -85,6 +85,9 @@
 - (void)updateMovieRect:(BOOL)display;
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect;
 
+- (void)lockDraw;
+- (void)unlockDraw;
+
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
 
 @end

@@ -107,9 +107,11 @@
     // move _movieView to _fullWindow from _mainWindow
     [_mainWindow setHasShadow:FALSE];
     [_mainWindow disableScreenUpdatesUntilFlush];
+    [_movieView lockDraw];
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [_fullWindow setMovieView:_movieView];
     [_fullWindow makeKeyAndOrderFront:nil];
+    [_movieView unlockDraw];
 
     switch (effect) {
         case FS_EFFECT_FADE :
@@ -159,10 +161,14 @@
 
     // move _movieView to _mainWindow from _fullWindow
     [_mainWindow disableScreenUpdatesUntilFlush];
+    [_mainWindow disableFlushWindow];
+    [_movieView lockDraw];
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [[_mainWindow contentView] addSubview:_movieView];
     [_movieView setFrame:_movieViewRect];
-    [_mainWindow disableScreenUpdatesUntilFlush];
+    [_movieView unlockDraw];
+    [_mainWindow enableFlushWindow];
+    [_mainWindow flushWindowIfNeeded];
     [_mainWindow makeFirstResponder:_movieView];
     [_mainWindow makeKeyAndOrderFront:nil];
 
