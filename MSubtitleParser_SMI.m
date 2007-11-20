@@ -466,6 +466,9 @@ SMITag MMakeSMITag(int type, int location, int length, NSString* attr)
         return MMakeSMITag(TAG_COMMENT, or.location, NSMaxRange(cr) - or.location, nil);
     }
     cr = [self rangeOfString:@">" rangePtr:range];
+    if (cr.location == NSNotFound) {
+        return MMakeSMITag(TAG_UNKNOWN, NSNotFound, 0, nil);
+    }
 
     // find tag name & attributes
     int i, c = ([self characterAtIndex:or.location + 1] == '/') ? 1 : 0;
