@@ -20,45 +20,86 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#if defined(_SUPPORT_FRONT_ROW)
-
 #import "Movist.h"
 
-enum {
-    NAV_ITEM_FOLDER,
-    NAV_ITEM_MOVIE,
-    NAV_ITEM_MUSCI,
-    //NAV_ITEM_TRAILER,
-};
+@class FullNavItem;
 
-@interface NavItem : NSObject
+@interface FullNavList : NSObject
 {
-    int _type;          // NAV_ITEM_*
-    NSString* _name;
-    BOOL _isContainer;
+    FullNavItem* _parentItem;
+    NSArray* _items;
+    int _selectedIndex;
+    int _topIndex;
 }
 
-- (id)initWithType:(int)type name:(NSString*)name;
-- (void)drawInRect:(NSRect)rect attributes:(NSDictionary*)attrs;
+- (id)initWithParentItem:(FullNavItem*)parentItem items:(NSArray*)items;
 
-- (int)type;
-- (NSString*)name;
-- (BOOL)isContainer;
+- (FullNavItem*)parentItem;
+- (int)count;
+- (int)topIndex;
+- (int)selectedIndex;
+
+- (FullNavItem*)itemAtIndex:(int)index;
+- (FullNavItem*)selectedItem;
+- (void)selectAtIndex:(int)index;
+- (void)selectUpper;
+- (void)selectLower;
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark
 
-@interface NavPathItem : NavItem
+@interface FullNavItem : NSObject
+{
+    NSString* _name;
+}
+
++ (id)fullNavItemWithName:(NSString*)name;
+
+- (id)initWithName:(NSString*)name;
+
+- (NSString*)name;
+- (BOOL)hasSubContents;
+- (NSArray*)subContents;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark
+
+@interface FullNavFileItem : FullNavItem
 {
     NSString* _path;
 }
 
-- (id)initWithPath:(NSString*)path;
++ (id)fullNavFileItemWithPath:(NSString*)path name:(NSString*)name;
+- (id)initWithPath:(NSString*)path name:(NSString*)name;
 
 - (NSString*)path;
 
 @end
 
-#endif  // _SUPPORT_FRONT_ROW
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark
+
+@interface FullNavDirectoryItem : FullNavFileItem
+
++ (id)fullNavDirectoryItemWithPath:(NSString*)path name:(NSString*)name;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark
+
+@interface FullNavURLItem : FullNavItem
+{
+    NSURL* _url;
+}
+
++ (id)fullNavURLItemWithURL:(NSURL*)url;
+- (id)initWithURL:(NSURL*)url;
+
+- (NSURL*)URL;
+
+@end

@@ -29,8 +29,6 @@
 #import "MMovieView.h"
 #import "PlayPanel.h"
 
-//#import <ApplicationServices/ApplicationServices.h>
-
 @implementation MainWindow
 
 - (void)awakeFromNib
@@ -88,18 +86,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_decoderImageView release];
     [super dealloc];
-}
-
-- (void)windowDidBecomeKey:(NSNotification*)aNotification
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSApp delegate] updatePureArrowKeyEquivalents];
-}
-
-- (void)windowDidResignKey:(NSNotification*)aNotification
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSApp delegate] updatePureArrowKeyEquivalents];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,6 +158,16 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [[NSApp delegate] closeMovie];
     return TRUE;
+}
+
+- (void)performClose:(id)sender
+{
+    if ([NSApp keyWindow] == self) {
+        [super performClose:sender];
+    }
+    else {
+        [[NSApp keyWindow] performClose:sender];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

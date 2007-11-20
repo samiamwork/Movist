@@ -3,10 +3,21 @@ Movist README
 1) Licensing
 
 * Read the file COPYING.
-  Movist is licensed under the GNU General Public License.
+  Movist is licensed under the GNU General Public License Version 3.
 
-* AppleRemote is distributed under the MIT-style license.
-  Read the file AppleRemote/license.txt.
+* AppleRemote is created by Martin Kahr and distributed under the
+  MIT-style license. Read the file AppleRemote/license.txt.
+
+* Ogg ...
 
 
-Yong-Hoe Kim.
+2) Contact
+
+* Official Site:
+  http://cocoable.tistory.com/
+  (Sorry for Korean Only)
+
+* Developers:
+  Yong-Hoe Kim   cocoable@gmail.com
+  Cheol Joo      moosoy@gmail.com
+

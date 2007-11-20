@@ -36,8 +36,8 @@
         _mainWindow = [mainWindow retain];
         _movieView = [[_mainWindow movieView] retain];
         _playPanel = [playPanel retain];
-        _fullWindow = [[FullWindow alloc] initWithFullScreener:self
-                            screen:[_mainWindow screen] playPanel:_playPanel];
+        _fullWindow = [[FullWindow alloc] initWithScreen:[_mainWindow screen]
+                                               playPanel:_playPanel];
 
         _movieViewRect = [_movieView frame];
 
@@ -60,9 +60,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-#if defined(_SUPPORT_FRONT_ROW)
-- (BOOL)isNavigationMode { return (_movieURL == nil); }
-#endif
 - (FullWindow*)fullWindow { return _fullWindow; }
 
 - (void)setEffect:(int)effect
@@ -77,24 +74,36 @@
     [movieURL retain], [_movieURL release], _movieURL = movieURL;
     [_fullWindow setMovieURL:_movieURL];
     [_playPanel setMovieURL:_movieURL];
+
+    if ([self isNavigatable]) {
+        [_fullWindow selectMovie:movieURL];
+    }
 }
+
+#define FADE_EFFECT_DURATION   0.5
 
 - (void)beginFullScreen
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    // hide system UI elements(main-menu, dock) & cursor
+    BOOL forNavigation = (_movieURL != nil);
+
+    // hide system UI elements(main-menu, dock)
     GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
     SetSystemUIMode(kUIModeAllSuppressed, 0);
-    [NSCursor setHiddenUntilMouseMoves:TRUE];
-
-#if defined(_SUPPORT_FRONT_ROW)
-    int effect = ([self isNavigationMode]) ? FS_EFFECT_FADE : _effect;
-#else
-    int effect = _effect;
-#endif
+    if (forNavigation) {
+        [NSCursor hide];    // FIXME
+    }
+    else {
+        [NSCursor setHiddenUntilMouseMoves:TRUE];
+    }
+    
+    float rate; // for FS_EFFECT_FADE
+    int effect = (forNavigation) ? _effect : FS_EFFECT_FADE;
     switch (effect) {
         case FS_EFFECT_FADE :
-            [self fadeOutScreen];
+            rate = [[_movieView movie] rate];
+            [[_movieView movie] setRate:0.0];
+            [[_mainWindow screen] fadeOut:FADE_EFFECT_DURATION];
             break;
         case FS_EFFECT_ANIMATION :
             [_fullWindow setFrame:_restoreRect display:TRUE];
@@ -117,6 +126,10 @@
         case FS_EFFECT_FADE :
             [_fullWindow setFrame:[[_fullWindow screen] frame] display:TRUE];
             [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
+            [_fullWindow flushWindow];
+            [_mainWindow flushWindow];
+            [[_mainWindow screen] fadeIn:FADE_EFFECT_DURATION];
+            [[_movieView movie] setRate:rate];
             break;
         case FS_EFFECT_ANIMATION :
             [self runBeginAnimation];
@@ -125,7 +138,11 @@
             [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
             break;
     }
+
     [_fullWindow setAcceptsMouseMovedEvents:TRUE];
+    if (!forNavigation) {
+        [NSCursor setHiddenUntilMouseMoves:TRUE];
+    }
 
     // update system activity periodically not to activate screen saver
     _updateSystemActivityTimer = [NSTimer scheduledTimerWithTimeInterval:30.0
@@ -135,19 +152,19 @@
 - (void)endFullScreen
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL forNavigation = (_movieURL != nil);
     [_updateSystemActivityTimer invalidate];
 
     [_fullWindow setAcceptsMouseMovedEvents:FALSE];
     [_playPanel orderOut:self];
 
-#if defined(_SUPPORT_FRONT_ROW)
-    int effect = ([self isNavigationMode]) ? FS_EFFECT_FADE : _effect;
-#else
-    int effect = _effect;
-#endif
+    float rate; // for FS_EFFECT_FADE
+    int effect = (forNavigation) ? _effect : FS_EFFECT_FADE;
     switch (effect) {
         case FS_EFFECT_FADE :
-            [self fadeOutScreen];
+            rate = [[_movieView movie] rate];
+            [[_movieView movie] setRate:0.0];
+            [[_mainWindow screen] fadeOut:FADE_EFFECT_DURATION];
             [_fullWindow removeChildWindow:_mainWindow];
             break;
         case FS_EFFECT_ANIMATION :
@@ -157,28 +174,41 @@
             [_fullWindow removeChildWindow:_mainWindow];
             break;
     }
+    [_mainWindow disableScreenUpdatesUntilFlush];
+    [_mainWindow disableFlushWindow];
     [_fullWindow orderOut:self];
 
     // move _movieView to _mainWindow from _fullWindow
-    [_mainWindow disableScreenUpdatesUntilFlush];
-    [_mainWindow disableFlushWindow];
     [_movieView lockDraw];
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [[_mainWindow contentView] addSubview:_movieView];
     [_movieView setFrame:_movieViewRect];
     [_movieView unlockDraw];
-    [_mainWindow enableFlushWindow];
-    [_mainWindow flushWindowIfNeeded];
+
     [_mainWindow makeFirstResponder:_movieView];
     [_mainWindow makeKeyAndOrderFront:nil];
-
-    // restore system UI elements and _mainWindow's shadow
-    SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
-    [NSCursor setHiddenUntilMouseMoves:FALSE];
     [_mainWindow setHasShadow:TRUE];
+    [_mainWindow enableFlushWindow];
+    [_mainWindow flushWindowIfNeeded];
+
+    // restore system UI elements(main-menu, dock) & cursor
+    SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
+    if (forNavigation) {
+        [NSCursor unhide];
+    }
+    else {
+        [NSCursor setHiddenUntilMouseMoves:FALSE];
+    }
 
     [_fullWindow release];
     _fullWindow = nil;
+
+    if (effect == FS_EFFECT_FADE) {
+        [_mainWindow flushWindow];
+        [_movieView display];
+        [[_mainWindow screen] fadeIn:FADE_EFFECT_DURATION];
+        [[_movieView movie] setRate:rate];
+    }
 }
 
 - (void)updateSystemActivity:(NSTimer*)timer
@@ -190,38 +220,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark navigation
 
-#if defined(_SUPPORT_FRONT_ROW)
-- (void)selectUpper
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([self isNavigationMode]) {
-        [_fullWindow selectUpper];
-    }
-}
+- (BOOL)isNavigatable   { return [_fullWindow isNavigatable]; }
+- (BOOL)isNavigating    { return [_fullWindow isNavigating]; }
+- (BOOL)isPreviewing    { return [_fullWindow isPreviewing]; }
 
-- (void)selectLower
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([self isNavigationMode]) {
-        [_fullWindow selectLower];
-    }
-}
+- (void)selectUpper     { [_fullWindow selectUpper]; }
+- (void)selectLower     { [_fullWindow selectLower]; }
+- (void)selectCurrent   { [_fullWindow selectMovie:_movieURL]; }
 
-- (void)openSelectedItem
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([self isNavigationMode]) {
-        [_fullWindow openSelectedItem];
-    }
-}
-
-- (void)closeCurrent
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([self isNavigationMode]) {
-        [_fullWindow closeCurrent];
-    }
-}
-#endif
+- (void)openCurrent     { [_fullWindow openCurrent]; }
+- (BOOL)closeCurrent    { return [_fullWindow closeCurrent]; }
+- (BOOL)canCloseCurrent { return [_fullWindow canCloseCurrent]; }
 
 @end

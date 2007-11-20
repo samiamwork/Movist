@@ -20,19 +20,76 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#if defined(_SUPPORT_FRONT_ROW)
-
 #import "FullNavItems.h"
+#import "MMovie.h"
 
-@implementation NavItem
+@implementation FullNavList
 
-- (id)initWithType:(int)type name:(NSString*)name
+- (id)initWithParentItem:(FullNavItem*)parentItem items:(NSArray*)items
 {
-    TRACE(@"%s type=%d, name=\"%@\"", __PRETTY_FUNCTION__, type, name);
+    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
-        _type = type;
+        _parentItem = [parentItem retain];
+        _items = [items retain];
+        _selectedIndex = (0 < [_items count]) ? 0 : -1;
+        _topIndex = 0;
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_items release];
+    [super dealloc];
+}
+
+- (FullNavItem*)parentItem  { return _parentItem; }
+- (int)count                { return [_items count]; }
+- (int)topIndex             { return _topIndex; }
+- (int)selectedIndex        { return _selectedIndex; }
+
+- (FullNavItem*)itemAtIndex:(int)index { return [_items objectAtIndex:index]; }
+
+- (FullNavItem*)selectedItem
+{
+    return (0 <= _selectedIndex) ? (FullNavItem*)[_items objectAtIndex:_selectedIndex] : nil;
+}
+
+- (void)selectAtIndex:(int)index { _selectedIndex = index; }
+
+- (void)selectUpper
+{
+    if (0 < _selectedIndex) {
+        _selectedIndex--;
+    }
+}
+
+- (void)selectLower
+{
+    if (_selectedIndex < [_items count] - 1) {
+        _selectedIndex++;
+    }
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark
+
+@implementation FullNavItem
+
++ (id)fullNavItemWithName:(NSString*)name
+{
+    FullNavItem* item = [[FullNavItem alloc] initWithName:name];
+    return [item autorelease];
+}
+
+- (id)initWithName:(NSString*)name
+{
+    TRACE(@"%s name=\"%@\"", __PRETTY_FUNCTION__, name);
+    if (self = [super init]) {
         _name = [name retain];
-        _isContainer = (_type == NAV_ITEM_FOLDER);
     }
     return self;
 }
@@ -44,46 +101,31 @@
     [super dealloc];
 }
 
-- (void)drawInRect:(NSRect)rect attributes:(NSDictionary*)attrs
-{
-    TRACE(@"%s name=\"%@\"", __PRETTY_FUNCTION__, _name);
-
-    float CONTAINER_MARK_WIDTH = 60;
-    NSSize size = [_name sizeWithAttributes:attrs];
-    NSRect rc;
-    rc.origin.x    = rect.origin.x;
-    rc.origin.y    = rect.origin.y + (rect.size.height - size.height) / 2;
-    rc.size.width  = rect.size.width - CONTAINER_MARK_WIDTH;
-    rc.size.height = size.height;
-    [_name drawInRect:rc withAttributes:attrs];
-
-    if (_isContainer) {
-        rc.size.width = CONTAINER_MARK_WIDTH;
-        rc.origin.x = NSMaxX(rect) - rc.size.width;
-        [@">" drawInRect:rc withAttributes:attrs];
-    }
-}
-
-- (int)type { return _type; }
 - (NSString*)name { return _name; }
-- (BOOL)isContainer { return _isContainer; }
+- (BOOL)hasSubContents { return FALSE; }
+- (NSArray*)subContents { return nil; }
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark
 
-@implementation NavPathItem
+@implementation FullNavFileItem
 
-- (id)initWithPath:(NSString*)path
++ (id)fullNavFileItemWithPath:(NSString*)path name:(NSString*)name
+{
+    FullNavFileItem* item = [[FullNavFileItem alloc] initWithPath:path name:name];
+    return [item autorelease];
+}
+
+- (id)initWithPath:(NSString*)path name:(NSString*)name
 {
     TRACE(@"%s path=\"%@\"", __PRETTY_FUNCTION__, path);
-    BOOL isDirectory;
-    NSFileManager* fm = [NSFileManager defaultManager];
-    [fm fileExistsAtPath:path isDirectory:&isDirectory];
-    int type = (isDirectory) ? NAV_ITEM_FOLDER : NAV_ITEM_MOVIE;    // FIXME
-    NSString* name = [[fm displayNameAtPath:path] lastPathComponent];
-    if (self = [super initWithType:type name:name]) {
+    if (!name) {
+        NSFileManager* fm = [NSFileManager defaultManager];
+        name = [[fm displayNameAtPath:path] lastPathComponent];
+    }
+    if (self = [super initWithName:name]) {
         _path = [path retain];
     }
     return self;
@@ -93,4 +135,68 @@
 
 @end
 
-#endif  // _SUPPORT_FRONT_ROW
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark
+
+@implementation FullNavDirectoryItem
+
++ (id)fullNavDirectoryItemWithPath:(NSString*)path name:(NSString*)name
+{
+    FullNavDirectoryItem* item = [[FullNavDirectoryItem alloc] initWithPath:path name:name];
+    return [item autorelease];
+}
+
+- (BOOL)hasSubContents { return TRUE; }
+
+- (NSArray*)subContents
+{
+    NSFileManager* fm = [NSFileManager defaultManager];
+    NSArray* contents = [fm directoryContentsAtPath:_path];
+
+    NSMutableArray* items = [[NSMutableArray alloc] initWithCapacity:[contents count]];
+
+    BOOL isDirectory;
+    NSString* file, *path;
+    NSArray* movieTypes = [MMovie movieTypes];
+    NSEnumerator* enumerator = [contents objectEnumerator];
+    while (file = [enumerator nextObject]) {
+        path = [_path stringByAppendingPathComponent:file];
+        if ([fm isVisibleFile:path isDirectory:&isDirectory]) {
+            if (isDirectory) {
+                [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:nil]];
+            }
+            else if ([path hasAnyExtension:movieTypes]) {
+                [items addObject:[FullNavFileItem fullNavFileItemWithPath:path name:nil]];
+            }
+        }
+    }
+    return [items autorelease];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark
+
+@implementation FullNavURLItem
+
++ (id)fullNavURLItemWithURL:(NSURL*)url
+{
+    FullNavURLItem* item = [[FullNavURLItem alloc] initWithURL:url];
+    return [item autorelease];
+}
+
+- (id)initWithURL:(NSURL*)url
+{
+    TRACE(@"%s url=\"%@\"", __PRETTY_FUNCTION__, [url absoluteString]);
+    NSString* name = [[url absoluteString] lastPathComponent];
+    if (self = [super initWithName:name]) {
+        _url = [url retain];
+    }
+    return self;
+}
+
+- (NSURL*)URL { return _url; }
+
+@end
+

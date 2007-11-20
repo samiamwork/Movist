@@ -29,6 +29,7 @@
 #import "Playlist.h"
 
 #import "MMovieView.h"
+#import "FullScreener.h"
 #import "CustomControls.h"  // for SeekSlider
 
 @implementation AppController (Open)
@@ -170,7 +171,13 @@
     MMovie* movie = [self movieFromURL:movieURL withMovieClass:movieClass error:&error];
     if (!movie || ![movie setOpenGLContext:[_movieView openGLContext]
                                pixelFormat:[_movieView pixelFormat] error:&error]) {
-        runAlertPanelForOpenError(error, movieURL);
+        if ([self isFullScreen]) {
+            NSString* s = [movieURL isFileURL] ? [movieURL path] : [movieURL absoluteString];
+            [_movieView setError:error info:[s lastPathComponent]];
+        }
+        else {
+            runAlertPanelForOpenError(error, movieURL);
+        }
         return FALSE;
     }
     _movie = [movie retain];
@@ -213,7 +220,6 @@
 
     // update movie & UI
     [self autoenableAudioTracks];
-    //[_movie setVolume:[movie preferredVolume]];
     [_movie setVolume:normalizedVolume([_defaults floatForKey:MVolumeKey])];
     [_movie setMuted:([_muteButton state] == NSOnState)];
     [_movieView hideLogo];
@@ -259,56 +265,19 @@
 #pragma mark -
 #pragma mark public interface
 
-- (BOOL)openFile:(NSString*)filename updatePlaylist:(BOOL)updatePlaylist
+- (BOOL)openFile:(NSString*)filename
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    return [self openFiles:[NSArray arrayWithObject:filename]
-            updatePlaylist:updatePlaylist];
+    return [self openFiles:[NSArray arrayWithObject:filename]];
 }
 
-- (BOOL)openFiles:(NSArray*)filenames updatePlaylist:(BOOL)updatePlaylist
+- (BOOL)openFiles:(NSArray*)filenames
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![_mainWindow isVisible]) {
-        [_mainWindow makeKeyAndOrderFront:self];
-    }
-
-    if ([filenames count] == 1 &&
-        [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle subtitleTypes]]) {
-        if (_movie) {   // reopen subtitle
-            NSURL* subtitleURL = [NSURL fileURLWithPath:[filenames objectAtIndex:0]];
-            [[_playlist currentItem] setSubtitleURL:subtitleURL];
-            [_playlistController updateUI];
-            [self reopenSubtitle];
-        }
-        return TRUE;
-    }
-    else if (updatePlaylist) {
-        [_playlist removeAllItems];
-        if ([filenames count] == 1) {
-            [_playlist addFile:[filenames objectAtIndex:0] addSeries:TRUE];
-        }
-        else {
-            [_playlist addFiles:filenames];
-        }
-        [_playlistController updateUI];
-        return (0 < [_playlist count]) ? [self openCurrentPlaylistItem] : FALSE;
-    }
-    else {
-        // use temp. playlist for auto-detecting subtitle.
-        Playlist* tempPlaylist = [[[Playlist alloc] init] autorelease];
-        [tempPlaylist addFile:[filenames objectAtIndex:0] addSeries:FALSE];
-        if (1 == [tempPlaylist count]) {
-            PlaylistItem* item = [tempPlaylist currentItem];
-            return [self openMovie:[item movieURL] movieClass:nil
-                          subtitle:[item subtitleURL] subtitleEncoding:kCFStringEncodingInvalidId];
-        }
-        // don't open multiple files without updating playlist
-        return FALSE;
-    }
+    return [self openFiles:filenames addSeries:TRUE];
 }
 
-- (BOOL)openURL:(NSURL*)url updatePlaylist:(BOOL)updatePlaylist
+- (BOOL)openURL:(NSURL*)url
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     NSString* s = @"\"Open URL...\" is not implemented yet.";
@@ -324,20 +293,50 @@
         }
         return TRUE;
     }
-    else if (updatePlaylist) {
+    else {
         [_playlist removeAllItems];
         [_playlist addURL:url];
         [_playlistController updateUI];
         return (0 < [_playlist count]) ? [self openCurrentPlaylistItem] : FALSE;
     }
-    else {
-        Playlist* tempPlaylist = [[[Playlist alloc] init] autorelease];
-        [tempPlaylist addURL:url];
-        PlaylistItem* item = [tempPlaylist currentItem];
-        return [self openMovie:[item movieURL] movieClass:nil
-                      subtitle:[item subtitleURL] subtitleEncoding:kCFStringEncodingInvalidId];
-    }
      */
+}
+
+- (BOOL)openFile:(NSString*)filename addSeries:(BOOL)addSeries
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    return [self openFiles:[NSArray arrayWithObject:filename]
+                 addSeries:addSeries];
+}
+
+- (BOOL)openFiles:(NSArray*)filenames addSeries:(BOOL)addSeries
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (![_mainWindow isVisible]) {
+        [_mainWindow makeKeyAndOrderFront:self];
+    }
+    
+    if ([filenames count] == 1 &&
+        [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle subtitleTypes]]) {
+        if (_movie) {   // reopen subtitle
+            NSURL* subtitleURL = [NSURL fileURLWithPath:[filenames objectAtIndex:0]];
+            [[_playlist currentItem] setSubtitleURL:subtitleURL];
+            [_playlistController updateUI];
+            [self reopenSubtitle];
+        }
+        return TRUE;
+    }
+    else {
+        [_playlist removeAllItems];
+        if ([filenames count] == 1) {
+            [_playlist addFile:[filenames objectAtIndex:0] addSeries:addSeries];
+        }
+        else {
+            [_playlist addFiles:filenames];
+        }
+        [_playlistController updateUI];
+        return (0 < [_playlist count]) ? [self openCurrentPlaylistItem] : FALSE;
+    }
 }
 
 - (BOOL)openSubtitle:(NSURL*)subtitleURL encoding:(CFStringEncoding)encoding
@@ -413,6 +412,7 @@
         
         [_movieView setMovie:nil];
         [_movieView setSubtitles:nil];
+        [_movieView setMessage:@""];
         [_movie cleanup], _movie = nil;
 
         [_subtitles release], _subtitles = nil;
@@ -427,22 +427,18 @@
 - (IBAction)openFileAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self clearPureArrowKeyEquivalents];
-
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     [panel setCanChooseDirectories:TRUE];
     if (NSOKButton == [panel runModalForTypes:[MMovie movieTypes]]) {
-        [self openFile:[panel filename] updatePlaylist:TRUE];
+        [self openFile:[panel filename]];
     }
-
-    [self setPureArrowKeyEquivalents];
 }
 
 - (IBAction)openURLAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     // FIXME : not implemented yet
-    [self openURL:nil updatePlaylist:TRUE];
+    [self openURL:nil];
 }
 
 - (IBAction)openSubtitleFileAction:(id)sender

@@ -131,7 +131,7 @@
         case DRAG_ACTION_PLAY_FILES :
         case DRAG_ACTION_REPLACE_SUBTITLE_FILE : {
             NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
-            [[NSApp delegate] performSelector:@selector(openFiles:updatePlaylist:)
+            [[NSApp delegate] performSelector:@selector(openFiles:)
                                    withObject:files afterDelay:0.01];
             return TRUE;
         }
@@ -147,7 +147,7 @@
         }
         case DRAG_ACTION_REPLACE_SUBTITLE_URL : {
             NSURL* subtitleURL = [NSURL URLFromPasteboard:pboard];
-            [[NSApp delegate] performSelector:@selector(openURL:updatePlaylist:)
+            [[NSApp delegate] performSelector:@selector(openURL:)
                                    withObject:subtitleURL afterDelay:0.01];
             return TRUE;
         }

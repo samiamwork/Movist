@@ -35,9 +35,9 @@
 
 @class MMovieView;
 @class MainWindow;
+@class ControlPanel;
 @class FullScreener;
 @class PlayPanel;
-@class ControlPanel;
 
 @class TimeTextField;
 @class MainVolumeSlider;
@@ -54,7 +54,27 @@
     NSUserDefaults* _defaults;
     BOOL _quitWhenWindowClose;
 
-    // controls
+    // movie
+    IBOutlet NSMenu* _fullScreenFillMenu;
+    IBOutlet NSMenu* _aspectRatioMenu;
+    IBOutlet NSMenu* _audioTrackMenu;
+    IBOutlet NSTableView* _propertiesView;
+    NSMutableIndexSet* _audioTrackIndexSet;
+    MMovie* _movie;
+    Playlist* _playlist;
+    float _playRate;
+    float _seekInterval[3];
+
+    // subtitle
+    IBOutlet NSMenu* _subtitleEncodingMenu;
+    IBOutlet NSMenu* _subtitleLanguageMenu;
+    IBOutlet NSMenuItem* _subtitleVisibleMenuItem;
+    IBOutlet NSMenuItem* _subtitleDisplayOnLetterBoxMenuItem;
+    IBOutlet NSButton* _subtitleDisplayOnLetterBoxButton;
+    NSMutableSet* _subtitleNameSet;
+    NSArray* _subtitles;
+
+    // main-menu
     IBOutlet NSMenuItem* _playMenuItem;
     IBOutlet NSMenuItem* _seekBackward1MenuItem;
     IBOutlet NSMenuItem* _seekBackward2MenuItem;
@@ -65,36 +85,12 @@
     IBOutlet NSMenuItem* _repeatOffMenuItem;
     IBOutlet NSMenuItem* _repeatAllMenuItem;
     IBOutlet NSMenuItem* _repeatOneMenuItem;
-    IBOutlet NSMenuItem* _volumeUpMenuItem;
-    IBOutlet NSMenuItem* _volumeDownMenuItem;
     IBOutlet NSMenuItem* _muteMenuItem;
-    IBOutlet NSButton* _muteButton;
-    MMovie* _movie;
-    Playlist* _playlist;
-    float _playRate;
-    float _seekInterval[3];
-
-    // movie
-    IBOutlet NSMenu* _fullScreenFillMenu;
-    IBOutlet NSMenu* _aspectRatioMenu;
-    IBOutlet NSMenu* _audioTrackMenu;
-    IBOutlet NSTableView* _propertiesView;
-    NSMutableIndexSet* _audioTrackIndexSet;
-    NSMutableSet* _subtitleNameSet;
-    FullScreener* _fullScreener;
-    NSLock* _fullScreenLock;
-
-    // subtitle
-    IBOutlet NSMenu* _subtitleEncodingMenu;
-    IBOutlet NSMenu* _subtitleLanguageMenu;
-    IBOutlet NSMenuItem* _subtitleVisibleMenuItem;
-    IBOutlet NSMenuItem* _subtitleDisplayOnLetterBoxMenuItem;
-    IBOutlet NSButton* _subtitleDisplayOnLetterBoxButton;
-    NSArray* _subtitles;
 
     // main window
     IBOutlet MainWindow* _mainWindow;
     IBOutlet MMovieView* _movieView;
+    IBOutlet NSButton* _muteButton;
     IBOutlet MainVolumeSlider* _volumeSlider;
     IBOutlet MainSeekSlider* _seekSlider;
     IBOutlet NSButton* _playButton;
@@ -102,6 +98,15 @@
     IBOutlet TimeTextField* _rTimeTextField;
     IBOutlet NSButton* _playlistButton;
     float _prevMovieTime;
+
+    // control panel
+    IBOutlet ControlPanel* _controlPanel;
+    IBOutlet NSTextField* _repeatBeginningTextField;
+    IBOutlet NSTextField* _repeatEndTextField;
+
+    // full-screen & navigation
+    NSLock* _fullScreenLock;
+    FullScreener* _fullScreener;
 
     // play panel
     IBOutlet PlayPanel* _playPanel;
@@ -112,11 +117,6 @@
     IBOutlet TimeTextField* _panelLTimeTextField;
     IBOutlet TimeTextField* _panelRTimeTextField;
     IBOutlet NSButton* _panelPlaylistButton;
-
-    // control panel
-    IBOutlet ControlPanel* _controlPanel;
-    IBOutlet NSTextField* _repeatBeginningTextField;
-    IBOutlet NSTextField* _repeatEndTextField;
 }
 
 - (MMovie*)movie;
@@ -124,9 +124,6 @@
 - (NSURL*)subtitleURL;
 
 - (void)updateUI;
-- (void)clearPureArrowKeyEquivalents;
-- (void)setPureArrowKeyEquivalents;
-- (void)updatePureArrowKeyEquivalents;
 - (void)setQuitWhenWindowClose:(BOOL)quitWhenClose;
 
 - (IBAction)controlPanelAction:(id)sender;
@@ -138,9 +135,11 @@
 
 @interface AppController (Open)
 
-- (BOOL)openFile:(NSString*)filename updatePlaylist:(BOOL)updatePlaylist;
-- (BOOL)openFiles:(NSArray*)filenames updatePlaylist:(BOOL)updatePlaylist;
-- (BOOL)openURL:(NSURL*)url updatePlaylist:(BOOL)updatePlaylist;
+- (BOOL)openFile:(NSString*)filename;
+- (BOOL)openFiles:(NSArray*)filenames;
+- (BOOL)openURL:(NSURL*)url;
+- (BOOL)openFile:(NSString*)filename addSeries:(BOOL)addSeries;
+- (BOOL)openFiles:(NSArray*)filenames addSeries:(BOOL)addSeries;
 - (BOOL)openMovie:(NSURL*)movieURL movieClass:(Class)movieClass
          subtitle:(NSURL*)subtitleURL subtitleEncoding:(CFStringEncoding)subtitleEncoding;
 - (BOOL)openSubtitle:(NSURL*)subtitleURL encoding:(CFStringEncoding)encoding;
@@ -221,6 +220,8 @@
 - (BOOL)isFullScreen;
 - (void)beginFullScreen;
 - (void)endFullScreen;
+- (void)beginFullNavigation;
+- (void)endFullNavigation;
 - (void)setFullScreenFill:(int)fill forWideMovie:(BOOL)forWideMovie;
 - (void)setFullScreenFill:(int)fill;
 - (void)setFullScreenUnderScan:(float)underScan;
@@ -290,17 +291,17 @@
 - (void)startRemoteControl;
 - (void)stopRemoteControl;
 
-- (void)appleRemotePlus:(BOOL)pressed;
-- (void)appleRemotePlusHold;
-- (void)appleRemoteMinus:(BOOL)pressed;
-- (void)appleRemoteMinusHold;
-- (void)appleRemoteLeft:(BOOL)pressed;
-- (void)appleRemoteLeftHold;
-- (void)appleRemoteRight:(BOOL)pressed;
-- (void)appleRemoteRightHold;
-- (void)appleRemotePlay:(BOOL)pressed;
-- (void)appleRemotePlayHold;
-- (void)appleRemoteMenu:(BOOL)pressed;
-- (void)appleRemoteMenuHold;
+- (IBAction)appleRemotePlusAction:(id)sender;
+- (IBAction)appleRemotePlusHoldAction:(id)sender;
+- (IBAction)appleRemoteMinusAction:(id)sender;
+- (IBAction)appleRemoteMinusHoldAction:(id)sender;
+- (IBAction)appleRemoteLeftAction:(id)sender;
+- (IBAction)appleRemoteLeftHoldAction:(id)sender;
+- (IBAction)appleRemoteRightAction:(id)sender;
+- (IBAction)appleRemoteRightHoldAction:(id)sender;
+- (IBAction)appleRemotePlayAction:(id)sender;
+- (IBAction)appleRemotePlayHoldAction:(id)sender;
+- (IBAction)appleRemoteMenuAction:(id)sender;
+- (IBAction)appleRemoteMenuHoldAction:(id)sender;
 
 @end

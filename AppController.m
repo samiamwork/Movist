@@ -126,13 +126,13 @@
 - (BOOL)application:(NSApplication*)theApplication openFile:(NSString*)filename
 {
     TRACE(@"%s:\"%@\"", __PRETTY_FUNCTION__, filename);
-    return [self openFile:filename updatePlaylist:TRUE];
+    return [self openFile:filename];
 }
 
 - (void)application:(NSApplication*)theApplication openFiles:(NSArray*)filenames
 {
     TRACE(@"%s:{%@}", __PRETTY_FUNCTION__, filenames);
-    if ([self openFiles:filenames updatePlaylist:TRUE]) {
+    if ([self openFiles:filenames]) {
         [NSApp replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
     }
     else {
@@ -211,47 +211,6 @@
     [_playlistController updateUI];
 }
 
-- (void)clearPureArrowKeyEquivalents
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_seekBackward1MenuItem setKeyEquivalent:@""];
-    [_seekForward1MenuItem setKeyEquivalent:@""];
-    [_volumeUpMenuItem setKeyEquivalent:@""];
-    [_volumeDownMenuItem setKeyEquivalent:@""];
-}
-
-- (void)setPureArrowKeyEquivalents
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_seekBackward1MenuItem setKeyEquivalent:[NSString stringWithUTF8String:"⇠"]];
-    [_seekForward1MenuItem setKeyEquivalent:[NSString stringWithUTF8String:"⇢"]];
-    [_volumeUpMenuItem setKeyEquivalent:[NSString stringWithUTF8String:"⇡"]];
-    [_volumeDownMenuItem setKeyEquivalent:[NSString stringWithUTF8String:"⇣"]];
-
-    // no key equivalent mask
-    [_seekBackward1MenuItem setKeyEquivalentModifierMask:0];
-    [_seekForward1MenuItem setKeyEquivalentModifierMask:0];
-    [_volumeUpMenuItem setKeyEquivalentModifierMask:0];
-    [_volumeDownMenuItem setKeyEquivalentModifierMask:0];
-}
-
-- (void)updatePureArrowKeyEquivalents
-{
-    //TRACE(@"key-win:\"%@\", movie-win:\"%@\" (%@)",
-    //      [NSApp keyWindow], [_movieView window],
-    //      [[_movieView window] isKeyWindow] ? @"is key-win" : @"is not key-win");
-    NSWindow* keyWindow = [NSApp keyWindow];
-    if (keyWindow) {    // app is currently activated
-        if ([keyWindow isEqualTo:_mainWindow] ||
-            [keyWindow isEqualTo:[_fullScreener fullWindow]]) {
-            [self setPureArrowKeyEquivalents];
-        }
-        else {
-            [self clearPureArrowKeyEquivalents];
-        }
-    }
-}
-
 - (void)setQuitWhenWindowClose:(BOOL)quitWhenWindowClose
 {
     TRACE(@"%s %d", __PRETTY_FUNCTION__, quitWhenWindowClose);
@@ -293,6 +252,9 @@
 - (BOOL)validateMenuItem:(NSMenuItem*)menuItem
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [menuItem title]);
+    if ([[NSApp keyWindow] firstResponder] != _movieView) {
+        return FALSE;
+    }
     if (![self isFullScreen] && _playlistController &&
         [[_playlistController window] isVisible]) {
         return FALSE;

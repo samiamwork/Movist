@@ -86,9 +86,9 @@
     if (![self isVisible]) {
         [self setAlphaValue:0.0];
         [self orderFront:self];
-        [self fadeAnimationWithEffect:NSViewAnimationFadeInEffect
-                         blockingMode:NSAnimationBlocking
-                             duration:PLAY_PANEL_FADE_DURATION];
+        [self fadeWithEffect:NSViewAnimationFadeInEffect
+                blockingMode:NSAnimationBlocking
+                    duration:PLAY_PANEL_FADE_DURATION];
     }
 }
 
@@ -108,9 +108,9 @@
     _hideTimer = nil;
 
     if ([_movieView movie]) {
-        [self fadeAnimationWithEffect:NSViewAnimationFadeOutEffect
-                         blockingMode:NSAnimationBlocking
-                             duration:PLAY_PANEL_FADE_DURATION];
+        [self fadeWithEffect:NSViewAnimationFadeOutEffect
+                blockingMode:NSAnimationBlocking
+                    duration:PLAY_PANEL_FADE_DURATION];
         [self orderOut:self];
         [NSCursor setHiddenUntilMouseMoves:TRUE];
     }
@@ -140,6 +140,9 @@
 - (void)orderFront:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([self screen] != [[_movieView window] screen]) {
+        // FIXME: move self to [[_movieView window] screen].
+    }
     [super orderFront:sender];
     [[_movieView window] addChildWindow:self ordered:NSWindowAbove];
 }

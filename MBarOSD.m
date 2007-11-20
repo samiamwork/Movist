@@ -89,8 +89,7 @@
     NSRect rc = [self drawTrack:texSize infoSize:BAR_ICON_SIZE];
 
     // volume value
-    rc.origin.x += 7, rc.size.width  -= 14;
-    rc.origin.y += 7, rc.size.height -= 14;
+    rc = NSInsetRect(rc, 7, 7);
     float x = rc.origin.x + rc.size.width * _value / (_maxValue - _minValue);
     rc.size.width = x - rc.origin.x;
     [[[[NSShadow alloc] init] autorelease] set];    // clear shadow
@@ -113,8 +112,7 @@
     NSRect rc = [self drawTrack:texSize infoSize:BAR_TIME_SIZE];
 
     // time value
-    rc.origin.x += 7, rc.size.width  -= 14;
-    rc.origin.y += 7, rc.size.height -= 14;
+    rc = NSInsetRect(rc, 7, 7);
     float cx = rc.origin.x + rc.size.width * _value / (_maxValue - _minValue);
     float cy = rc.origin.y + rc.size.height / 2;
     rc.size.width  = rc.size.height;

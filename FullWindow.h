@@ -22,33 +22,37 @@
 
 #import "Movist.h"
 
-@class FullScreener;
-#if defined(_SUPPORT_FRONT_ROW)
-@class FullNavView;
-#endif
 @class MMovieView;
 @class PlayPanel;
+@class FullNavView;
 
 @interface FullWindow : NSWindow
 {
-    FullScreener* _fullScreener;
-#if defined(_SUPPORT_FRONT_ROW)
-    FullNavView* _navView;
-#endif
     MMovieView* _movieView;
     PlayPanel* _playPanel;
+    FullNavView* _navView;
 }
 
-- (id)initWithFullScreener:(FullScreener*)fullScreener
-                    screen:(NSScreen*)screen playPanel:(PlayPanel*)playPanel;
+- (id)initWithScreen:(NSScreen*)screen playPanel:(PlayPanel*)playPanel;
 
 - (void)setMovieView:(MMovieView*)movieView;
 
-#if defined(_SUPPORT_FRONT_ROW)
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@interface FullWindow (Navigation)
+
+- (BOOL)isNavigatable;
+- (BOOL)isNavigating;
+- (BOOL)isPreviewing;
+
 - (void)selectUpper;
 - (void)selectLower;
-- (void)openSelectedItem;
-- (void)closeCurrent;
-#endif
+- (void)selectMovie:(NSURL*)movieURL;
+
+- (void)openCurrent;
+- (BOOL)closeCurrent;
+- (BOOL)canCloseCurrent;
 
 @end

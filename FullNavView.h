@@ -20,31 +20,40 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#if defined(_SUPPORT_FRONT_ROW)
-
 #import "Movist.h"
-#import "FullNavItems.h"
-#import "FullNavColumns.h"
 
 @class MMovieView;
+@class FullNavTitleView;
+@class FullNavListView;
+@class FullNavItem;
 
 @interface FullNavView : NSView
 {
-    MMovieView* _movieView;
-    NSMutableArray* _columns;   // NavColumn
-    float _slideOffset;
+    NSMutableArray* _listArray;
 
-    CGShadingRef _shading;  // background
+    MMovieView* _movieView;
+    NSTimer* _previewTimer;
+
+    FullNavTitleView* _titleView;
+    FullNavListView* _listView;
 }
 
-- (id)initWithFrame:(NSRect)frameRect movieView:(MMovieView*)movieView;
+- (id)initWithFrame:(NSRect)rect movieView:(MMovieView*)movieView;
 
-- (NavItem*)selectedItem;
-- (void)openSelectedItem;
-- (void)closeCurrent;
+- (void)initListRoot;
+- (void)addNavListWithParentItem:(FullNavItem*)parentItem items:(NSArray*)items;
+- (void)removeLastNavList;
+
 - (void)selectUpper;
 - (void)selectLower;
+- (void)selectMovie:(NSURL*)movieURL;
+
+- (void)openCurrent;
+- (BOOL)closeCurrent;
+- (BOOL)canCloseCurrent;
+
+- (void)showPreview;
+- (void)hidePreview;
+- (NSRect)previewRect;
 
 @end
-
-#endif  // _SUPPORT_FRONT_ROW

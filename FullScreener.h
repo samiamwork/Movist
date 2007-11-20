@@ -52,9 +52,6 @@
 
 - (id)initWithMainWindow:(MainWindow*)mainWindow playPanel:(PlayPanel*)playPanel;
 
-#if defined(_SUPPORT_FRONT_ROW)
-- (BOOL)isNavigationMode;
-#endif
 - (FullWindow*)fullWindow;
 - (void)setEffect:(int)effect;
 - (void)setMovieURL:(NSURL*)movieURL;
@@ -62,21 +59,17 @@
 - (void)beginFullScreen;
 - (void)endFullScreen;
 
-#if defined(_SUPPORT_FRONT_ROW)
+- (BOOL)isNavigatable;
+- (BOOL)isNavigating;
+- (BOOL)isPreviewing;
+
 - (void)selectUpper;
 - (void)selectLower;
-- (void)openSelectedItem;
-- (void)closeCurrent;
-#endif
+- (void)selectCurrent;
 
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface FullScreener (Fade)
-
-- (void)fadeOutScreen;
+- (void)openCurrent;
+- (BOOL)closeCurrent;
+- (BOOL)canCloseCurrent;
 
 @end
 

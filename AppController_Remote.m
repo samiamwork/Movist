@@ -22,6 +22,7 @@
 
 #import "AppController.h"
 #import "UserDefaults.h"
+#import "FullScreener.h"
 
 #import "MultiClickRemoteBehavior.h"
 #import "RemoteControlContainer.h"
@@ -73,22 +74,25 @@
 - (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier
          pressedDown:(BOOL)pressed clickCount:(unsigned int)clickCount
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    TRACE(@"%s pressed=%d, clickCount=%d", __PRETTY_FUNCTION__, pressed, clickCount);
+    if (!pressed) {
+        return;
+    }
     switch (buttonIdentifier) {
-        case kRemoteButtonPlus          : [self appleRemotePlus:pressed];   break;
-        case kRemoteButtonPlus_Hold     : [self appleRemotePlusHold];       break;
-        case kRemoteButtonMinus         : [self appleRemoteMinus:pressed];   break;
-        case kRemoteButtonMinus_Hold    : [self appleRemoteMinusHold];      break;
-        case kRemoteButtonLeft          : [self appleRemoteLeft:pressed];   break;
-        case kRemoteButtonLeft_Hold     : [self appleRemoteLeftHold];       break;
-        case kRemoteButtonRight         : [self appleRemoteRight:pressed];  break;
-        case kRemoteButtonRight_Hold    : [self appleRemoteRightHold];      break;
-        case kRemoteButtonPlay          : [self appleRemotePlay:pressed];   break;
-        case kRemoteButtonPlay_Hold     : [self appleRemotePlayHold];       break;
-        case kRemoteButtonMenu          : [self appleRemoteMenu:pressed];   break;			
-        case kRemoteButtonMenu_Hold     : [self appleRemoteMenuHold];       break;
-        case kRemoteControl_Switched    : TRACE(@"AppleRemote Switched");   break;
-        default : TRACE(@"Unmapped event for button %d", buttonIdentifier); break;
+        case kRemoteButtonPlus          : [self appleRemotePlusAction:self];        break;
+        case kRemoteButtonPlus_Hold     : [self appleRemotePlusHoldAction:self];    break;
+        case kRemoteButtonMinus         : [self appleRemoteMinusAction:self];       break;
+        case kRemoteButtonMinus_Hold    : [self appleRemoteMinusHoldAction:self];   break;
+        case kRemoteButtonLeft          : [self appleRemoteLeftAction:self];        break;
+        case kRemoteButtonLeft_Hold     : [self appleRemoteLeftHoldAction:self];    break;
+        case kRemoteButtonRight         : [self appleRemoteRightAction:self];       break;
+        case kRemoteButtonRight_Hold    : [self appleRemoteRightHoldAction:self];   break;
+        case kRemoteButtonPlay          : [self appleRemotePlayAction:self];        break;
+        case kRemoteButtonPlay_Hold     : [self appleRemotePlayHoldAction:self];    break;
+        case kRemoteButtonMenu          : [self appleRemoteMenuAction:self];        break;			
+        case kRemoteButtonMenu_Hold     : [self appleRemoteMenuHoldAction:self];    break;
+        case kRemoteControl_Switched    : TRACE(@"AppleRemote Switched");           break;
+        default : TRACE(@"Unmapped event for button %d", buttonIdentifier);         break;
     }
 }
 
@@ -99,179 +103,155 @@
     [self remoteButton:buttonIdentifier pressedDown:pressedDown clickCount:1];
 }
 
-- (void)appleRemotePlus:(BOOL)pressed
+- (IBAction)appleRemotePlusAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (pressed) {
-#if defined(_SUPPORT_FRONT_ROW)
-        if ([self isFullScreen]) {
-            if ([_fullScreener isNavigationMode]) {
-                [_fullScreener selectUpper];
-            }
-            else {
-                [self volumeUp];
-                [_movieView showVolumeBar];
-            }
-        }
-        else {
-            [self volumeUp];
-        }
-#else
+    if (![self isFullScreen]) {                 // window mode
         [self volumeUp];
-#endif
+    }
+    else if (![_fullScreener isNavigating]) {   // full play mode
+        //[_movieView showVolumeBar];
+        [self volumeUp];
+    }
+    else {                                      // full navigation mode
+        [_fullScreener selectUpper];
     }
 }
 
-- (void)appleRemotePlusHold
+- (IBAction)appleRemotePlusHoldAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self appleRemotePlus:TRUE];
+    [self appleRemotePlusAction:sender];
 }
 
-- (void)appleRemoteMinus:(BOOL)pressed
+- (IBAction)appleRemoteMinusAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (pressed) {
-#if defined(_SUPPORT_FRONT_ROW)
-        if ([self isFullScreen]) {
-            if ([_fullScreener isNavigationMode]) {
-                [_fullScreener selectLower];
-            }
-            else {
-                [self volumeDown];
-                [_movieView showVolumeBar];
-            }
-        }
-        else {
-            [self volumeDown];
-        }
-#else
+    if (![self isFullScreen]) {                 // window mode
         [self volumeDown];
-#endif
+    }
+    else if (![_fullScreener isNavigating]) {   // full play mode
+        //[_movieView showVolumeBar];
+        [self volumeDown];
+    }
+    else {                                      // full navigation mode
+        [_fullScreener selectLower];
     }
 }
 
-- (void)appleRemoteMinusHold
+- (IBAction)appleRemoteMinusHoldAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self appleRemoteMinus:TRUE];
+    [self appleRemoteMinusAction:sender];
 }
 
 - (void)appleRemoteSeekBackward:(int)seekIndex
 {
-#if defined(_SUPPORT_FRONT_ROW)
-    if ([self isFullScreen]) {
-        if ([_fullScreener isNavigationMode]) {
-            // do nothing
-        }
-        else {
-            [self seekBackward:seekIndex];
-            [_movieView showSeekBar];
-        }
-    }
-    else {
+    if (![self isFullScreen]) {                 // window mode
         [self seekBackward:seekIndex];
     }
-#else
-    [self seekBackward:seekIndex];
-#endif
+    else if (![_fullScreener isNavigating]) {   // full play mode
+        //[_movieView showSeekBar];
+        [self seekBackward:seekIndex];
+    }
+    else {                                      // full navigation mode
+        // do nothing
+    }
 }
 
 - (void)appleRemoteSeekForward:(int)seekIndex
 {
-#if defined(_SUPPORT_FRONT_ROW)
-    if ([self isFullScreen]) {
-        if ([_fullScreener isNavigationMode]) {
-            // do nothing
-        }
-        else {
-            [self seekForward:seekIndex];
-            [_movieView showSeekBar];
-        }
-    }
-    else {
+    if (![self isFullScreen]) {                 // window mode
         [self seekForward:seekIndex];
     }
-#else
-    [self seekForward:seekIndex];
-#endif
-}
-
-- (void)appleRemoteLeft:(BOOL)pressed
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (pressed) {
-        [self appleRemoteSeekBackward:0];
+    else if (![_fullScreener isNavigating]) {   // full play mode
+        //[_movieView showSeekBar];
+        [self seekForward:seekIndex];
+    }
+    else {                                      // full navigation mode
+        // do nothing
     }
 }
 
-- (void)appleRemoteLeftHold
+- (IBAction)appleRemoteLeftAction:(id)sender
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self appleRemoteSeekBackward:0];
+}
+
+- (IBAction)appleRemoteLeftHoldAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [self appleRemoteSeekBackward:1];
 }
 
-- (void)appleRemoteRight:(BOOL)pressed
+- (IBAction)appleRemoteRightAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (pressed) {
-        [self appleRemoteSeekForward:0];
-    }
+    [self appleRemoteSeekForward:0];
 }
 
-- (void)appleRemoteRightHold
+- (IBAction)appleRemoteRightHoldAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [self appleRemoteSeekForward:1];
 }
 
-- (void)appleRemotePlay:(BOOL)pressed
+- (IBAction)appleRemotePlayAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (pressed) {
-#if defined(_SUPPORT_FRONT_ROW)
-        if ([self isFullScreen]) {
-            if ([_fullScreener isNavigationMode]) {
-                [_fullScreener openSelectedItem];
+    if (![self isFullScreen]) {                 // window mode
+        if (!_movie) {
+            // go to folder navigation directly
+            [self beginFullNavigation];
+        }
+        else {
+            if ([_movie rate] == 0.0) {
+                [self beginFullScreen]; // auto full-screen
+                [self play];
             }
             else {
-                [self playAction:self];
+                [self pause];
             }
         }
-        else {
-            [self playAction:self];
-        }
-#else
+    }
+    else if (![_fullScreener isNavigating]) {   // full play mode
         [self playAction:self];
-#endif
+    }
+    else {                                      // full navigation mode
+        [_fullScreener openCurrent];
     }
 }
 
-- (void)appleRemotePlayHold
+- (IBAction)appleRemotePlayHoldAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
 }
 
-- (void)appleRemoteMenu:(BOOL)pressed
+- (IBAction)appleRemoteMenuAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (pressed) {
-#if defined(_SUPPORT_FRONT_ROW)
-        if ([self isFullScreen]) {
-            [_fullScreener closeCurrent];
+    [self fullScreenAction:sender];
+}
+
+- (IBAction)appleRemoteMenuHoldAction:(id)sender
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (![self isFullScreen]) {                 // window mode
+        // do nothing
+    }
+    else if (![_fullScreener isNavigating]) {   // full play mode
+        // escape to alternative mode
+        if ([_fullScreener isNavigatable]) {
+            [self endFullScreen];
         }
         else {
-            [self fullScreenAction:self];
+            [self beginFullNavigation];
         }
-#else
-        [self fullScreenAction:self];
-#endif
     }
-}
-
-- (void)appleRemoteMenuHold
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    else {                                      // full navigation mode
+        // do nothing
+    }
 }
 
 @end

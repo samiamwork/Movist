@@ -27,6 +27,7 @@
 
 #import "MMovieView.h"
 #import "CustomControls.h"  // for SeekSlider
+#import "FullScreener.h"
 
 @implementation AppController (Playback)
 
@@ -175,10 +176,20 @@
 
         if (![self openNextPlaylistItem]) {
             if ([self isFullScreen]) {
-                [self endFullScreen];
+                if ([_fullScreener isNavigating]) {
+                    // preview is over => do nothing
+                }
+                else if ([_fullScreener isNavigatable]) {
+                    [_fullScreener closeCurrent];
+                }
+                else {
+                    [self endFullScreen];
+                }
             }
-            [_movieView setMessage:@""];
-            [_movieView showLogo];
+            else {
+                [_movieView setMessage:@""];
+                [_movieView showLogo];
+            }
         }
     }
 }
@@ -340,7 +351,28 @@
 
 - (IBAction)rangeRepeatAction:(id)sender
 {
-    if ([sender tag] == -100) {
+    if ([sender tag] == -1) {
+        float beginning = [_movie currentTime];
+        [_seekSlider setRepeatBeginning:beginning];
+        [_panelSeekSlider setRepeatBeginning:beginning];
+        [_movieView setMessage:[NSString stringWithFormat:
+            NSLocalizedString(@"Range Repeat Beginning %@", nil),
+            NSStringFromMovieTime([_seekSlider repeatBeginning])]];
+    }
+    else if ([sender tag] == 1) {
+        float end = [_movie currentTime];
+        [_seekSlider setRepeatEnd:end];
+        [_panelSeekSlider setRepeatEnd:end];
+        [_movieView setMessage:[NSString stringWithFormat:
+            NSLocalizedString(@"Range Repeat End %@", nil),
+            NSStringFromMovieTime([_seekSlider repeatEnd])]];
+    }
+    else if ([sender tag] == 0) {
+        [_seekSlider clearRepeat];
+        [_panelSeekSlider clearRepeat];
+        [_movieView setMessage:NSLocalizedString(@"Range Repeat Clear", nil)];
+    }
+    else if ([sender tag] == -100) {
         float beginning = [_movie currentTime];
         float end = beginning + 10;
         if ([_movie duration] < end) {
@@ -352,28 +384,7 @@
         [_panelSeekSlider setRepeatEnd:end];
         [_movieView setMessage:NSLocalizedString(@"Range Repeat 10 sec.", nil)];
     }
-    else if ([sender tag] < 0) {
-        float beginning = [_movie currentTime];
-        [_seekSlider setRepeatBeginning:beginning];
-        [_panelSeekSlider setRepeatBeginning:beginning];
-        [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Range Repeat Beginning %@", nil),
-            NSStringFromMovieTime([_seekSlider repeatBeginning])]];
-    }
-    else if (0 < [sender tag]) {
-        float end = [_movie currentTime];
-        [_seekSlider setRepeatEnd:end];
-        [_panelSeekSlider setRepeatEnd:end];
-        [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Range Repeat End %@", nil),
-            NSStringFromMovieTime([_seekSlider repeatEnd])]];
-    }
-    else {
-        [_seekSlider clearRepeat];
-        [_panelSeekSlider clearRepeat];
-        [_movieView setMessage:NSLocalizedString(@"Range Repeat Clear", nil)];
-    }
-
+    
     if ([_seekSlider repeatEnabled]) {
         [_repeatBeginningTextField setStringValue:
             NSStringFromMovieTime([_seekSlider repeatBeginning])];

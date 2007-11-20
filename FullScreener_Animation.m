@@ -97,7 +97,7 @@
     [_fullWindow setFrame:fullWindowRect display:TRUE animate:TRUE];
     [_blackWindow setAlphaValue:endAlpha];
 #endif
-    
+
     [[NSNotificationCenter defaultCenter]
         removeObserver:self
                   name:NSWindowDidResizeNotification object:_fullWindow];
