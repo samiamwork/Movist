@@ -47,6 +47,7 @@ enum {  // for _updateMask
 #pragma mark -
 - (NSString*)fontName;
 - (float)fontSize;
+- (void)setTextAlignment:(NSTextAlignment)alignment;
 - (void)setString:(NSMutableAttributedString*)string;
 - (void)setFontName:(NSString*)name size:(float)size;
 - (void)setTextColor:(NSColor*)textColor;

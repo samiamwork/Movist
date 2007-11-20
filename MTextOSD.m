@@ -29,7 +29,6 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         _paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-        //[_paragraphStyle setAlignment:NSCenterTextAlignment];
         [_paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
         //[_paragraphStyle setLineSpacing:0.5];
         //[_paragraphStyle setParagraphSpacing:0.1];
@@ -89,6 +88,11 @@
     [_newString retain];
     [_string release];
     _string = _newString;
+}
+
+- (void)setTextAlignment:(NSTextAlignment)alignment
+{
+    [_paragraphStyle setAlignment:alignment];
 }
 
 - (void)setString:(NSMutableAttributedString*)string
