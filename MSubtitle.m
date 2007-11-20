@@ -96,18 +96,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@class MSubtitleParser_SMI;
-@class MSubtitleParser_SRT;
-//@class MSubtitleParser_SUB;
-
 @implementation MSubtitle
 
 + (NSDictionary*)subtitleTypesAndParsers
 {
     return [NSDictionary dictionaryWithObjectsAndKeys:
-                            [MSubtitleParser_SMI class], @"smi",
-                            [MSubtitleParser_SRT class], @"srt",
-                            //[MSubtitleParser_SUB class], @"sub",
+                            @"MSubtitleParser_SMI", @"smi",
+                            @"MSubtitleParser_SRT", @"srt",
+                            //@"MSubtitleParser_SUB", @"sub",
                             nil];
 }
 
@@ -118,7 +114,8 @@
 
 + (Class)subtitleParserClassForType:(NSString*)type
 {
-    return [[MSubtitle subtitleTypesAndParsers] objectForKey:[type lowercaseString]];
+    return NSClassFromString([[MSubtitle subtitleTypesAndParsers]
+                                            objectForKey:[type lowercaseString]]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
