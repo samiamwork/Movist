@@ -63,11 +63,14 @@
     BOOL _subtitleVisible;
     float _minLetterBoxHeight;
     float _subtitleSync;
-    
+
     // bar
     MBarOSD* _barOSD;
     float _barHideInterval;
     NSTimer* _barHideTimer;
+
+    // error
+    MTextOSD* _errorOSD;
 
     // drag & drop
     unsigned int _dragAction;
@@ -129,6 +132,8 @@
 - (void)showSeekBar;
 - (void)hideBar;
 - (void)invalidateBarHideTimer;
+
+- (void)setError:(NSError*)error info:(NSString*)info;
 
 @end
 

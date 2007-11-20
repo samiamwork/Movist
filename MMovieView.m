@@ -89,6 +89,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     _messageOSD = [[MTextOSD alloc] init];      [_messageOSD setMovieRect:rect];
     _subtitleOSD = [[MSubtitleOSD alloc] init]; [_subtitleOSD setMovieRect:rect];
     _barOSD = [[MBarOSD alloc] init];           [_barOSD setMovieRect:rect];
+    _errorOSD = [[MTextOSD alloc] init];        [_errorOSD setMovieRect:rect];
     _messageHideInterval = 2.0;
     _subtitleVisible = TRUE;
     _barHideInterval = 2.0;
@@ -96,6 +97,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
     [_iconOSD setHAlign:OSD_HALIGN_CENTER];
     [_iconOSD setVAlign:OSD_VALIGN_CENTER];
+
+    [_errorOSD setTextAlignment:NSCenterTextAlignment];
+    [_errorOSD setHAlign:OSD_HALIGN_CENTER];
+    [_errorOSD setVAlign:OSD_VALIGN_CENTER];
 
     // drag-and-drop
     [self registerForDraggedTypes:MOVIST_DRAG_TYPES];
@@ -127,10 +132,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_ciContext release];
 
     [self invalidateMessageHideTimer];
+    [_errorOSD release];
+    [_barOSD release];
     [_iconOSD release];
     [_messageOSD release];
     [_subtitleOSD release];
-    [_barOSD release];
     [_subtitles release];
     [_movie release];
 
@@ -161,7 +167,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     TRACE(@"%s", __PRETTY_FUNCTION__);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     
-	long swapInterval = 1;
+	GLint swapInterval = 1;
 	[[self openGLContext] setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
 }
 
@@ -217,6 +223,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
     if ([_messageOSD hasContent]) {
         [_messageOSD drawInViewBounds:bounds];
+    }
+    if ([_errorOSD hasContent]) {
+        [_errorOSD drawInViewBounds:bounds];
     }
 
     // restore OpenGL status
@@ -286,7 +295,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         }
 
         if ([_iconOSD hasContent] || [_barOSD hasContent] ||
-            [_messageOSD hasContent] ||
+            [_messageOSD hasContent] || [_errorOSD hasContent] ||
             (_subtitleVisible && [_subtitleOSD hasContent])) {
             [self drawOSD];
         }
@@ -395,6 +404,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         [_subtitleOSD setMovieRect:mr];
         [_barOSD setMovieRect:mr];
     }
+    [_errorOSD setMovieRect:NSInsetRect([self bounds], 50, 0)];
     [_drawLock unlock];
 
     if (display) {
@@ -410,10 +420,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromSize(boundingSize));
     if ([[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
         float underScan = _fullScreenUnderScan / 100.0;
-        float dx = boundingRect.size.width  * underScan;
-        float dy = boundingRect.size.height * underScan;
-        boundingRect.origin.x += dx / 2, boundingRect.size.width  -= dx;
-        boundingRect.origin.y += dy / 2, boundingRect.size.height -= dy;
+        boundingRect = NSInsetRect(boundingRect,
+                                   boundingRect.size.width  * underScan / 2,
+                                   boundingRect.size.height * underScan / 2);
     }
 
     if ([[NSApp delegate] isFullScreen] && _fullScreenFill != FS_FILL_NEVER) {
@@ -545,7 +554,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 #pragma mark event-handling
 
 - (BOOL)acceptsFirstResponder { return TRUE; }
-- (BOOL)resignFirstResponder  { return TRUE; }
 
 - (void)keyDown:(NSEvent*)event
 {
@@ -564,17 +572,27 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                 [[NSApp delegate] fullScreenAction:self];
             }
             break;
-            
+        case 27 :   // escape
+            if ([[NSApp delegate] isFullScreen]) {
+                [[NSApp delegate] fullScreenAction:self];
+            }
+            else if (_movie) {
+                [[NSApp delegate] closeMovie];
+                [self showLogo];
+            }
+            else {
+                [[NSApp mainWindow] performClose:self];
+            }
+            break;
+        /*
+        case 'f' : case 'F' :
+            if (!_movie && ![[NSApp delegate] isFullScreen]) {
+                [[NSApp delegate] fullScreenAction:self];   // begin navigation
+            }
+            break;
+        */
         case 'p' : case 'P' : [[NSApp delegate] stepBackward];  break;
         case 'n' : case 'N' : [[NSApp delegate] stepForward];   break;
-
-        /*
-        // if AppController's setPureArrowKeyEquivalents does not work, then use these.
-        case NSLeftArrowFunctionKey  : [[NSApp delegate] seekBackward:0];   break;
-        case NSRightArrowFunctionKey : [[NSApp delegate] seekForward:0];    break;
-        case NSUpArrowFunctionKey    : [[NSApp delegate] volumeUp];         break;
-        case NSDownArrowFunctionKey  : [[NSApp delegate] volumeDown];       break;
-        */
     }
 }
 

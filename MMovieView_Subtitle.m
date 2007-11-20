@@ -87,6 +87,7 @@
     TRACE(@"%s \"%@\" %g", __PRETTY_FUNCTION__, fontName, size);
     [_messageOSD setFontName:fontName size:15.0];
     [_subtitleOSD setFontName:fontName size:size];
+    [_errorOSD setFontName:fontName size:24.0];
     [self setNeedsDisplay:TRUE];
 }
 
@@ -95,6 +96,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_messageOSD setTextColor:textColor];
     [_subtitleOSD setTextColor:textColor];
+    [_errorOSD setTextColor:textColor];
     [self setNeedsDisplay:TRUE];
 }
 
@@ -103,6 +105,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_messageOSD setStrokeColor:strokeColor];
     [_subtitleOSD setStrokeColor:strokeColor];
+    [_errorOSD setStrokeColor:strokeColor];
     [self setNeedsDisplay:TRUE];
 }
 
@@ -111,6 +114,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_messageOSD setStrokeWidth:strokeWidth];
     [_subtitleOSD setStrokeWidth:strokeWidth];
+    [_errorOSD setStrokeWidth:strokeWidth];
     [self setNeedsDisplay:TRUE];
 }
 
@@ -119,6 +123,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_messageOSD setShadowColor:shadowColor];
     [_subtitleOSD setShadowColor:shadowColor];
+    [_errorOSD setShadowColor:shadowColor];
     [self setNeedsDisplay:TRUE];
 }
 
@@ -127,6 +132,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_messageOSD setShadowBlur:shadowBlur];
     [_subtitleOSD setShadowBlur:shadowBlur];
+    [_errorOSD setShadowBlur:shadowBlur];
     [self setNeedsDisplay:TRUE];
 }
 
@@ -135,6 +141,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_messageOSD setShadowOffset:shadowOffset];
     [_subtitleOSD setShadowOffset:shadowOffset];
+    [_errorOSD setShadowOffset:shadowOffset];
     [self setNeedsDisplay:TRUE];
 }
 

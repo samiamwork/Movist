@@ -143,4 +143,21 @@
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (void)setError:(NSError*)error info:(NSString*)info
+{
+    //TRACE(@"%s \"%@\", \"%@\"", __PRETTY_FUNCTION__, s, info);
+    if (error) {
+        NSString* s = [NSString stringWithFormat:@"%@\n\n%@", error, info];
+        NSMutableAttributedString* mas = [[NSMutableAttributedString alloc] initWithString:s];
+        [_errorOSD setString:[mas autorelease]];
+    }
+    else {
+        [_errorOSD clearContent];
+    }
+    [self setNeedsDisplay:TRUE];
+}
+
 @end
