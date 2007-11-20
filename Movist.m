@@ -53,9 +53,9 @@ NSString* MMovieRectUpdateNotification         = @"MMovieRectUpdateNotification"
     }
 }
 
-- (void)fadeAnimationWithEffect:(NSString*)effect
-                   blockingMode:(NSAnimationBlockingMode)blockingMode
-                       duration:(float)duration
+- (void)fadeWithEffect:(NSString*)effect
+          blockingMode:(NSAnimationBlockingMode)blockingMode
+              duration:(float)duration
 {
     NSArray* array = [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:
@@ -135,6 +135,47 @@ NSString* MMovieRectUpdateNotification         = @"MMovieRectUpdateNotification"
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@implementation NSScreen (Movist)
+
+static NSWindow* _fadeWindow = 0;
+
+- (void)fadeOut:(float)duration
+{
+    _fadeWindow = [[NSWindow alloc] initWithContentRect:[self frame]
+                                              styleMask:NSBorderlessWindowMask
+                                                backing:NSBackingStoreBuffered
+                                                  defer:FALSE
+                                                 screen:self];
+    [_fadeWindow setBackgroundColor:[NSColor blackColor]];
+    [_fadeWindow setLevel:NSScreenSaverWindowLevel];
+    [_fadeWindow useOptimizedDrawing:TRUE];
+    [_fadeWindow setHasShadow:FALSE];
+    [_fadeWindow setOpaque:FALSE];
+    [_fadeWindow setAlphaValue:0.0];
+
+    [_fadeWindow orderFront:self];
+    [_fadeWindow fadeWithEffect:NSViewAnimationFadeInEffect
+                   blockingMode:NSAnimationBlocking
+                       duration:duration];
+}
+
+- (void)fadeIn:(float)duration
+{
+    if (0 < duration) {
+        [_fadeWindow fadeWithEffect:NSViewAnimationFadeOutEffect
+                       blockingMode:NSAnimationBlocking
+                           duration:duration];
+    }
+    [_fadeWindow orderOut:self];
+    [_fadeWindow release];
+    _fadeWindow = 0;
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @implementation NSString (Movist)
 
 - (BOOL)hasAnyExtension:(NSArray*)extensions
@@ -160,7 +201,7 @@ NSString* MMovieRectUpdateNotification         = @"MMovieRectUpdateNotification"
 
 @implementation NSFileManager (Movist)
 
-- (BOOL)isVisibleFileAtPath:(NSString*)path isDirectory:(BOOL*)isDirectory
+- (BOOL)isVisibleFile:(NSString*)path isDirectory:(BOOL*)isDirectory
 {
     if (![self fileExistsAtPath:path isDirectory:isDirectory]) {
         return FALSE;
@@ -215,8 +256,7 @@ NSString* NSStringFromMovieTime(float time)
 void runAlertPanelForOpenError(NSError* error, NSURL* url)
 {
     NSString* s = [NSString stringWithFormat:@"%@\n\n%@",
-        error,//[error localizedDescription],
-        [url isFileURL] ? [url path] : [url absoluteString]];
+                    error, [url isFileURL] ? [url path] : [url absoluteString]];
     NSRunAlertPanel(NSLocalizedString(@"Movist", nil), s,
                     NSLocalizedString(@"OK", nil), nil, nil);
 }

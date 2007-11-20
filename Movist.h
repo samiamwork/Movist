@@ -90,10 +90,20 @@ extern NSString* MMovieRectUpdateNotification;
 @interface NSWindow (Movist)
 
 - (void)setMovieURL:(NSURL*)movieURL;
-- (void)fadeAnimationWithEffect:(NSString*)effect
-                   blockingMode:(NSAnimationBlockingMode)blockingMode
-                       duration:(float)duration;
+- (void)fadeWithEffect:(NSString*)effect
+          blockingMode:(NSAnimationBlockingMode)blockingMode
+              duration:(float)duration;
 - (NSColor*)makeHUDBackgroundColor;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface NSScreen (Movist)
+
+- (void)fadeOut:(float)duration;
+- (void)fadeIn:(float)duration;
 
 @end
 
@@ -111,7 +121,7 @@ extern NSString* MMovieRectUpdateNotification;
 
 @interface NSFileManager (Movist)
 
-- (BOOL)isVisibleFileAtPath:(NSString*)path isDirectory:(BOOL*)isDirectory;
+- (BOOL)isVisibleFile:(NSString*)path isDirectory:(BOOL*)isDirectory;
 
 @end
 
