@@ -51,7 +51,6 @@
 {
     TRACE(@"%s \"%@\" with \"%@\"", __PRETTY_FUNCTION__,
           [movieURL absoluteString], movieClass);
-#if defined(_SUPPORT_FFMPEG)
     NSArray* classes;
     if (movieClass) {
         // if movieClass is specified, then try it only
@@ -73,18 +72,15 @@
     MMovie* movie;
     NSEnumerator* enumerator = [classes objectEnumerator];
     while (movieClass = [enumerator nextObject]) {
+        [self setMessageWithURL:movieURL info:[NSString stringWithFormat:
+            NSLocalizedString(@"Opening with %@...", nil), [movieClass name]]];
+        [_movieView display];   // force display
+
         movie = [[movieClass alloc] initWithURL:movieURL error:error];
         if (movie) {
             return [movie autorelease];
         }
     }
-#else
-    // always QuickTime!
-    MMovie* movie = [[MMovie_QuickTime alloc] initWithURL:movieURL error:error];
-    if (movie) {
-        return [movie autorelease];
-    }
-#endif
     return nil;
 }
 
@@ -192,29 +188,7 @@
         }
         else {
             _subtitles = [subtitles retain];
-
-            MSubtitle* subtitle;
-            int i, enabledCount = 0;
-            if (0 < [_subtitleNameSet count]) {
-                // select previous selected language
-                for (i = 0; i < [_subtitles count]; i++) {
-                    subtitle = [_subtitles objectAtIndex:i];
-                    if ([_subtitleNameSet containsObject:[subtitle name]]) {
-                        [subtitle setEnabled:TRUE];
-                        enabledCount++;
-                    }
-                    else {
-                        [subtitle setEnabled:FALSE];
-                    }
-                }
-            }
-            if (enabledCount == 0) {
-                // select first language by default
-                for (i = 0; i < [_subtitles count]; i++) {
-                    subtitle = [_subtitles objectAtIndex:i];
-                    [subtitle setEnabled:(i == 0)];
-                }
-            }
+            [self autoenableSubtitles];
         }
     }
 
@@ -233,6 +207,9 @@
     [_panelSeekSlider setMinValue:0];
     [_panelSeekSlider setMaxValue:[_movie duration]];
     [_panelSeekSlider clearRepeat];
+    [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
+        NSLocalizedString(@"Reopen With %@", nil),
+        (movieClass == [MMovie_QuickTime class]) ? @"FFMPEG" : @"QuickTime"]];
     _prevMovieTime = 0.0;
     [self updateUI];
 
@@ -355,7 +332,7 @@
     [_movieView setSubtitles:   // select first language by default
         [NSArray arrayWithObject:[_subtitles objectAtIndex:0]]];
 
-    [self updateSubtitleLanguageMenu];
+    [self updateSubtitleLanguageMenuItems];
 
     [_movie gotoBeginning];
 
@@ -392,8 +369,15 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
-        // don't clear _audioTrackIndexSet.
-        // _audioTrackIndexSet will be used in next open.
+        // init _audioTrackIndexSet for next open.
+        [_audioTrackIndexSet removeAllIndexes];
+        NSArray* audioTracks = [_movie audioTracks];
+        int i, count = [audioTracks count];
+        for (i = 0; i < count; i++) {
+            if ([[audioTracks objectAtIndex:i] isEnabled]) {
+                [_audioTrackIndexSet addIndex:i];
+            }
+        }
 
         // init _subtitleNameSet for next open.
         [_subtitleNameSet removeAllObjects];
@@ -416,6 +400,8 @@
         [_movie cleanup], _movie = nil;
 
         [_subtitles release], _subtitles = nil;
+        [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
+            NSLocalizedString(@"Reopen With %@", nil), @"..."]];
         [self updateUI];
     }
 }
@@ -455,13 +441,13 @@
 - (IBAction)reopenMovieAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([sender tag] == DECODER_QUICKTIME) {
-        [self reopenMovieWithMovieClass:[MMovie_QuickTime class]];
-    }
-    else {
-        #if defined(_SUPPORT_FFMPEG)
-        [self reopenMovieWithMovieClass:[MMovie_FFMPEG class]];
-        #endif
+    if (_movie) {
+        if ([_movie isMemberOfClass:[MMovie_FFMPEG class]]) {
+            [self reopenMovieWithMovieClass:[MMovie_QuickTime class]];
+        }
+        else {
+            [self reopenMovieWithMovieClass:[MMovie_FFMPEG class]];
+        }
     }
 }
 
@@ -510,7 +496,7 @@
         else {
             [[tableColumn dataCellForRow:rowIndex] setEnabled:TRUE];
             if (audioIndex < audioCount) {
-                BOOL state = [_audioTrackIndexSet containsIndex:audioIndex];
+                BOOL state = [[[_movie audioTracks] objectAtIndex:audioIndex] isEnabled];
                 return [NSNumber numberWithBool:state];
             }
             else {

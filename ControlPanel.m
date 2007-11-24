@@ -180,6 +180,22 @@
 #pragma mark -
 #pragma mark playback
 
+- (void)setPlayRate:(float)rate
+{
+    float value;
+    const float dv = (3.0 - 0.5) / 6;
+    if (rate <= 1.0) {
+        value = (0.5 + dv * 0) + (2 * dv * (rate - 0.5)) / (1.0 - 0.5);
+    }
+    else if (rate <= 2.0) {
+        value = (0.5 + dv * 2) + (3 * dv * (rate - 1.0)) / (2.0 - 1.0);
+    }
+    else {  // rate <= 3.0
+        value = (0.5 + dv * 5) + (1 * dv * (rate - 2.0)) / (3.0 - 2.0);
+    }
+    [_playbackRateSlider setFloatValue:value];
+}
+
 - (IBAction)playbackRateAction:(id)sender
 {
     const float dv = (3.0 - 0.5) / 6;

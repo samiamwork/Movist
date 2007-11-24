@@ -126,7 +126,7 @@
     TRACE(@"%s %@", __PRETTY_FUNCTION__, type);
     if (self = [super init]) {
         _type = [type retain];
-        _name = [NSLocalizedString(@"no name", nil) retain];
+        _name = [NSLocalizedString(@"Unnamed", nil) retain];
         _enabled = TRUE;
         _strings = [[NSMutableArray alloc] init];
 

@@ -150,23 +150,6 @@
 		AFFE5EE80C341EAE00516510 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFFE5EE50C341EAE00516510 /* CoreAudio.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		AF3568CA0CF1D62800C0621A /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Development;
-		};
-		AF3568CB0CF1D62800C0621A /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
@@ -710,12 +693,6 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Movist" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				AF3568CA0CF1D62800C0621A /* Development */,
-				AF3568CB0CF1D62800C0621A /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -940,10 +917,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					DEBUG,
-					_SUPPORT_FFMPEG,
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -955,7 +929,7 @@
 					ffmpeg/libogg.a,
 					ffmpeg/libtheora.a,
 					ffmpeg/libvorbis.a,
-					/usr/lib/libz.dylib,
+					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Movist;
@@ -973,7 +947,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = _SUPPORT_FFMPEG;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
@@ -1000,10 +974,7 @@
 			buildSettings = {
 				ARCHS = i386;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					DEBUG,
-					_SUPPORT_FFMPEG,
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1021,7 +992,7 @@
 					ffmpeg/libogg.a,
 					ffmpeg/libtheora.a,
 					ffmpeg/libvorbis.a,
-					/usr/lib/libz.dylib,
+					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -1040,7 +1011,7 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = _SUPPORT_FFMPEG;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (

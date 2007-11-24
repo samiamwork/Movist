@@ -74,6 +74,7 @@
 #pragma mark -
 #pragma mark playback
 
+- (void)setPlayRate:(float)rate;
 - (IBAction)playbackRateAction:(id)sender;
 
 @end

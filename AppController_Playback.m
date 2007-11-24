@@ -127,6 +127,49 @@
     }
 }
 
+- (void)setSeekInterval:(float)interval atIndex:(unsigned int)index
+{
+    TRACE(@"%s [%d]:%.1f sec", __PRETTY_FUNCTION__, index, interval);
+    _seekInterval[index] = interval;
+    
+    NSMenuItem* backwardItem[3] = {
+        _seekBackward1MenuItem, _seekBackward2MenuItem, _seekBackward3MenuItem
+    };
+    NSMenuItem* forwardItem[3] = {
+        _seekForward1MenuItem, _seekForward2MenuItem, _seekForward3MenuItem
+    };
+    [backwardItem[index] setTitle:[NSString stringWithFormat:
+        NSLocalizedString(@"Backward %d sec.", nil), (int)_seekInterval[index]]];
+    [forwardItem[index] setTitle:[NSString stringWithFormat:
+        NSLocalizedString(@"Forward %d sec.", nil), (int)_seekInterval[index]]];
+}
+
+- (void)setPlayRate:(float)rate
+{
+    TRACE(@"%s %.1f", __PRETTY_FUNCTION__, rate);
+    rate = MAX(MIN_PLAY_RATE, rate);
+    rate = MIN(rate, MAX_PLAY_RATE);
+    
+    _playRate = rate;
+    [_movieView setMessage:[NSString stringWithFormat:
+        NSLocalizedString(@"Play Rate %.1fx", nil), _playRate]];
+    [_controlPanel setPlayRate:_playRate];
+
+    if ([_movie rate] != 0.0) {
+        [_movie setRate:0.0];
+        [_movie setRate:_playRate];
+    }
+}
+
+- (void)changePlayRate:(int)tag
+{
+    switch (tag) {
+        case -1 : [self setPlayRate:_playRate - 0.1];   break;
+        case  0 : [self setPlayRate:1.0];               break;
+        case +1 : [self setPlayRate:_playRate + 0.1];   break;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark notifications
@@ -265,35 +308,6 @@
     }
 }
 
-- (void)setPlayRate:(float)rate
-{
-    TRACE(@"%s %.1f", __PRETTY_FUNCTION__, rate);
-    _playRate = rate;
-    [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Play Rate %.1fx", nil), _playRate]];
-    if ([_movie rate] != 0.0) {
-        [_movie setRate:0.0];
-        [_movie setRate:_playRate];
-    }
-}
-
-- (void)setSeekInterval:(float)interval atIndex:(unsigned int)index
-{
-    TRACE(@"%s [%d]:%.1f sec", __PRETTY_FUNCTION__, index, interval);
-    _seekInterval[index] = interval;
-
-    NSMenuItem* backwardItem[3] = {
-        _seekBackward1MenuItem, _seekBackward2MenuItem, _seekBackward3MenuItem
-    };
-    NSMenuItem* forwardItem[3] = {
-        _seekForward1MenuItem, _seekForward2MenuItem, _seekForward3MenuItem
-    };
-    [backwardItem[index] setTitle:[NSString stringWithFormat:
-        NSLocalizedString(@"Backward %d sec.", nil), (int)_seekInterval[index]]];
-    [forwardItem[index] setTitle:[NSString stringWithFormat:
-        NSLocalizedString(@"Forward %d sec.", nil), (int)_seekInterval[index]]];
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark IB actions
@@ -351,7 +365,7 @@
 
 - (IBAction)rangeRepeatAction:(id)sender
 {
-    if ([sender tag] == -1) {
+    if ([sender tag] == -1) {   // beginning
         float beginning = [_movie currentTime];
         [_seekSlider setRepeatBeginning:beginning];
         [_panelSeekSlider setRepeatBeginning:beginning];
@@ -359,7 +373,7 @@
             NSLocalizedString(@"Range Repeat Beginning %@", nil),
             NSStringFromMovieTime([_seekSlider repeatBeginning])]];
     }
-    else if ([sender tag] == 1) {
+    else if ([sender tag] == 1) {   // end
         float end = [_movie currentTime];
         [_seekSlider setRepeatEnd:end];
         [_panelSeekSlider setRepeatEnd:end];
@@ -367,12 +381,13 @@
             NSLocalizedString(@"Range Repeat End %@", nil),
             NSStringFromMovieTime([_seekSlider repeatEnd])]];
     }
-    else if ([sender tag] == 0) {
+    else if ([sender tag] == 0) {   // clear
         [_seekSlider clearRepeat];
         [_panelSeekSlider clearRepeat];
         [_movieView setMessage:NSLocalizedString(@"Range Repeat Clear", nil)];
     }
-    else if ([sender tag] == -100) {
+    /*
+    else if ([sender tag] == -100) {    // 10 sec.
         float beginning = [_movie currentTime];
         float end = beginning + 10;
         if ([_movie duration] < end) {
@@ -384,7 +399,8 @@
         [_panelSeekSlider setRepeatEnd:end];
         [_movieView setMessage:NSLocalizedString(@"Range Repeat 10 sec.", nil)];
     }
-    
+    */
+
     if ([_seekSlider repeatEnabled]) {
         [_repeatBeginningTextField setStringValue:
             NSStringFromMovieTime([_seekSlider repeatBeginning])];
@@ -395,6 +411,11 @@
         [_repeatBeginningTextField setStringValue:@"--:--:--"];
         [_repeatEndTextField setStringValue:@"--:--:--"];
     }
+}
+
+- (IBAction)rateAction:(id)sender
+{
+    [self changePlayRate:[sender tag]];
 }
 
 @end

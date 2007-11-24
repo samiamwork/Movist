@@ -73,6 +73,9 @@ enum {
 
 #define MAX_VOLUME      4.0
 
+#define MIN_PLAY_RATE   0.5
+#define MAX_PLAY_RATE   3.0
+
 #pragma mark -
 #pragma mark notifications: movie
 extern NSString* MMovieRateChangeNotification;

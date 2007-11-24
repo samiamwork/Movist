@@ -112,16 +112,14 @@
     [track setEnabled:enabled];
 
     if (enabled) {
-        [_audioTrackIndexSet addIndex:index];
         [_movieView setMessage:[NSString stringWithFormat:
             NSLocalizedString(@"Sound Track %@ enabled", nil), [track name]]];
     }
     else {
-        [_audioTrackIndexSet removeIndex:index];
         [_movieView setMessage:[NSString stringWithFormat:
             NSLocalizedString(@"Sound Track %@ disabled", nil), [track name]]];
     }
-    [self updateAudioTrackMenu];
+    [self updateAudioTrackMenuItems];
 }
 
 - (void)autoenableAudioTracks
@@ -159,40 +157,85 @@
     [_propertiesView reloadData];
 }
 
-- (void)updateAudioTrackMenu
+- (void)changeAudioTrack:(int)tag
+{
+    float rate = [_movie rate];
+    [_movie setRate:0.0];
+    
+    int index = tag;
+    if (index < 0) { // rotation
+        NSArray* audioTracks = [_movie audioTracks];
+        int i, count = [audioTracks count];
+        for (i = 0; i < count; i++) {
+            if ([[audioTracks objectAtIndex:i] isEnabled]) {
+                break;
+            }
+        }
+        index = (i + 1) % count;
+    }
+    NSArray* audioTracks = [_movie audioTracks];
+    unsigned int i, count = [audioTracks count];
+    for (i = 0; i < count; i++) {
+        [[audioTracks objectAtIndex:i] setEnabled:(i == index)];
+    }
+    
+    [_movieView setMessage:[NSString stringWithFormat:
+        NSLocalizedString(@"Sound Track %@ selected", nil),
+        [[audioTracks objectAtIndex:index] name]]];
+    [self updateAudioTrackMenuItems];
+    [_propertiesView reloadData];
+    
+    [_movie setRate:rate];
+}
+
+- (void)updateAudioTrackMenuItems
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     // remove all items
-    while (0 < [_audioTrackMenu numberOfItems]) {
-        [_audioTrackMenu removeItemAtIndex:0];
-    }
-    
-    NSArray* tracks = [_movie audioTracks];
-    
+    int i, index;
     NSMenuItem* item;
+    NSArray* itemArray = [_movieMenu itemArray];
+    for (i = 0; i < [itemArray count]; i++) {
+        item = (NSMenuItem*)[itemArray objectAtIndex:i];
+        if ([item action] == @selector(audioTrackAction:)) {
+            [_movieMenu removeItem:item];
+            index = i--;  // remember index of last audio track item
+        }
+    }
+
+    NSArray* tracks = [_movie audioTracks];
     if ([tracks count] == 0) {
-        item = [_audioTrackMenu
-                    addItemWithTitle:NSLocalizedString(@"no audio", nil)
-                              action:@selector(audioTrackAction:)
-                       keyEquivalent:@""];
-        [item setTag:-1];
+        item = [_movieMenu
+                    insertItemWithTitle:NSLocalizedString(@"No Sound Track", nil)
+                                     action:@selector(audioTrackAction:)
+                              keyEquivalent:@"" atIndex:index];
     }
     else {
+        // insert before rotation item
         MTrack* track;
+        unsigned int mask = NSCommandKeyMask | NSShiftKeyMask;
         unsigned int i, count = [tracks count];
         for (i = 0; i < count; i++) {
             track = [tracks objectAtIndex:i];
-            item = [_audioTrackMenu
-                    addItemWithTitle:[track name]
-                              action:@selector(audioTrackAction:)
-                       keyEquivalent:@""];
+            item = [_movieMenu
+                        insertItemWithTitle:[track name]
+                                     action:@selector(audioTrackAction:)
+                              keyEquivalent:@"" atIndex:index++];
             [item setTag:i];
             [item setState:[track isEnabled]];
             [item setKeyEquivalent:[NSString stringWithFormat:@"%d", i + 1]];
-            [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
+            [item setKeyEquivalentModifierMask:mask];
+        }
+        if (1 < [tracks count]) {   // add rotate item
+            item = [_movieMenu
+                        insertItemWithTitle:NSLocalizedString(@"Sound Track Rotation", nil)
+                                 action:@selector(audioTrackAction:)
+                          keyEquivalent:@"s" atIndex:index++];
+            [item setKeyEquivalentModifierMask:mask];
+            [item setTag:-1];
         }
     }
-    [_audioTrackMenu update];
+    [_movieMenu update];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -232,25 +275,7 @@
 - (IBAction)audioTrackAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    float rate = [_movie rate];
-    [_movie setRate:0.0];
-
-    unsigned int index = [(NSMenuItem*)sender tag];
-    NSArray* audioTracks = [_movie audioTracks];
-    unsigned int i, count = [audioTracks count];
-    for (i = 0; i < count; i++) {
-        [[audioTracks objectAtIndex:i] setEnabled:(i == index)];
-    }
-    [_audioTrackIndexSet removeAllIndexes];
-    [_audioTrackIndexSet addIndex:index];
-
-    [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Sound Track %@ selected", nil),
-        [[audioTracks objectAtIndex:index] name]]];
-    [self updateAudioTrackMenu];
-    [_propertiesView reloadData];
-
-    [_movie setRate:rate];
+    [self changeAudioTrack:[sender tag]];
 }
 
 @end

@@ -66,10 +66,24 @@
     [_panelVolumeSlider setMinValue:0.0];   [_panelVolumeSlider setMaxValue:MAX_VOLUME];
     [self updateVolumeUI];
 
-    // add shift-key mask to backward/forward seek menu items
+    // set modifier keys (I don't know how to set Shift key mask)
     unsigned int mask = NSAlternateKeyMask | NSShiftKeyMask;
     [_seekBackward3MenuItem setKeyEquivalentModifierMask:mask];
     [_seekForward3MenuItem setKeyEquivalentModifierMask:mask];
+
+    mask = NSAlternateKeyMask | NSShiftKeyMask | NSControlKeyMask;
+    [_seekPrevSubtitleMenuItem setKeyEquivalentModifierMask:mask];
+    [_seekNextSubtitleMenuItem setKeyEquivalentModifierMask:mask];
+
+    mask = NSCommandKeyMask | NSShiftKeyMask;
+    [_rateSlowerMenuItem setKeyEquivalentModifierMask:mask];
+    [_rateFasterMenuItem setKeyEquivalentModifierMask:mask];
+    [_rateDefaultMenuItem setKeyEquivalentModifierMask:mask];
+
+    mask = NSControlKeyMask | NSShiftKeyMask;
+    [_syncLaterMenuItem setKeyEquivalentModifierMask:mask];
+    [_syncEarlierMenuItem setKeyEquivalentModifierMask:mask];
+    [_syncDefaultMenuItem setKeyEquivalentModifierMask:mask];
 }
 
 - (void)dealloc
@@ -200,10 +214,9 @@
     [_controlPanel setMovieURL:movieURL];
     [_controlPanel setDecoder:[[_movie class] name]];
     [_propertiesView reloadData];
-    [self updateFullScreenFillMenu];
     [self updateAspectRatioMenu];
-    [self updateAudioTrackMenu];
-    [self updateSubtitleLanguageMenu];
+    [self updateAudioTrackMenuItems];
+    [self updateSubtitleLanguageMenuItems];
     [self updateRepeatUI];
     [self updateVolumeUI];
     [self updateTimeUI];
@@ -253,6 +266,10 @@
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [menuItem title]);
     if ([[NSApp keyWindow] firstResponder] != _movieView) {
+        if ([NSApp keyWindow] == [_playlistController window] &&
+            [menuItem action] == @selector(playlistAction:)) {
+            return TRUE;
+        }
         return FALSE;
     }
     if (![self isFullScreen] && _playlistController &&
@@ -265,27 +282,25 @@
         return FALSE;   // not supported yet
     }
     if ([menuItem action] == @selector(reopenMovieAction:)) {
-        #if defined(_SUPPORT_FFMPEG)
-        if ([menuItem tag] == DECODER_FFMPEG) {
-            return _movie && [_movie isMemberOfClass:[MMovie_QuickTime class]];
-        }
-        else {  // DECODER_QUICKTIME
-            return _movie && [_movie isMemberOfClass:[MMovie_FFMPEG class]];
-        }
-        #else
-        return FALSE;
-        #endif
+        return (_movie != nil);
     }
 
     // Controls
-    if ([menuItem action] == @selector(seekAction:) ||
-        [menuItem action] == @selector(rangeRepeatAction:)) {
-        return (_movie != nil);
+    if ([menuItem action] == @selector(seekAction:)) {
+        if ([menuItem tag] == 40 || [menuItem tag] == -40) {
+            return (_movie != nil && _subtitles != nil);
+        }
+        else {
+            return (_movie != nil);
+        }
     }
     if ([menuItem action] == @selector(prevNextMovieAction:)) {
         return (0 < [_playlist count]);
     }
-
+    if ([menuItem action] == @selector(rangeRepeatAction:)) {
+        return (_movie != nil);
+    }
+    
     // Movie
     if ([menuItem action] == @selector(movieSizeAction:)) {
         return _movie && ![self isFullScreen];
@@ -299,7 +314,7 @@
         return (_movie && 0 < [_defaults floatForKey:MFullScreenUnderScanKey]);
     }
     if ([menuItem action] == @selector(audioTrackAction:)) {
-        return (_movie && 0 <= [menuItem tag]);
+        return (_movie && 0 < [[_movie audioTracks] count]);
     }
 
     // Subtitle
@@ -307,7 +322,7 @@
         return _movie && [_defaults boolForKey:MSubtitleEnableKey];
     }
     if ([menuItem action] == @selector(subtitleLanguageAction:)) {
-        return (_subtitles && 0 <= [menuItem tag]);
+        return (_subtitles && 0 < [_subtitles count]);
     }
     if ([menuItem action] == @selector(reopenSubtitleAction:) ||
         [menuItem action] == @selector(subtitleVisibleAction:) ||

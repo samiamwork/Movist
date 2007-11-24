@@ -591,8 +591,25 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             }
             break;
         */
-        case 'p' : case 'P' : [[NSApp delegate] stepBackward];  break;
-        case 'n' : case 'N' : [[NSApp delegate] stepForward];   break;
+        case 'p' : case 'P' : [[NSApp delegate] stepBackward];          break;
+        case 'n' : case 'N' : [[NSApp delegate] stepForward];           break;
+
+        case 'c' : case 'C' : [[NSApp delegate] changePlayRate:+1];     break;
+        case 'x' : case 'X' : [[NSApp delegate] changePlayRate:-1];     break;
+        case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];     break;
+
+        case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible]; break;
+
+        case 'l' : case 'L' : [[NSApp delegate] subtitleDisplayOnLetterBoxAction:self];break;
+        case 'u' : case 'U' : [[NSApp delegate] changeMinLetterBoxHeight:+1];   break;
+        case 'd' : case 'D' : [[NSApp delegate] changeMinLetterBoxHeight:-1];   break;
+        case '0' :            [[NSApp delegate] changeMinLetterBoxHeight: 0];   break;
+
+        case ',' : case '<' : [[NSApp delegate] changePlayRate:-1];     break;
+        case '.' : case '>' : [[NSApp delegate] changePlayRate:+1];     break;
+        case '/' : case '?' : [[NSApp delegate] changePlayRate: 0];     break;
+
+        case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];  break;
     }
 }
 

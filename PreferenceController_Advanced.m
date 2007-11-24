@@ -30,12 +30,7 @@
 - (void)initAdvancedPane
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-#if defined(_SUPPORT_FFMPEG)
     [_defaultDecoderPopUpButton selectItemWithTag:[_defaults integerForKey:MDefaultDecoderKey]];
-#else
-    [_defaultDecoderPopUpButton selectItemWithTag:DECODER_QUICKTIME];   // always!
-    [_defaultDecoderPopUpButton setEnabled:FALSE];
-#endif
 }
 
 - (IBAction)defaultDecoderAction:(id)sender

@@ -1,145 +1,209 @@
 {
-    IBClasses = (
-        {
-            ACTIONS = {
-                aspectRatioAction = id; 
-                audioTrackAction = id; 
-                controlPanelAction = id; 
-                fullScreenAction = id; 
-                fullScreenFillAction = id; 
-                fullScreenUnderScanAction = id; 
-                moviePropertyAction = id; 
-                movieSizeAction = id; 
-                muteAction = id; 
-                openFileAction = id; 
-                openSubtitleFileAction = id; 
-                openURLAction = id; 
-                playAction = id; 
-                playlistAction = id; 
-                preferencePanelAction = id; 
-                prevNextMovieAction = id; 
-                rangeRepeatAction = id; 
-                reopenMovieAction = id; 
-                reopenSubtitleAction = id; 
-                repeatAction = id; 
-                seekAction = id; 
-                subtitleDisplayOnLetterBoxAction = id; 
-                subtitleFontSizeAction = id; 
-                subtitleLanguageAction = id; 
-                subtitleLetterBoxHeightAction = id; 
-                subtitleSyncAction = id; 
-                subtitleVMarginAction = id; 
-                subtitleVisibleAction = id; 
-                volumeAction = id; 
-            }; 
-            CLASS = AppController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "_aspectRatioMenu" = NSMenu; 
-                "_audioTrackMenu" = NSMenu; 
-                "_controlPanel" = ControlPanel; 
-                "_fullScreenFillMenu" = NSMenu; 
-                "_lTimeTextField" = TimeTextField; 
-                "_mainWindow" = MainWindow; 
-                "_movieView" = MMovieView; 
-                "_muteButton" = NSButton; 
-                "_muteMenuItem" = NSMenuItem; 
-                "_panelLTimeTextField" = TimeTextField; 
-                "_panelMuteButton" = NSButton; 
-                "_panelPlayButton" = NSButton; 
-                "_panelPlaylistButton" = NSButton; 
-                "_panelRTimeTextField" = TimeTextField; 
-                "_panelSeekSlider" = FSSeekSlider; 
-                "_panelVolumeSlider" = FSVolumeSlider; 
-                "_playButton" = NSButton; 
-                "_playMenuItem" = NSMenuItem; 
-                "_playPanel" = PlayPanel; 
-                "_playlistButton" = NSButton; 
-                "_propertiesView" = NSTableView; 
-                "_rTimeTextField" = TimeTextField; 
-                "_repeatAllMenuItem" = NSMenuItem; 
-                "_repeatBeginningTextField" = NSTextField; 
-                "_repeatEndTextField" = NSTextField; 
-                "_repeatOffMenuItem" = NSMenuItem; 
-                "_repeatOneMenuItem" = NSMenuItem; 
-                "_seekBackward1MenuItem" = NSMenuItem; 
-                "_seekBackward2MenuItem" = NSMenuItem; 
-                "_seekBackward3MenuItem" = NSMenuItem; 
-                "_seekForward1MenuItem" = NSMenuItem; 
-                "_seekForward2MenuItem" = NSMenuItem; 
-                "_seekForward3MenuItem" = NSMenuItem; 
-                "_seekSlider" = MainSeekSlider; 
-                "_subtitleDisplayOnLetterBoxButton" = NSButton; 
-                "_subtitleDisplayOnLetterBoxMenuItem" = NSMenuItem; 
-                "_subtitleEncodingMenu" = NSMenu; 
-                "_subtitleLanguageMenu" = NSMenu; 
-                "_subtitleVisibleMenuItem" = NSMenuItem; 
-                "_volumeDownMenuItem" = NSMenuItem; 
-                "_volumeSlider" = MainVolumeSlider; 
-                "_volumeUpMenuItem" = NSMenuItem; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {
-                playbackRateAction = id; 
-                videoColorControlsAction = id; 
-                videoColorControlsDefaultsAction = id; 
-            }; 
-            CLASS = ControlPanel; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "_appController" = AppController; 
-                "_decoderImageView" = NSImageView; 
-                "_filenameTextField" = NSTextField; 
-                "_movieView" = MMovieView; 
-                "_playbackRateSlider" = NSSlider; 
-                "_tabView" = NSTabView; 
-                "_videoBrightnessSlider" = NSSlider; 
-                "_videoContrastSlider" = NSSlider; 
-                "_videoHueSlider" = NSSlider; 
-                "_videoSaturationSlider" = NSSlider; 
-            }; 
-            SUPERCLASS = NSPanel; 
-        }, 
-        {CLASS = FSSeekSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
-        {CLASS = FSVolumeSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
-        {
-            ACTIONS = {"" = id; }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = MMovieView; LANGUAGE = ObjC; SUPERCLASS = NSOpenGLView; }, 
-        {CLASS = MainLCDView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {CLASS = MainSeekSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
-        {CLASS = MainVolumeSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
-        {
-            CLASS = MainWindow; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {"_movieView" = MMovieView; }; 
-            SUPERCLASS = NSWindow; 
-        }, 
-        {
-            CLASS = PlayPanel; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {"_movieView" = MMovieView; "_titleTextField" = NSTextField; }; 
-            SUPERCLASS = NSWindow; 
-        }, 
-        {
-            ACTIONS = {addAction = id; closeAction = id; modeAction = id; removeAction = id; }; 
-            CLASS = PlaylistController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "_modeButton" = NSButton; 
-                "_removeButton" = NSButton; 
-                "_statusTextField" = NSTextField; 
-                "_tableView" = NSTableView; 
-            }; 
-            SUPERCLASS = NSWindowController; 
-        }, 
-        {CLASS = TimeTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }, 
-        {CLASS = WindowMoveTextField; LANGUAGE = ObjC; SUPERCLASS = NSTextField; }
-    ); 
-    IBVersion = 1; 
+    IBClasses =     (
+                {
+            ACTIONS =             {
+                appleRemoteLeftAction = id;
+                appleRemoteLeftHoldAction = id;
+                appleRemoteMenuAction = id;
+                appleRemoteMenuHoldAction = id;
+                appleRemoteMinusAction = id;
+                appleRemoteMinusHoldAction = id;
+                appleRemotePlayAction = id;
+                appleRemotePlayHoldAction = id;
+                appleRemotePlusAction = id;
+                appleRemotePlusHoldAction = id;
+                appleRemoteRightAction = id;
+                appleRemoteRightHoldAction = id;
+                aspectRatioAction = id;
+                audioTrackAction = id;
+                controlPanelAction = id;
+                fullScreenAction = id;
+                fullScreenFillAction = id;
+                fullScreenUnderScanAction = id;
+                moviePropertyAction = id;
+                movieSizeAction = id;
+                muteAction = id;
+                openFileAction = id;
+                openSubtitleFileAction = id;
+                openURLAction = id;
+                playAction = id;
+                playlistAction = id;
+                preferencePanelAction = id;
+                prevNextMovieAction = id;
+                rangeRepeatAction = id;
+                rateAction = id;
+                reopenMovieAction = id;
+                reopenSubtitleAction = id;
+                repeatAction = id;
+                seekAction = id;
+                subtitleDisplayOnLetterBoxAction = id;
+                subtitleFontSizeAction = id;
+                subtitleLanguageAction = id;
+                subtitleLetterBoxHeightAction = id;
+                subtitleSyncAction = id;
+                subtitleVMarginAction = id;
+                subtitleVisibleAction = id;
+                volumeAction = id;
+            };
+            CLASS = AppController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "_aspectRatioMenu" = NSMenu;
+                "_controlPanel" = ControlPanel;
+                "_lTimeTextField" = TimeTextField;
+                "_mainWindow" = MainWindow;
+                "_movieMenu" = NSMenu;
+                "_movieView" = MMovieView;
+                "_muteButton" = NSButton;
+                "_muteMenuItem" = NSMenuItem;
+                "_panelLTimeTextField" = TimeTextField;
+                "_panelMuteButton" = NSButton;
+                "_panelPlayButton" = NSButton;
+                "_panelPlaylistButton" = NSButton;
+                "_panelRTimeTextField" = TimeTextField;
+                "_panelSeekSlider" = FSSeekSlider;
+                "_panelVolumeSlider" = FSVolumeSlider;
+                "_playButton" = NSButton;
+                "_playMenuItem" = NSMenuItem;
+                "_playPanel" = PlayPanel;
+                "_playlistButton" = NSButton;
+                "_propertiesView" = NSTableView;
+                "_rTimeTextField" = TimeTextField;
+                "_rateDefaultMenuItem" = NSMenuItem;
+                "_rateFasterMenuItem" = NSMenuItem;
+                "_rateSlowerMenuItem" = NSMenuItem;
+                "_reopenWithMenuItem" = NSMenuItem;
+                "_repeatAllMenuItem" = NSMenuItem;
+                "_repeatBeginningTextField" = NSTextField;
+                "_repeatEndTextField" = NSTextField;
+                "_repeatOffMenuItem" = NSMenuItem;
+                "_repeatOneMenuItem" = NSMenuItem;
+                "_seekBackward1MenuItem" = NSMenuItem;
+                "_seekBackward2MenuItem" = NSMenuItem;
+                "_seekBackward3MenuItem" = NSMenuItem;
+                "_seekForward1MenuItem" = NSMenuItem;
+                "_seekForward2MenuItem" = NSMenuItem;
+                "_seekForward3MenuItem" = NSMenuItem;
+                "_seekNextSubtitleMenuItem" = NSMenuItem;
+                "_seekPrevSubtitleMenuItem" = NSMenuItem;
+                "_seekSlider" = MainSeekSlider;
+                "_subtitleDisplayOnLetterBoxButton" = NSButton;
+                "_subtitleDisplayOnLetterBoxMenuItem" = NSMenuItem;
+                "_subtitleEncodingMenu" = NSMenu;
+                "_subtitleMenu" = NSMenu;
+                "_subtitleVisibleMenuItem" = NSMenuItem;
+                "_syncDefaultMenuItem" = NSMenuItem;
+                "_syncEarlierMenuItem" = NSMenuItem;
+                "_syncLaterMenuItem" = NSMenuItem;
+                "_underScanMenuItem" = NSMenuItem;
+                "_volumeSlider" = MainVolumeSlider;
+            };
+            SUPERCLASS = NSObject;
+        },
+                {
+            ACTIONS =             {
+                playbackRateAction = id;
+                videoColorControlsAction = id;
+                videoColorControlsDefaultsAction = id;
+            };
+            CLASS = ControlPanel;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "_appController" = AppController;
+                "_decoderImageView" = NSImageView;
+                "_filenameTextField" = NSTextField;
+                "_movieView" = MMovieView;
+                "_playbackRateSlider" = NSSlider;
+                "_tabView" = NSTabView;
+                "_videoBrightnessSlider" = NSSlider;
+                "_videoContrastSlider" = NSSlider;
+                "_videoHueSlider" = NSSlider;
+                "_videoSaturationSlider" = NSSlider;
+            };
+            SUPERCLASS = NSPanel;
+        },
+                {
+            CLASS = FSSeekSlider;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSlider;
+        },
+                {
+            CLASS = FSVolumeSlider;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSlider;
+        },
+                {
+            ACTIONS =             {
+                "" = id;
+            };
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = MMovieView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSOpenGLView;
+        },
+                {
+            CLASS = MainLCDView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            CLASS = MainSeekSlider;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSlider;
+        },
+                {
+            CLASS = MainVolumeSlider;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSlider;
+        },
+                {
+            CLASS = MainWindow;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "_movieView" = MMovieView;
+            };
+            SUPERCLASS = NSWindow;
+        },
+                {
+            CLASS = PlayPanel;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "_movieView" = MMovieView;
+                "_titleTextField" = NSTextField;
+            };
+            SUPERCLASS = NSWindow;
+        },
+                {
+            ACTIONS =             {
+                addAction = id;
+                closeAction = id;
+                modeAction = id;
+                removeAction = id;
+            };
+            CLASS = PlaylistController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "_modeButton" = NSButton;
+                "_removeButton" = NSButton;
+                "_statusTextField" = NSTextField;
+                "_tableView" = NSTableView;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = TimeTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextField;
+        },
+                {
+            CLASS = WindowMoveTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextField;
+        }
+    );
+    IBVersion = 1;
 }

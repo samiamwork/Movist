@@ -41,7 +41,21 @@
     else if (_subtitles) {
         [_movieView setSubtitles:nil];
         [_subtitles release], _subtitles = nil;
-        [self updateSubtitleLanguageMenu];
+        [self updateSubtitleLanguageMenuItems];
+    }
+}
+
+- (void)changeSubtitleVisible
+{
+    if ([_movieView subtitleVisible]) {
+        [_movieView setSubtitleVisible:FALSE];
+        [_movieView setMessage:NSLocalizedString(@"Hide Subtitle", nil)];
+        [_subtitleVisibleMenuItem setTitle:NSLocalizedString(@"Show Subtitle", nil)];
+    }
+    else {
+        [_movieView setSubtitleVisible:TRUE];
+        [_movieView setMessage:NSLocalizedString(@"Show Subtitle", nil)];
+        [_subtitleVisibleMenuItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
     }
 }
 
@@ -58,6 +72,26 @@
         NSLocalizedString(@"Subtitle Size %.1f", nil), [_movieView subtitleFontSize]]];
 }
 
+- (void)changeSubtitleFontSize:(int)tag
+{
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__);
+    switch (tag) {
+        case -1 : [self setSubtitleFontSize:[_movieView subtitleFontSize] - 1.0];           break;
+        case  0 : [self setSubtitleFontSize:[_defaults floatForKey:MSubtitleFontSizeKey]];  break;
+        case +1 : [self setSubtitleFontSize:[_movieView subtitleFontSize] + 1.0];           break;
+    }
+}
+
+- (void)changeSubtitleVMargin:(int)tag
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    switch (tag) {
+        case -1 : [self setSubtitleVMargin:[_movieView subtitleVMargin] - 1.0];          break;
+        case  0 : [self setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]]; break;
+        case +1 : [self setSubtitleVMargin:[_movieView subtitleVMargin] + 1.0];          break;
+    }
+}
+
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox
 {
     [_movieView setSubtitleDisplayOnLetterBox:displayOnLetterBox];
@@ -72,6 +106,18 @@
 - (void)setMinLetterBoxHeight:(float)minLetterBoxHeight
 {
     [_movieView setMinLetterBoxHeight:minLetterBoxHeight];
+    [_movieView setMessage:[NSString stringWithFormat:
+        NSLocalizedString(@"Min. Letter Box Height %d", nil),
+        (int)[_movieView minLetterBoxHeight]]];
+}
+
+- (void)changeMinLetterBoxHeight:(int)tag
+{
+    switch (tag) {
+        case -1 : [_movieView decreaseLetterBoxHeight]; break;
+        case  0 : [_movieView revertLetterBoxHeight];   break;
+        case +1 : [_movieView increaseLetterBoxHeight]; break;
+    }
     [_movieView setMessage:[NSString stringWithFormat:
         NSLocalizedString(@"Min. Letter Box Height %d", nil),
         (int)[_movieView minLetterBoxHeight]]];
@@ -100,6 +146,15 @@
         NSLocalizedString(@"Subtitle Sync %.1f sec.", nil), [_movieView subtitleSync]]];
 }
 
+- (void)changeSubtitleSync:(int)tag
+{
+    switch (tag) {
+        case -1 : [self setSubtitleSync:[_movieView subtitleSync] - 0.1];   break;
+        case  0 : [self setSubtitleSync:0.0];                               break;
+        case +1 : [self setSubtitleSync:[_movieView subtitleSync] + 0.1];   break;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
@@ -108,50 +163,122 @@
     [subtitle setEnabled:enabled];
     if (enabled) {
         [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Subtitle Language %@ enabled", nil),
+            NSLocalizedString(@"Subtitle %@ enabled", nil),
             [subtitle name]]];
     }
     else {
         [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Subtitle Language %@ disabled", nil),
+            NSLocalizedString(@"Subtitle %@ disabled", nil),
             [subtitle name]]];
     }
     [_movieView setSubtitles:_subtitles];   // for update
-    [self updateSubtitleLanguageMenu];
+    [self updateSubtitleLanguageMenuItems];
 }
 
-- (void)updateSubtitleLanguageMenu
+- (void)autoenableSubtitles
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    // remove all items
-    while (0 < [_subtitleLanguageMenu numberOfItems]) {
-        [_subtitleLanguageMenu removeItemAtIndex:0];
+    if (_subtitles == nil) {
+        return;
     }
 
+    MSubtitle* subtitle;
+    int i, enabledCount = 0;
+    if (0 < [_subtitleNameSet count]) {
+        // select previous selected language
+        for (i = 0; i < [_subtitles count]; i++) {
+            subtitle = [_subtitles objectAtIndex:i];
+            if ([_subtitleNameSet containsObject:[subtitle name]]) {
+                [subtitle setEnabled:TRUE];
+                enabledCount++;
+            }
+            else {
+                [subtitle setEnabled:FALSE];
+            }
+        }
+    }
+    if (enabledCount == 0) {
+        // select first language by default
+        for (i = 0; i < [_subtitles count]; i++) {
+            subtitle = [_subtitles objectAtIndex:i];
+            [subtitle setEnabled:(i == 0)];
+        }
+    }
+}
+
+- (void)changeSubtitle:(int)tag
+{
+    int index = tag;
+    if (index < 0) { // rotation
+        int i, count = [_subtitles count];
+        for (i = 0; i < count; i++) {
+            if ([[_subtitles objectAtIndex:i] isEnabled]) {
+                break;
+            }
+        }
+        index = (i + 1) % count;
+    }
+    int i, count = [_subtitles count];
+    for (i = 0; i < count; i++) {
+        [[_subtitles objectAtIndex:i] setEnabled:(i == index)];
+    }
+    [_movieView setSubtitles:_subtitles];   // for update
+    [_movieView setMessage:[NSString stringWithFormat:
+        NSLocalizedString(@"Subtitle %@ selected", nil),
+        [[_subtitles objectAtIndex:index] name]]];
+    [self updateSubtitleLanguageMenuItems];
+    [_propertiesView reloadData];
+}
+
+- (void)updateSubtitleLanguageMenuItems
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    // remove all subtitle language items except rotation item
+    int i, index;
     NSMenuItem* item;
+    NSArray* itemArray = [_subtitleMenu itemArray];
+    for (i = 0; i < [itemArray count]; i++) {
+        item = (NSMenuItem*)[itemArray objectAtIndex:i];
+        if ([item action] == @selector(subtitleLanguageAction:)) {
+            [_subtitleMenu removeItem:item];
+            index = i--;  // remember index of last subtitle item
+        }
+    }
+
     if ([_subtitles count] == 0) {
-        item = [_subtitleLanguageMenu
-                    addItemWithTitle:NSLocalizedString(@"no subtitle", nil)
-                              action:@selector(subtitleLanguageAction:)
-                       keyEquivalent:@""];
-        [item setTag:-1];
+        item = [_subtitleMenu
+                    insertItemWithTitle:NSLocalizedString(@"No Subtitle", nil)
+                                 action:@selector(subtitleLanguageAction:)
+                          keyEquivalent:@"" atIndex:index];
     }
     else {
+        // insert before rotation item
         MSubtitle* subtitle;
+        NSString* title;
+        unsigned int mask = NSCommandKeyMask | NSControlKeyMask;
         unsigned int i, count = [_subtitles count];
         for (i = 0; i < count; i++) {
             subtitle = [_subtitles objectAtIndex:i];
-            item = [_subtitleLanguageMenu
-                    addItemWithTitle:[subtitle name]
-                              action:@selector(subtitleLanguageAction:)
-                       keyEquivalent:@""];
+            title = [NSString stringWithFormat:
+                        NSLocalizedString(@"Subtitle %@", nil), [subtitle name]];
+            item = [_subtitleMenu
+                        insertItemWithTitle:title
+                                     action:@selector(subtitleLanguageAction:)
+                              keyEquivalent:@"" atIndex:index++];
             [item setTag:i];
             [item setState:[subtitle isEnabled]];
             [item setKeyEquivalent:[NSString stringWithFormat:@"%d", i + 1]];
-            [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSControlKeyMask];
+            [item setKeyEquivalentModifierMask:mask];
+        }
+        if (1 < [_subtitles count]) {   // add rotate item
+            item = [_subtitleMenu
+                        insertItemWithTitle:NSLocalizedString(@"Subtitle Rotation", nil)
+                                     action:@selector(subtitleLanguageAction:)
+                              keyEquivalent:@"s" atIndex:index++];
+            [item setKeyEquivalentModifierMask:mask];
+            [item setTag:-1];
         }
     }
-    [_subtitleLanguageMenu update];
+    [_subtitleMenu update];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -161,52 +288,25 @@
 - (IBAction)subtitleVisibleAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([_movieView subtitleVisible]) {
-        [_movieView setSubtitleVisible:FALSE];
-        [_movieView setMessage:[sender title]];
-        [_subtitleVisibleMenuItem setTitle:NSLocalizedString(@"Show Subtitle", nil)];
-    }
-    else {
-        [_movieView setSubtitleVisible:TRUE];
-        [_movieView setMessage:[sender title]];
-        [_subtitleVisibleMenuItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
-    }
+    [self changeSubtitleVisible];
 }
 
 - (IBAction)subtitleLanguageAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    // enable selected subtitle only
-    int i, index = [sender tag];
-    for (i = 0; i < [_subtitles count]; i++) {
-        [[_subtitles objectAtIndex:i] setEnabled:(i == index)];
-    }
-    [_movieView setSubtitles:_subtitles];   // for update
-    [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Subtitle Language %@ selected", nil),
-        [[_subtitles objectAtIndex:index] name]]];
-    [self updateSubtitleLanguageMenu];
-    [_propertiesView reloadData];
+    [self changeSubtitle:[sender tag]];
 }
 
 - (IBAction)subtitleFontSizeAction:(id)sender
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__);
-    switch ([sender tag]) {
-        case -1 : [self setSubtitleFontSize:[_movieView subtitleFontSize] - 1.0];           break;
-        case  0 : [self setSubtitleFontSize:[_defaults floatForKey:MSubtitleFontSizeKey]];  break;
-        case +1 : [self setSubtitleFontSize:[_movieView subtitleFontSize] + 1.0];           break;
-    }
+    [self changeSubtitleFontSize:[sender tag]];
 }
 
 - (IBAction)subtitleVMarginAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    switch ([sender tag]) {
-        case -1 : [self setSubtitleVMargin:[_movieView subtitleVMargin] - 1.0];          break;
-        case  0 : [self setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]]; break;
-        case +1 : [self setSubtitleVMargin:[_movieView subtitleVMargin] + 1.0];          break;
-    }
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self changeSubtitleVMargin:[sender tag]];
 }
 
 - (IBAction)subtitleLetterBoxHeightAction:(id)sender
@@ -217,14 +317,7 @@
         [self setMinLetterBoxHeight:height];
     }
     else {
-        switch ([sender tag]) {
-            case -1 : [_movieView decreaseLetterBoxHeight]; break;
-            case  0 : [_movieView revertLetterBoxHeight];   break;
-            case +1 : [_movieView increaseLetterBoxHeight]; break;
-        }
-        [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Min. Letter Box Height %d", nil),
-            (int)[_movieView minLetterBoxHeight]]];
+        [self changeMinLetterBoxHeight:[sender tag]];
     }
 }
 
@@ -244,12 +337,7 @@
 - (IBAction)subtitleSyncAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    switch ([sender tag]) {
-        case -1 : [self setSubtitleSync:[_movieView subtitleSync] - 0.1];    break;
-        case  0 : [self setSubtitleSync:0.0];           break;
-        case +1 : [self setSubtitleSync:[_movieView subtitleSync] + 0.1];    break;
-    }
-    
+    [self changeSubtitleSync:[sender tag]];
 }
 
 @end

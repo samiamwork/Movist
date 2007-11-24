@@ -90,12 +90,7 @@
     // hide system UI elements(main-menu, dock)
     GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
     SetSystemUIMode(kUIModeAllSuppressed, 0);
-    if (forNavigation) {
-        [NSCursor hide];    // FIXME
-    }
-    else {
-        [NSCursor setHiddenUntilMouseMoves:TRUE];
-    }
+    [NSCursor setHiddenUntilMouseMoves:TRUE];
     
     float rate; // for FS_EFFECT_FADE
     int effect = (forNavigation) ? _effect : FS_EFFECT_FADE;
@@ -140,9 +135,6 @@
     }
 
     [_fullWindow setAcceptsMouseMovedEvents:TRUE];
-    if (!forNavigation) {
-        [NSCursor setHiddenUntilMouseMoves:TRUE];
-    }
 
     // update system activity periodically not to activate screen saver
     _updateSystemActivityTimer = [NSTimer scheduledTimerWithTimeInterval:30.0
@@ -193,12 +185,7 @@
 
     // restore system UI elements(main-menu, dock) & cursor
     SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
-    if (forNavigation) {
-        [NSCursor unhide];
-    }
-    else {
-        [NSCursor setHiddenUntilMouseMoves:FALSE];
-    }
+    [NSCursor setHiddenUntilMouseMoves:FALSE];
 
     [_fullWindow release];
     _fullWindow = nil;
