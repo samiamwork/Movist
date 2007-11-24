@@ -34,6 +34,7 @@
 
         _shadow = [[NSShadow alloc] init];
         _shadowNone = [[NSShadow alloc] init];
+        _strongShadow = FALSE;
 
         _hAlign = OSD_HALIGN_CENTER;
         _vAlign = OSD_VALIGN_CENTER;
@@ -87,6 +88,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (BOOL)strongShadow { return _strongShadow; }
+
 - (void)setShadowColor:(NSColor*)shadowColor
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -111,6 +114,14 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_shadowOffset != shadowOffset) {
         _shadowOffset = shadowOffset;
+        _updateMask |= UPDATE_TEXTURE | UPDATE_SHADOW;
+    }
+}
+
+- (void)setShadowStrong:(BOOL)strong
+{
+    if (_strongShadow != strong) {
+        _strongShadow = strong;
         _updateMask |= UPDATE_TEXTURE | UPDATE_SHADOW;
     }
 }

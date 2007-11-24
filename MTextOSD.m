@@ -281,6 +281,9 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
     // at first, draw with outline & shadow
     [_shadow set];
     [_string drawInRect:drawingRect];
+    if (_strongShadow) {  // draw again for strong shadow
+        [_string drawInRect:drawingRect];
+    }
 
     // redraw with new-outline & no-shadow for sharpness
     NSRange range = NSMakeRange(0, [_string length]);

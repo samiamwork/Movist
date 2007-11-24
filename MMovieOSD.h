@@ -51,10 +51,11 @@ enum {  // for _updateMask
     unsigned int _updateMask;   // bit-mask of UPDATE_*
 
     NSShadow* _shadow;
+    NSShadow* _shadowNone;
     NSColor* _shadowColor;
     float _shadowBlur;         // for 640-width-of-movie
     float _shadowOffset;       // for 640-width-of-movie
-    NSShadow* _shadowNone;
+    BOOL _strongShadow;
 
     NSSize _contentSize;
     NSSize _drawingSize;
@@ -76,9 +77,11 @@ enum {  // for _updateMask
 - (void)updateContent;
 
 #pragma mark -
+- (BOOL)strongShadow;
 - (void)setShadowColor:(NSColor*)shadowColor;
 - (void)setShadowBlur:(float)shadowBlur;
 - (void)setShadowOffset:(float)shadowOffset;
+- (void)setShadowStrong:(BOOL)strong;
 - (void)updateShadow;
 
 #pragma mark -

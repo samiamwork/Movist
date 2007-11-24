@@ -153,9 +153,15 @@
     [_shadow set];
     if (_type == VOLUME_BAR) {
         [self drawVolumeBar:texSize];
+        if (_strongShadow) {  // draw again for strong shadow
+            [self drawVolumeBar:texSize];
+        }
     }
     else {
         [self drawSeekBar:texSize];
+        if (_strongShadow) {  // draw again for strong shadow
+            [self drawVolumeBar:texSize];
+        }
     }
 }
 
