@@ -21,8 +21,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#if defined(_SUPPORT_FFMPEG)
-
 #import "MMovie_FFMPEG.h"
 
 #define _USE_AUDIO_DATA_FLOAT_BIT
@@ -643,5 +641,3 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
                     audioData:ioData];
     return noErr;
 }
-
-#endif  // _SUPPORT_FFMPEG

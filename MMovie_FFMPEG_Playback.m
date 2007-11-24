@@ -21,8 +21,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#if defined(_SUPPORT_FFMPEG)
-
 #import "MMovie_FFMPEG.h"
 
 @implementation PacketQueue
@@ -652,5 +650,3 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
 }
 
 @end
-
-#endif  // _SUPPORT_FFMPEG

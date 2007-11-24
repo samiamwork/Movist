@@ -21,8 +21,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#if defined(_SUPPORT_FFMPEG)
-
 #import "MMovie_FFMPEG.h"
 
 @implementation MMovie_FFMPEG
@@ -99,5 +97,3 @@
 }
 
 @end
-
-#endif  // _SUPPORT_FFMPEG

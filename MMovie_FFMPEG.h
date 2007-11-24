@@ -21,8 +21,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#if defined(_SUPPORT_FFMPEG)
-
 #import "MMovie.h"
 
 #import <avcodec.h>
@@ -206,5 +204,3 @@ enum {
 - (void)stopAudio:(int)streamId;
 
 @end
-
-#endif  // _SUPPORT_FFMPEG
