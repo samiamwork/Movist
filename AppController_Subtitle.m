@@ -235,9 +235,8 @@
     // remove all subtitle language items except rotation item
     int i, index;
     NSMenuItem* item;
-    NSArray* itemArray = [_subtitleMenu itemArray];
-    for (i = 0; i < [itemArray count]; i++) {
-        item = (NSMenuItem*)[itemArray objectAtIndex:i];
+    for (i = 0; i < [[_subtitleMenu itemArray] count]; i++) {
+        item = (NSMenuItem*)[[_subtitleMenu itemArray] objectAtIndex:i];
         if ([item action] == @selector(subtitleLanguageAction:)) {
             [_subtitleMenu removeItem:item];
             index = i--;  // remember index of last subtitle item

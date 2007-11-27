@@ -194,9 +194,8 @@
     // remove all items
     int i, index;
     NSMenuItem* item;
-    NSArray* itemArray = [_movieMenu itemArray];
-    for (i = 0; i < [itemArray count]; i++) {
-        item = (NSMenuItem*)[itemArray objectAtIndex:i];
+    for (i = 0; i < [[_movieMenu itemArray] count]; i++) {
+        item = (NSMenuItem*)[[_movieMenu itemArray] objectAtIndex:i];
         if ([item action] == @selector(audioTrackAction:)) {
             [_movieMenu removeItem:item];
             index = i--;  // remember index of last audio track item
