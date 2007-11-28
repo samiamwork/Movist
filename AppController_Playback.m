@@ -227,6 +227,8 @@
                 }
                 else {
                     [self endFullScreen];
+                    [_movieView setMessage:@""];
+                    [_movieView showLogo];
                 }
             }
             else {

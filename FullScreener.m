@@ -85,15 +85,14 @@
 - (void)beginFullScreen
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL forNavigation = (_movieURL != nil);
-
     // hide system UI elements(main-menu, dock)
     GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
     SetSystemUIMode(kUIModeAllSuppressed, 0);
     [NSCursor setHiddenUntilMouseMoves:TRUE];
-    
+
+    BOOL forNavigation = (_movieURL == nil);
+    int effect = (forNavigation) ? FS_EFFECT_FADE : _effect;
     float rate; // for FS_EFFECT_FADE
-    int effect = (forNavigation) ? _effect : FS_EFFECT_FADE;
     switch (effect) {
         case FS_EFFECT_FADE :
             rate = [[_movieView movie] rate];
@@ -144,14 +143,13 @@
 - (void)endFullScreen
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL forNavigation = (_movieURL != nil);
     [_updateSystemActivityTimer invalidate];
 
     [_fullWindow setAcceptsMouseMovedEvents:FALSE];
     [_playPanel orderOut:self];
 
     float rate; // for FS_EFFECT_FADE
-    int effect = (forNavigation) ? _effect : FS_EFFECT_FADE;
+    int effect = ([self isNavigatable]) ? FS_EFFECT_FADE : _effect;
     switch (effect) {
         case FS_EFFECT_FADE :
             rate = [[_movieView movie] rate];

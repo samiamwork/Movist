@@ -209,7 +209,7 @@
     [_panelSeekSlider clearRepeat];
     [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
         NSLocalizedString(@"Reopen With %@", nil),
-        (movieClass == [MMovie_QuickTime class]) ? @"FFMPEG" : @"QuickTime"]];
+        ([_movie class] == [MMovie_QuickTime class]) ? @"FFMPEG" : @"QuickTime"]];
     _prevMovieTime = 0.0;
     [self updateUI];
 
@@ -393,7 +393,7 @@
 
         [[NSNotificationCenter defaultCenter]
             removeObserver:self name:nil object:_movie];
-        
+
         [_movieView setMovie:nil];
         [_movieView setSubtitles:nil];
         [_movieView setMessage:@""];
