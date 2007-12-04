@@ -140,11 +140,11 @@
 
 - (BOOL)checkMovieSeriesFile:(NSString*)path forMovieFile:(NSString*)moviePath
 {
-    TRACE(@"%s \"%@\" for \"%@\"", __PRETTY_FUNCTION__, path, moviePath);
+    //TRACE(@"%s \"%@\" for \"%@\"", __PRETTY_FUNCTION__, path, moviePath);
     if ([path isEqualToString:moviePath]) {
         return TRUE;
     }
-    
+
     // don't check if same extension for more flexibility
     //if (![[path pathExtension] isEqualToString:[moviePath pathExtension]]) {
     //    return FALSE;
@@ -157,7 +157,7 @@
     for (i = 0; i < length1 && i < length2; i++) {
         c1 = [moviePath characterAtIndex:i];
         c2 = [path characterAtIndex:i];
-        if (c1 != c2) {
+        if (toupper(c1) != toupper(c2)) {
             return (minSameLength <= i || (isdigit(c1) && isdigit(c2)));
         }
     }
