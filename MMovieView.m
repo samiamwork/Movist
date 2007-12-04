@@ -28,7 +28,9 @@
 #import "MImageOSD.h"
 #import "MTextOSD.h"
 #import "MSubtitleOSD.h"
-#import "MBarOSD.h"
+#if defined(_USE_SUBTITLE_RENDERER)
+#import "SubtitleRenderer.h"
+#endif
 
 #import "AppController.h"   // for NSApp's delegate
 
@@ -83,17 +85,24 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_hueFilter setDefaults];
     _fullScreenFill = FS_FILL_NEVER;
 
-    // OSD: icon, message, subtitle & bar
+    // OSD: icon, message, subtitle
     NSRect rect = [self bounds];
     _iconOSD = [[MImageOSD alloc] init];        [_iconOSD setMovieRect:rect];
     _messageOSD = [[MTextOSD alloc] init];      [_messageOSD setMovieRect:rect];
     _subtitleOSD = [[MSubtitleOSD alloc] init]; [_subtitleOSD setMovieRect:rect];
-    _barOSD = [[MBarOSD alloc] init];           [_barOSD setMovieRect:rect];
     _errorOSD = [[MTextOSD alloc] init];        [_errorOSD setMovieRect:rect];
     _messageHideInterval = 2.0;
     _subtitleVisible = TRUE;
-    _barHideInterval = 2.0;
 
+#if defined(_USE_SUBTITLE_RENDERER)
+    _subtitleImageOSD = [[MTextImageOSD alloc] init];
+    [_subtitleImageOSD setMovieRect:rect];
+    [_subtitleImageOSD setHAlign:OSD_HALIGN_CENTER];
+    [_subtitleImageOSD setVAlign:OSD_VALIGN_UPPER_FROM_MOVIE_BOTTOM];
+    _subtitleRenderer = [[SubtitleRenderer alloc] initWithMovieView:self
+                                                        subtitleOSD:_subtitleOSD];
+#endif
+    
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
     [_iconOSD setHAlign:OSD_HALIGN_CENTER];
     [_iconOSD setVAlign:OSD_VALIGN_CENTER];
@@ -133,9 +142,12 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
     [self invalidateMessageHideTimer];
     [_errorOSD release];
-    [_barOSD release];
     [_iconOSD release];
     [_messageOSD release];
+#if defined(_USE_SUBTITLE_RENDERER)
+    [_subtitleRenderer release];
+    [_subtitleImageOSD release];
+#endif
     [_subtitleOSD release];
     [_subtitles release];
     [_movie release];
@@ -215,12 +227,15 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     if ([_iconOSD hasContent]) {
         [_iconOSD drawInViewBounds:bounds];
     }
+#if defined(_USE_SUBTITLE_RENDERER)
+    if (_subtitleVisible && [_subtitleImageOSD hasContent]) {
+        [_subtitleImageOSD drawInViewBounds:bounds];
+    }
+#else
     if (_subtitleVisible && [_subtitleOSD hasContent]) {
         [_subtitleOSD drawInViewBounds:bounds];
     }
-    if ([_barOSD hasContent]) {
-        [_barOSD drawInViewBounds:bounds];
-    }
+#endif
     if ([_messageOSD hasContent]) {
         [_messageOSD drawInViewBounds:bounds];
     }
@@ -294,9 +309,13 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
         }
 
-        if ([_iconOSD hasContent] || [_barOSD hasContent] ||
+        if ([_iconOSD hasContent] ||
             [_messageOSD hasContent] || [_errorOSD hasContent] ||
+#if defined(_USE_SUBTITLE_RENDERER)
+            (_subtitleVisible && [_subtitleImageOSD hasContent])) {
+#else
             (_subtitleVisible && [_subtitleOSD hasContent])) {
+#endif
             [self drawOSD];
         }
 
@@ -338,12 +357,17 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                                                   Z:[_movie size].width - 2.0
                                                   W:[_movie size].height - 2.0]
                        forKey:@"inputRectangle"];
-        [_messageOSD setMovieSize:[_movie adjustedSize]];
-        [_subtitleOSD setMovieSize:[_movie adjustedSize]];
-        [_barOSD setMovieSize:[_movie adjustedSize]];
+        NSSize movieSize = [_movie adjustedSize];
+        [_messageOSD setMovieSize:movieSize];
+        [_subtitleOSD setMovieSize:movieSize];
+#if defined(_USE_SUBTITLE_RENDERER)
+        [_subtitleImageOSD setMovieSize:movieSize];
+#endif
     }
     [_subtitleOSD clearContent];
-    [_barOSD clearContent];
+#if defined(_USE_SUBTITLE_RENDERER)
+    [_subtitleImageOSD clearContent];
+#endif
     [_drawLock unlock];
     [self updateMovieRect:TRUE];
 }
@@ -402,13 +426,15 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         _movieRect = *(CGRect*)&mr;
         [_messageOSD setMovieRect:mr];
         [_subtitleOSD setMovieRect:mr];
-        [_barOSD setMovieRect:mr];
+#if defined(_USE_SUBTITLE_RENDERER)
+        [_subtitleImageOSD setMovieRect:mr];
+#endif
     }
     [_errorOSD setMovieRect:NSInsetRect([self bounds], 50, 0)];
     [_drawLock unlock];
 
     if (display) {
-        [self setNeedsDisplay:TRUE];
+        [self redisplay];
     }
 
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
@@ -460,6 +486,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)lockDraw   { [_drawLock lock]; }
 - (void)unlockDraw { [_drawLock unlock]; }
+- (void)redisplay { [self setNeedsDisplay:TRUE]; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -516,7 +543,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_colorFilter setValue:[NSNumber numberWithFloat:brightness]
                     forKey:@"inputBrightness"];
     [_drawLock unlock];
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 }
 
 - (void)setSaturation:(float)saturation
@@ -526,7 +553,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_colorFilter setValue:[NSNumber numberWithFloat:saturation]
                     forKey:@"inputSaturation"];
     [_drawLock unlock];
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 }
 
 - (void)setContrast:(float)contrast
@@ -536,7 +563,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_colorFilter setValue:[NSNumber numberWithFloat:contrast]
                     forKey:@"inputContrast"];
     [_drawLock unlock];
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 }
 
 - (void)setHue:(float)hue
@@ -546,7 +573,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_hueFilter setValue:[NSNumber numberWithFloat:hue]
                   forKey:@"inputAngle"];
     [_drawLock unlock];
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

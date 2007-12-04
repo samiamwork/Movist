@@ -24,7 +24,6 @@
 
 #import "MMovie.h"
 #import "MTextOSD.h"
-#import "MBarOSD.h"
 
 @implementation MMovieView (Message)
 
@@ -57,7 +56,7 @@
 {
     TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [s string]);
     [_messageOSD setString:s];
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 
     [self invalidateMessageHideTimer];
     _messageHideTimer = [NSTimer scheduledTimerWithTimeInterval:_messageHideInterval
@@ -71,7 +70,7 @@
     _messageHideTimer = nil;
 
     [_messageOSD setString:[[NSMutableAttributedString alloc] initWithString:@""]];
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 }
 
 - (void)invalidateMessageHideTimer
@@ -94,58 +93,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (void)showBar:(int)type value:(float)value
-       minValue:(float)minValue maxValue:(float)maxValue
-{
-    [_barOSD setType:type value:value minValue:minValue maxValue:maxValue];
-    [self setNeedsDisplay:TRUE];
-
-    [self invalidateBarHideTimer];
-    _barHideTimer = [NSTimer scheduledTimerWithTimeInterval:_barHideInterval
-                                        target:self selector:@selector(hideBar:)
-                                        userInfo:nil repeats:FALSE];
-}
-
-- (void)showVolumeBar
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self showBar:VOLUME_BAR value:[_movie volume] minValue:0.0 maxValue:MAX_VOLUME];
-}
-
-- (void)showSeekBar
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self showBar:SEEK_BAR value:[_movie currentTime] minValue:0.0 maxValue:[_movie duration]];
-}
-
-- (void)hideBar
-{
-    [self invalidateBarHideTimer];
-    [_barOSD clearContent];
-    [self setNeedsDisplay:TRUE];
-}
-
-- (void)hideBar:(NSTimer*)timer
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    _barHideTimer = nil;
-    
-    [_barOSD clearContent];
-    [self setNeedsDisplay:TRUE];
-}
-
-- (void)invalidateBarHideTimer
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_barHideTimer && [_barHideTimer isValid]) {
-        [_barHideTimer invalidate];
-        _barHideTimer = nil;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
 - (void)setError:(NSError*)error info:(NSString*)info
 {
     //TRACE(@"%s \"%@\", \"%@\"", __PRETTY_FUNCTION__, s, info);
@@ -157,7 +104,7 @@
     else {
         [_errorOSD clearContent];
     }
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 }
 
 @end

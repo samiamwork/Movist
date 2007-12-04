@@ -130,7 +130,7 @@
         _enabled = TRUE;
         _strings = [[NSMutableArray alloc] init];
 
-        _lastLoadedIndex = -1;     // for initial comparison
+        _lastIndexOfStringAtTime = -1;     // for initial comparison
         _emptyString = [[NSMutableAttributedString alloc] initWithString:@"" attributes:nil];
     }
     return self;
@@ -256,11 +256,13 @@
     }
 }
 
-- (NSMutableAttributedString*)nextString:(float)time
+- (NSMutableAttributedString*)stringAtTime:(float)time
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, time);
-    int index = (_lastLoadedIndex < 0) ? 0 : _lastLoadedIndex;
+    int index = (_lastIndexOfStringAtTime < 0) ? 0 : _lastIndexOfStringAtTime;
     if (index < 0 || [_strings count] <= index) {
+        //TRACE(@"%s(\"%@\")[%.03f]: <none>", __PRETTY_FUNCTION__, _name, time);
+        _lastIndexOfStringAtTime = -1;
         return nil;
     }
 
@@ -273,10 +275,9 @@
             }
         }
         if (0 <= index && time < [ss endTime]) {
-            TRACE(@"next subtitle:(\"%@\")[%.03f:%d=>%d]:\"%@\"", _name,
-                  time, _lastLoadedIndex, index, [[ss string] string]);
-            _lastLoadedString = [ss string];
-            _lastLoadedIndex = index;
+            //TRACE(@"%s(\"%@\")[%.03f:%d=>%d]:\"%@\"", __PRETTY_FUNCTION__, _name,
+            //      time, _lastIndexOfStringAtTime, index, [[ss string] string]);
+            _lastIndexOfStringAtTime = index;
             return [ss string];
         }
     }
@@ -289,40 +290,29 @@
             }
         }
         if (index <= maxIndex && [ss beginTime] <= time) {
-            TRACE(@"next subtitle:(\"%@\")[%.03f:%d=>%d]:\"%@\"", _name,
-                  time, _lastLoadedIndex, index, [[ss string] string]);
-            _lastLoadedString = [ss string];
-            _lastLoadedIndex = index;
+            //TRACE(@"%s(\"%@\")[%.03f:%d=>%d]:\"%@\"", __PRETTY_FUNCTION__, _name,
+            //      time, _lastIndexOfStringAtTime, index, [[ss string] string]);
+            _lastIndexOfStringAtTime = index;
             return [ss string];
         }
     }
     else {
-        if (_lastLoadedString != [ss string]) {
-            TRACE(@"next subtitle:(\"%@\")[%.03f:%d=>%d]:\"%@\"", _name,
-                  time, _lastLoadedIndex, index, [[ss string] string]);
-            _lastLoadedString = [ss string];
-            _lastLoadedIndex = index;
-            return [ss string];
-        }
-        // _lastLoadedString is continued...
-        return nil;
+        //TRACE(@"%s(\"%@\")[%.03f:%d=>%d]:\"%@\"", __PRETTY_FUNCTION__, _name,
+        //      time, _lastIndexOfStringAtTime, index, [[ss string] string]);
+        _lastIndexOfStringAtTime = index;
+        return [ss string];
     }
-    
+
     // string not found
-    if (_lastLoadedString != _emptyString) {
-        TRACE(@"next subtitle:(\"%@\")[%.03f]: <none>", _name, time);
-        _lastLoadedString = _emptyString;
-        return _emptyString;
-    }
-    // <none> is continued...
-    return nil;
+    //TRACE(@"%s(\"%@\")[%.03f]: <none>", __PRETTY_FUNCTION__, _name, time);
+    _lastIndexOfStringAtTime = -1;
+    return _emptyString;
 }
 
 - (void)clearCache
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    _lastLoadedIndex = -1;
-    _lastLoadedString = nil;
+    _lastIndexOfStringAtTime = -1;
 }
 
 @end

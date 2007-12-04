@@ -29,9 +29,8 @@
     BOOL _enabled;
     NSMutableArray* _strings;   // for MSubtitleString
 
-    // for performance of -nextString:
-    int _lastLoadedIndex;
-    NSAttributedString* _lastLoadedString;
+    // for performance of -stringAtTime:
+    int _lastIndexOfStringAtTime;
     NSMutableAttributedString* _emptyString;
 }
 
@@ -49,7 +48,7 @@
 - (void)addString:(NSMutableAttributedString*)string time:(float)time;
 - (void)addString:(NSMutableAttributedString*)string
         beginTime:(float)beginTime endTime:(float)endTime;
-- (NSMutableAttributedString*)nextString:(float)time;
+- (NSMutableAttributedString*)stringAtTime:(float)time;
 - (void)clearCache;
 
 @end

@@ -132,6 +132,9 @@
             [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
             break;
     }
+#if defined(_USE_SUBTITLE_RENDERER)
+    [_movieView updateSubtitle];
+#endif
 
     [_fullWindow setAcceptsMouseMovedEvents:TRUE];
 
@@ -180,6 +183,10 @@
     [_mainWindow setHasShadow:TRUE];
     [_mainWindow enableFlushWindow];
     [_mainWindow flushWindowIfNeeded];
+
+#if defined(_USE_SUBTITLE_RENDERER)
+    [_movieView updateSubtitle];
+#endif
 
     // restore system UI elements(main-menu, dock) & cursor
     SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);

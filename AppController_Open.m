@@ -192,15 +192,27 @@
         }
     }
 
-    // update movie & UI
+    // update movie
     [self autoenableAudioTracks];
     [_movie setVolume:normalizedVolume([_defaults floatForKey:MVolumeKey])];
     [_movie setMuted:([_muteButton state] == NSOnState)];
-    [_movieView hideLogo];
-    [_movieView setMovie:_movie];
-    [_movieView setSubtitles:_subtitles];
     [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForWideMovieKey] forWideMovie:TRUE];
     [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForStdMovieKey] forWideMovie:FALSE];
+
+    // update movie-view
+    [_movieView hideLogo];
+    [_movieView setMovie:_movie];
+    [self setMessageWithURL:movieURL info:[[_movie class] name]];
+    // subtitles should be set after resizing window.
+    if (![self isFullScreen]) {
+        [self resizeWithMagnification:1.0];
+        if ([_defaults boolForKey:MAutoFullScreenKey]) {
+            [self beginFullScreen];
+        }
+    }
+    [_movieView setSubtitles:_subtitles];
+
+    // update etc. UI
     [_seekSlider setMinValue:0];
     [_seekSlider setMaxValue:[_movie duration]];
     [_seekSlider clearRepeat];
@@ -222,18 +234,9 @@
     [nc addObserver:self selector:@selector(movieEnded:)
                name:MMovieEndNotification object:_movie];
 
-    // show message
-    [self setMessageWithURL:movieURL info:[[_movie class] name]];
-
     // add to recent-menu
     [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[self movieURL]];
 
-    if (![self isFullScreen]) {
-        [self resizeWithMagnification:1.0];
-        if ([_defaults boolForKey:MAutoFullScreenKey]) {
-            [self beginFullScreen];
-        }
-    }
     [_movie setRate:_playRate];  // auto play
     return TRUE;
 }

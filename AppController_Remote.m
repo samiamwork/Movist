@@ -110,7 +110,6 @@
         [self volumeUp];
     }
     else if (![_fullScreener isNavigating]) {   // full play mode
-        //[_movieView showVolumeBar];
         [self volumeUp];
     }
     else {                                      // full navigation mode
@@ -131,7 +130,6 @@
         [self volumeDown];
     }
     else if (![_fullScreener isNavigating]) {   // full play mode
-        //[_movieView showVolumeBar];
         [self volumeDown];
     }
     else {                                      // full navigation mode
@@ -151,7 +149,6 @@
         [self seekBackward:seekIndex];
     }
     else if (![_fullScreener isNavigating]) {   // full play mode
-        //[_movieView showSeekBar];
         [self seekBackward:seekIndex];
     }
     else {                                      // full navigation mode
@@ -165,7 +162,6 @@
         [self seekForward:seekIndex];
     }
     else if (![_fullScreener isNavigating]) {   // full play mode
-        //[_movieView showSeekBar];
         [self seekForward:seekIndex];
     }
     else {                                      // full navigation mode

@@ -29,7 +29,10 @@
 @class MImageOSD;
 @class MTextOSD;
 @class MSubtitleOSD;
-@class MBarOSD;
+#if defined(_USE_SUBTITLE_RENDERER)
+@class MTextImageOSD;
+@class SubtitleRenderer;
+#endif
 
 @interface MMovieView : NSOpenGLView
 {
@@ -52,22 +55,21 @@
 
     // icon
     MImageOSD* _iconOSD;
-    
+
     // message
     MTextOSD* _messageOSD;
     float _messageHideInterval;
     NSTimer* _messageHideTimer;
-    
+
     // subtitle
     MSubtitleOSD* _subtitleOSD;
+#if defined(_USE_SUBTITLE_RENDERER)
+    MTextImageOSD* _subtitleImageOSD;
+    SubtitleRenderer* _subtitleRenderer;
+#endif
     BOOL _subtitleVisible;
     float _minLetterBoxHeight;
     float _subtitleSync;
-
-    // bar
-    MBarOSD* _barOSD;
-    float _barHideInterval;
-    NSTimer* _barHideTimer;
 
     // error
     MTextOSD* _errorOSD;
@@ -90,6 +92,7 @@
 
 - (void)lockDraw;
 - (void)unlockDraw;
+- (void)redisplay;
 
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
 
@@ -128,11 +131,6 @@
 - (float)messageHideInterval;
 - (void)setMessageHideInterval:(float)interval;
 
-- (void)showVolumeBar;
-- (void)showSeekBar;
-- (void)hideBar;
-- (void)invalidateBarHideTimer;
-
 - (void)setError:(NSError*)error info:(NSString*)info;
 
 @end
@@ -145,6 +143,9 @@
 - (NSArray*)subtitles;
 - (void)setSubtitles:(NSArray*)subtitles;
 - (void)updateSubtitleString;
+#if defined(_USE_SUBTITLE_RENDERER)
+- (void)updateSubtitle;
+#endif
 
 - (BOOL)subtitleVisible;
 - (void)setSubtitleVisible:(BOOL)visible;

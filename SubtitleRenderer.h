@@ -19,20 +19,39 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+#if defined(_USE_SUBTITLE_RENDERER)
 
-#import "MMovieOSD.h"
+#import "Movist.h"
 
-enum { VOLUME_BAR, SEEK_BAR };
+@class MMovieView;
+@class MSubtitleOSD;
 
-@interface MBarOSD : MMovieOSD
+@interface SubtitleRenderer : NSObject
 {
-    int _type;
-    float _value;
-    float _minValue;
-    float _maxValue;
+    NSArray* _subtitles;
+    MSubtitleOSD* _subtitleOSD;
+    NSMutableArray* _subtitleImages;    // for MSubtitleStringImage
+    float _subtitleImagesInterval;
+    int _removeCount;
+    float _requestedTime;
+    BOOL _canRequestNewTime;
+    MMovieView* _movieView;
+    NSLock* _subtitlesLock;
+    NSConditionLock* _conditionLock;
+
+    NSImage* _emptyImage;
+
+    NSAutoreleasePool* _autoreleasePool;
+    BOOL _quitRequested;
 }
 
-- (void)setType:(int)type value:(float)value
-       minValue:(float)minValue maxValue:(float)maxValue;
+- (id)initWithMovieView:(MMovieView*)movieView
+            subtitleOSD:(MSubtitleOSD*)subtitleOSD;
+
+- (void)setSubtitles:(NSArray*)subtitles;
+- (void)clearImages:(float)requestedTime;
+- (NSImage*)imageAtTime:(float)time;
 
 @end
+
+#endif

@@ -30,6 +30,7 @@
     if (self = [super init]) {
         [_paragraphStyle setAlignment:NSCenterTextAlignment];
         _strings = [[NSMutableDictionary alloc] initWithCapacity:2];
+        _shadowStrongness = 10;
         _hAlign = OSD_HALIGN_CENTER;
         _vAlign = OSD_VALIGN_UPPER_FROM_MOVIE_BOTTOM;
     }
@@ -50,39 +51,51 @@
 
 - (void)clearContent
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_strings removeAllObjects];
     _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
 }
 
-- (void)setString:(NSMutableAttributedString*)string forName:(NSString*)name
+- (NSMutableAttributedString*)stringForName:(NSString*)name
+{
+    return [_strings objectForKey:name];
+}
+
+- (BOOL)setString:(NSMutableAttributedString*)string forName:(NSString*)name
 {
     //TRACE(@"%s \"%@\" for \"%@\"", __PRETTY_FUNCTION__, [string string], name);
     assert(string != nil && name != nil);
-    if ([string length] == 0) {
-        [_strings removeObjectForKey:name];
+    NSAttributedString* prevString = [self stringForName:name];
+    if (!prevString || ![prevString isEqualToAttributedString:string]) {
+        if ([string length] == 0) {
+            [_strings removeObjectForKey:name];
+        }
+        else {
+            [_strings setObject:string forKey:name];
+        }
+        _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
+        return TRUE;
     }
-    else {
-        [_strings setObject:string forKey:name];
-    }
-    _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
+    return FALSE;
 }
 
 - (void)updateContent
 {
-    [_string release];
-    _string = [[NSMutableAttributedString alloc] initWithString:@""];
+    [_newString release];
+    _newString = [[NSMutableAttributedString alloc] initWithString:@""];
     NSAttributedString* newline = [[NSAttributedString alloc] initWithString:@"\n"];
     NSMutableAttributedString* s;
     NSEnumerator* enumerator = [[_strings allValues] objectEnumerator];
     while (s = [enumerator nextObject]) {
-        if ([_string length] != 0) {
-            [_string appendAttributedString:newline];
+        if ([_newString length] != 0) {
+            [_newString appendAttributedString:newline];
         }
-        [_string appendAttributedString:s];
+        [_newString appendAttributedString:s];
     }
     [newline release];
-    [_string fixAttributesInRange:NSMakeRange(0, [_string length])];
+    [_newString fixAttributesInRange:NSMakeRange(0, [_newString length])];
+
+    [super updateContent];
 }
 
 - (void)drawInViewBounds:(NSRect)viewBounds

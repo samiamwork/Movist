@@ -27,6 +27,7 @@
     NSMutableDictionary* _strings;
 }
 
-- (void)setString:(NSMutableAttributedString*)string forName:(NSString*)name;
+- (NSMutableAttributedString*)stringForName:(NSString*)name;
+- (BOOL)setString:(NSMutableAttributedString*)string forName:(NSString*)name;
 
 @end

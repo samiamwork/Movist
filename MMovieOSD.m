@@ -34,8 +34,13 @@
 
         _shadow = [[NSShadow alloc] init];
         _shadowNone = [[NSShadow alloc] init];
-        _strongShadow = FALSE;
+        _shadowStrongness = 1;
 
+        _contentLeftMargin = 0;
+        _contentRightMargin = 0;
+        _contentTopMargin = 0;
+        _contentBottomMargin = 0;
+        
         _hAlign = OSD_HALIGN_CENTER;
         _vAlign = OSD_VALIGN_CENTER;
         _hMargin = _vMargin = 0.0;
@@ -60,7 +65,7 @@
 #pragma mark -
 
 - (BOOL)hasContent { return FALSE; }
-- (void)updateContent {}
+- (void)updateContent { /* _contentSize must be updated here. */ }
 - (void)clearContent {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +82,7 @@
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(rect));
     _movieRect = rect;
-    _updateMask |= UPDATE_SHADOW | UPDATE_TEXTURE;
+    _updateMask |= UPDATE_SHADOW | UPDATE_CONTENT | UPDATE_TEXTURE;
 }
 
 - (float)autoSize:(float)defaultSize
@@ -88,7 +93,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (BOOL)strongShadow { return _strongShadow; }
+- (int)shadowStrongness { return _shadowStrongness; }
 
 - (void)setShadowColor:(NSColor*)shadowColor
 {
@@ -118,10 +123,10 @@
     }
 }
 
-- (void)setShadowStrong:(BOOL)strong
+- (void)setShadowStrongness:(int)strongness
 {
-    if (_strongShadow != strong) {
-        _strongShadow = strong;
+    if (_shadowStrongness != strongness) {
+        _shadowStrongness = strongness;
         _updateMask |= UPDATE_TEXTURE | UPDATE_SHADOW;
     }
 }
@@ -215,26 +220,29 @@
 - (NSRect)drawingRectForViewBounds:(NSRect)viewBounds
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(viewBounds));
-    NSRect rect;
-    rect.size = _contentSize;
-    
     float hmargin = _movieRect.size.width * _hMargin;
     float vmargin = _movieRect.size.height* _vMargin;
-    
+
     NSRect mr = _movieRect;
     mr.origin.x   += hmargin;
     mr.size.width -= hmargin * 2;
-    
+
+    NSRect rect;
+    rect.size = _contentSize;
+
     // horizontal align
     switch (_hAlign) {
         case OSD_HALIGN_LEFT :
             rect.origin.x = mr.origin.x;
+            rect.origin.x -= _contentLeftMargin;
             break;
         case OSD_HALIGN_CENTER :
             rect.origin.x = mr.origin.x + (mr.size.width - rect.size.width) / 2;
+            rect.origin.x += (_contentRightMargin - _contentLeftMargin) / 2;
             break;
         case OSD_HALIGN_RIGHT :
             rect.origin.x = mr.origin.x + mr.size.width - rect.size.width;
+            rect.origin.x += _contentRightMargin;
             break;
     }
 
@@ -243,25 +251,32 @@
     switch (_vAlign) {
         case OSD_VALIGN_CENTER :
             rect.origin.y = mr.origin.y + (mr.size.height - rect.size.height) / 2;
+            rect.origin.y += (_contentBottomMargin - _contentTopMargin) / 2;
             break;
         case OSD_VALIGN_UPPER_FROM_MOVIE_TOP :
             rect.origin.y = tm - vmargin - rect.size.height;
-            float minY = NSMinY(viewBounds);
-            if (NSMinY(rect) < minY) {
-                rect.origin.y += minY - NSMinY(rect);
+            rect.origin.y += _contentBottomMargin;
+            float minContentY = NSMinY(rect) + _contentTopMargin;
+            float minBoundsY = NSMinY(viewBounds);
+            if (minContentY < minBoundsY) {
+                rect.origin.y += minBoundsY - minContentY;
             }
             break;
         case OSD_VALIGN_LOWER_FROM_MOVIE_TOP :
             rect.origin.y = tm + vmargin;
+            rect.origin.y -= _contentTopMargin;
             break;
         case OSD_VALIGN_UPPER_FROM_MOVIE_BOTTOM :
             rect.origin.y = (tm + mr.size.height) - vmargin - rect.size.height;
+            rect.origin.y += _contentBottomMargin;
             break;
         case OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM :
             rect.origin.y = (tm + mr.size.height) + vmargin;
-            float maxY = NSMaxY(viewBounds);
-            if (maxY < NSMaxY(rect)) {
-                rect.origin.y -= NSMaxY(rect) - maxY;
+            rect.origin.y -= _contentTopMargin;
+            float maxContentY = NSMaxY(rect) - _contentBottomMargin;
+            float maxBoundsY = NSMaxY(viewBounds);
+            if (maxBoundsY < maxContentY) {
+                rect.origin.y -= maxContentY - maxBoundsY;
             }
             break;
     }
@@ -271,14 +286,6 @@
 - (void)drawInViewBounds:(NSRect)viewBounds
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(viewBounds));
-    if (_updateMask & UPDATE_SHADOW) {
-        _updateMask &= ~UPDATE_SHADOW;
-        [self updateShadow];
-    }
-    if (_updateMask & UPDATE_CONTENT) {
-        _updateMask &= ~UPDATE_CONTENT;
-        [self updateContent];
-    }
     if (_updateMask & UPDATE_TEXTURE) {
         _updateMask &= ~UPDATE_TEXTURE;
         [self makeTexture:CGLGetCurrentContext()];
@@ -289,13 +296,33 @@
     }
 }
 
-- (NSSize)updateTextureSizes
-{
-    // _contentSize & _drawingSize must be updated here.
-    return NSMakeSize(0, 0);
-}
+- (void)drawContent:(NSRect)rect { /* draw content here */ }
 
-- (void)drawContent:(NSSize)texSize {}
+- (NSImage*)makeTexImage
+{
+    if (_updateMask & UPDATE_SHADOW) {
+        _updateMask &= ~UPDATE_SHADOW;
+        [self updateShadow];
+    }
+    if (_updateMask & UPDATE_CONTENT) {
+        _updateMask &= ~UPDATE_CONTENT;
+        [self updateContent];
+    }
+
+    if (_contentSize.width == 0 || _contentSize.height == 0) {
+        return nil;
+    }
+
+    // draw content
+    NSImage* img = [[NSImage alloc] initWithSize:_contentSize];
+    [img lockFocus];
+        NSRect rect = NSMakeRect(0, 0, _contentSize.width, _contentSize.height);
+        [self drawContent:rect];
+        //[[NSColor yellowColor] set];
+        //NSFrameRect(rect);
+    [img unlockFocus];
+    return [img autorelease];
+}
 
 - (void)makeTexture:(CGLContextObj)glContext
 {
@@ -309,53 +336,43 @@
         _texName = 0;
     }
 
-    NSSize texSize = [self updateTextureSizes];
-    if (texSize.width == 0 || texSize.height == 0) {
+    NSImage* img = [self makeTexImage];
+    if (!img) {
         return;
     }
-
-    // draw content
-    NSImage* img = [[NSImage alloc] initWithSize:texSize];
     NSBitmapImageRep* bmp;
     [img lockFocus];
-        [self drawContent:texSize];
-
-        NSRect texRect = NSMakeRect(0, 0, texSize.width, texSize.height);
-        bmp = [[NSBitmapImageRep alloc] initWithFocusedViewRect:texRect];
-
-        //[[NSColor yellowColor] set];
-        //NSFrameRect(texRect);
-        //[[NSColor blueColor] set];
-        //NSFrameRect(drawingRect);
+        NSSize size = [img size];
+        NSRect rect = NSMakeRect(0, 0, size.width, size.height);
+        bmp = [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
     [img unlockFocus];
     
     // make texture
     glGenTextures(1, &_texName);
     glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texName);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA, texSize.width, texSize.height,
+    glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA, size.width, size.height,
                  0, GL_RGBA, GL_UNSIGNED_BYTE, [bmp bitmapData]);
     [bmp release];
-    [img release];
 }
 
 - (void)drawTexture:(NSRect)rect
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(rect));
-    rect.size = _drawingSize;
+    rect.size = _contentSize;
 
     glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texName);
-        glBegin(GL_QUADS);
+    glBegin(GL_QUADS);
         // upper-left
         glTexCoord2f(0.0,                0.0);
         glVertex2f  (NSMinX(rect),       NSMinY(rect));
         // lower-left
-        glTexCoord2f(0.0,                _drawingSize.height);
+        glTexCoord2f(0.0,                _contentSize.height);
         glVertex2f  (NSMinX(rect),       NSMaxY(rect));
         // upper-right
-        glTexCoord2f(_drawingSize.width, _drawingSize.height);
+        glTexCoord2f(_contentSize.width, _contentSize.height);
         glVertex2f  (NSMaxX(rect),        NSMaxY(rect));
         // lower-right
-        glTexCoord2f(_drawingSize.width, 0.0);
+        glTexCoord2f(_contentSize.width, 0.0);
         glVertex2f  (NSMaxX(rect),        NSMinY(rect));
     glEnd();
 }

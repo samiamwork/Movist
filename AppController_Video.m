@@ -43,6 +43,9 @@
         NSRect frame = [_mainWindow frameRectForMovieSize:size
                                                     align:ALIGN_WINDOW_TITLE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
+#if defined(_USE_SUBTITLE_RENDERER)
+        [_movieView updateSubtitle];
+#endif
     }
 }
 
@@ -52,6 +55,9 @@
     if (![self isFullScreen]) {
         NSRect frame = [_mainWindow frameRectForScreen];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
+#if defined(_USE_SUBTITLE_RENDERER)
+        [_movieView updateSubtitle];
+#endif
     }
 }
 
@@ -98,7 +104,6 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullScreenLock lock];
     if ([self isFullScreen]) {
-        [_movieView hideBar];
         [_fullScreener endFullScreen];
         [_fullScreener release];
         _fullScreener = nil;
@@ -130,7 +135,6 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullScreenLock lock];
     if ([self isFullScreen]) {
-        [_movieView hideBar];
         [_movieView showLogo];
         [_fullScreener endFullScreen];
         [_fullScreener release];

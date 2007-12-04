@@ -28,6 +28,18 @@
     NSImage* _image;
 }
 
-- (void)setImage:(NSImage*)image;
+- (NSImage*)image;
+- (BOOL)setImage:(NSImage*)image;
 
 @end
+
+#if defined(_USE_SUBTITLE_RENDERER)
+////////////////////////////////////////////////////////////////////////////////
+
+@interface MTextImageOSD : MImageOSD
+{
+}
+
+@end
+
+#endif

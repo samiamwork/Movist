@@ -63,7 +63,7 @@
                                 userInfo:nil repeats:FALSE];
     }
     if (_dragAction != DRAG_ACTION_NONE) {
-        [self setNeedsDisplay:TRUE];
+        [self redisplay];
     }
     return [self dragOperation];
 }
@@ -114,7 +114,7 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _dragAction = DRAG_ACTION_NONE;
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 }
 
 - (BOOL)prepareForDragOperation:(id<NSDraggingInfo>)sender
@@ -162,7 +162,7 @@
     if ([[NSApp delegate] playlistWindowVisible]) {
         [[NSApp delegate] hidePlaylistWindow];
     }
-    [self setNeedsDisplay:TRUE];
+    [self redisplay];
 }
 
 @end

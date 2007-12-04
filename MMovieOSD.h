@@ -53,16 +53,19 @@ enum {  // for _updateMask
     NSShadow* _shadow;
     NSShadow* _shadowNone;
     NSColor* _shadowColor;
-    float _shadowBlur;         // for 640-width-of-movie
-    float _shadowOffset;       // for 640-width-of-movie
-    BOOL _strongShadow;
+    float _shadowBlur;          // for 640-width-of-movie
+    float _shadowOffset;        // for 640-width-of-movie
+    int _shadowStrongness;
 
     NSSize _contentSize;
-    NSSize _drawingSize;
-    unsigned int _hAlign;      // bit-mask of OSD_HALIGN_*
-    unsigned int _vAlign;      // bit-mask of OSD_VALIGN_*
-    float _hMargin;            // percentage of width
-    float _vMargin;            // percentage of height
+    float _contentLeftMargin;   // pure content margins in content size
+    float _contentRightMargin;
+    float _contentTopMargin;
+    float _contentBottomMargin;
+    unsigned int _hAlign;       // bit-mask of OSD_HALIGN_*
+    unsigned int _vAlign;       // bit-mask of OSD_VALIGN_*
+    float _hMargin;             // percentage of width
+    float _vMargin;             // percentage of height
 
     GLuint _texName;
 }
@@ -72,37 +75,35 @@ enum {  // for _updateMask
 - (float)autoSize:(float)defaultSize;
 
 #pragma mark -
+- (BOOL)displayOnLetterBox;
+- (unsigned int)hAlign;
+- (unsigned int)vAlign;
+- (float)hMargin;
+- (float)vMargin;
+- (void)setDisplayOnLetterBox:(BOOL)displayOnLetterBox;
+- (void)setHAlign:(unsigned int)hAlign;
+- (void)setVAlign:(unsigned int)vAlign;
+- (void)setHMargin:(float)hMargin;
+- (void)setVMargin:(float)vMargin;
+
+#pragma mark -
 - (BOOL)hasContent;
 - (void)clearContent;
 - (void)updateContent;
 
 #pragma mark -
-- (BOOL)strongShadow;
+- (int)shadowStrongness;
 - (void)setShadowColor:(NSColor*)shadowColor;
 - (void)setShadowBlur:(float)shadowBlur;
 - (void)setShadowOffset:(float)shadowOffset;
-- (void)setShadowStrong:(BOOL)strong;
+- (void)setShadowStrongness:(int)strongness;
 - (void)updateShadow;
 
 #pragma mark -
-- (unsigned int)hAlign;
-- (unsigned int)vAlign;
-- (void)setHAlign:(unsigned int)hAlign;
-- (void)setVAlign:(unsigned int)vAlign;
-- (BOOL)displayOnLetterBox;
-- (float)hMargin;
-- (float)vMargin;
-- (void)setDisplayOnLetterBox:(BOOL)displayOnLetterBox;
-- (void)setHMargin:(float)hMargin;
-- (void)setVMargin:(float)vMargin;
-
-#pragma mark -
-- (NSSize)updateTextureSizes;
-- (void)drawContent:(NSSize)texSize;
+- (void)drawContent:(NSRect)rect;
+- (NSImage*)makeTexImage;
 - (void)makeTexture:(CGLContextObj)glContext;
 - (void)drawTexture:(NSRect)rect;
-
-#pragma mark -
 - (NSRect)drawingRectForViewBounds:(NSRect)viewBounds;
 - (void)drawInViewBounds:(NSRect)viewBounds;
 

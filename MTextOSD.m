@@ -37,6 +37,12 @@
 
         _strokeWidth2= [[NSNumber alloc] initWithFloat:-0.01];
 
+        // for stroke & shadow
+        _contentLeftMargin  = 10;
+        _contentRightMargin = 30;
+        _contentTopMargin   = 10;
+        _contentBottomMargin= 30;
+        
         _hAlign = OSD_HALIGN_LEFT;
         _vAlign = OSD_VALIGN_LOWER_FROM_MOVIE_TOP;
         _hMargin = _vMargin = 0.0;
@@ -76,18 +82,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (NSMutableAttributedString*)string { return _string; }
 - (NSString*)fontName { return _fontName; }
 - (float)fontSize { return _fontSize; }
 
 - (BOOL)hasContent { return _newString && ([_newString length] != 0); }
 
-- (void)clearContent { [self setString:@""]; }
-
-- (void)updateContent
+- (void)clearContent
 {
-    [_newString retain];
-    [_string release];
-    _string = _newString;
+    [self setString:[[NSMutableAttributedString alloc] initWithString:@""]];
 }
 
 - (void)setTextAlignment:(NSTextAlignment)alignment
@@ -95,12 +98,17 @@
     [_paragraphStyle setAlignment:alignment];
 }
 
-- (void)setString:(NSMutableAttributedString*)string
+- (BOOL)setString:(NSMutableAttributedString*)string
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [string string]);
     assert(string != nil);
-    [string retain], [_newString release], _newString = string;
-    _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
+    if (!_newString || ![_newString isEqualToAttributedString:string]) {
+        [_newString release];
+        _newString = [string retain];
+        _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
+        return TRUE;
+    }
+    return FALSE;
 }
 
 - (void)setFontName:(NSString*)name size:(float)size
@@ -161,17 +169,22 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (void)drawInViewBounds:(NSRect)viewBounds
+- (void)updateFont
+{
+    [_font release];
+    float size = MAX(15.0, [self autoSize:_fontSize]);
+    _font = [[NSFont fontWithName:_fontName size:size] retain];
+    //TRACE(@"font recreated: name=\"%@\" size=%g", _fontName, [_font pointSize]);
+}
+
+- (NSImage*)makeTexImage
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(viewBounds));
     if (_updateMask & UPDATE_FONT) {
         _updateMask &= ~UPDATE_FONT;
-        [_font release];
-        float size = MAX(15.0, [self autoSize:_fontSize]);
-        _font = [[NSFont fontWithName:_fontName size:size] retain];
-        //TRACE(@"font recreated: name=\"%@\" size=%g", _fontName, [_font pointSize]);
+        [self updateFont];
     }
-    [super drawInViewBounds:viewBounds];
+    return [super makeTexImage];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -242,47 +255,46 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
     [_string fixAttributesInRange:range];
 }
 
-#define DRAWING_LT_MARGIN    (10)        // for stroke
-#define DRAWING_RB_MARGIN    (10 + 20)   // for stroke & shadow
-
-- (NSSize)updateTextureSizes
+- (void)updateContent
 {
+    [_newString retain];
+    [_string release];
+    _string = _newString;
+    
     if (!_string) {
-        return NSMakeSize(0, 0);
+        _contentSize.width  = 0;
+        _contentSize.height = 0;
     }
-
-    // set attributes : font & shadow should be applied before calculating size
-    [self applyAttributes];
-
-    NSSize maxSize = _movieRect.size;
-    maxSize.width -= (_movieRect.size.width * _hMargin) * 2;
-    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
-                                     NSStringDrawingUsesFontLeading |
-                                     NSStringDrawingUsesDeviceMetrics;
-    _contentSize = [_string boundingRectWithSize:maxSize options:options].size;
-    _drawingSize.width  = _contentSize.width  + DRAWING_LT_MARGIN + DRAWING_RB_MARGIN;
-    _drawingSize.height = _contentSize.height + DRAWING_LT_MARGIN;
-    _drawingSize.height += MIN(DRAWING_RB_MARGIN, _movieRect.size.height * _vMargin);
-
-    NSSize texSize;
-    texSize.width  = _contentSize.width  + DRAWING_LT_MARGIN + DRAWING_RB_MARGIN;
-    texSize.height = _contentSize.height + DRAWING_LT_MARGIN + DRAWING_RB_MARGIN;
-    return texSize;
+    else {
+        // set attributes : font & shadow should be applied before calculating size
+        [self applyAttributes];
+        
+        NSSize maxSize = _movieRect.size;
+        float vmargin = _movieRect.size.height * _vMargin;
+        maxSize.width -= (_movieRect.size.width * _hMargin) * 2;
+        NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
+            NSStringDrawingUsesFontLeading |
+            NSStringDrawingUsesDeviceMetrics;
+        _contentSize = [_string boundingRectWithSize:maxSize options:options].size;
+        // add margins for outline & shadow
+        _contentSize.width  += _contentLeftMargin + _contentRightMargin;
+        _contentSize.height += _contentTopMargin + MAX(vmargin, _contentBottomMargin);
+    }
 }
 
-- (void)drawContent:(NSSize)texSize
+- (void)drawContent:(NSRect)rect
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSRect drawingRect;
-    drawingRect.origin.x = DRAWING_LT_MARGIN;
-    drawingRect.origin.y = texSize.height - _contentSize.height - DRAWING_LT_MARGIN;
-    drawingRect.size = _contentSize;
+    rect.origin.x += _contentLeftMargin;
+    rect.origin.y += _contentBottomMargin;
+    rect.size.width  -= _contentLeftMargin + _contentRightMargin;
+    rect.size.height -= _contentTopMargin + _contentBottomMargin;
 
     // at first, draw with outline & shadow
     [_shadow set];
-    [_string drawInRect:drawingRect];
-    if (_strongShadow) {  // draw again for strong shadow
-        [_string drawInRect:drawingRect];
+    int i;
+    for (i = 0; i < _shadowStrongness; i++) {
+        [_string drawInRect:rect];
     }
 
     // redraw with new-outline & no-shadow for sharpness
@@ -291,20 +303,10 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
     [_string addAttribute:NSStrokeWidthAttributeName
                     value:_strokeWidth2 range:range];
     [_string fixAttributesInRange:range];
-    [_string drawInRect:drawingRect];
+    [_string drawInRect:rect];
 
-    //[[NSColor yellowColor] set];
-    //NSFrameRect(texRect);
     //[[NSColor blueColor] set];
-    //NSFrameRect(drawingRect);
-}
-
-- (void)drawTexture:(NSRect)rect
-{
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(rect));
-    rect.origin.x -= DRAWING_LT_MARGIN;
-    rect.origin.y -= DRAWING_LT_MARGIN;
-    [super drawTexture:rect];
+    //NSFrameRect(rect);
 }
 
 @end
