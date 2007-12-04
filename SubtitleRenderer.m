@@ -141,10 +141,8 @@
     [_conditionLock lock];
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _removeCount = [_subtitleImages count];
-    //if ([[_movieView movie] rate] == 0.0 || _canRequestedNewTime) {
-        _requestedTime = requestedTime;
-        _canRequestNewTime = FALSE;
-    //}
+    _requestedTime = requestedTime;
+    _canRequestNewTime = FALSE;
     [_conditionLock unlockWithCondition:MAKING_IMAGE];
 }
 
@@ -188,11 +186,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-// how to make image for paused? (exclusive)
-// don't define anything for no subtitle on paused.
-//#define _SYNC_ON_PAUSED
-#define _ASYNC_ON_PAUSED
-
 - (NSImage*)imageAtTime:(float)time
 {
     if ([_subtitles count] == 0) {
@@ -210,15 +203,15 @@
         }
         else if (time < [image endTime]) {
             if (0 == i) {
-                TRACE(@"%s [%.03f] image[%d] => ok", __PRETTY_FUNCTION__, time, i);
+                //TRACE(@"%s [%.03f] image[%d] => ok", __PRETTY_FUNCTION__, time, i);
                 int condition = (0 < _removeCount || 0 <= _requestedTime) ?
                                     MAKING_IMAGE : [_conditionLock condition];
                 [_conditionLock unlockWithCondition:condition];
             }
             else {
                 if (_removeCount < i) {
-                    TRACE(@"%s [%.03f] image[%d] => need to remove oldest %d",
-                          __PRETTY_FUNCTION__, time, i, i);
+                    //TRACE(@"%s [%.03f] image[%d] => need to remove oldest %d",
+                    //      __PRETTY_FUNCTION__, time, i, i);
                     _removeCount = i;
                 }
                 [_conditionLock unlockWithCondition:MAKING_IMAGE];
@@ -228,31 +221,19 @@
     }
     // clear & remake _subtitleImages
     NSImage* resultImage = _emptyImage;
-    if ([[_movieView movie] rate] == 0.0) { // if paused, then make now
-        TRACE(@"%s [%.03f] no image ==> need to remove all (paused)", __PRETTY_FUNCTION__, time);
+    if (_canRequestNewTime || [[_movieView movie] rate] == 0.0) {
+        //TRACE(@"%s [%.03f] no image ==> need to remove all", __PRETTY_FUNCTION__, time);
         _removeCount = [_subtitleImages count];
         _canRequestNewTime = FALSE;
         _requestedTime = time;
-#if defined(_SYNC_ON_PAUSED)
-        while (TRUE) {  // wait until image is made
-            [_conditionLock unlockWithCondition:MAKING_IMAGE];
-            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
-            [_conditionLock lock];
-            if (_canRequestNewTime && 0 < [_subtitleImages count]) {
-                image = [_subtitleImages objectAtIndex:0];
-                if ([image beginTime] <= time && time < [image endTime]) {
-                    resultImage = [image image];
-                }
-                break;
+        /*
+        if ([[_movieView movie] rate] == 0.0) {
+            [_subtitleOSD clearContent];
+            if ([self updateSubtitleOSD:time]) {
+                resultImage = [_subtitleOSD makeTexImage];
             }
         }
-#endif  // _SYNC_ON_PAUSED
-    }
-    else if (_canRequestNewTime) {          // if playing, then retry later
-        TRACE(@"%s [%.03f] no image ==> need to remove all (playing)", __PRETTY_FUNCTION__, time);
-        _removeCount = [_subtitleImages count];
-        _canRequestNewTime = FALSE;
-        _requestedTime = time;
+         */
     }
     [_conditionLock unlockWithCondition:MAKING_IMAGE];
 
@@ -272,13 +253,14 @@
 - (void)removeOldestImages
 {
     if ([_subtitleImages count] == _removeCount) {
-        TRACE(@"%s removing all oldests (%d)...", __PRETTY_FUNCTION__, _removeCount);
+        //TRACE(@"%s removing all oldests (%d)...", __PRETTY_FUNCTION__, _removeCount);
         [_subtitleImages removeAllObjects];
-        _subtitleImagesInterval = 0;
         _removeCount = 0;
+        _subtitleImagesInterval = 0;
+        [_subtitleOSD clearContent];
     }
     else if (0 < _removeCount) {
-        TRACE(@"%s removing oldest %d...", __PRETTY_FUNCTION__, _removeCount);
+        //TRACE(@"%s removing oldest %d...", __PRETTY_FUNCTION__, _removeCount);
         while (0 < _removeCount) {
             [_subtitleImages removeObjectAtIndex:0];
             _removeCount--;
@@ -296,18 +278,19 @@
     NSImage* texImage;
     MSubtitleStringImage* image = nil;
     while (!_quitRequested) {
-        TRACE(@"%s waiting for resume", __PRETTY_FUNCTION__);
+        //TRACE(@"%s waiting for resume", __PRETTY_FUNCTION__);
         [_conditionLock lockWhenCondition:MAKING_IMAGE];
         [self removeOldestImages];
         [_conditionLock unlockWithCondition:MAKING_IMAGE];  // maintain locking
 
         if (0 <= _requestedTime) {  // new time requested
-            TRACE(@"%s new time requested: %.03f", __PRETTY_FUNCTION__, _requestedTime);
+            //TRACE(@"%s new time requested: %.03f", __PRETTY_FUNCTION__, _requestedTime);
             time = _requestedTime;
             _requestedTime = -1;
+            [_subtitleOSD clearContent];
             [image release], image = nil;
         }
-        TRACE(@"%s making images at %.03f...", __PRETTY_FUNCTION__, time);
+        //TRACE(@"%s making images at %.03f...", __PRETTY_FUNCTION__, time);
         while (_requestedTime < 0 &&     // stop if new time is requested
                _subtitleImagesInterval < MAX_IMAGES_TIME_INTERVAL) {
             if ([self updateSubtitleOSD:time] & STRING_UPDATED) {
@@ -315,21 +298,21 @@
                     [_conditionLock lock];
                     [image setEndTime:time];
                     [_subtitleImages addObject:image];
-                    TRACE(@"%s image[%d] (%.03f~%.03f)", __PRETTY_FUNCTION__,
-                          [_subtitleImages count] - 1,
-                          [image beginTime], [image endTime]);
+                    //TRACE(@"%s image[%d] (%.03f~%.03f)", __PRETTY_FUNCTION__,
+                    //      [_subtitleImages count] - 1,
+                    //      [image beginTime], [image endTime]);
                     [image release], image = nil;
                     _subtitleImagesInterval = [self imagesTimeInterval];
                     _canRequestNewTime = TRUE;
                     [_conditionLock unlockWithCondition:MAKING_IMAGE];
-#if defined(_ASYNC_ON_PAUSED)
+                    //#if defined(_ASYNC_ON_PAUSED)
                     if (_requestedTime < 0 &&
                         [[_movieView movie] rate] == 0.0) {
                         [_movieView updateSubtitleString];
                         [_movieView performSelectorOnMainThread:@selector(redisplay)
                                                      withObject:nil waitUntilDone:FALSE];
                     }
-#endif  // _ASYNC_ON_PAUSED
+                    //#endif  // _ASYNC_ON_PAUSED
                 }
                 texImage = [_subtitleOSD makeTexImage];
                 if (texImage) {
