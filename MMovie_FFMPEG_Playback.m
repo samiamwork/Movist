@@ -90,6 +90,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+#define WAITING_FOR_COMMAND 0
+#define DISPATCHING_COMMAND 1
 
 @implementation MMovie_FFMPEG (Playback)
 
@@ -106,7 +108,7 @@
     _dispatchPacket = FALSE;
     _command = COMMAND_NONE;
     _reservedCommand = COMMAND_NONE;
-    _commandLock = [[NSConditionLock alloc] initWithCondition:0];
+    _commandLock = [[NSConditionLock alloc] initWithCondition:WAITING_FOR_COMMAND];
     _avSyncMutex = [[NSLock alloc] init];
 
     _videoQueue = [[PacketQueue alloc] initWithCapacity:30];  // 30 fps * 5 sec.
@@ -158,7 +160,7 @@
 
     if (_command == COMMAND_NONE) { // awake if waiting for command
         TRACE(@"%s awake", __PRETTY_FUNCTION__);
-        [_commandLock unlockWithCondition:1];
+        [_commandLock unlockWithCondition:DISPATCHING_COMMAND];
     }
     TRACE(@"%s waiting for finished...", __PRETTY_FUNCTION__);
     while (_playThreading) {
@@ -234,7 +236,7 @@
           (cmd == COMMAND_PLAY)          ? @"PLAY" :
           (cmd == COMMAND_PAUSE)         ? @"PAUSE" : @"NONE");
     _reservedCommand = cmd;
-    [_commandLock unlockWithCondition:1];
+    [_commandLock unlockWithCondition:DISPATCHING_COMMAND];
 }
 
 - (void)stepBackwardFunc
@@ -409,11 +411,11 @@
     int prevCommand = COMMAND_NONE;
     while (!_quitRequested) {
         //TRACE(@"%s waiting for command-reservation", __PRETTY_FUNCTION__);
-        [_commandLock lockWhenCondition:1];
+        [_commandLock lockWhenCondition:DISPATCHING_COMMAND];
         //TRACE(@"%s _reservedCommand = %d", __PRETTY_FUNCTION__, _reservedCommand);
         _command = _reservedCommand;
         _reservedCommand = COMMAND_NONE;
-        [_commandLock unlockWithCondition:0];
+        [_commandLock unlockWithCondition:WAITING_FOR_COMMAND];
         
         if (_command == COMMAND_PLAY) {
             // if end-of-movie, then restart from first.
