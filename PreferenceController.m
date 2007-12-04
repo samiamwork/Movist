@@ -61,6 +61,7 @@ NSString* PANE_ID[] = {
     [toolbar setAutosavesConfiguration:FALSE];
     [toolbar setDelegate: self];
     [[self window] setToolbar:[toolbar autorelease]];
+    [[self window] setShowsToolbarButton:FALSE];
 
     [self initGeneralPane];
     [self initVideoPane];
