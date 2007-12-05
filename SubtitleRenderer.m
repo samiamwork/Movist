@@ -20,8 +20,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#if defined(_USE_SUBTITLE_RENDERER)
-
 #import "SubtitleRenderer.h"
 
 #import "MMovieView.h"
@@ -77,24 +75,24 @@
 
 @implementation SubtitleRenderer
 
-#define MAX_IMAGES_TIME_INTERVAL    10.0      // 10 sec.
-
 #define WAITING         0
 #define MAKING_IMAGE    1
 
 - (id)initWithMovieView:(MMovieView*)movieView
-            subtitleOSD:(MSubtitleOSD*)subtitleOSD;
 {
     if (self = [super init]) {
         _movieView = [movieView retain];
-        _subtitleOSD = [subtitleOSD retain];
+        _subtitleOSD1 = [[MSubtitleOSD alloc] init];
+        _subtitleOSD2 = [[MSubtitleOSD alloc] init];
         _subtitleImages = [[NSMutableArray alloc] initWithCapacity:5];
         _subtitlesLock = [[NSLock alloc] init];
         _conditionLock = [[NSConditionLock alloc] initWithCondition:WAITING];
 
-        _subtitleImagesInterval = 0;
+        _maxPreRenderInterval = 2.0;
+        _curPreRenderInterval = 0.0;
+        _lastRequestedTime = 0.0;
+        _requestedTime = 0.0;
         _removeCount = 0;
-        _requestedTime = 0;
         _canRequestNewTime = TRUE;
         _emptyImage = [[NSImage alloc] initWithSize:NSMakeSize(1, 1)];
 
@@ -115,7 +113,8 @@
 
     [_subtitleImages removeAllObjects];
     [_subtitleImages release];
-    [_subtitleOSD release];
+    [_subtitleOSD2 release];
+    [_subtitleOSD1 release];
     [_subtitles release];
     [_movieView release];
     [_emptyImage release];
@@ -128,22 +127,151 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (float)maxPreRenderInterval { return _maxPreRenderInterval; }
+- (void)setMaxPreRenderInterval:(float)interval { _maxPreRenderInterval = interval; }
+
 - (void)setSubtitles:(NSArray*)subtitles
 {
     [_subtitlesLock lock];
     [subtitles retain], [_subtitles release], _subtitles = subtitles;
-    [self clearImages:0.0];
+    [_subtitleOSD1 clearContent];
+    [_subtitleOSD2 clearContent];
+    _lastRequestedTime = 0.0;
+    [self clearImages];
     [_subtitlesLock unlock];
 }
 
-- (void)clearImages:(float)requestedTime
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (void)setMovieRect:(NSRect)rect
+{
+    [_subtitleOSD1 setMovieRect:rect];
+    [_subtitleOSD2 setMovieRect:rect];
+}
+
+- (void)setMovieSize:(NSSize)size
+{
+    [_subtitleOSD1 setMovieSize:size];
+    [_subtitleOSD2 setMovieSize:size];
+}
+
+- (void)clearSubtitleContent
+{
+    [_subtitleOSD1 clearContent];
+    [_subtitleOSD2 clearContent];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (NSString*)fontName { return [_subtitleOSD1 fontName]; }
+- (float)fontSize { return [_subtitleOSD1 fontSize]; }
+
+- (void)setFontName:(NSString*)fontName size:(float)size
 {
     [_conditionLock lock];
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    _removeCount = [_subtitleImages count];
-    _requestedTime = requestedTime;
-    _canRequestNewTime = FALSE;
-    [_conditionLock unlockWithCondition:MAKING_IMAGE];
+    [_subtitleOSD1 setFontName:fontName size:size];
+    [_subtitleOSD2 setFontName:fontName size:size];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setTextColor:(NSColor*)textColor
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setTextColor:textColor];
+    [_subtitleOSD2 setTextColor:textColor];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setStrokeColor:(NSColor*)strokeColor
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setStrokeColor:strokeColor];
+    [_subtitleOSD2 setStrokeColor:strokeColor];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setStrokeWidth:(float)strokeWidth
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setStrokeWidth:strokeWidth];
+    [_subtitleOSD2 setStrokeWidth:strokeWidth];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setShadowColor:(NSColor*)shadowColor
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setShadowColor:shadowColor];
+    [_subtitleOSD2 setShadowColor:shadowColor];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setShadowBlur:(float)shadowBlur
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setShadowBlur:shadowBlur];
+    [_subtitleOSD2 setShadowBlur:shadowBlur];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setShadowOffset:(float)shadowOffset
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setShadowOffset:shadowOffset];
+    [_subtitleOSD2 setShadowOffset:shadowOffset];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setShadowDarkness:(int)shadowDarkness
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setShadowDarkness:shadowDarkness];
+    [_subtitleOSD2 setShadowDarkness:shadowDarkness];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (BOOL)displayOnLetterBox { return [_subtitleOSD1 displayOnLetterBox]; }
+- (float)hMargin { return [_subtitleOSD1 hMargin]; }
+- (float)vMargin { return [_subtitleOSD1 vMargin]; }
+
+- (void)setDisplayOnLetterBox:(BOOL)displayOnLetterBox
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setDisplayOnLetterBox:displayOnLetterBox];
+    [_subtitleOSD2 setDisplayOnLetterBox:displayOnLetterBox];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setHMargin:(float)hMargin
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setHMargin:hMargin];
+    [_subtitleOSD2 setHMargin:hMargin];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
+}
+
+- (void)setVMargin:(float)vMargin
+{
+    [_conditionLock lock];
+    [_subtitleOSD1 setVMargin:vMargin];
+    [_subtitleOSD2 setVMargin:vMargin];
+    [_conditionLock unlockWithCondition:WAITING];
+    [self clearImages];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +281,7 @@
 #define STRING_UPDATED  1
 #define SAME_STRING     2
 
-- (int)updateSubtitleOSD:(float)time
+- (int)updateSubtitleOSD:(MSubtitleOSD*)subtitleOSD forTime:(float)time
 {
     [_subtitlesLock lock];
 
@@ -165,7 +293,7 @@
         if ([subtitle isEnabled]) {
             string = [subtitle stringAtTime:time];
             if (string) {
-                if ([_subtitleOSD setString:string forName:[subtitle name]]) {
+                if ([subtitleOSD setString:string forName:[subtitle name]]) {
                     result |= STRING_UPDATED;
                     //TRACE(@"%s subtitle(\"%@\"):[%.03f]\"%@\"", __PRETTY_FUNCTION__,
                     //      [subtitle name], time, [string string]);
@@ -193,59 +321,76 @@
         return _emptyImage;
     }
 
-    [_conditionLock lock];
-    MSubtitleStringImage* image;
-    int i, count = [_subtitleImages count];
-    for (i = 0; i < count; i++) {
-        image = [_subtitleImages objectAtIndex:i];
-        if (time < [image beginTime]) {
-            break;
-        }
-        else if (time < [image endTime]) {
-            if (0 == i) {
-                //TRACE(@"%s [%.03f] image[%d] => ok", __PRETTY_FUNCTION__, time, i);
-                int condition = (0 < _removeCount || 0 <= _requestedTime) ?
-                                    MAKING_IMAGE : [_conditionLock condition];
-                [_conditionLock unlockWithCondition:condition];
-            }
-            else {
-                if (_removeCount < i) {
-                    //TRACE(@"%s [%.03f] image[%d] => need to remove oldest %d",
-                    //      __PRETTY_FUNCTION__, time, i, i);
-                    _removeCount = i;
-                }
-                [_conditionLock unlockWithCondition:MAKING_IMAGE];
-            }
-            return [image image];
-        }
-    }
-    // clear & remake _subtitleImages
     NSImage* resultImage = _emptyImage;
-    if (_canRequestNewTime || [[_movieView movie] rate] == 0.0) {
-        //TRACE(@"%s [%.03f] no image ==> need to remove all", __PRETTY_FUNCTION__, time);
+
+    [_conditionLock lock];
+
+    _lastRequestedTime = time;
+    if ([[_movieView movie] rate] == 0.0) {
         _removeCount = [_subtitleImages count];
         _canRequestNewTime = FALSE;
         _requestedTime = time;
-        /*
-        if ([[_movieView movie] rate] == 0.0) {
-            [_subtitleOSD clearContent];
-            if ([self updateSubtitleOSD:time]) {
-                resultImage = [_subtitleOSD makeTexImage];
+        
+        [_subtitleOSD2 clearContent];
+        if ([self updateSubtitleOSD:_subtitleOSD2 forTime:time]) {
+            resultImage = [_subtitleOSD2 makeTexImage];
+        }
+    }
+    else {
+        MSubtitleStringImage* image;
+        int i, count = [_subtitleImages count];
+        for (i = 0; i < count; i++) {
+            image = [_subtitleImages objectAtIndex:i];
+            if (time < [image beginTime]) {
+                break;
+            }
+            else if (time < [image endTime]) {
+                if (0 == i) {
+                    //TRACE(@"%s [%.03f] image[%d] => ok", __PRETTY_FUNCTION__, time, i);
+                    int condition = (0 < _removeCount || 0 <= _requestedTime) ?
+                                        MAKING_IMAGE : [_conditionLock condition];
+                    [_conditionLock unlockWithCondition:condition];
+                }
+                else {
+                    if (_removeCount < i) {
+                        //TRACE(@"%s [%.03f] image[%d] => need to remove oldest %d",
+                        //      __PRETTY_FUNCTION__, time, i, i);
+                        _removeCount = i;
+                    }
+                    [_conditionLock unlockWithCondition:MAKING_IMAGE];
+                }
+                return [image image];
             }
         }
-         */
+        // clear & remake _subtitleImages
+        if (_canRequestNewTime) {
+            //TRACE(@"%s [%.03f] no image ==> need to remove all", __PRETTY_FUNCTION__, time);
+            _removeCount = [_subtitleImages count];
+            _canRequestNewTime = FALSE;
+            _requestedTime = time;
+        }
     }
     [_conditionLock unlockWithCondition:MAKING_IMAGE];
 
     return resultImage;
 }
 
+- (void)clearImages
+{
+    [_conditionLock lock];
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    _removeCount = [_subtitleImages count];
+    _requestedTime = _lastRequestedTime;
+    _canRequestNewTime = FALSE;
+    [_conditionLock unlockWithCondition:MAKING_IMAGE];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (float)imagesTimeInterval
+- (void)updateCurPreRenderInterval
 {
-    return ([_subtitleImages count] == 0) ? 0 :
+    _curPreRenderInterval = ([_subtitleImages count] == 0) ? 0 :
                                 ([[_subtitleImages lastObject] endTime] -
                                  [[_subtitleImages objectAtIndex:0] beginTime]);
 }
@@ -256,8 +401,8 @@
         //TRACE(@"%s removing all oldests (%d)...", __PRETTY_FUNCTION__, _removeCount);
         [_subtitleImages removeAllObjects];
         _removeCount = 0;
-        _subtitleImagesInterval = 0;
-        [_subtitleOSD clearContent];
+        _curPreRenderInterval = 0;
+        [_subtitleOSD1 clearContent];
     }
     else if (0 < _removeCount) {
         //TRACE(@"%s removing oldest %d...", __PRETTY_FUNCTION__, _removeCount);
@@ -265,7 +410,7 @@
             [_subtitleImages removeObjectAtIndex:0];
             _removeCount--;
         }
-        _subtitleImagesInterval = [self imagesTimeInterval];
+        [self updateCurPreRenderInterval];
     }
 }
 
@@ -287,13 +432,13 @@
             //TRACE(@"%s new time requested: %.03f", __PRETTY_FUNCTION__, _requestedTime);
             time = _requestedTime;
             _requestedTime = -1;
-            [_subtitleOSD clearContent];
+            [_subtitleOSD1 clearContent];
             [image release], image = nil;
         }
         //TRACE(@"%s making images at %.03f...", __PRETTY_FUNCTION__, time);
         while (_requestedTime < 0 &&     // stop if new time is requested
-               _subtitleImagesInterval < MAX_IMAGES_TIME_INTERVAL) {
-            if ([self updateSubtitleOSD:time] & STRING_UPDATED) {
+               _curPreRenderInterval < _maxPreRenderInterval) {
+            if ([self updateSubtitleOSD:_subtitleOSD1 forTime:time] & STRING_UPDATED) {
                 if (image) {
                     [_conditionLock lock];
                     [image setEndTime:time];
@@ -302,19 +447,11 @@
                     //      [_subtitleImages count] - 1,
                     //      [image beginTime], [image endTime]);
                     [image release], image = nil;
-                    _subtitleImagesInterval = [self imagesTimeInterval];
+                    [self updateCurPreRenderInterval];
                     _canRequestNewTime = TRUE;
                     [_conditionLock unlockWithCondition:MAKING_IMAGE];
-                    //#if defined(_ASYNC_ON_PAUSED)
-                    if (_requestedTime < 0 &&
-                        [[_movieView movie] rate] == 0.0) {
-                        [_movieView updateSubtitleString];
-                        [_movieView performSelectorOnMainThread:@selector(redisplay)
-                                                     withObject:nil waitUntilDone:FALSE];
                     }
-                    //#endif  // _ASYNC_ON_PAUSED
-                }
-                texImage = [_subtitleOSD makeTexImage];
+                texImage = [_subtitleOSD1 makeTexImage];
                 if (texImage) {
                     image = [[MSubtitleStringImage alloc] initWithStringImage:texImage];
                     [image setBeginTime:time];
@@ -334,5 +471,3 @@
 }
 
 @end
-
-#endif

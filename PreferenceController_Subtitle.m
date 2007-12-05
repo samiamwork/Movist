@@ -52,6 +52,7 @@
     NSColor* shadowColor = [_defaults colorForKey:MSubtitleShadowColorKey];
     float shadowBlur = [_defaults floatForKey:MSubtitleShadowBlurKey];
     float shadowOffset = [_defaults floatForKey:MSubtitleShadowOffsetKey];
+    int shadowDarkness = [_defaults integerForKey:MSubtitleShadowDarknessKey];
     [_subtitleShadowColorWell setColor:shadowColor];
     [_subtitleShadowOpacitySlider setFloatValue:[shadowColor alphaComponent]];
     [_subtitleShadowOpacityTextField setFloatValue:[shadowColor alphaComponent]];
@@ -59,6 +60,8 @@
     [_subtitleShadowBlurTextField setFloatValue:shadowBlur];
     [_subtitleShadowOffsetSlider setFloatValue:shadowOffset];
     [_subtitleShadowOffsetTextField setFloatValue:shadowOffset];
+    [_subtitleShadowDarknessSlider setFloatValue:shadowDarkness];
+    [_subtitleShadowDarknessTextField setFloatValue:shadowDarkness];
 
     [_subtitleDisplayOnLetterBoxButton setState:[_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey]];
 
@@ -128,7 +131,7 @@
     return fontSize;
      */
 
-    NSString* testChar = NSLocalizedString(@"SubtitleTestChar", nil);
+    NSString* testChar = NSLocalizedString(@"SubtitleAutoSizeTestChar", nil);
     NSMutableString* s = [NSMutableString stringWithCapacity:100];
     int i;
     for (i = 0; i < chars; i++) {
@@ -226,6 +229,7 @@
         SUBTITLE_SHADOW_OPACITY,
         SUBTITLE_SHADOW_BLUR,
         SUBTITLE_SHADOW_OFFSET,
+        SUBTITLE_SHADOW_DARKNESS,
     };
         
     switch ([sender tag]) {
@@ -284,6 +288,13 @@
             [_subtitleShadowOffsetTextField setFloatValue:shadowOffset];
             [_defaults setFloat:shadowOffset forKey:MSubtitleShadowOffsetKey];
             [_movieView setSubtitleShadowOffset:shadowOffset];
+            break;
+        }
+        case SUBTITLE_SHADOW_DARKNESS : {
+            float shadowDarkness = [_subtitleShadowDarknessSlider intValue];
+            [_subtitleShadowDarknessTextField setIntValue:shadowDarkness];
+            [_defaults setInteger:shadowDarkness forKey:MSubtitleShadowDarknessKey];
+            [_movieView setSubtitleShadowDarkness:shadowDarkness];
             break;
         }
     }

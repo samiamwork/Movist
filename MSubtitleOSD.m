@@ -30,7 +30,7 @@
     if (self = [super init]) {
         [_paragraphStyle setAlignment:NSCenterTextAlignment];
         _strings = [[NSMutableDictionary alloc] initWithCapacity:2];
-        _shadowStrongness = 10;
+        _shadowDarkness = 10;
         _hAlign = OSD_HALIGN_CENTER;
         _vAlign = OSD_VALIGN_UPPER_FROM_MOVIE_BOTTOM;
     }

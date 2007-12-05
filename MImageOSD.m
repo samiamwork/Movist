@@ -62,8 +62,8 @@
 
 - (void)drawContent:(NSRect)rect
 {
-    int i;
-    for (i = 0; i < _shadowStrongness; i++) {
+    int i;  assert(0 < _shadowDarkness);
+    for (i = 0; i < _shadowDarkness; i++) {
         [_image drawInRect:rect fromRect:NSZeroRect
                  operation:NSCompositeSourceOver fraction:1.0];
     }
@@ -73,7 +73,6 @@
 
 @end
 
-#if defined(_USE_SUBTITLE_RENDERER)
 ////////////////////////////////////////////////////////////////////////////////
 
 @implementation MTextImageOSD
@@ -117,5 +116,3 @@
 }
 
 @end
-
-#endif

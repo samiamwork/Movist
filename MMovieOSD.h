@@ -55,7 +55,7 @@ enum {  // for _updateMask
     NSColor* _shadowColor;
     float _shadowBlur;          // for 640-width-of-movie
     float _shadowOffset;        // for 640-width-of-movie
-    int _shadowStrongness;
+    int _shadowDarkness;
 
     NSSize _contentSize;
     float _contentLeftMargin;   // pure content margins in content size
@@ -92,11 +92,11 @@ enum {  // for _updateMask
 - (void)updateContent;
 
 #pragma mark -
-- (int)shadowStrongness;
+- (int)shadowDarkness;
 - (void)setShadowColor:(NSColor*)shadowColor;
 - (void)setShadowBlur:(float)shadowBlur;
 - (void)setShadowOffset:(float)shadowOffset;
-- (void)setShadowStrongness:(int)strongness;
+- (void)setShadowDarkness:(int)darkness;
 - (void)updateShadow;
 
 #pragma mark -

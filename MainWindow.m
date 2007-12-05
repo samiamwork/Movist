@@ -189,12 +189,10 @@
 #pragma mark -
 #pragma mark resize
 
-#if defined(_USE_SUBTITLE_RENDERER)
 - (void)windowDidResize:(NSNotification*)aNotification
 {
     //[_movieView updateSubtitle];
 }
-#endif
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow*)sender defaultFrame:(NSRect)defaultFrame
 {

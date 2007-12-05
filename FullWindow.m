@@ -39,6 +39,20 @@
 {
     [[NSColor blackColor] set];
     NSRectFill([self bounds]);
+
+    /* for test
+    NSImage* image = [NSImage imageNamed:@"FrontRow_TEST_BACKGROUND"];
+    [image drawAtPoint:NSMakePoint(0, 0) fromRect:NSZeroRect
+             operation:NSCompositeSourceOver fraction:1.0];
+
+    [[NSColor whiteColor] set];
+    NSRect b = [self bounds];
+    NSBezierPath* path = [NSBezierPath bezierPath];
+    [path moveToPoint:NSMakePoint(b.size.width / 2, 0)];
+    [path lineToPoint:NSMakePoint(b.size.width / 2, b.size.height)];
+    [path closePath];
+    [path stroke];
+     */
 }
 
 @end

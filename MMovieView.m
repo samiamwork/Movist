@@ -25,12 +25,9 @@
 #import "MMovie.h"
 #import "MSubtitle.h"
 
-#import "MImageOSD.h"
 #import "MTextOSD.h"
-#import "MSubtitleOSD.h"
-#if defined(_USE_SUBTITLE_RENDERER)
+#import "MImageOSD.h"
 #import "SubtitleRenderer.h"
-#endif
 
 #import "AppController.h"   // for NSApp's delegate
 
@@ -87,29 +84,30 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
     // OSD: icon, message, subtitle
     NSRect rect = [self bounds];
-    _iconOSD = [[MImageOSD alloc] init];        [_iconOSD setMovieRect:rect];
-    _messageOSD = [[MTextOSD alloc] init];      [_messageOSD setMovieRect:rect];
-    _subtitleOSD = [[MSubtitleOSD alloc] init]; [_subtitleOSD setMovieRect:rect];
-    _errorOSD = [[MTextOSD alloc] init];        [_errorOSD setMovieRect:rect];
-    _messageHideInterval = 2.0;
-    _subtitleVisible = TRUE;
-
-#if defined(_USE_SUBTITLE_RENDERER)
+    _subtitleRenderer = [[SubtitleRenderer alloc] initWithMovieView:self];
     _subtitleImageOSD = [[MTextImageOSD alloc] init];
     [_subtitleImageOSD setMovieRect:rect];
     [_subtitleImageOSD setHAlign:OSD_HALIGN_CENTER];
-    [_subtitleImageOSD setVAlign:OSD_VALIGN_UPPER_FROM_MOVIE_BOTTOM];
-    _subtitleRenderer = [[SubtitleRenderer alloc] initWithMovieView:self
-                                                        subtitleOSD:_subtitleOSD];
-#endif
-    
+    [_subtitleImageOSD setVAlign:OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM];
+    _subtitleVisible = TRUE;
+
+    _iconOSD = [[MImageOSD alloc] init];
+    [_iconOSD setMovieRect:rect];
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
     [_iconOSD setHAlign:OSD_HALIGN_CENTER];
     [_iconOSD setVAlign:OSD_VALIGN_CENTER];
 
+    _errorOSD = [[MTextOSD alloc] init];
+    [_errorOSD setMovieRect:rect];
     [_errorOSD setTextAlignment:NSCenterTextAlignment];
     [_errorOSD setHAlign:OSD_HALIGN_CENTER];
     [_errorOSD setVAlign:OSD_VALIGN_CENTER];
+
+    _messageOSD = [[MTextOSD alloc] init];
+    [_messageOSD setMovieRect:rect];
+    [_messageOSD setHAlign:OSD_HALIGN_LEFT];
+    [_messageOSD setVAlign:OSD_VALIGN_UPPER_FROM_MOVIE_TOP];
+    _messageHideInterval = 2.0;
 
     // drag-and-drop
     [self registerForDraggedTypes:MOVIST_DRAG_TYPES];
@@ -141,14 +139,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_ciContext release];
 
     [self invalidateMessageHideTimer];
+    [_messageOSD release];
     [_errorOSD release];
     [_iconOSD release];
-    [_messageOSD release];
-#if defined(_USE_SUBTITLE_RENDERER)
-    [_subtitleRenderer release];
     [_subtitleImageOSD release];
-#endif
-    [_subtitleOSD release];
+    [_subtitleRenderer release];
     [_subtitles release];
     [_movie release];
 
@@ -227,15 +222,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     if ([_iconOSD hasContent]) {
         [_iconOSD drawInViewBounds:bounds];
     }
-#if defined(_USE_SUBTITLE_RENDERER)
     if (_subtitleVisible && [_subtitleImageOSD hasContent]) {
         [_subtitleImageOSD drawInViewBounds:bounds];
     }
-#else
-    if (_subtitleVisible && [_subtitleOSD hasContent]) {
-        [_subtitleOSD drawInViewBounds:bounds];
-    }
-#endif
     if ([_messageOSD hasContent]) {
         [_messageOSD drawInViewBounds:bounds];
     }
@@ -311,11 +300,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
         if ([_iconOSD hasContent] ||
             [_messageOSD hasContent] || [_errorOSD hasContent] ||
-#if defined(_USE_SUBTITLE_RENDERER)
             (_subtitleVisible && [_subtitleImageOSD hasContent])) {
-#else
-            (_subtitleVisible && [_subtitleOSD hasContent])) {
-#endif
             [self drawOSD];
         }
 
@@ -359,15 +344,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                        forKey:@"inputRectangle"];
         NSSize movieSize = [_movie adjustedSize];
         [_messageOSD setMovieSize:movieSize];
-        [_subtitleOSD setMovieSize:movieSize];
-#if defined(_USE_SUBTITLE_RENDERER)
         [_subtitleImageOSD setMovieSize:movieSize];
-#endif
+        [_subtitleRenderer setMovieSize:movieSize];
     }
-    [_subtitleOSD clearContent];
-#if defined(_USE_SUBTITLE_RENDERER)
+    [_subtitleRenderer clearSubtitleContent];
     [_subtitleImageOSD clearContent];
-#endif
     [_drawLock unlock];
     [self updateMovieRect:TRUE];
 }
@@ -425,10 +406,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         NSRect mr = [self calcMovieRectForBoundingRect:[self bounds]];
         _movieRect = *(CGRect*)&mr;
         [_messageOSD setMovieRect:mr];
-        [_subtitleOSD setMovieRect:mr];
-#if defined(_USE_SUBTITLE_RENDERER)
         [_subtitleImageOSD setMovieRect:mr];
-#endif
+        [_subtitleRenderer setMovieRect:mr];
     }
     [_errorOSD setMovieRect:NSInsetRect([self bounds], 50, 0)];
     [_drawLock unlock];

@@ -292,8 +292,8 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
 
     // at first, draw with outline & shadow
     [_shadow set];
-    int i;
-    for (i = 0; i < _shadowStrongness; i++) {
+    int i;  assert(0 < _shadowDarkness);
+    for (i = 0; i < _shadowDarkness; i++) {
         [_string drawInRect:rect];
     }
 

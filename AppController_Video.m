@@ -43,9 +43,7 @@
         NSRect frame = [_mainWindow frameRectForMovieSize:size
                                                     align:ALIGN_WINDOW_TITLE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
-#if defined(_USE_SUBTITLE_RENDERER)
         [_movieView updateSubtitle];
-#endif
     }
 }
 
@@ -55,9 +53,7 @@
     if (![self isFullScreen]) {
         NSRect frame = [_mainWindow frameRectForScreen];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
-#if defined(_USE_SUBTITLE_RENDERER)
         [_movieView updateSubtitle];
-#endif
     }
 }
 

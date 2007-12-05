@@ -34,7 +34,7 @@
 
         _shadow = [[NSShadow alloc] init];
         _shadowNone = [[NSShadow alloc] init];
-        _shadowStrongness = 1;
+        _shadowDarkness = 1;
 
         _contentLeftMargin = 0;
         _contentRightMargin = 0;
@@ -93,7 +93,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (int)shadowStrongness { return _shadowStrongness; }
+- (int)shadowDarkness { return _shadowDarkness; }
 
 - (void)setShadowColor:(NSColor*)shadowColor
 {
@@ -123,10 +123,11 @@
     }
 }
 
-- (void)setShadowStrongness:(int)strongness
+- (void)setShadowDarkness:(int)darkness
 {
-    if (_shadowStrongness != strongness) {
-        _shadowStrongness = strongness;
+    assert(0 < darkness);
+    if (_shadowDarkness != darkness) {
+        _shadowDarkness = darkness;
         _updateMask |= UPDATE_TEXTURE | UPDATE_SHADOW;
     }
 }

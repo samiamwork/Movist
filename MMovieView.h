@@ -26,13 +26,10 @@
 
 @class MMovie;
 
-@class MImageOSD;
 @class MTextOSD;
-@class MSubtitleOSD;
-#if defined(_USE_SUBTITLE_RENDERER)
+@class MImageOSD;
 @class MTextImageOSD;
 @class SubtitleRenderer;
-#endif
 
 @interface MMovieView : NSOpenGLView
 {
@@ -53,27 +50,20 @@
     MMovie* _movie;
     NSArray* _subtitles;
 
-    // icon
-    MImageOSD* _iconOSD;
-
-    // message
-    MTextOSD* _messageOSD;
-    float _messageHideInterval;
-    NSTimer* _messageHideTimer;
-
     // subtitle
-    MSubtitleOSD* _subtitleOSD;
-#if defined(_USE_SUBTITLE_RENDERER)
-    MTextImageOSD* _subtitleImageOSD;
     SubtitleRenderer* _subtitleRenderer;
-#endif
+    MTextImageOSD* _subtitleImageOSD;
     BOOL _subtitleVisible;
     float _minLetterBoxHeight;
     float _subtitleSync;
 
-    // error
+    // icon, error, message
+    MImageOSD* _iconOSD;
     MTextOSD* _errorOSD;
-
+    MTextOSD* _messageOSD;
+    float _messageHideInterval;
+    NSTimer* _messageHideTimer;
+    
     // drag & drop
     unsigned int _dragAction;
     BOOL _activateOnDragging;
@@ -143,9 +133,7 @@
 - (NSArray*)subtitles;
 - (void)setSubtitles:(NSArray*)subtitles;
 - (void)updateSubtitleString;
-#if defined(_USE_SUBTITLE_RENDERER)
 - (void)updateSubtitle;
-#endif
 
 - (BOOL)subtitleVisible;
 - (void)setSubtitleVisible:(BOOL)visible;
@@ -159,6 +147,7 @@
 - (void)setSubtitleShadowColor:(NSColor*)shadowColor;
 - (void)setSubtitleShadowBlur:(float)shadowBlur;
 - (void)setSubtitleShadowOffset:(float)shadowOffset;
+- (void)setSubtitleShadowDarkness:(int)shadowDarkness;
 
 - (BOOL)subtitleDisplayOnLetterBox;
 - (float)minLetterBoxHeight;

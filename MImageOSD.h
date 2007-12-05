@@ -33,7 +33,6 @@
 
 @end
 
-#if defined(_USE_SUBTITLE_RENDERER)
 ////////////////////////////////////////////////////////////////////////////////
 
 @interface MTextImageOSD : MImageOSD
@@ -41,5 +40,3 @@
 }
 
 @end
-
-#endif

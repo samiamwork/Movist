@@ -19,7 +19,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
-#if defined(_USE_SUBTITLE_RENDERER)
 
 #import "Movist.h"
 
@@ -29,11 +28,14 @@
 @interface SubtitleRenderer : NSObject
 {
     NSArray* _subtitles;
-    MSubtitleOSD* _subtitleOSD;
+    MSubtitleOSD* _subtitleOSD1;        // for rendering on playing
+    MSubtitleOSD* _subtitleOSD2;        // for rendering on paused
     NSMutableArray* _subtitleImages;    // for MSubtitleStringImage
-    float _subtitleImagesInterval;
-    int _removeCount;
+    float _maxPreRenderInterval;
+    float _curPreRenderInterval;
+    float _lastRequestedTime;
     float _requestedTime;
+    int _removeCount;
     BOOL _canRequestNewTime;
     MMovieView* _movieView;
     NSLock* _subtitlesLock;
@@ -45,13 +47,36 @@
     BOOL _quitRequested;
 }
 
-- (id)initWithMovieView:(MMovieView*)movieView
-            subtitleOSD:(MSubtitleOSD*)subtitleOSD;
+- (id)initWithMovieView:(MMovieView*)movieView;
+
+- (float)maxPreRenderInterval;
+- (void)setMaxPreRenderInterval:(float)interval;
 
 - (void)setSubtitles:(NSArray*)subtitles;
-- (void)clearImages:(float)requestedTime;
+
+- (void)setMovieRect:(NSRect)rect;
+- (void)setMovieSize:(NSSize)size;
+- (void)clearSubtitleContent;
+
+- (NSString*)fontName;
+- (float)fontSize;
+- (void)setFontName:(NSString*)fontName size:(float)size;
+- (void)setTextColor:(NSColor*)textColor;
+- (void)setStrokeColor:(NSColor*)strokeColor;
+- (void)setStrokeWidth:(float)strokeWidth;
+- (void)setShadowColor:(NSColor*)shadowColor;
+- (void)setShadowBlur:(float)shadowBlur;
+- (void)setShadowOffset:(float)shadowOffset;
+- (void)setShadowDarkness:(int)shadowDarkness;
+
+- (BOOL)displayOnLetterBox;
+- (float)hMargin;
+- (float)vMargin;
+- (void)setDisplayOnLetterBox:(BOOL)displayOnLetterBox;
+- (void)setHMargin:(float)hMargin;
+- (void)setVMargin:(float)vMargin;
+
 - (NSImage*)imageAtTime:(float)time;
+- (void)clearImages;
 
 @end
-
-#endif
