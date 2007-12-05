@@ -112,19 +112,24 @@
                 blockingMode:NSAnimationBlocking
                     duration:PLAY_PANEL_FADE_DURATION];
         [self orderOut:self];
-        [NSCursor setHiddenUntilMouseMoves:TRUE];
+
+        if ([[_movieView window] isKeyWindow]) {
+            [NSCursor setHiddenUntilMouseMoves:TRUE];
+        }
     }
 }
 
-- (void)updateByMouseInScreen:(NSPoint)point
+- (void)updateAutoShowHideByMouseMoved:(BOOL)byMouseMoved
 {
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromPoint(point));
     if (![_movieView movie] || [_movieView window] == [NSApp mainWindow]) {
         return;
     }
 
+    NSPoint point = [NSEvent mouseLocation];
     if (NSPointInRect(point, [[_movieView window] frame])) {
-        [self invalidateHideTimer];
+        if (byMouseMoved) {
+            [self invalidateHideTimer];
+        }
         if (![self isVisible]) {
             [self showPanel];
         }

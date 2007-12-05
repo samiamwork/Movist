@@ -104,8 +104,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isNavigating]) {
-        NSPoint p = [self convertBaseToScreen:[event locationInWindow]];
-        [_playPanel updateByMouseInScreen:p];
+        [_playPanel updateAutoShowHideByMouseMoved:TRUE];
     }
 }
 

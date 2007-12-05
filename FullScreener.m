@@ -137,7 +137,7 @@
     [_fullWindow setAcceptsMouseMovedEvents:TRUE];
 
     // update system activity periodically not to activate screen saver
-    _updateSystemActivityTimer = [NSTimer scheduledTimerWithTimeInterval:30.0
+    _updateSystemActivityTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
         target:self selector:@selector(updateSystemActivity:) userInfo:nil repeats:TRUE];
 }
 
@@ -203,6 +203,13 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     UpdateSystemActivity(UsrActivity);
+
+    if ([_playPanel isVisible]) {
+        [_playPanel updateAutoShowHideByMouseMoved:FALSE];
+    }
+    else if ([[_movieView window] isKeyWindow] && CGCursorIsVisible()) {
+        [NSCursor setHiddenUntilMouseMoves:TRUE];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

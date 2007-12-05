@@ -108,6 +108,8 @@
         [_playlistController updateUI];
         if ([self isFullScreen]) {
             [_playlistController showWindow:self];
+            [[_playlistController window] setDelegate:self];
+            [[_playlistController window] makeKeyWindow];
         }
         else {
             [_playlistController runSheetForWindow:_mainWindow];

@@ -88,7 +88,7 @@
         _subtitlesLock = [[NSLock alloc] init];
         _conditionLock = [[NSConditionLock alloc] initWithCondition:WAITING];
 
-        _maxPreRenderInterval = 2.0;
+        _maxPreRenderInterval = 30.0;
         _curPreRenderInterval = 0.0;
         _lastRequestedTime = 0.0;
         _requestedTime = 0.0;
@@ -243,33 +243,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (BOOL)displayOnLetterBox { return [_subtitleOSD1 displayOnLetterBox]; }
 - (float)hMargin { return [_subtitleOSD1 hMargin]; }
-- (float)vMargin { return [_subtitleOSD1 vMargin]; }
-
-- (void)setDisplayOnLetterBox:(BOOL)displayOnLetterBox
-{
-    [_conditionLock lock];
-    [_subtitleOSD1 setDisplayOnLetterBox:displayOnLetterBox];
-    [_subtitleOSD2 setDisplayOnLetterBox:displayOnLetterBox];
-    [_conditionLock unlockWithCondition:WAITING];
-    [self clearImages];
-}
 
 - (void)setHMargin:(float)hMargin
 {
     [_conditionLock lock];
     [_subtitleOSD1 setHMargin:hMargin];
     [_subtitleOSD2 setHMargin:hMargin];
-    [_conditionLock unlockWithCondition:WAITING];
-    [self clearImages];
-}
-
-- (void)setVMargin:(float)vMargin
-{
-    [_conditionLock lock];
-    [_subtitleOSD1 setVMargin:vMargin];
-    [_subtitleOSD2 setVMargin:vMargin];
     [_conditionLock unlockWithCondition:WAITING];
     [self clearImages];
 }
@@ -327,14 +307,13 @@
 
     _lastRequestedTime = time;
     if ([[_movieView movie] rate] == 0.0) {
-        _removeCount = [_subtitleImages count];
-        _canRequestNewTime = FALSE;
-        _requestedTime = time;
-        
         [_subtitleOSD2 clearContent];
         if ([self updateSubtitleOSD:_subtitleOSD2 forTime:time]) {
             resultImage = [_subtitleOSD2 makeTexImage];
         }
+        _removeCount = [_subtitleImages count];
+        _canRequestNewTime = FALSE;
+        _requestedTime = time;
     }
     else {
         MSubtitleStringImage* image;
@@ -450,7 +429,7 @@
                     [self updateCurPreRenderInterval];
                     _canRequestNewTime = TRUE;
                     [_conditionLock unlockWithCondition:MAKING_IMAGE];
-                    }
+                }
                 texImage = [_subtitleOSD1 makeTexImage];
                 if (texImage) {
                     image = [[MSubtitleStringImage alloc] initWithStringImage:texImage];
@@ -459,7 +438,6 @@
                 }
             }
             time += 0.01;
-            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
         }
         [_conditionLock lock];
         [_conditionLock unlockWithCondition:WAITING];

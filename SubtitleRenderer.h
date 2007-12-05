@@ -69,12 +69,8 @@
 - (void)setShadowOffset:(float)shadowOffset;
 - (void)setShadowDarkness:(int)shadowDarkness;
 
-- (BOOL)displayOnLetterBox;
 - (float)hMargin;
-- (float)vMargin;
-- (void)setDisplayOnLetterBox:(BOOL)displayOnLetterBox;
 - (void)setHMargin:(float)hMargin;
-- (void)setVMargin:(float)vMargin;
 
 - (NSImage*)imageAtTime:(float)time;
 - (void)clearImages;

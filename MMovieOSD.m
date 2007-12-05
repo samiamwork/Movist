@@ -163,13 +163,8 @@
 
 - (BOOL)displayOnLetterBox
 {
-    if (_vAlign == OSD_VALIGN_UPPER_FROM_MOVIE_TOP ||
-        _vAlign == OSD_VALIGN_LOWER_FROM_MOVIE_TOP) {
-        return (_vAlign & OSD_VALIGN_UPPER_FROM_MOVIE_TOP) ? TRUE : FALSE;
-    }
-    else {
-        return (_vAlign & OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM) ? TRUE : FALSE;
-    }
+    return (_vAlign == OSD_VALIGN_UPPER_FROM_MOVIE_TOP ||
+            _vAlign == OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM) ? TRUE : FALSE;
 }
 
 - (float)hMargin { return _hMargin * 100; }

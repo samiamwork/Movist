@@ -34,6 +34,6 @@
 
 - (void)showPanel;
 - (void)hidePanel;
-- (void)updateByMouseInScreen:(NSPoint)point;
+- (void)updateAutoShowHideByMouseMoved:(BOOL)byMouseMoved;
 
 @end

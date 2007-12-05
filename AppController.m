@@ -197,6 +197,13 @@
     [self updateUI];
 }
 
+- (void)windowWillClose:(NSNotification*)aNotification
+{
+    if ([aNotification object] != [_movieView window]) {
+        [[_movieView window] makeKeyWindow];
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
@@ -242,6 +249,7 @@
     }
     else {
         [_controlPanel showPanel];
+        //[_controlPanel makeKeyWindow];
     }
 }
 
@@ -253,6 +261,8 @@
                             initWithAppController:self mainWindow:_mainWindow];
     }
     [_preferenceController showWindow:self];
+    [[_preferenceController window] setDelegate:self];
+    [[_preferenceController window] makeKeyWindow];
 }
 
 @end

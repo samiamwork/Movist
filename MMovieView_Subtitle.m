@@ -157,19 +157,19 @@
 #pragma mark -
 #pragma mark subtitle attributes
 
-- (BOOL)subtitleDisplayOnLetterBox { return [_subtitleRenderer displayOnLetterBox]; }
+- (BOOL)subtitleDisplayOnLetterBox { return [_subtitleImageOSD displayOnLetterBox]; }
 - (float)minLetterBoxHeight { return _minLetterBoxHeight; }
-- (float)subtitleHMargin { return [_subtitleRenderer hMargin]; }
-- (float)subtitleVMargin { return [_subtitleRenderer vMargin]; }
+- (float)subtitleHMargin { return [_subtitleImageOSD hMargin]; }
+- (float)subtitleVMargin { return [_subtitleImageOSD vMargin]; }
 - (float)subtitleSync { return _subtitleSync; }
 
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (displayOnLetterBox != [self subtitleDisplayOnLetterBox]) {
-        [_messageOSD setDisplayOnLetterBox:displayOnLetterBox];
-        [_subtitleRenderer setDisplayOnLetterBox:displayOnLetterBox];
+        // need not update _subtitleRenderer.
         [_subtitleImageOSD setDisplayOnLetterBox:displayOnLetterBox];
+        [_messageOSD setDisplayOnLetterBox:displayOnLetterBox];
         [self redisplay];
     }
 }
@@ -222,10 +222,10 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     if (vMargin != [self subtitleVMargin]) {
-        [_subtitleRenderer setVMargin:vMargin];
+        // need not update _subtitleRenderer.
         [_subtitleImageOSD setVMargin:vMargin];
         [_messageOSD setVMargin:vMargin];
-        // need not [self updateSubtitle];
+        // need not update subtitle
         [self redisplay];
     }
 }
