@@ -315,7 +315,7 @@
         _canRequestNewTime = FALSE;
         _requestedTime = time;
     }
-    else {
+    else if (_requestedTime < 0) {
         MSubtitleStringImage* image;
         int i, count = [_subtitleImages count];
         for (i = 0; i < count; i++) {

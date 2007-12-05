@@ -122,40 +122,22 @@
     [_fullWindow addChildWindow:_blackWindow ordered:NSWindowBelow];
     [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
 
-    BOOL subtitleVisible = [_movieView subtitleVisible];
-    if (subtitleVisible) {     // for smooth animation
-        [_movieView setSubtitleVisible:FALSE];
-    }
-
     // resizing-animation from movie-view-rect to full-movie-rect
     [self animatedResizeForBegin:TRUE];
     
     // resize to screen-rect
     NSRect screenRect = [[_fullWindow screen] frame];
     [_fullWindow setFrame:screenRect display:TRUE];
-
-    if (subtitleVisible) {
-        [_movieView setSubtitleVisible:TRUE];
-    }
 }
 
 - (void)runEndAnimation
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL subtitleVisible = [_movieView subtitleVisible];
-    if (subtitleVisible) {     // for smooth animation
-        [_movieView setSubtitleVisible:FALSE];
-    }
-    
     // resize to full-movie-rect
     [_fullWindow setFrame:_fullMovieRect display:TRUE];
 
     // resizing-animation from full-movie-rect to movie-view-rect
     [self animatedResizeForBegin:FALSE];
-
-    if (subtitleVisible) {
-        [_movieView setSubtitleVisible:TRUE];
-    }
 
     [_fullWindow removeChildWindow:_blackWindow];
     [_fullWindow removeChildWindow:_mainWindow];

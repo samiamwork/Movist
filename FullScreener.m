@@ -107,6 +107,10 @@
             break;
     }
 
+    BOOL subtitleVisible = [_movieView subtitleVisible];
+    if (subtitleVisible) {
+        [_movieView setSubtitleVisible:FALSE];
+    }
     // move _movieView to _fullWindow from _mainWindow
     [_mainWindow setHasShadow:FALSE];
     [_mainWindow disableScreenUpdatesUntilFlush];
@@ -132,7 +136,10 @@
             [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
             break;
     }
-    [_movieView updateSubtitle];
+    if (subtitleVisible) {
+        [_movieView updateSubtitle];
+        [_movieView setSubtitleVisible:TRUE];
+    }
 
     [_fullWindow setAcceptsMouseMovedEvents:TRUE];
 
@@ -149,6 +156,10 @@
     [_fullWindow setAcceptsMouseMovedEvents:FALSE];
     [_playPanel orderOut:self];
 
+    BOOL subtitleVisible = [_movieView subtitleVisible];
+    if (subtitleVisible) {
+        [_movieView setSubtitleVisible:FALSE];
+    }
     float rate; // for FS_EFFECT_FADE
     int effect = ([self isNavigatable]) ? FS_EFFECT_FADE : _effect;
     switch (effect) {
@@ -182,7 +193,10 @@
     [_mainWindow enableFlushWindow];
     [_mainWindow flushWindowIfNeeded];
 
-    [_movieView updateSubtitle];
+    if (subtitleVisible) {
+        [_movieView updateSubtitle];
+        [_movieView setSubtitleVisible:TRUE];
+    }
 
     // restore system UI elements(main-menu, dock) & cursor
     SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
