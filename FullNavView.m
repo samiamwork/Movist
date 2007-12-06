@@ -328,80 +328,122 @@
 
 #define FADE_DURATION   0.25
 
+- (void)openSubContents:(FullNavItem*)item
+{
+    NSWindow* window = [self window];
+    NSScreen* screen = [window screen];
+    [screen fadeOut:FADE_DURATION];
+
+    [self addNavListWithParentItem:item items:[item subContents]];
+
+    [window flushWindow];
+    [screen fadeIn:FADE_DURATION];
+}
+
+- (void)closeSubContents
+{
+    // exit from sub-contents
+    NSWindow* window = [self window];
+    NSScreen* screen = [window screen];
+    [screen fadeOut:FADE_DURATION];
+
+    [self hidePreview];
+    [self removeLastNavList];
+
+    [window flushWindow];
+    [screen fadeIn:FADE_DURATION];
+}
+
+- (void)openCurrentMovie:(FullNavItem*)item
+{
+    NSWindow* window = [self window];
+    NSScreen* screen = [window screen];
+
+    [screen fadeOut:FADE_DURATION];
+    MMovie* movie = [_movieView movie];
+    if (movie) {
+        [_movieView setHidden:TRUE];
+        [movie setRate:0.0];
+    }
+    else {
+        [self hidePreview];
+    }
+    [self setHidden:TRUE];
+    [_listView hideSelBox];
+    [_movieView hideLogo];
+
+    [movie gotoBeginning];
+    [_movieView setFrame:[[window contentView] bounds]];
+    [_movieView updateSubtitle];
+    [_movieView setHidden:FALSE];
+
+    [window makeFirstResponder:_movieView];
+    [_movieView display];
+    [window flushWindow];
+    [screen fadeIn:FADE_DURATION];
+
+    if (movie) {
+        [movie setMuted:FALSE];
+        [movie setRate:1.0];
+    }
+    else if ([item isMemberOfClass:[FullNavFileItem class]]) {
+        [[NSApp delegate] openFile:[(FullNavFileItem*)item path]];
+    }
+    else if ([item isMemberOfClass:[FullNavURLItem class]]) {
+        [[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
+    }
+}
+
+- (void)closeCurrentMovie
+{
+    // exit from full-screen movie
+    NSWindow* window = [self window];
+    NSScreen* screen = [window screen];
+    [[_movieView movie] setMuted:TRUE];
+    [[_movieView movie] setRate:0.0];
+    [screen fadeOut:FADE_DURATION];
+
+    [_movieView setHidden:TRUE];
+    [self setHidden:FALSE];
+    [_movieView setFrame:[self previewRect]];
+    [_movieView updateSubtitle];
+    [_movieView setHidden:FALSE];
+    [_listView showSelBox];
+    [window makeFirstResponder:self];
+
+    [window flushWindow];
+    [screen fadeIn:FADE_DURATION];
+    [[_movieView movie] setRate:1.0];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 - (BOOL)canCloseCurrent { return (1 < [_listArray count]); }
 
 - (void)openCurrent
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSWindow* window = [self window];
-    FullNavList* list = (FullNavList*)[_listArray lastObject];
-    FullNavItem* item = [list selectedItem];
+    FullNavItem* item = [(FullNavList*)[_listArray lastObject] selectedItem];
     if (item == nil) {
         // do nothing
     }
     else if ([item hasSubContents]) {
-        // enter into sub-contents
-        [[window screen] fadeOut:FADE_DURATION];
-
-        [self addNavListWithParentItem:item items:[item subContents]];
-
-        [window flushWindow];
-        [[window screen] fadeIn:FADE_DURATION];
+        [self openSubContents:item];
     }
     else {
-        // open current movie
-        [[window screen] fadeOut:FADE_DURATION];
-
-        [self hidePreview];
-        [self setHidden:TRUE];
-        [_listView hideSelBox];
-        [_movieView hideLogo];
-        [_movieView setFrame:[[window contentView] bounds]];
-        [_movieView setHidden:FALSE];
-        [window makeFirstResponder:_movieView];
-
-        [_movieView display];
-        [window flushWindow];
-        [[window screen] fadeIn:FADE_DURATION];
-
-        if ([item isMemberOfClass:[FullNavFileItem class]]) {
-            [[NSApp delegate] openFile:[(FullNavFileItem*)item path]];
-        }
-        else if ([item isMemberOfClass:[FullNavURLItem class]]) {
-            [[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
-        }
+        [self openCurrentMovie:item];
     }
 }
 
 - (BOOL)closeCurrent
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSWindow* window = [self window];
-    NSScreen* screen = [window screen];
     if ([self isHidden]) {
-        // exit from full-screen movie
-        [[_movieView movie] setRate:0.0];
-        [screen fadeOut:FADE_DURATION];
-
-        [self hidePreview];     // hide _movieView
-        [self setHidden:FALSE];
-        [self showPreview];
-        [_listView showSelBox];
-        [window makeFirstResponder:self];
-
-        [window flushWindow];
-        [screen fadeIn:FADE_DURATION];
+        [self closeCurrentMovie];
         return TRUE;
     }
     else if ([self canCloseCurrent]) {
-        // exit from sub-contents
-        [screen fadeOut:FADE_DURATION];
-
-        [self hidePreview];
-        [self removeLastNavList];
-
-        [window flushWindow];
-        [screen fadeIn:FADE_DURATION];
+        [self closeSubContents];
         return TRUE;
     }
     return FALSE;
@@ -441,6 +483,7 @@
             [[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
         }
         [_movieView setFrame:[self previewRect]];
+        [_movieView updateSubtitle];
         [_movieView setHidden:FALSE];
     }
 }

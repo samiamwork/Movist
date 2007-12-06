@@ -374,7 +374,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, display ? @"display" : @"no-display");
     [_drawLock lock];
     if (!_movie) {
-        [_iconOSD setMovieRect:[self bounds]];
+        NSRect mr = [self bounds];
+        [_iconOSD setMovieRect:mr];
+        [_messageOSD setMovieRect:mr];
     }
     else {
         NSSize bs = [self bounds].size;
@@ -405,6 +407,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         // update _movieRect
         NSRect mr = [self calcMovieRectForBoundingRect:[self bounds]];
         _movieRect = *(CGRect*)&mr;
+        [_iconOSD setMovieRect:mr];
         [_messageOSD setMovieRect:mr];
         [_subtitleImageOSD setMovieRect:mr];
         [_subtitleRenderer setMovieRect:mr];
