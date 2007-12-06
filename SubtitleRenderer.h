@@ -38,7 +38,7 @@
     int _removeCount;
     BOOL _canRequestNewTime;
     MMovieView* _movieView;
-    NSLock* _subtitlesLock;
+    NSRecursiveLock* _subtitlesLock;
     NSConditionLock* _conditionLock;
 
     NSImage* _emptyImage;

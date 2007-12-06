@@ -85,7 +85,7 @@
         _subtitleOSD1 = [[MSubtitleOSD alloc] init];
         _subtitleOSD2 = [[MSubtitleOSD alloc] init];
         _subtitleImages = [[NSMutableArray alloc] initWithCapacity:5];
-        _subtitlesLock = [[NSLock alloc] init];
+        _subtitlesLock = [[NSRecursiveLock alloc] init];
         _conditionLock = [[NSConditionLock alloc] initWithCondition:WAITING];
 
         _maxPreRenderInterval = 30.0;
@@ -137,8 +137,8 @@
     [_subtitleOSD1 clearContent];
     [_subtitleOSD2 clearContent];
     _lastRequestedTime = 0.0;
-    [self clearImages];
     [_subtitlesLock unlock];
+    [self clearImages];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -257,31 +257,43 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+#define NO_SUBTITLE    -1
 #define NO_STRING       0
 #define STRING_UPDATED  1
 #define SAME_STRING     2
+
+- (BOOL)hasSubtitle
+{
+    [_subtitlesLock lock];
+    BOOL ret = (_subtitles && 0 < [_subtitles count]);
+    [_subtitlesLock unlock];
+    return ret;
+}
 
 - (int)updateSubtitleOSD:(MSubtitleOSD*)subtitleOSD forTime:(float)time
 {
     [_subtitlesLock lock];
 
-    int result = NO_STRING;
-    MSubtitle* subtitle;
-    NSMutableAttributedString* string;
-    NSEnumerator* enumerator = [_subtitles objectEnumerator];
-    while (subtitle = [enumerator nextObject]) {
-        if ([subtitle isEnabled]) {
-            string = [subtitle stringAtTime:time];
-            if (string) {
-                if ([subtitleOSD setString:string forName:[subtitle name]]) {
-                    result |= STRING_UPDATED;
-                    //TRACE(@"%s subtitle(\"%@\"):[%.03f]\"%@\"", __PRETTY_FUNCTION__,
-                    //      [subtitle name], time, [string string]);
-                }
-                else {
-                    result |= SAME_STRING;
-                    //TRACE(@"%s subtitle(\"%@\"):[%.03f]\"<same>\"", __PRETTY_FUNCTION__,
-                    //      [subtitle name], time);
+    int result = NO_SUBTITLE;
+    if ([self hasSubtitle]) {
+        result = NO_STRING;
+        MSubtitle* subtitle;
+        NSMutableAttributedString* string;
+        NSEnumerator* enumerator = [_subtitles objectEnumerator];
+        while (subtitle = [enumerator nextObject]) {
+            if ([subtitle isEnabled]) {
+                string = [subtitle stringAtTime:time];
+                if (string) {
+                    if ([subtitleOSD setString:string forName:[subtitle name]]) {
+                        result |= STRING_UPDATED;
+                        //TRACE(@"%s subtitle(\"%@\"):[%.03f]\"%@\"", __PRETTY_FUNCTION__,
+                        //      [subtitle name], time, [string string]);
+                    }
+                    else {
+                        result |= SAME_STRING;
+                        //TRACE(@"%s subtitle(\"%@\"):[%.03f]\"<same>\"", __PRETTY_FUNCTION__,
+                        //      [subtitle name], time);
+                    }
                 }
             }
         }
@@ -296,7 +308,7 @@
 
 - (NSImage*)imageAtTime:(float)time
 {
-    if ([_subtitles count] == 0) {
+    if (![self hasSubtitle]) {
         //TRACE(@"%s [%.03f] no subtitles", __PRETTY_FUNCTION__, time);
         return _emptyImage;
     }
@@ -358,10 +370,14 @@
 {
     [_conditionLock lock];
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    _removeCount = [_subtitleImages count];
-    _requestedTime = _lastRequestedTime;
-    _canRequestNewTime = FALSE;
-    [_conditionLock unlockWithCondition:MAKING_IMAGE];
+    int condition = WAITING;
+    if ([self hasSubtitle]) {
+        _removeCount = [_subtitleImages count];
+        _requestedTime = _lastRequestedTime;
+        _canRequestNewTime = FALSE;
+        condition = MAKING_IMAGE;
+    }
+    [_conditionLock unlockWithCondition:condition];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -404,6 +420,10 @@
     while (!_quitRequested) {
         //TRACE(@"%s waiting for resume", __PRETTY_FUNCTION__);
         [_conditionLock lockWhenCondition:MAKING_IMAGE];
+        if (![self hasSubtitle]) {
+            [_conditionLock unlockWithCondition:WAITING];
+            continue;
+        }
         [self removeOldestImages];
         [_conditionLock unlockWithCondition:MAKING_IMAGE];  // maintain locking
 
@@ -417,6 +437,9 @@
         //TRACE(@"%s making images at %.03f...", __PRETTY_FUNCTION__, time);
         while (_requestedTime < 0 &&     // stop if new time is requested
                _curPreRenderInterval < _maxPreRenderInterval) {
+            if (![self hasSubtitle]) {
+                break;
+            }
             if ([self updateSubtitleOSD:_subtitleOSD1 forTime:time] & STRING_UPDATED) {
                 if (image) {
                     [_conditionLock lock];
