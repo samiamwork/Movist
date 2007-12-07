@@ -98,9 +98,14 @@
 - (void)setDecoder:(NSString*)decoder
 {
     if (!decoder) {
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        decoder = ([defaults integerForKey:MDefaultDecoderKey] == DECODER_QUICKTIME) ?
-                                    [MMovie_QuickTime name] : [MMovie_FFMPEG name];
+        if ([_movieView movie]) {
+            decoder = [[[_movieView movie] class] name];
+        }
+        else {
+            NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+            decoder = ([defaults integerForKey:MDefaultDecoderKey] == DECODER_QUICKTIME) ?
+                                        [MMovie_QuickTime name] : [MMovie_FFMPEG name];
+        }
     }
 
     if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
