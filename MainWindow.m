@@ -25,6 +25,7 @@
 #import "MMovie_QuickTime.h"
 #import "MMovie_FFMPEG.h"
 #import "AppController.h"       // for NSApp's delegate
+#import "UserDefaults.h"
 
 #import "MMovieView.h"
 #import "PlayPanel.h"
@@ -71,20 +72,21 @@
     rc.size.height = 16;
     rc.origin.x = NSMaxX([[closeButton superview] bounds]) - rc.origin.x - rc.size.width;
     rc.origin.y++;
-    _decoderImageView = [[NSImageView alloc] initWithFrame:rc];
-    [_decoderImageView setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
-    [_decoderImageView setImageFrameStyle:NSImageFrameNone];
-    [_decoderImageView setImageAlignment:NSImageAlignCenter];
-    [_decoderImageView setImageScaling:NSScaleNone];
-    [_decoderImageView setImage:nil];
-    [[closeButton superview] addSubview:_decoderImageView];
+    _decoderButton = [[NSButton alloc] initWithFrame:rc];
+    [_decoderButton setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
+    [_decoderButton setBordered:FALSE];
+    [_decoderButton setTitle:@""];
+    [_decoderButton setTarget:[NSApp delegate]];
+    [_decoderButton setAction:@selector(reopenMovieAction:)];
+    [[closeButton superview] addSubview:_decoderButton];
+    [self setDecoder:nil];  // for defaults
 }
 
 - (void)dealloc
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_decoderImageView release];
+    [_decoderButton release];
     [super dealloc];
 }
 
@@ -96,14 +98,18 @@
 - (void)setDecoder:(NSString*)decoder
 {
     if (!decoder) {
-        [_decoderImageView setImage:nil];
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        decoder = ([defaults integerForKey:MDefaultDecoderKey] == DECODER_QUICKTIME) ?
+                                    [MMovie_QuickTime name] : [MMovie_FFMPEG name];
     }
-    else if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
-        [_decoderImageView setImage:[NSImage imageNamed:@"QuickTime16"]];
+
+    if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
+        [_decoderButton setImage:[NSImage imageNamed:@"QuickTime16"]];
     }
     else {  // [decoder isEqualToString:[MMovie_FFMPEG name]]
-        [_decoderImageView setImage:[NSImage imageNamed:@"FFMPEG16"]];
+        [_decoderButton setImage:[NSImage imageNamed:@"FFMPEG16"]];
     }
+    [_decoderButton setEnabled:([_movieView movie] != nil)];
 }
 
 - (BOOL)alwaysOnTop { return _alwaysOnTop; }

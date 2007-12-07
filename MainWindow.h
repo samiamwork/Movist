@@ -30,7 +30,7 @@
     IBOutlet MMovieView* _movieView;
     NSPoint _movieViewMarginPoint;
     NSSize _movieViewMarginSize;
-    NSImageView* _decoderImageView;
+    NSButton* _decoderButton;
 
     NSRect _zoomRestoreRect;
 

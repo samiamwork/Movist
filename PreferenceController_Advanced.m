@@ -24,6 +24,7 @@
 #import "UserDefaults.h"
 
 #import "MMovieView.h"
+#import "MainWindow.h"
 
 @implementation PreferenceController (Advanced)
 
@@ -37,6 +38,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaults setInteger:[[sender selectedItem] tag] forKey:MDefaultDecoderKey];
+    [(MainWindow*)[NSApp mainWindow] setDecoder:nil];    // update as new decoder
 }
 
 @end
