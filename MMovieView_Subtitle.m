@@ -93,9 +93,9 @@
 - (void)setSubtitleTextColor:(NSColor*)textColor
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_errorOSD setTextColor:textColor];
-    [_messageOSD setTextColor:textColor];
     [_subtitleRenderer setTextColor:textColor];
+    //[_messageOSD setTextColor:textColor];
+    //[_errorOSD setTextColor:textColor];
     [self updateSubtitle];
 }
 
@@ -103,8 +103,8 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setStrokeColor:strokeColor];
-    [_messageOSD setStrokeColor:strokeColor];
-    [_errorOSD setStrokeColor:strokeColor];
+    //[_messageOSD setStrokeColor:strokeColor];
+    //[_errorOSD setStrokeColor:strokeColor];
     [self updateSubtitle];
 }
 
@@ -112,8 +112,8 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setStrokeWidth:strokeWidth];
-    [_messageOSD setStrokeWidth:strokeWidth];
-    [_errorOSD setStrokeWidth:strokeWidth];
+    //[_messageOSD setStrokeWidth:strokeWidth];
+    //[_errorOSD setStrokeWidth:strokeWidth];
     [self updateSubtitle];
 }
 
@@ -121,8 +121,8 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setShadowColor:shadowColor];
-    [_messageOSD setShadowColor:shadowColor];
-    [_errorOSD setShadowColor:shadowColor];
+    //[_messageOSD setShadowColor:shadowColor];
+    //[_errorOSD setShadowColor:shadowColor];
     [self updateSubtitle];
 }
 
@@ -130,8 +130,8 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setShadowBlur:shadowBlur];
-    [_messageOSD setShadowBlur:shadowBlur];
-    [_errorOSD setShadowBlur:shadowBlur];
+    //[_messageOSD setShadowBlur:shadowBlur];
+    //[_errorOSD setShadowBlur:shadowBlur];
     [self updateSubtitle];
 }
 
@@ -139,8 +139,8 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setShadowOffset:shadowOffset];
-    [_messageOSD setShadowOffset:shadowOffset];
-    [_errorOSD setShadowOffset:shadowOffset];
+    //[_messageOSD setShadowOffset:shadowOffset];
+    //[_errorOSD setShadowOffset:shadowOffset];
     [self updateSubtitle];
 }
 

@@ -98,7 +98,7 @@ NSString* MDefaultDecoderKey                = @"DefaultDecoder";
     [dict setObject:[NSNumber numberWithFloat:300.0] forKey:MSeekInterval2Key];
 
     // prefs: video
-    [dict setObject:[NSNumber numberWithInt:FS_EFFECT_NONE] forKey:MFullScreenEffectKey];
+    [dict setObject:[NSNumber numberWithInt:FS_EFFECT_ANIMATION] forKey:MFullScreenEffectKey];
     [dict setObject:[NSNumber numberWithInt:FS_FILL_NEVER] forKey:MFullScreenFillForWideMovieKey];
     [dict setObject:[NSNumber numberWithInt:FS_FILL_NEVER] forKey:MFullScreenFillForStdMovieKey];
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MFullScreenUnderScanKey];
@@ -120,9 +120,9 @@ NSString* MDefaultDecoderKey                = @"DefaultDecoder";
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleStrokeWidthKey];
     color = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
     [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleShadowColorKey];
-    [dict setObject:[NSNumber numberWithFloat:2.0] forKey:MSubtitleShadowBlurKey];
+    [dict setObject:[NSNumber numberWithFloat:2.5] forKey:MSubtitleShadowBlurKey];
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleShadowOffsetKey];
-    [dict setObject:[NSNumber numberWithFloat:10.0] forKey:MSubtitleShadowDarknessKey];
+    [dict setObject:[NSNumber numberWithInt:5] forKey:MSubtitleShadowDarknessKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleHMarginKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleVMarginKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleDisplayOnLetterBoxKey];

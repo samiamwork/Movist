@@ -34,6 +34,9 @@
 
         _shadow = [[NSShadow alloc] init];
         _shadowNone = [[NSShadow alloc] init];
+        _shadowColor = [[NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1] retain];
+        _shadowBlur = 2.0;
+        _shadowOffset = 0.0;
         _shadowDarkness = 1;
 
         _contentLeftMargin = 0;

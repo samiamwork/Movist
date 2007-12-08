@@ -91,11 +91,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_subtitleImageOSD setVAlign:OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM];
     _subtitleVisible = TRUE;
 
-    _iconOSD = [[MImageOSD alloc] init];
-    [_iconOSD setMovieRect:rect];
-    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
-    [_iconOSD setHAlign:OSD_HALIGN_CENTER];
-    [_iconOSD setVAlign:OSD_VALIGN_CENTER];
+    _messageOSD = [[MTextOSD alloc] init];
+    [_messageOSD setMovieRect:rect];
+    [_messageOSD setHAlign:OSD_HALIGN_LEFT];
+    [_messageOSD setVAlign:OSD_VALIGN_UPPER_FROM_MOVIE_TOP];
+    _messageHideInterval = 2.0;
 
     _errorOSD = [[MTextOSD alloc] init];
     [_errorOSD setMovieRect:rect];
@@ -103,12 +103,12 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_errorOSD setHAlign:OSD_HALIGN_CENTER];
     [_errorOSD setVAlign:OSD_VALIGN_CENTER];
 
-    _messageOSD = [[MTextOSD alloc] init];
-    [_messageOSD setMovieRect:rect];
-    [_messageOSD setHAlign:OSD_HALIGN_LEFT];
-    [_messageOSD setVAlign:OSD_VALIGN_UPPER_FROM_MOVIE_TOP];
-    _messageHideInterval = 2.0;
-
+    _iconOSD = [[MImageOSD alloc] init];
+    [_iconOSD setMovieRect:rect];
+    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
+    [_iconOSD setHAlign:OSD_HALIGN_CENTER];
+    [_iconOSD setVAlign:OSD_VALIGN_CENTER];
+    
     // drag-and-drop
     [self registerForDraggedTypes:MOVIST_DRAG_TYPES];
 
@@ -123,6 +123,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)dealloc
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self invalidateMessageHideTimer];
     if (_displayLink) {
         CVDisplayLinkStop(_displayLink);
         CVDisplayLinkRelease(_displayLink);
@@ -138,10 +139,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_colorFilter release];
     [_ciContext release];
 
-    [self invalidateMessageHideTimer];
-    [_messageOSD release];
-    [_errorOSD release];
     [_iconOSD release];
+    [_errorOSD release];
+    [_messageOSD release];
     [_subtitleImageOSD release];
     [_subtitleRenderer release];
     [_subtitles release];
