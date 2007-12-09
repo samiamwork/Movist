@@ -21,6 +21,7 @@
 //
 
 #import "Movist.h"
+#import "CustomControls.h"
 
 @class MTrack;
 @class MMovie;
@@ -38,12 +39,6 @@
 @class ControlPanel;
 @class FullScreener;
 @class PlayPanel;
-
-@class TimeTextField;
-@class MainVolumeSlider;
-@class MainSeekSlider;
-@class FSVolumeSlider;
-@class FSSeekSlider;
 
 @interface AppController : NSObject
 {
@@ -107,6 +102,7 @@
     IBOutlet TimeTextField* _rTimeTextField;
     IBOutlet NSButton* _playlistButton;
     float _prevMovieTime;
+    BOOL _viewDuration;
 
     // control panel
     IBOutlet ControlPanel* _controlPanel;
@@ -137,6 +133,7 @@
 - (void)checkForUpdatesOnStartup;
 
 - (IBAction)checkForUpdates:(id)sender;
+- (IBAction)viewDurationAction:(id)sender;
 - (IBAction)controlPanelAction:(id)sender;
 - (IBAction)preferencePanelAction:(id)sender;
 

@@ -63,6 +63,10 @@
 
     initSubtitleEncodingMenu(_subtitleEncodingMenu, @selector(reopenSubtitleAction:));
 
+    _viewDuration = [_defaults boolForKey:MViewDurationKey];
+    [_lTimeTextField setClickable:FALSE];   [_panelLTimeTextField setClickable:FALSE];
+    [_rTimeTextField setClickable:TRUE];    [_panelRTimeTextField setClickable:TRUE];
+
     [_volumeSlider      setMinValue:0.0];   [_volumeSlider      setMaxValue:MAX_VOLUME];
     [_panelVolumeSlider setMinValue:0.0];   [_panelVolumeSlider setMaxValue:MAX_VOLUME];
     [self updateVolumeUI];
@@ -300,6 +304,14 @@
         }
     }
     [checker release];
+}
+
+- (IBAction)viewDurationAction:(id)sender
+{
+    //NSLog(@"%s", __PRETTY_FUNCTION__);
+    _viewDuration = !_viewDuration;
+    [_defaults setBool:_viewDuration forKey:MViewDurationKey];
+    [self updateTimeUI];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

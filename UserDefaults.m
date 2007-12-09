@@ -27,6 +27,7 @@ NSString* MPreferencePaneKey                = @"PreferencePane";
 NSString* MControlTabKey                    = @"ControlTab";
 NSString* MCheckUpdateIntervalKey           = @"CheckUpdateInterval";
 NSString* MLastCheckUpdateTimeKey           = @"LastCheckUpdateTime";
+NSString* MViewDurationKey                  = @"ViewDuration";
 
 #pragma mark -
 #pragma mark prefs: general
@@ -91,6 +92,7 @@ NSString* MDefaultDecoderKey                = @"DefaultDecoder";
     [dict setObject:@"" forKey:MControlTabKey];     // for first tab
     [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MCheckUpdateIntervalKey];
     [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastCheckUpdateTimeKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MViewDurationKey];
 
     // prefs: general
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAutoFullScreenKey];
@@ -121,11 +123,11 @@ NSString* MDefaultDecoderKey                = @"DefaultDecoder";
     [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleTextColorKey];
     color = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
     [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleStrokeColorKey];
-    [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleStrokeWidthKey];
+    [dict setObject:[NSNumber numberWithFloat:2.0] forKey:MSubtitleStrokeWidthKey];
     color = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
     [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleShadowColorKey];
+    [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleShadowOffsetKey];
     [dict setObject:[NSNumber numberWithFloat:2.5] forKey:MSubtitleShadowBlurKey];
-    [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleShadowOffsetKey];
     [dict setObject:[NSNumber numberWithInt:5] forKey:MSubtitleShadowDarknessKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleHMarginKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleVMarginKey];

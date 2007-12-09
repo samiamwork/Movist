@@ -33,6 +33,16 @@
     [super drawRect:rect];
 }
 
+- (void)mouseDown:(NSEvent*)event
+{
+    if (_clickable) {
+        [[self target] performSelector:[self action] withObject:self];
+    }
+}
+
+- (BOOL)isClickable { return _clickable; }
+- (void)setClickable:(BOOL)clickable { _clickable = clickable; }
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

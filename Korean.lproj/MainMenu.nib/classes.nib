@@ -44,6 +44,7 @@
                 subtitleSyncAction = id;
                 subtitleVMarginAction = id;
                 subtitleVisibleAction = id;
+                viewDurationAction = id;
                 volumeAction = id;
             };
             CLASS = AppController;

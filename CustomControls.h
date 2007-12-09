@@ -22,7 +22,17 @@
 
 #import "Movist.h"
 
-@interface TimeTextField : NSTextField {} @end
+@interface TimeTextField : NSTextField
+{
+    BOOL _clickable;
+}
+
+- (BOOL)isClickable;
+- (void)setClickable:(BOOL)clickable;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
 
 @interface SeekSlider : NSSlider
 {
@@ -36,6 +46,8 @@
 - (void)clearRepeat;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 @interface MainSeekSlider : SeekSlider {} @end
 @interface FSSeekSlider : SeekSlider {} @end

@@ -258,14 +258,13 @@
             _prevMovieTime = [_movie currentTime];
         }
 
-        float time = [_movie currentTime];
-        NSString* s = NSStringFromMovieTime(time);
+        NSString* s = NSStringFromMovieTime([_movie currentTime]);
         if (![s isEqualToString:[_lTimeTextField stringValue]]) {
             [_lTimeTextField setStringValue:s];
             [_panelLTimeTextField setStringValue:s];
         }
-        time = [_movie currentTime] - [_movie duration];
-        s = NSStringFromMovieTime(time);
+        s = NSStringFromMovieTime((_viewDuration) ? [_movie duration] :
+                                    [_movie currentTime] - [_movie duration]);
         if (![s isEqualToString:[_rTimeTextField stringValue]]) {
             [_rTimeTextField setStringValue:s];
             [_panelRTimeTextField setStringValue:s];

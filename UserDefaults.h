@@ -35,6 +35,7 @@ extern NSString* MPreferencePaneKey;
 extern NSString* MControlTabKey;
 extern NSString* MCheckUpdateIntervalKey;
 extern NSString* MLastCheckUpdateTimeKey;
+extern NSString* MViewDurationKey;
 
 #pragma mark -
 #pragma mark prefs: general
