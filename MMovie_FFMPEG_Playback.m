@@ -144,6 +144,8 @@
     _decodedImageBufCount = 0;
     _videoDataBufId = 0;
     _nextVideoBufId = 0;
+    
+    _needIndexing = FALSE;
 
     _playThreading = 0;
     [NSThread detachNewThreadSelector:@selector(backgroundThreadFunc:)
