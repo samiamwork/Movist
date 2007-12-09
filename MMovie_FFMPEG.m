@@ -78,6 +78,11 @@
                     (_formatContext->duration / AV_TIME_BASE);
 }
 
+- (float)indexDuration
+{
+    return [self duration];     // FIXME
+}
+
 - (NSSize)size
 {
     return NSMakeSize(_videoWidth, _videoHeight);

@@ -86,6 +86,7 @@ enum {
 
 #pragma mark -
 #pragma mark notifications: movie
+extern NSString* MMovieIndexDurationNotification;
 extern NSString* MMovieRateChangeNotification;
 extern NSString* MMovieCurrentTimeNotification;
 extern NSString* MMovieEndNotification;

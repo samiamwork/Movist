@@ -60,6 +60,7 @@
 #pragma mark -
 - (NSArray*)videoTracks;
 - (float)duration;
+- (float)indexDuration;
 - (NSSize)size;
 
 - (int)aspectRatio;

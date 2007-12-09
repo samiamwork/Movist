@@ -38,6 +38,9 @@
 {
 }
 
+- (float)indexDuration;
+- (void)setIndexDuration:(float)duration;
+
 - (BOOL)repeatEnabled;
 - (float)repeatBeginning;
 - (float)repeatEnd;

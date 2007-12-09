@@ -25,13 +25,14 @@
 
 #pragma mark notifications: movie
 
-NSString* MMovieRateChangeNotification         = @"MMovieRateChangeNotification";
-NSString* MMovieCurrentTimeNotification        = @"MMovieCurrentTimeNotification";
-NSString* MMovieEndNotification                = @"MMovieEndNotification";
+NSString* MMovieIndexDurationNotification       = @"MMovieIndexDurationNotification";
+NSString* MMovieRateChangeNotification          = @"MMovieRateChangeNotification";
+NSString* MMovieCurrentTimeNotification         = @"MMovieCurrentTimeNotification";
+NSString* MMovieEndNotification                 = @"MMovieEndNotification";
 
 #pragma mark notifications: etc
 
-NSString* MMovieRectUpdateNotification         = @"MMovieRectUpdateNotification";
+NSString* MMovieRectUpdateNotification          = @"MMovieRectUpdateNotification";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

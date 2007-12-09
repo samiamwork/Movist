@@ -115,6 +115,7 @@
 - (NSArray*)videoTracks { return _videoTracks; }
 
 - (float)duration { return 0; }
+- (float)indexDuration { return 0; }
 - (NSSize)size { return NSMakeSize(0, 0); }
 
 - (int)aspectRatio { return _aspectRatio; }

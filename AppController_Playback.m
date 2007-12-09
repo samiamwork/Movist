@@ -174,6 +174,18 @@
 #pragma mark -
 #pragma mark notifications
 
+- (void)movieIndexDurationChanged:(NSNotification*)notification
+{
+    if (notification) {
+        [self performSelectorOnMainThread:@selector(movieIndexDurationChanged:)
+                               withObject:nil waitUntilDone:FALSE];   // don't wait
+    }
+    else {
+        TRACE(@"%s", __PRETTY_FUNCTION__);
+        [self updateTimeUI];
+    }
+}
+
 - (void)movieRateChanged:(NSNotification*)notification
 {
     if (notification) {
@@ -251,13 +263,21 @@
             [_seekSlider setEnabled:TRUE];
             [_panelSeekSlider setEnabled:TRUE];
         }
-        float dt = ABS([_movie currentTime] - _prevMovieTime);
+        float ct = [_movie currentTime];
+        float dt = ABS(ct - _prevMovieTime);
         if (1.0 <= dt * [_seekSlider bounds].size.width / [_movie duration]) {
-            [_seekSlider setFloatValue:[_movie currentTime]];
-            [_panelSeekSlider setFloatValue:[_movie currentTime]];
-            _prevMovieTime = [_movie currentTime];
+            [_seekSlider setFloatValue:ct];
+            [_panelSeekSlider setFloatValue:ct];
+            _prevMovieTime = ct;
         }
 
+        ct = [_movie indexDuration];
+        dt = ABS(ct - [_seekSlider indexDuration]);
+        if (1.0 <= dt * [_seekSlider bounds].size.width / [_movie duration]) {
+            [_seekSlider setIndexDuration:ct];
+            [_panelSeekSlider setIndexDuration:ct];
+        }
+        
         NSString* s = NSStringFromMovieTime([_movie currentTime]);
         if (![s isEqualToString:[_lTimeTextField stringValue]]) {
             [_lTimeTextField setStringValue:s];
@@ -273,8 +293,10 @@
     else {
         [_seekSlider setEnabled:FALSE];
         [_seekSlider setFloatValue:0.0];
+        [_seekSlider setIndexDuration:0.0];
         [_panelSeekSlider setEnabled:FALSE];
         [_panelSeekSlider setFloatValue:0.0];
+        [_panelSeekSlider setIndexDuration:0.0];
 
         [_lTimeTextField setStringValue:@"--:--:--"];
         [_rTimeTextField setStringValue:@"--:--:--"];

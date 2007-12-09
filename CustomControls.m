@@ -82,8 +82,8 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
                     NSImage* bgImage, NSImage* lImage, NSImage* cImage, NSImage* rImage,
                     float knobSize, NSColor* knobColor,
-                    float repeatBeginning, float repeatEnd,
-                    float minValue, float maxValue)
+                    float movieDuration, float indexDuration,
+                    float repeatBeginning, float repeatEnd)
 {
     NSRect knobRect = [cell knobRectFlipped:[controlView isFlipped]];
 
@@ -117,16 +117,35 @@ void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
     [cImage drawInRect:rc fromRect:NSZeroRect
              operation:NSCompositeSourceOver fraction:1.0];
 
+    float minValue = 0;
+    float maxValue = movieDuration;
+    float minY = NSMinY(trackRect) + 1;
+    float maxY = NSMaxY(trackRect) - 1;
+    // index duration
+    if (indexDuration < movieDuration) {
+        // FIXME
+        [[NSColor colorWithCalibratedWhite:0.8 alpha:0.7] set];     // FIXME
+        NSBezierPath* path = [NSBezierPath bezierPath];
+        float bx = trackRect.size.width * indexDuration / (maxValue - minValue) + knobSize / 2 + 1;
+        float ex = trackRect.size.width * movieDuration / (maxValue - minValue) + knobSize / 2 - 1;
+        [path moveToPoint:NSMakePoint(bx, minY)];
+        [path lineToPoint:NSMakePoint(ex, minY)];
+        [path lineToPoint:NSMakePoint(ex, maxY)];
+        [path lineToPoint:NSMakePoint(bx, maxY)];
+        [path closePath];
+        [path fill];
+    }
+
     // repeat range
     if (0 <= repeatBeginning) {
         [[NSColor colorWithCalibratedWhite:0.5 alpha:0.7] set];
         NSBezierPath* path = [NSBezierPath bezierPath];
-        float bx = trackRect.size.width * repeatBeginning / (maxValue - minValue) + knobSize / 2;
-        float ex = trackRect.size.width * repeatEnd       / (maxValue - minValue) + knobSize / 2;
-        [path moveToPoint:NSMakePoint(bx, NSMinY(trackRect))];
-        [path lineToPoint:NSMakePoint(ex, NSMinY(trackRect))];
-        [path lineToPoint:NSMakePoint(ex, NSMaxY(trackRect))];
-        [path lineToPoint:NSMakePoint(bx, NSMaxY(trackRect))];
+        float bx = trackRect.size.width * repeatBeginning / (maxValue - minValue) + knobSize / 2 + 1;
+        float ex = trackRect.size.width * repeatEnd       / (maxValue - minValue) + knobSize / 2 - 1;
+        [path moveToPoint:NSMakePoint(bx, minY)];
+        [path lineToPoint:NSMakePoint(ex, minY)];
+        [path lineToPoint:NSMakePoint(ex, maxY)];
+        [path lineToPoint:NSMakePoint(bx, maxY)];
         [path closePath];
         [path fill];
     }
@@ -163,9 +182,13 @@ void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
 
 @interface SeekSliderCell : NSSliderCell
 {
+    float _indexDuration;
     float _repeatBeginning;
     float _repeatEnd;
 }
+
+- (float)indexDuration;
+- (void)setIndexDuration:(float)duration;
 
 - (BOOL)repeatEnabled;
 - (float)repeatBeginning;
@@ -185,6 +208,9 @@ void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
     }
     return self;
 }
+
+- (float)indexDuration { return _indexDuration; }
+- (void)setIndexDuration:(float)duration { _indexDuration = duration; }
 
 - (BOOL)repeatEnabled { return (0 <= _repeatBeginning && _repeatBeginning <= _repeatEnd); }
 - (float)repeatBeginning { return _repeatBeginning; }
@@ -210,6 +236,22 @@ void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
 @end
 
 @implementation SeekSlider
+
+- (void)mouseDown:(NSEvent*)theEvent
+{
+    NSPoint p = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    TRACE(@"%s (%f,%f)", __PRETTY_FUNCTION__, p.x, p.y);
+    [super mouseDown:theEvent];
+}
+
+- (float)indexDuration { return [(SeekSliderCell*)[self cell] indexDuration]; }
+
+- (void)setIndexDuration:(float)duration
+{
+    TRACE(@"%s %.1f", __PRETTY_FUNCTION__, duration);
+    [(SeekSliderCell*)[self cell] setIndexDuration:duration];
+    [self setNeedsDisplay];
+}
 
 - (BOOL)repeatEnabled    { return [(SeekSliderCell*)[self cell] repeatEnabled]; }
 - (float)repeatBeginning { return [(SeekSliderCell*)[self cell] repeatBeginning]; }
@@ -257,7 +299,7 @@ void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
                    [NSImage imageNamed:@"MainSeekSliderRight"],
                    8.0,
                    [NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.25 alpha:1.0],
-                   _repeatBeginning, _repeatEnd, [self minValue], [self maxValue]);
+                   [self maxValue], _indexDuration, _repeatBeginning, _repeatEnd);
 }
 
 @end
@@ -304,7 +346,7 @@ void drawSeekSlider(NSSliderCell* cell, NSRect cellFrame, NSView* controlView,
                    [NSImage imageNamed:@"FSSeekSliderRight"],
                    12.0,
                    [NSColor colorWithCalibratedRed:0.75 green:0.75 blue:0.75 alpha:1.0],
-                   _repeatBeginning, _repeatEnd, [self minValue], [self maxValue]);
+                   [self maxValue], _indexDuration, _repeatBeginning, _repeatEnd);
 }
 
 @end

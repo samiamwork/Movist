@@ -201,6 +201,8 @@
     return (float)t.timeValue / t.timeScale;
 }
 
+- (float)indexDuration { return [self duration]; }  // always fully indexed
+
 - (NSSize)size
 {
     return [[_qtMovie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];

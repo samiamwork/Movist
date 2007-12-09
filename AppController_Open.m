@@ -175,6 +175,24 @@
     }
     _movie = [movie retain];
 
+    // observe movie's notifications
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(movieIndexDurationChanged:)
+               name:MMovieIndexDurationNotification object:_movie];
+    [nc addObserver:self selector:@selector(movieRateChanged:)
+               name:MMovieRateChangeNotification object:_movie];
+    [nc addObserver:self selector:@selector(movieCurrentTimeChanged:)
+               name:MMovieCurrentTimeNotification object:_movie];
+    [nc addObserver:self selector:@selector(movieEnded:)
+               name:MMovieEndNotification object:_movie];
+
+    // update movie
+    [self autoenableAudioTracks];
+    [_movie setVolume:normalizedVolume([_defaults floatForKey:MVolumeKey])];
+    [_movie setMuted:([_muteButton state] == NSOnState)];
+    [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForWideMovieKey] forWideMovie:TRUE];
+    [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForStdMovieKey] forWideMovie:FALSE];
+    
     // open subtitle
     if (subtitleURL && [_defaults boolForKey:MSubtitleEnableKey]) {
         NSArray* subtitles = [self subtitleFromURL:subtitleURL
@@ -188,13 +206,6 @@
             [self autoenableSubtitles];
         }
     }
-
-    // update movie
-    [self autoenableAudioTracks];
-    [_movie setVolume:normalizedVolume([_defaults floatForKey:MVolumeKey])];
-    [_movie setMuted:([_muteButton state] == NSOnState)];
-    [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForWideMovieKey] forWideMovie:TRUE];
-    [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForStdMovieKey] forWideMovie:FALSE];
 
     // update movie-view
     [_movieView hideLogo];
@@ -212,24 +223,17 @@
     // update etc. UI
     [_seekSlider setMinValue:0];
     [_seekSlider setMaxValue:[_movie duration]];
+    [_seekSlider setIndexDuration:0];
     [_seekSlider clearRepeat];
     [_panelSeekSlider setMinValue:0];
     [_panelSeekSlider setMaxValue:[_movie duration]];
+    [_panelSeekSlider setIndexDuration:0];
     [_panelSeekSlider clearRepeat];
     [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
         NSLocalizedString(@"Reopen With %@", nil),
         ([_movie class] == [MMovie_QuickTime class]) ? @"FFMPEG" : @"QuickTime"]];
     _prevMovieTime = 0.0;
     [self updateUI];
-
-    // observe movie's notifications
-    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-    [nc addObserver:self selector:@selector(movieRateChanged:)
-               name:MMovieRateChangeNotification object:_movie];
-    [nc addObserver:self selector:@selector(movieCurrentTimeChanged:)
-               name:MMovieCurrentTimeNotification object:_movie];
-    [nc addObserver:self selector:@selector(movieEnded:)
-               name:MMovieEndNotification object:_movie];
 
     // add to recent-menu
     [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[self movieURL]];
