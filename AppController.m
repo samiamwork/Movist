@@ -187,6 +187,7 @@
     [_movieView setSubtitleShadowColor:[_defaults colorForKey:MSubtitleShadowColorKey]];
     [_movieView setSubtitleShadowBlur:[_defaults floatForKey:MSubtitleShadowBlurKey]];
     [_movieView setSubtitleShadowOffset:[_defaults floatForKey:MSubtitleShadowOffsetKey]];
+    [_movieView setSubtitleShadowDarkness:[_defaults integerForKey:MSubtitleShadowDarknessKey]];
     [_movieView setSubtitleDisplayOnLetterBox:[_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey]];
     [_movieView setMinLetterBoxHeight:[_defaults floatForKey:MSubtitleMinLetterBoxHeightKey]];
     [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
@@ -197,7 +198,7 @@
     BOOL displayOnLetterBox = [_movieView subtitleDisplayOnLetterBox];
     [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
     [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
-    
+
     _playRate = 1.0;
     _prevMovieTime = 0.0;
 

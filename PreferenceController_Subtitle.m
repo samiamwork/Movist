@@ -60,8 +60,8 @@
     [_subtitleShadowBlurTextField setFloatValue:shadowBlur];
     [_subtitleShadowOffsetSlider setFloatValue:shadowOffset];
     [_subtitleShadowOffsetTextField setFloatValue:shadowOffset];
-    [_subtitleShadowDarknessSlider setFloatValue:shadowDarkness];
-    [_subtitleShadowDarknessTextField setFloatValue:shadowDarkness];
+    [_subtitleShadowDarknessSlider setIntValue:shadowDarkness];
+    [_subtitleShadowDarknessTextField setIntValue:shadowDarkness];
 
     [_subtitleDisplayOnLetterBoxButton setState:[_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey]];
 

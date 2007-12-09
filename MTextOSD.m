@@ -37,7 +37,7 @@
 
         _textColor = [[NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:1] retain];
         _strokeColor = [[NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1] retain];
-        _strokeWidth = [[NSNumber alloc] initWithFloat:1.0];
+        _strokeWidth = [[NSNumber alloc] initWithFloat:10.0];
         _strokeWidth2= [[NSNumber alloc] initWithFloat:-0.01];
 
         // for stroke & shadow
