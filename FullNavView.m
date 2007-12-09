@@ -237,7 +237,7 @@
     NSString* title = nil;
     if (!item) {
         icon = [NSImage imageNamed:@"Movist"];
-        title = NSLocalizedString(@"Movist", nil);
+        title = localizedAppName();
     }
     else {
         if ([item isMemberOfClass:[FullNavDirectoryItem class]]) {

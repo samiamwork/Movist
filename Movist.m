@@ -238,6 +238,13 @@ static NSWindow* _fadeWindow = 0;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+NSString* localizedAppName()
+{
+    return [[NSBundle mainBundle] localizedStringForKey:@"CFBundleName"
+                                                  value:@"Movist"
+                                                  table:@"InfoPlist"];
+}
+
 float normalizedVolume(float volume)
 {
     return (float)(int)((volume + 0.05f) * 10) / 10;  // make "x.x"
@@ -257,8 +264,7 @@ void runAlertPanelForOpenError(NSError* error, NSURL* url)
 {
     NSString* s = [NSString stringWithFormat:@"%@\n\n%@",
                     error, [url isFileURL] ? [url path] : [url absoluteString]];
-    NSRunAlertPanel(NSLocalizedString(@"Movist", nil), s,
-                    NSLocalizedString(@"OK", nil), nil, nil);
+    NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
 }
 
 unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)

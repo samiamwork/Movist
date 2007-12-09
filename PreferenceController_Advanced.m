@@ -32,6 +32,7 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaultDecoderPopUpButton selectItemWithTag:[_defaults integerForKey:MDefaultDecoderKey]];
+    [_checkForUpdatesPopUpButton selectItemWithTag:[_defaults integerForKey:MCheckUpdateIntervalKey]];
 }
 
 - (IBAction)defaultDecoderAction:(id)sender
@@ -39,6 +40,12 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaults setInteger:[[sender selectedItem] tag] forKey:MDefaultDecoderKey];
     [(MainWindow*)[NSApp mainWindow] setDecoder:nil];    // update as new decoder
+}
+
+- (IBAction)checkForUpdatesAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_defaults setInteger:[[sender selectedItem] tag] forKey:MCheckUpdateIntervalKey];
 }
 
 @end

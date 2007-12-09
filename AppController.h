@@ -134,7 +134,9 @@
 
 - (void)updateUI;
 - (void)setQuitWhenWindowClose:(BOOL)quitWhenClose;
+- (void)checkForUpdatesOnStartup;
 
+- (IBAction)checkForUpdates:(id)sender;
 - (IBAction)controlPanelAction:(id)sender;
 - (IBAction)preferencePanelAction:(id)sender;
 

@@ -21,6 +21,7 @@
 //
 
 #import "AppController.h"
+#import "NewVersionChecker.h"
 #import "UserDefaults.h"
 
 #import "MMovie_FFMPEG.h"
@@ -84,6 +85,8 @@
     [_syncLaterMenuItem setKeyEquivalentModifierMask:mask];
     [_syncEarlierMenuItem setKeyEquivalentModifierMask:mask];
     [_syncDefaultMenuItem setKeyEquivalentModifierMask:mask];
+
+    [self checkForUpdatesOnStartup];
 }
 
 - (void)dealloc
@@ -235,6 +238,68 @@
 {
     TRACE(@"%s %d", __PRETTY_FUNCTION__, quitWhenWindowClose);
     _quitWhenWindowClose = quitWhenWindowClose;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (void)checkForUpdatesOnStartup
+{
+    NSTimeInterval timeInterval;
+    switch ([_defaults integerForKey:MCheckUpdateIntervalKey]) {
+        case CHECK_UPDATE_NEVER   : return; // don't check automatically
+        case CHECK_UPDATE_DAILY   : timeInterval =  1 * 24 * 60 * 60;   break;
+        case CHECK_UPDATE_WEEKLY  : timeInterval =  7 * 24 * 60 * 60;   break;
+        case CHECK_UPDATE_MONTHLY :
+        default                   : timeInterval = 30 * 24 * 60 * 60;   break;
+    }
+    NSDate* lastCheckTime = [_defaults objectForKey:MLastCheckUpdateTimeKey];
+    NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastCheckTime];
+    if (timeInterval <= interval) {
+        [self checkForUpdates:self];
+    }
+}
+
+- (IBAction)checkForUpdates:(id)sender
+{
+    [_movieView setMessage:NSLocalizedString(@"Checking for Updates...", nil)];
+    [_movieView display];
+
+    NSError* error;
+    NewVersionChecker* checker = [[NewVersionChecker alloc] init];
+    int ret = [checker checkNewVersion:&error];
+    [_defaults setObject:[NSDate date] forKey:MLastCheckUpdateTimeKey];
+
+    [_movieView setMessage:@""];
+    [_movieView display];
+
+    if (ret == NEW_VERSION_CHECK_FAILED) {
+        if (sender != self) {   // only for manual checking
+            NSString* s = [NSString stringWithFormat:@"%@", error];
+            NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
+        }
+    }
+    else if (ret == NEW_VERSION_NONE) {
+        if (sender != self) {   // only for manual checking
+            NSString* s = NSLocalizedString(@"No new version", nil);
+            NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
+        }
+    }
+    else if (ret == NEW_VERSION_IS_AVAILABLE) {
+        // new version alert always show.
+        NSString* newVersion = [checker newVersion];
+        NSURL* newVersionURL = [checker newVersionURL];
+        NSString* s = [NSString stringWithFormat:
+                        NSLocalizedString(@"New version is available. (v%@)", nil),
+                        newVersion];
+        ret = NSRunAlertPanel(localizedAppName(), s,
+                              NSLocalizedString(@"Show New Version", nil),
+                              NSLocalizedString(@"Cancel", nil), nil);
+        if (ret == NSAlertDefaultReturn) {
+            [[NSWorkspace sharedWorkspace] openURL:newVersionURL];
+        }
+    }
+    [checker release];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

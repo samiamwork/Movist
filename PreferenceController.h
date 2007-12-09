@@ -89,6 +89,7 @@
     // advanced
     IBOutlet NSView* _advancedPane;
     IBOutlet NSPopUpButton* _defaultDecoderPopUpButton;
+    IBOutlet NSPopUpButton* _checkForUpdatesPopUpButton;
 
     NSUserDefaults* _defaults;
     AppController* _appController;
@@ -170,5 +171,6 @@
 
 - (void)initAdvancedPane;
 - (IBAction)defaultDecoderAction:(id)sender;
+- (IBAction)checkForUpdatesAction:(id)sender;
 
 @end

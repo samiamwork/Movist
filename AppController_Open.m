@@ -94,8 +94,7 @@
     }
     if (![subtitleURL isFileURL]) {
         TRACE(@"remote subtitle is not supported yet");
-        *error = [NSError errorWithDomain:NSLocalizedString(@"Movist", nil)
-                                     code:0 userInfo:0];
+        *error = [NSError errorWithDomain:localizedAppName() code:0 userInfo:0];
         return nil;
     }
     
@@ -103,8 +102,7 @@
     NSString* path = [subtitleURL path];
     Class parserClass = [MSubtitle subtitleParserClassForType:[path pathExtension]];
     if (!parserClass) {
-        *error = [NSError errorWithDomain:NSLocalizedString(@"Movist", nil)
-                                     code:1 userInfo:0];
+        *error = [NSError errorWithDomain:localizedAppName() code:1 userInfo:0];
         return nil;
     }
 
@@ -139,8 +137,7 @@
         }
         s = [NSString stringWithCString:contents encoding:nsEncoding];
         if (!s) {
-            *error = [NSError errorWithDomain:NSLocalizedString(@"Movist", nil)
-                                         code:2 userInfo:0];
+            *error = [NSError errorWithDomain:localizedAppName() code:2 userInfo:0];
             return nil;
         }
     }
@@ -261,8 +258,7 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     NSString* s = @"\"Open URL...\" is not implemented yet.";
-    NSRunAlertPanel(NSLocalizedString(@"Movist", nil), s,
-                    NSLocalizedString(@"OK", nil), nil, nil);
+    NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
     return FALSE;
     /*
     if ([[url absoluteString] hasAnyExtension:[MSubtitle subtitleTypes]]) {

@@ -84,6 +84,7 @@
 		AF5143170C3C252C00BDACB7 /* FSSeekSliderLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5143140C3C252C00BDACB7 /* FSSeekSliderLeft.tiff */; };
 		AF5143180C3C252C00BDACB7 /* FSSeekSliderRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5143150C3C252C00BDACB7 /* FSSeekSliderRight.tiff */; };
 		AF5143190C3C252C00BDACB7 /* FSSeekSliderCenter.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5143160C3C252C00BDACB7 /* FSSeekSliderCenter.tiff */; };
+		AF51FF320D0BBA47005824F1 /* NewVersionChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = AF51FF300D0BBA47005824F1 /* NewVersionChecker.m */; };
 		AF5A29430C2CEC0D00483AEB /* AppController_Open.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5A29420C2CEC0D00483AEB /* AppController_Open.m */; };
 		AF5A29930C2CF05000483AEB /* AppController_Subtitle.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5A29920C2CF05000483AEB /* AppController_Subtitle.m */; };
 		AF5A29970C2CF14A00483AEB /* AppController_Playlist.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5A29960C2CF14A00483AEB /* AppController_Playlist.m */; };
@@ -258,6 +259,8 @@
 		AF5143140C3C252C00BDACB7 /* FSSeekSliderLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderLeft.tiff; path = Images/FSSeekSliderLeft.tiff; sourceTree = "<group>"; };
 		AF5143150C3C252C00BDACB7 /* FSSeekSliderRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderRight.tiff; path = Images/FSSeekSliderRight.tiff; sourceTree = "<group>"; };
 		AF5143160C3C252C00BDACB7 /* FSSeekSliderCenter.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderCenter.tiff; path = Images/FSSeekSliderCenter.tiff; sourceTree = "<group>"; };
+		AF51FF300D0BBA47005824F1 /* NewVersionChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewVersionChecker.m; sourceTree = "<group>"; };
+		AF51FF310D0BBA47005824F1 /* NewVersionChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewVersionChecker.h; sourceTree = "<group>"; };
 		AF5A29420C2CEC0D00483AEB /* AppController_Open.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Open.m; sourceTree = "<group>"; };
 		AF5A29920C2CF05000483AEB /* AppController_Subtitle.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Subtitle.m; sourceTree = "<group>"; };
 		AF5A29960C2CF14A00483AEB /* AppController_Playlist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Playlist.m; sourceTree = "<group>"; };
@@ -610,6 +613,8 @@
 				AF5A29EA0C2CF84F00483AEB /* AppController_Audio.m */,
 				AF5A29AE0C2CF64D00483AEB /* AppController_Video.m */,
 				AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */,
+				AF51FF310D0BBA47005824F1 /* NewVersionChecker.h */,
+				AF51FF300D0BBA47005824F1 /* NewVersionChecker.m */,
 				AFF4A8650C1B1E3F00B4F481 /* UserDefaults.h */,
 				AFF4A8660C1B1E3F00B4F481 /* UserDefaults.m */,
 			);
@@ -855,6 +860,7 @@
 				AF3568F60CF1D6AB00C0621A /* FullNavItems.m in Sources */,
 				AF3568F70CF1D6AB00C0621A /* FullNavListView.m in Sources */,
 				AFEE91F70CFC706800DB5C7A /* SubtitleRenderer.m in Sources */,
+				AF51FF320D0BBA47005824F1 /* NewVersionChecker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

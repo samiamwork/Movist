@@ -22,6 +22,14 @@
 
 #import <Cocoa/Cocoa.h>
 
+#pragma mark check-for-updates
+enum {
+    CHECK_UPDATE_NEVER,
+    CHECK_UPDATE_DAILY,
+    CHECK_UPDATE_WEEKLY,
+    CHECK_UPDATE_MONTHLY,
+};
+
 #pragma mark decoder
 enum {
     DECODER_QUICKTIME,
@@ -131,6 +139,7 @@ extern NSString* MMovieRectUpdateNotification;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+NSString* localizedAppName();
 float normalizedVolume(float volume);
 NSString* NSStringFromMovieTime(float time);
 void runAlertPanelForOpenError(NSError* error, NSURL* url);

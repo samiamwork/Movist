@@ -16,6 +16,7 @@
                 appleRemoteRightHoldAction = id;
                 aspectRatioAction = id;
                 audioTrackAction = id;
+                checkForUpdates = id;
                 controlPanelAction = id;
                 fullScreenAction = id;
                 fullScreenFillAction = id;

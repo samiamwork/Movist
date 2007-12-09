@@ -1,8 +1,16 @@
 /* App General */
-"Movist" = "Movist";
+"Cancel" = "Cancel";
+
+/* Check for Updates */
+"Checking for Updates..." = "Checking for Updates...";
+"No new version" = "No new version";
+"New version is available. (v%@)" = "New version is available. (v%@)";
+"Show New Version" = "Show New Version";
+
+/* MainMenu: File */
 "Opening with %@..." = "Opening with %@...";
 
-/* Menu: Controls */
+/* MainMenu: Controls */
 "Play_space"  = "Play               space";
 "Pause_space" = "Pause              space";
 "Backward %d sec." = "Backward %d sec.";

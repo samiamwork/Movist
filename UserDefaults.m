@@ -25,6 +25,8 @@
 #pragma mark app
 NSString* MPreferencePaneKey                = @"PreferencePane";
 NSString* MControlTabKey                    = @"ControlTab";
+NSString* MCheckUpdateIntervalKey           = @"CheckUpdateInterval";
+NSString* MLastCheckUpdateTimeKey           = @"LastCheckUpdateTime";
 
 #pragma mark -
 #pragma mark prefs: general
@@ -87,6 +89,8 @@ NSString* MDefaultDecoderKey                = @"DefaultDecoder";
     // app
     [dict setObject:@"" forKey:MPreferencePaneKey]; // for first pane
     [dict setObject:@"" forKey:MControlTabKey];     // for first tab
+    [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MCheckUpdateIntervalKey];
+    [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastCheckUpdateTimeKey];
 
     // prefs: general
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAutoFullScreenKey];
