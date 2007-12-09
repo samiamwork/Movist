@@ -88,8 +88,8 @@
         _subtitlesLock = [[NSRecursiveLock alloc] init];
         _conditionLock = [[NSConditionLock alloc] initWithCondition:WAITING];
 
-        _maxPreRenderInterval = 30.0;
-        _curPreRenderInterval = 0.0;
+        _maxRenderInterval = 30.0;
+        _renderInterval = 0.0;
         _lastRequestedTime = 0.0;
         _requestedTime = 0.0;
         _removeCount = 0;
@@ -107,7 +107,7 @@
 {
     _quitRequested = TRUE;
     [_conditionLock unlockWithCondition:MAKING_IMAGE];
-    while (_autoreleasePool != nil) {
+    while (_running) {
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
 
@@ -127,8 +127,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (float)maxPreRenderInterval { return _maxPreRenderInterval; }
-- (void)setMaxPreRenderInterval:(float)interval { _maxPreRenderInterval = interval; }
+- (float)maxRenderInterval { return _maxRenderInterval; }
+- (void)setMaxRenderInterval:(float)interval { _maxRenderInterval = interval; }
 
 - (void)setSubtitles:(NSArray*)subtitles
 {
@@ -383,9 +383,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (void)updateCurPreRenderInterval
+- (void)updateRenderInterval
 {
-    _curPreRenderInterval = ([_subtitleImages count] == 0) ? 0 :
+    _renderInterval = ([_subtitleImages count] == 0) ? 0 :
                                 ([[_subtitleImages lastObject] endTime] -
                                  [[_subtitleImages objectAtIndex:0] beginTime]);
 }
@@ -396,7 +396,7 @@
         //TRACE(@"%s removing all oldests (%d)...", __PRETTY_FUNCTION__, _removeCount);
         [_subtitleImages removeAllObjects];
         _removeCount = 0;
-        _curPreRenderInterval = 0;
+        _renderInterval = 0;
         [_subtitleOSD1 clearContent];
     }
     else if (0 < _removeCount) {
@@ -405,69 +405,72 @@
             [_subtitleImages removeObjectAtIndex:0];
             _removeCount--;
         }
-        [self updateCurPreRenderInterval];
+        [self updateRenderInterval];
     }
 }
 
 - (void)renderThreadFunc:(id)anObject
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    _autoreleasePool = [[NSAutoreleasePool alloc] init];
+    TRACE(@"%s started", __PRETTY_FUNCTION__);
+    _running = TRUE;
 
     float time;
     NSImage* texImage;
+    NSAutoreleasePool* pool;
     MSubtitleStringImage* image = nil;
     while (!_quitRequested) {
         //TRACE(@"%s waiting for resume", __PRETTY_FUNCTION__);
-        [_conditionLock lockWhenCondition:MAKING_IMAGE];
-        if (![self hasSubtitle]) {
-            [_conditionLock unlockWithCondition:WAITING];
-            continue;
-        }
-        [self removeOldestImages];
-        [_conditionLock unlockWithCondition:MAKING_IMAGE];  // maintain locking
+        pool = [[NSAutoreleasePool alloc] init];
 
-        if (0 <= _requestedTime) {  // new time requested
-            //TRACE(@"%s new time requested: %.03f", __PRETTY_FUNCTION__, _requestedTime);
-            time = _requestedTime;
-            _requestedTime = -1;
-            [_subtitleOSD1 clearContent];
-            [image release], image = nil;
-        }
-        //TRACE(@"%s making images at %.03f...", __PRETTY_FUNCTION__, time);
-        while (_requestedTime < 0 &&     // stop if new time is requested
-               _curPreRenderInterval < _maxPreRenderInterval) {
-            if (![self hasSubtitle]) {
-                break;
+        [_conditionLock lockWhenCondition:MAKING_IMAGE];
+        if ([self hasSubtitle]) {
+            [self removeOldestImages];
+            [_conditionLock unlockWithCondition:MAKING_IMAGE];  // maintain locking
+
+            if (0 <= _requestedTime) {  // new time requested
+                //TRACE(@"%s new time requested: %.03f", __PRETTY_FUNCTION__, _requestedTime);
+                time = _requestedTime;
+                _requestedTime = -1;
+                [_subtitleOSD1 clearContent];
+                [image release], image = nil;
             }
-            if ([self updateSubtitleOSD:_subtitleOSD1 forTime:time] & STRING_UPDATED) {
-                if (image) {
-                    [_conditionLock lock];
-                    [image setEndTime:time];
-                    [_subtitleImages addObject:image];
-                    //TRACE(@"%s image[%d] (%.03f~%.03f)", __PRETTY_FUNCTION__,
-                    //      [_subtitleImages count] - 1,
-                    //      [image beginTime], [image endTime]);
-                    [image release], image = nil;
-                    [self updateCurPreRenderInterval];
-                    _canRequestNewTime = TRUE;
-                    [_conditionLock unlockWithCondition:MAKING_IMAGE];
+            //TRACE(@"%s making images from %.03f...", __PRETTY_FUNCTION__, time);
+            while (!_quitRequested && [self hasSubtitle] &&
+                   _requestedTime < 0 && _renderInterval < _maxRenderInterval) {
+                if ([self updateSubtitleOSD:_subtitleOSD1 forTime:time] & STRING_UPDATED) {
+                    if (image) {
+                        [_conditionLock lock];
+                        [image setEndTime:time];
+                        [_subtitleImages addObject:image];
+                        //TRACE(@"%s image[%d] (%.03f~%.03f)", __PRETTY_FUNCTION__,
+                        //      [_subtitleImages count] - 1,
+                        //      [image beginTime], [image endTime]);
+                        [image release], image = nil;
+                        [self updateRenderInterval];
+                        _canRequestNewTime = TRUE;
+                        [_conditionLock unlockWithCondition:MAKING_IMAGE];
+                    }
+                    texImage = [_subtitleOSD1 makeTexImage];
+                    if (texImage) {
+                        image = [[MSubtitleStringImage alloc] initWithStringImage:texImage];
+                        [image setBeginTime:time];
+                        //TRACE(@"%s new-image at %.03f", __PRETTY_FUNCTION__, time);
+                    }
                 }
-                texImage = [_subtitleOSD1 makeTexImage];
-                if (texImage) {
-                    image = [[MSubtitleStringImage alloc] initWithStringImage:texImage];
-                    [image setBeginTime:time];
-                    //TRACE(@"%s new-image at (%.03f)", __PRETTY_FUNCTION__, time);
-                }
+                time += 0.01;
             }
-            time += 0.01;
+            [_conditionLock lock];
         }
-        [_conditionLock lock];
+        if (_quitRequested && image) {
+            [image release];
+            image = nil;
+        }
         [_conditionLock unlockWithCondition:WAITING];
+
+        [pool release];
     }
 
-    [_autoreleasePool release];
-    _autoreleasePool = nil;
+    _running = FALSE;
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 

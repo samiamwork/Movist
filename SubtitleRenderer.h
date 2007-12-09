@@ -31,8 +31,8 @@
     MSubtitleOSD* _subtitleOSD1;        // for rendering on playing
     MSubtitleOSD* _subtitleOSD2;        // for rendering on paused
     NSMutableArray* _subtitleImages;    // for MSubtitleStringImage
-    float _maxPreRenderInterval;
-    float _curPreRenderInterval;
+    float _maxRenderInterval;
+    float _renderInterval;
     float _lastRequestedTime;
     float _requestedTime;
     int _removeCount;
@@ -43,14 +43,14 @@
 
     NSImage* _emptyImage;
 
-    NSAutoreleasePool* _autoreleasePool;
+    BOOL _running;
     BOOL _quitRequested;
 }
 
 - (id)initWithMovieView:(MMovieView*)movieView;
 
-- (float)maxPreRenderInterval;
-- (void)setMaxPreRenderInterval:(float)interval;
+- (float)maxRenderInterval;
+- (void)setMaxRenderInterval:(float)interval;
 
 - (void)setSubtitles:(NSArray*)subtitles;
 

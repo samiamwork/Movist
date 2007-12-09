@@ -129,7 +129,7 @@
     }
     _avFineTuningTime = 0;
     _hostTimeFreq = CVGetHostClockFrequency( );
-    //NSLog(@"host time frequency %f", _hostTimeFreq);
+    //TRACE(@"host time frequency %f", _hostTimeFreq);
     _hostTime = 0;
     _hostTime0point = 0;
     _needKeyFrame = FALSE;
@@ -381,7 +381,7 @@
             return;
         }
     }
-    //NSLog(@"%s %g", __PRETTY_FUNCTION__, time);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, time);
     _reservedSeekTime = time;
     [self reserveCommand:COMMAND_SEEK];
 }
@@ -523,13 +523,13 @@
     _decodedImageCount--;
     _decodedImageBufCount--;
     _videoDataBufId = (_videoDataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;
-    NSLog(@"discard image");
+    TRACE(@"discard image");
 }
 
 - (BOOL)isNewImageAvailable:(const CVTimeStamp*)timeStamp
 {
     if (_decodedImageCount < 1) {
-        //NSLog(@"not decoded %f", current);
+        //TRACE(@"not decoded %f", current);
         return FALSE;
     }
     //float videoTime = (float)timeStamp->videoTime / timeStamp->videoTimeScale;
@@ -582,7 +582,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
                                            pixelBufferReleaseCallback, &_decodedImageBufCount, 0, 
                                            bufferRef);
     if (ret != kCVReturnSuccess) {
-        NSLog(@"%s CVPixelBufferCreateWithBytes() failed : %d", __PRETTY_FUNCTION__, ret);
+        TRACE(@"%s CVPixelBufferCreateWithBytes() failed : %d", __PRETTY_FUNCTION__, ret);
         assert(FALSE);
         return FALSE;
     }
@@ -604,7 +604,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
         [[NSNotificationCenter defaultCenter]
             postNotificationName:MMovieCurrentTimeNotification object:self];
     }
-    //NSLog(@"display(%d) %f", _videoDataBufId, _currentTime);
+    //TRACE(@"display(%d) %f", _videoDataBufId, _currentTime);
     _videoDataBufId = (_videoDataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;    
     return bufferRef;
 }
@@ -615,9 +615,9 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     _playThreading++;
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 /*
-    NSLog(@"cur thread priority %f", [NSThread threadPriority]);
+    TRACE(@"cur thread priority %f", [NSThread threadPriority]);
     [NSThread setThreadPriority:0.9];
-    NSLog(@"set thread priority %f", [NSThread threadPriority]);
+    TRACE(@"set thread priority %f", [NSThread threadPriority]);
 */
     while (!_quitRequested) {
         if (_decodedImageBufCount >= MAX_VIDEO_DATA_BUF_SIZE - 1 ||
@@ -638,7 +638,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
             _seekComplete = TRUE;
         }
         _lastDecodedTime = _decodedImageTime[_nextVideoBufId];
-        //NSLog(@"decoded(%d,%d:%d) %f", _decodedImageBufCount, 
+        //TRACE(@"decoded(%d,%d:%d) %f", _decodedImageBufCount, 
         //                               _decodedImageCount, 
         //                               _nextVideoBufId, 
         //                               _lastDecodedTime);

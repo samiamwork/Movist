@@ -72,7 +72,7 @@ NSString* MMovieRectUpdateNotification         = @"MMovieRectUpdateNotification"
 
 - (NSColor*)makeHUDBackgroundColor
 {
-    //NSLog(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSView* cv = [self contentView];
     NSSize bgSize = [cv convertSize:[self frame].size fromView:nil];
     NSImage* bg = [[NSImage alloc] initWithSize:bgSize];
@@ -180,7 +180,7 @@ static NSWindow* _fadeWindow = 0;
 
 - (BOOL)hasAnyExtension:(NSArray*)extensions
 {
-    //NSLog(@"%s %@", __PRETTY_FUNCTION__, self);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, self);
     NSString* ext = [self pathExtension];
     if (![ext isEqualToString:@""]) {
         NSString* type;
@@ -536,7 +536,7 @@ void initSubtitleEncodingMenu(NSMenu* menu, SEL action)
     for (i = 0; i < count; i++) {
         if (cfEncoding[i] == kCFStringEncodingInvalidId) {  // separator
             [menu addItem:[NSMenuItem separatorItem]];
-            //NSLog(@"separator ===============================");
+            //TRACE(@"separator ===============================");
         }
         else {
             nsEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding[i]);
@@ -545,7 +545,7 @@ void initSubtitleEncodingMenu(NSMenu* menu, SEL action)
                 item = [menu addItemWithTitle:encodingString action:action keyEquivalent:@""];
                 [item setTag:cfEncoding[i]];
             }
-            //NSLog(@"encoding:[0x%08x] => [0x%08x]:\"%@\"",
+            //TRACE(@"encoding:[0x%08x] => [0x%08x]:\"%@\"",
             //      cfEncoding[i], nsEncoding, encodingString);
         }
     }

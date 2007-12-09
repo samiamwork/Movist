@@ -426,15 +426,15 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     if (![mTrack isEnabled]) {
         return;
     }
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     if (packet->data == _flushPacket.data) {
         avcodec_flush_buffers(_audioContext(trackId));
         return;
     }
     if (packet->stream_index != _audioStreamIndex[trackId]) {
-        NSLog(@"packet.stream_index != _audioStreamIndex");
+        TRACE(@"packet.stream_index != _audioStreamIndex");
         assert(FALSE);
     }
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
     int16_t audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE];
@@ -460,7 +460,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
                 nextPts = pts;
             }
             else {
-                NSLog(@"packet.dts == AV_NOPTS_VALUE");
+                TRACE(@"packet.dts == AV_NOPTS_VALUE");
                 assert(FALSE);
             }
         }
@@ -471,7 +471,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         pts = nextPts;
         if (0 < dataSize) {
             if (AVCODEC_MAX_AUDIO_FRAME_SIZE < dataSize) {
-                NSLog(@"AVCODEC_MAX_AUDIO_FRAME_SIZE < dataSize");
+                TRACE(@"AVCODEC_MAX_AUDIO_FRAME_SIZE < dataSize");
                 assert(FALSE);
             }
             while (!_quitRequested && [audioDataQueue freeSize] < dataSize) {
