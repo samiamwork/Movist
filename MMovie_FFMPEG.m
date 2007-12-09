@@ -80,6 +80,9 @@
 
 - (float)indexDuration
 {
+    if (_needIndexing) {
+        return _indexingTime;
+    }
     return [self duration];     // FIXME
 }
 

@@ -297,6 +297,7 @@
 
 - (BOOL)initFFMPEGWithMovieURL:(NSURL*)movieURL errorCode:(int*)errorCode
 {
+    _fileName = [[NSString alloc] initWithString:[movieURL path]];
     const char* path = [[movieURL path] UTF8String];
     if (av_open_input_file(&_formatContext, path, NULL, 0, NULL) != 0) {
         *errorCode = ERROR_FFMPEG_FILE_OPEN_FAILED;

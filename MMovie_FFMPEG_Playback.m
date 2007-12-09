@@ -110,6 +110,7 @@
     _reservedCommand = COMMAND_NONE;
     _commandLock = [[NSConditionLock alloc] initWithCondition:WAITING_FOR_COMMAND];
     _avSyncMutex = [[NSLock alloc] init];
+    _frameReadMutex = [[NSLock alloc] init];
 
     _videoQueue = [[PacketQueue alloc] initWithCapacity:30];  // 30 fps * 5 sec.
     _audioDataQueue = [[NSMutableArray alloc] initWithCapacity:MAX_AUDIO_STREAM_COUNT];
@@ -145,6 +146,8 @@
     _nextVideoBufId = 0;
 
     _playThreading = 0;
+    [NSThread detachNewThreadSelector:@selector(backgroundThreadFunc:)
+                             toTarget:self withObject:nil];
     [NSThread detachNewThreadSelector:@selector(videoDecodeThreadFunc:)
                              toTarget:self withObject:nil];
     [NSThread detachNewThreadSelector:@selector(playThreadFunc:)
@@ -183,10 +186,13 @@
         return TRUE;
     }
     AVPacket packet;
+    [_frameReadMutex lock];
     if (av_read_frame(_formatContext, &packet) < 0) {
+        [_frameReadMutex unlock];
         TRACE(@"%s read-error or end-of-file", __PRETTY_FUNCTION__);
         return FALSE;
     }
+    [_frameReadMutex unlock];
     _needKeyFrame = FALSE;
     
     PacketQueue* queue = nil;
@@ -255,6 +261,10 @@
 {
     _seekTime = _reservedSeekTime;
     TRACE(@"%s seek to %g", __PRETTY_FUNCTION__, _seekTime);
+    if (_needIndexing && _indexingTime < _seekTime) {
+        TRACE(@"not indexed time");
+        return;
+    }
     [_videoQueue clear];
     [_videoQueue putPacket:&_flushPacket];
     int i;
@@ -270,8 +280,10 @@
     }
     int mode = _lastDecodedTime < _seekTime ? 0 : AVSEEK_FLAG_BACKWARD;
     int64_t pos = av_rescale_q((int64_t)(_seekTime * AV_TIME_BASE),
-                               AV_TIME_BASE_Q, _videoStream->time_base);
+                       AV_TIME_BASE_Q, _videoStream->time_base);
+    [_frameReadMutex lock];
     int ret = av_seek_frame(_formatContext, _videoStreamIndex, pos, mode);
+    [_frameReadMutex unlock];
     if (ret < 0) {
         TRACE(@"%s error while seeking", __PRETTY_FUNCTION__);
         _fileEnded = TRUE;
@@ -541,6 +553,8 @@
         _hostTime0point = hostTime - imageTime;
         current = imageTime;
     }
+    //#define _FRAME_DROP
+    #ifdef _FRAME_DROP
     while (imageTime + 1. / 60 < current) {
         if (_decodedImageCount > 0) {
             [self discardImage];
@@ -550,6 +564,7 @@
             return FALSE;
         }
     }
+    #endif
     if (current + 0.002 < imageTime) {
         //TRACE(@"wait(%d) %f < %f", _videoDataBufId, current, imageTime);
         return FALSE;

@@ -98,6 +98,7 @@ enum {
 
 @interface MMovie_FFMPEG : MMovie
 {
+    NSString* _fileName;
     AVFormatContext* _formatContext;
 
     // video
@@ -116,11 +117,20 @@ enum {
     #define _audioStream(i)     _formatContext->streams[_audioStreamIndex[i]]
     #define _audioContext(i)    _audioStream(i)->codec
 
+    // rebuild index
+    int _indexStreamId;
+    AVFormatContext* _indexContext;
+    AVCodecContext* _indexCodec;
+    BOOL _indexingCompleted;
+    BOOL _needIndexing;
+    float _indexingTime;
+    
     // playback: control
     int _command;
     int _reservedCommand;
     NSConditionLock* _commandLock;
     NSLock* _avSyncMutex;
+    NSLock* _frameReadMutex;
     BOOL _quitRequested;
     BOOL _dispatchPacket;
     BOOL _seekComplete;
