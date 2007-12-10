@@ -264,7 +264,7 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
     [_string release];
     _string = _newString;
     
-    if (!_string) {
+    if (!_string || [[_string string] isEqualToString:@""]) {
         _contentSize.width  = 0;
         _contentSize.height = 0;
     }

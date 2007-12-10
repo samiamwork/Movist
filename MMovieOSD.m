@@ -308,12 +308,14 @@
         [self updateContent];
     }
 
-    if (_contentSize.width == 0 || _contentSize.height == 0) {
+    if (_contentSize.width  <= 1 || _contentSize.height <= 1) {
+        // empty image can have size of (1, 1).
         return nil;
     }
 
     // draw content
     NSImage* img = [[NSImage alloc] initWithSize:_contentSize];
+    [img setCacheMode:NSImageCacheNever];
     [img lockFocus];
         NSRect rect = NSMakeRect(0, 0, _contentSize.width, _contentSize.height);
         [self drawContent:rect];
