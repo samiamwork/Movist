@@ -164,6 +164,10 @@
 - (float)subtitleSync;
 - (void)setSubtitleSync:(float)sync;
 
+- (float)currentSubtitleTime;
+- (float)prevSubtitleTime;
+- (float)nextSubtitleTime;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -198,6 +198,8 @@
 - (void)gotoBeginning;
 - (void)gotoEnd;
 - (void)gotoTime:(float)time;
+- (void)seekPrevSubtitle;
+- (void)seekNextSubtitle;
 - (void)seekBackward:(unsigned int)indexOfValue;
 - (void)seekForward:(unsigned int)indexOfValue;
 - (void)stepBackward;

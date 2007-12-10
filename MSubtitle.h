@@ -50,6 +50,8 @@
         beginTime:(float)beginTime endTime:(float)endTime;
 - (NSMutableAttributedString*)stringAtTime:(float)time;
 - (void)clearCache;
+- (float)prevSubtitleTime:(float)time;
+- (float)nextSubtitleTime:(float)time;
 
 @end
 

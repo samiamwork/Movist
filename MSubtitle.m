@@ -315,6 +315,49 @@
     _lastIndexOfStringAtTime = -1;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+- (float)nearestSubtitleTime:(float)time nextNeighbor:(BOOL)nextNeighbor
+{
+    MSubtitleString* s;
+    int i, count = [_strings count];
+    for (i = 0; i < count; i++) {
+        s = [_strings objectAtIndex:i];
+        if (time < [s beginTime]) {
+            if (nextNeighbor) {
+                // i
+            }
+            else if (0 < i) {
+                i--;
+            }
+            break;
+        }
+        else if (time < [s endTime]) {
+            if (nextNeighbor) {
+                if (i < count - 1) {
+                    i++;
+                }
+            }
+            else if (0 < i) {
+                i--;
+            }
+            break;
+        }
+    }
+    s = (i < count) ? [_strings objectAtIndex:i] : [_strings lastObject];
+    return ([s beginTime] + [s endTime]) / 2;   // center for sure to display subtitle
+}
+
+- (float)prevSubtitleTime:(float)time
+{
+    return [self nearestSubtitleTime:time nextNeighbor:FALSE];
+}
+
+- (float)nextSubtitleTime:(float)time
+{
+    return [self nearestSubtitleTime:time nextNeighbor:TRUE];
+}
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

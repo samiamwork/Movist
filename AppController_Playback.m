@@ -81,6 +81,18 @@
     }
 }
 
+- (void)seekPrevSubtitle
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self gotoTime:[_movieView prevSubtitleTime]];
+}
+
+- (void)seekNextSubtitle
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self gotoTime:[_movieView nextSubtitleTime]];
+}
+
 - (void)seekBackward:(unsigned int)indexOfValue
 {
     TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
@@ -369,6 +381,7 @@
     TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
     switch ([sender tag]) {
         case -100 : [self gotoBeginning];       break;
+        case  -40 : [self seekPrevSubtitle];    break;
         case  -30 : [self seekBackward:2];      break;
         case  -20 : [self seekBackward:1];      break;
         case  -10 : [self seekBackward:0];      break;
@@ -382,6 +395,7 @@
         case  +10 : [self seekForward:0];       break;
         case  +20 : [self seekForward:1];       break;
         case  +30 : [self seekForward:2];       break;
+        case  +40 : [self seekNextSubtitle];    break;
         case +100 : [self gotoEnd];             break;
     }
 }

@@ -49,8 +49,8 @@
 - (void)updateSubtitleString
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    float currentTime = [_movie currentTime] + _subtitleSync;
-    [_subtitleImageOSD setImage:[_subtitleRenderer imageAtTime:currentTime]];
+    [_subtitleImageOSD setImage:
+        [_subtitleRenderer imageAtTime:[self currentSubtitleTime]]];
 }
 
 - (void)updateSubtitle
@@ -235,6 +235,43 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _subtitleSync = sync;
     [self updateSubtitle];
+}
+
+- (float)currentSubtitleTime
+{
+    return [_movie currentTime] + _subtitleSync;
+}
+
+- (float)prevSubtitleTime
+{
+    float ct = [self currentSubtitleTime];
+    float t, prevTime = 0;
+
+    MSubtitle* subtitle;
+    NSEnumerator* enumerator = [_subtitles objectEnumerator];
+    while (subtitle = [enumerator nextObject]) {
+        t = [subtitle prevSubtitleTime:ct];
+        if (prevTime < t) {
+            prevTime = t;
+        }
+    }
+    return prevTime;
+}
+
+- (float)nextSubtitleTime
+{
+    float ct = [self currentSubtitleTime];
+    float t, nextTime = [_movie duration];
+    
+    MSubtitle* subtitle;
+    NSEnumerator* enumerator = [_subtitles objectEnumerator];
+    while (subtitle = [enumerator nextObject]) {
+        t = [subtitle nextSubtitleTime:ct];
+        if (t < nextTime) {
+            nextTime = t;
+        }
+    }
+    return nextTime;
 }
 
 @end
