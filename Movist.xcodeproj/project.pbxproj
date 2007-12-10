@@ -129,6 +129,7 @@
 		AFC7D1070C36B9A100F5EA5C /* UnderConstruction2.gif in Resources */ = {isa = PBXBuildFile; fileRef = AFC7D1040C36B9A000F5EA5C /* UnderConstruction2.gif */; };
 		AFC7D1900C36D23900F5EA5C /* PanelClose.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFC7D18F0C36D23900F5EA5C /* PanelClose.tiff */; };
 		AFC7D3A90C37084800F5EA5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AFC7D3A70C37084800F5EA5C /* Localizable.strings */; };
+		AFDCCCCF0D0CC5330098206C /* MMovie_FFMPEG_Index.m in Sources */ = {isa = PBXBuildFile; fileRef = AFDCCCCE0D0CC5330098206C /* MMovie_FFMPEG_Index.m */; };
 		AFEE863D0C0C807D00EABE1D /* Movist.icns in Resources */ = {isa = PBXBuildFile; fileRef = AFEE863C0C0C807D00EABE1D /* Movist.icns */; };
 		AFEE91F70CFC706800DB5C7A /* SubtitleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = AFEE91F50CFC706800DB5C7A /* SubtitleRenderer.m */; };
 		AFEF1EBC0BF8A5160047D887 /* Playlist.m in Sources */ = {isa = PBXBuildFile; fileRef = AFEF1EBB0BF8A5160047D887 /* Playlist.m */; };
@@ -311,6 +312,7 @@
 		AFC7D4300C3715A500F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFC7D4330C37160300F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFC7D44D0C371C4C00F5EA5C /* Korean */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Korean; path = Korean.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AFDCCCCE0D0CC5330098206C /* MMovie_FFMPEG_Index.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovie_FFMPEG_Index.m; sourceTree = "<group>"; };
 		AFEE863C0C0C807D00EABE1D /* Movist.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Movist.icns; sourceTree = "<group>"; };
 		AFEE91F50CFC706800DB5C7A /* SubtitleRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubtitleRenderer.m; sourceTree = "<group>"; };
 		AFEE91F60CFC706800DB5C7A /* SubtitleRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubtitleRenderer.h; sourceTree = "<group>"; };
@@ -629,6 +631,7 @@
 				AF494D840B902DB400EDDB8A /* MMovie_FFMPEG.h */,
 				AF494D850B902DB400EDDB8A /* MMovie_FFMPEG.m */,
 				AF30E3A70C2ECA87009DB59C /* MMovie_FFMPEG_Init.m */,
+				AFDCCCCE0D0CC5330098206C /* MMovie_FFMPEG_Index.m */,
 				AF30E3440C2EC453009DB59C /* MMovie_FFMPEG_Playback.m */,
 				AFFA0B080C50837600FCBE18 /* MMovie_FFMPEG_Audio.m */,
 				AF494D880B902DB400EDDB8A /* MMovie_QuickTime.h */,
@@ -861,6 +864,7 @@
 				AF3568F70CF1D6AB00C0621A /* FullNavListView.m in Sources */,
 				AFEE91F70CFC706800DB5C7A /* SubtitleRenderer.m in Sources */,
 				AF51FF320D0BBA47005824F1 /* NewVersionChecker.m in Sources */,
+				AFDCCCCF0D0CC5330098206C /* MMovie_FFMPEG_Index.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
