@@ -42,8 +42,9 @@
         }
         NSRect frame = [_mainWindow frameRectForMovieSize:size
                                                     align:ALIGN_WINDOW_TITLE];
+        [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
-        [_movieView updateSubtitle];
+        [_movieView setSubtitleVisible:TRUE];
     }
 }
 
@@ -52,8 +53,9 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {
         NSRect frame = [_mainWindow frameRectForScreen];
+        [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
-        [_movieView updateSubtitle];
+        [_movieView setSubtitleVisible:TRUE];
     }
 }
 

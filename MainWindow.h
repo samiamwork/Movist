@@ -30,7 +30,6 @@
     IBOutlet MMovieView* _movieView;
     NSPoint _movieViewMarginPoint;
     NSSize _movieViewMarginSize;
-    NSButton* _decoderButton;
 
     NSRect _zoomRestoreRect;
 
@@ -38,7 +37,6 @@
 }
 
 - (MMovieView*)movieView;
-- (void)setDecoder:(NSString*)decoder;
 
 - (BOOL)alwaysOnTop;
 - (void)setAlwaysOnTop:(BOOL)alwaysOnTop;

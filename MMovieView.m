@@ -316,6 +316,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self updateMovieRect:FALSE];
+    if ([self subtitleVisible]) {
+        [self updateSubtitle];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -374,9 +377,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, display ? @"display" : @"no-display");
     [_drawLock lock];
     if (!_movie) {
-        NSRect mr = [self bounds];
-        [_iconOSD setMovieRect:mr];
-        [_messageOSD setMovieRect:mr];
+        if (![[NSApp delegate] isFullScreen]) {
+            NSRect mr = [self bounds];
+            [_iconOSD setMovieRect:mr];
+            [_messageOSD setMovieRect:mr];
+        }
     }
     else {
         NSSize bs = [self bounds].size;
@@ -608,11 +613,12 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];     break;
 
         case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible]; break;
+        case 's' : case 'S' : [[NSApp delegate] changeSubtitle:-1];     break;
 
         case 'l' : case 'L' : [[NSApp delegate] subtitleDisplayOnLetterBoxAction:self];break;
-        case 'u' : case 'U' : [[NSApp delegate] changeMinLetterBoxHeight:+1];   break;
-        case 'd' : case 'D' : [[NSApp delegate] changeMinLetterBoxHeight:-1];   break;
-        case '0' :            [[NSApp delegate] changeMinLetterBoxHeight: 0];   break;
+        case 'k' : case 'K' : [[NSApp delegate] changeMinLetterBoxHeight:+1];   break;
+        case 'j' : case 'J' : [[NSApp delegate] changeMinLetterBoxHeight:-1];   break;
+        case 'h' : case 'H' : [[NSApp delegate] changeMinLetterBoxHeight: 0];   break;
 
         case ',' : case '<' : [[NSApp delegate] changePlayRate:-1];     break;
         case '.' : case '>' : [[NSApp delegate] changePlayRate:+1];     break;

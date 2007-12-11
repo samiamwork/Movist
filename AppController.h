@@ -101,6 +101,7 @@
     IBOutlet TimeTextField* _lTimeTextField;
     IBOutlet TimeTextField* _rTimeTextField;
     IBOutlet NSButton* _playlistButton;
+    IBOutlet NSButton* _decoderButton;
     float _prevMovieTime;
     BOOL _viewDuration;
 
@@ -108,6 +109,7 @@
     IBOutlet ControlPanel* _controlPanel;
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
+    IBOutlet NSButton* _controlPanelDecoderButton;
 
     // full-screen & navigation
     NSLock* _fullScreenLock;
@@ -122,6 +124,7 @@
     IBOutlet TimeTextField* _panelLTimeTextField;
     IBOutlet TimeTextField* _panelRTimeTextField;
     IBOutlet NSButton* _panelPlaylistButton;
+    IBOutlet NSButton* _panelDecoderButton;
 }
 
 - (MMovie*)movie;
@@ -131,8 +134,8 @@
 - (void)updateUI;
 - (void)setQuitWhenWindowClose:(BOOL)quitWhenClose;
 - (void)checkForUpdatesOnStartup;
+- (void)checkForUpdates:(BOOL)manual;
 
-- (IBAction)checkForUpdates:(id)sender;
 - (IBAction)viewDurationAction:(id)sender;
 - (IBAction)controlPanelAction:(id)sender;
 - (IBAction)preferencePanelAction:(id)sender;
@@ -154,6 +157,8 @@
 - (BOOL)reopenMovieWithMovieClass:(Class)movieClass;
 - (void)reopenSubtitle;
 - (void)closeMovie;
+
+- (void)updateDecoderUI;
 
 - (IBAction)openFileAction:(id)sender;
 - (IBAction)openURLAction:(id)sender;

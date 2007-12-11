@@ -33,8 +33,6 @@
 #pragma mark app
 extern NSString* MPreferencePaneKey;
 extern NSString* MControlTabKey;
-extern NSString* MCheckUpdateIntervalKey;
-extern NSString* MLastCheckUpdateTimeKey;
 extern NSString* MViewDurationKey;
 
 #pragma mark -
@@ -82,3 +80,5 @@ extern NSString* MSubtitleReplaceNLWithBRKey;
 #pragma mark -
 #pragma mark prefs: advanced
 extern NSString* MDefaultDecoderKey;
+extern NSString* MUpdateCheckIntervalKey;
+extern NSString* MLastUpdateCheckTimeKey;

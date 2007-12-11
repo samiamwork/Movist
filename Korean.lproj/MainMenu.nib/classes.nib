@@ -16,7 +16,6 @@
                 appleRemoteRightHoldAction = id;
                 aspectRatioAction = id;
                 audioTrackAction = id;
-                checkForUpdates = id;
                 controlPanelAction = id;
                 fullScreenAction = id;
                 fullScreenFillAction = id;
@@ -52,12 +51,15 @@
             OUTLETS =             {
                 "_aspectRatioMenu" = NSMenu;
                 "_controlPanel" = ControlPanel;
+                "_controlPanelDecoderButton" = NSButton;
+                "_decoderButton" = NSButton;
                 "_lTimeTextField" = TimeTextField;
                 "_mainWindow" = MainWindow;
                 "_movieMenu" = NSMenu;
                 "_movieView" = MMovieView;
                 "_muteButton" = NSButton;
                 "_muteMenuItem" = NSMenuItem;
+                "_panelDecoderButton" = NSButton;
                 "_panelLTimeTextField" = TimeTextField;
                 "_panelMuteButton" = NSButton;
                 "_panelPlayButton" = NSButton;
@@ -112,7 +114,6 @@
             LANGUAGE = ObjC;
             OUTLETS =             {
                 "_appController" = AppController;
-                "_decoderImageView" = NSImageView;
                 "_filenameTextField" = NSTextField;
                 "_movieView" = MMovieView;
                 "_playbackRateSlider" = NSSlider;

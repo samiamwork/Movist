@@ -45,7 +45,7 @@
 
     _alwaysOnTop = FALSE;
 
-    [self setDelegate:self];    // for windowDidResize:
+    //[self setDelegate:self];    // for windowDidResize:
     [self useOptimizedDrawing:TRUE];
     [self setMovableByWindowBackground:TRUE];
     [self setAcceptsMouseMovedEvents:TRUE];
@@ -64,29 +64,12 @@
     frame.origin.x = sr.origin.x + (sr.size.width - frame.size.width) / 2;
     frame.origin.y = sr.origin.y + (sr.size.height- frame.size.height) * 2 / 3;
     [self setFrame:frame display:TRUE];
-
-    // create image view for decoder
-    NSButton* closeButton = [self standardWindowButton:NSWindowCloseButton];
-    NSRect rc = [closeButton frame];
-    rc.size.width = 16;
-    rc.size.height = 16;
-    rc.origin.x = NSMaxX([[closeButton superview] bounds]) - rc.origin.x - rc.size.width;
-    rc.origin.y++;
-    _decoderButton = [[NSButton alloc] initWithFrame:rc];
-    [_decoderButton setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
-    [_decoderButton setBordered:FALSE];
-    [_decoderButton setTitle:@""];
-    [_decoderButton setTarget:[NSApp delegate]];
-    [_decoderButton setAction:@selector(reopenMovieAction:)];
-    [[closeButton superview] addSubview:_decoderButton];
-    [self setDecoder:nil];  // for defaults
 }
 
 - (void)dealloc
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_decoderButton release];
     [super dealloc];
 }
 
@@ -94,28 +77,6 @@
 #pragma mark -
 
 - (MMovieView*)movieView { return _movieView; }
-
-- (void)setDecoder:(NSString*)decoder
-{
-    if (!decoder) {
-        if ([_movieView movie]) {
-            decoder = [[[_movieView movie] class] name];
-        }
-        else {
-            NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-            decoder = ([defaults integerForKey:MDefaultDecoderKey] == DECODER_QUICKTIME) ?
-                                        [MMovie_QuickTime name] : [MMovie_FFMPEG name];
-        }
-    }
-
-    if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
-        [_decoderButton setImage:[NSImage imageNamed:@"QuickTime16"]];
-    }
-    else {  // [decoder isEqualToString:[MMovie_FFMPEG name]]
-        [_decoderButton setImage:[NSImage imageNamed:@"FFMPEG16"]];
-    }
-    [_decoderButton setEnabled:([_movieView movie] != nil)];
-}
 
 - (BOOL)alwaysOnTop { return _alwaysOnTop; }
 
@@ -200,10 +161,7 @@
 #pragma mark -
 #pragma mark resize
 
-- (void)windowDidResize:(NSNotification*)aNotification
-{
-    //[_movieView updateSubtitle];
-}
+//- (void)windowDidResize:(NSNotification*)aNotification {}
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow*)sender defaultFrame:(NSRect)defaultFrame
 {
@@ -215,6 +173,7 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([_movieView movie]) {
+        [_movieView setSubtitleVisible:FALSE];
         if ([self isZoomed]) {
             [self setFrame:_zoomRestoreRect display:TRUE animate:TRUE];
         }
@@ -222,6 +181,7 @@
             _zoomRestoreRect = [self frame];
             [self setFrame:[self frameRectForScreen] display:TRUE animate:TRUE];
         }
+        [_movieView setSubtitleVisible:TRUE];
     }
 }
 

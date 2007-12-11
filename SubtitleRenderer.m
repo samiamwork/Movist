@@ -82,20 +82,22 @@
 {
     if (self = [super init]) {
         _movieView = [movieView retain];
-        _subtitleOSD1 = [[MSubtitleOSD alloc] init];
-        _subtitleOSD2 = [[MSubtitleOSD alloc] init];
-        _subtitleImages = [[NSMutableArray alloc] initWithCapacity:5];
-        _subtitlesLock = [[NSRecursiveLock alloc] init];
-        _conditionLock = [[NSConditionLock alloc] initWithCondition:WAITING];
 
+        _subtitlesLock = [[NSLock alloc] init];
+
+        _subtitleOSD = [[MSubtitleOSD alloc] init];
+        _subtitleImages = [[NSMutableArray alloc] initWithCapacity:5];
+        _conditionLock = [[NSConditionLock alloc] initWithCondition:WAITING];
         _maxRenderInterval = 30.0;
         _renderInterval = 0.0;
         _lastRequestedTime = 0.0;
         _requestedTime = 0.0;
         _removeCount = 0;
         _canRequestNewTime = TRUE;
+
         _emptyImage = [[NSImage alloc] initWithSize:NSMakeSize(1, 1)];
 
+        _running = FALSE;
         _quitRequested = FALSE;
         [NSThread detachNewThreadSelector:@selector(renderThreadFunc:)
                                  toTarget:self withObject:nil];
@@ -111,16 +113,17 @@
     while (_running) {
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
+    [_conditionLock release];
 
     [_subtitleImages removeAllObjects];
     [_subtitleImages release];
-    [_subtitleOSD2 release];
-    [_subtitleOSD1 release];
-    [_subtitles release];
-    [_movieView release];
-    [_emptyImage release];
+    [_subtitleOSD release];
+
     [_subtitlesLock release];
-    [_conditionLock release];
+    [_subtitles release];
+
+    [_emptyImage release];
+    [_movieView release];
 
     [super dealloc];
 }
@@ -131,18 +134,10 @@
 - (float)maxRenderInterval { return _maxRenderInterval; }
 - (void)setMaxRenderInterval:(float)interval { _maxRenderInterval = interval; }
 
-- (BOOL)hasSubtitle
-{
-    [_subtitlesLock lock];
-    BOOL ret = (_subtitles && 0 < [_subtitles count]);
-    [_subtitlesLock unlock];
-    return ret;
-}
-
 - (int)requestRemakeImages
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([self hasSubtitle]) {
+    if (_subtitles) {
         _removeCount = [_subtitleImages count];
         _requestedTime = _lastRequestedTime;
         _canRequestNewTime = FALSE;
@@ -153,12 +148,20 @@
 
 - (void)setSubtitles:(NSArray*)subtitles
 {
-    [_conditionLock lock];
     [_subtitlesLock lock];
-    [subtitles retain], [_subtitles release], _subtitles = subtitles;
+    if (subtitles && 0 < [subtitles count]) {
+        [subtitles retain];
+        [_subtitles release];
+        _subtitles = subtitles;
+    }
+    else {
+        [_subtitles release];
+        _subtitles = nil;
+    }
+    [_subtitleOSD clearContent];
     [_subtitlesLock unlock];
-    [_subtitleOSD1 clearContent];
-    [_subtitleOSD2 clearContent];
+
+    [_conditionLock lock];
     _lastRequestedTime = 0.0;
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
@@ -169,96 +172,115 @@
 
 - (void)setMovieRect:(NSRect)rect
 {
-    [_subtitleOSD1 setMovieRect:rect];
-    [_subtitleOSD2 setMovieRect:rect];
+    [_subtitlesLock lock];
+    [_subtitleOSD setMovieRect:rect];
+    [_subtitlesLock unlock];
 }
 
 - (void)setMovieSize:(NSSize)size
 {
-    [_subtitleOSD1 setMovieSize:size];
-    [_subtitleOSD2 setMovieSize:size];
+    [_subtitlesLock lock];
+    [_subtitleOSD setMovieSize:size];
+    [_subtitlesLock unlock];
 }
 
 - (void)clearSubtitleContent
 {
-    [_subtitleOSD1 clearContent];
-    [_subtitleOSD2 clearContent];
+    [_subtitlesLock lock];
+    [_subtitleOSD clearContent];
+    [_subtitlesLock unlock];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (NSString*)fontName { return [_subtitleOSD1 fontName]; }
-- (float)fontSize { return [_subtitleOSD1 fontSize]; }
+- (NSString*)fontName { return [_subtitleOSD fontName]; }
+- (float)fontSize { return [_subtitleOSD fontSize]; }
 
 - (void)setFontName:(NSString*)fontName size:(float)size
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setFontName:fontName size:size];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setFontName:fontName size:size];
-    [_subtitleOSD2 setFontName:fontName size:size];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
 
 - (void)setTextColor:(NSColor*)textColor
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setTextColor:textColor];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setTextColor:textColor];
-    [_subtitleOSD2 setTextColor:textColor];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
 
 - (void)setStrokeColor:(NSColor*)strokeColor
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setStrokeColor:strokeColor];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setStrokeColor:strokeColor];
-    [_subtitleOSD2 setStrokeColor:strokeColor];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
 
 - (void)setStrokeWidth:(float)strokeWidth
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setStrokeWidth:strokeWidth];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setStrokeWidth:strokeWidth];
-    [_subtitleOSD2 setStrokeWidth:strokeWidth];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
 
 - (void)setShadowColor:(NSColor*)shadowColor
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setShadowColor:shadowColor];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setShadowColor:shadowColor];
-    [_subtitleOSD2 setShadowColor:shadowColor];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
 
 - (void)setShadowBlur:(float)shadowBlur
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setShadowBlur:shadowBlur];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setShadowBlur:shadowBlur];
-    [_subtitleOSD2 setShadowBlur:shadowBlur];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
 
 - (void)setShadowOffset:(float)shadowOffset
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setShadowOffset:shadowOffset];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setShadowOffset:shadowOffset];
-    [_subtitleOSD2 setShadowOffset:shadowOffset];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
 
 - (void)setShadowDarkness:(int)shadowDarkness
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setShadowDarkness:shadowDarkness];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setShadowDarkness:shadowDarkness];
-    [_subtitleOSD2 setShadowDarkness:shadowDarkness];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
@@ -266,13 +288,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (float)hMargin { return [_subtitleOSD1 hMargin]; }
+- (float)hMargin { return [_subtitleOSD hMargin]; }
 
 - (void)setHMargin:(float)hMargin
 {
+    [_subtitlesLock lock];
+    [_subtitleOSD setHMargin:hMargin];
+    [_subtitlesLock unlock];
+
     [_conditionLock lock];
-    [_subtitleOSD1 setHMargin:hMargin];
-    [_subtitleOSD2 setHMargin:hMargin];
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
@@ -285,12 +309,11 @@
 #define STRING_UPDATED  1
 #define SAME_STRING     2
 
-- (int)updateSubtitleOSD:(MSubtitleOSD*)subtitleOSD forTime:(float)time
+- (int)updateSubtitleOSD:(float)time
 {
-    [_subtitlesLock lock];
-
     int result = NO_SUBTITLE;
-    if ([self hasSubtitle]) {
+
+    if (_subtitles) {
         result = NO_STRING;
         MSubtitle* subtitle;
         NSMutableAttributedString* string;
@@ -299,7 +322,7 @@
             if ([subtitle isEnabled]) {
                 string = [subtitle stringAtTime:time];
                 if (string) {
-                    if ([subtitleOSD setString:string forName:[subtitle name]]) {
+                    if ([_subtitleOSD setString:string forName:[subtitle name]]) {
                         result |= STRING_UPDATED;
                         //TRACE(@"%s subtitle(\"%@\"):[%.03f]\"%@\"", __PRETTY_FUNCTION__,
                         //      [subtitle name], time, [string string]);
@@ -313,7 +336,6 @@
             }
         }
     }
-    [_subtitlesLock unlock];
 
     return result;
 }
@@ -323,26 +345,34 @@
 
 - (NSImage*)imageAtTime:(float)time
 {
-    if (![self hasSubtitle]) {
+    if (!_subtitles) {
         //TRACE(@"%s [%.03f] no subtitles", __PRETTY_FUNCTION__, time);
         return _emptyImage;
     }
 
     NSImage* resultImage = _emptyImage;
 
-    [_conditionLock lock];
-
+    float lastTime = _lastRequestedTime;
     _lastRequestedTime = time;
+
     if ([[_movieView movie] rate] == 0.0) {
-        [_subtitleOSD2 clearContent];
-        if ([self updateSubtitleOSD:_subtitleOSD2 forTime:time]) {
-            resultImage = [_subtitleOSD2 makeTexImage];
+        [_subtitlesLock lock];
+        [_subtitleOSD clearContent];
+        if ([self updateSubtitleOSD:time]) {
+            resultImage = [_subtitleOSD makeTexImage];
         }
-        _removeCount = [_subtitleImages count];
-        _canRequestNewTime = FALSE;
-        _requestedTime = time;
+        [_subtitlesLock unlock];
+
+        if (0.1 <= ABS(time - lastTime)) {  // to avoid to remake for toggling play/pause.
+            [_conditionLock lock];
+            _removeCount = [_subtitleImages count];
+            _canRequestNewTime = FALSE;
+            _requestedTime = time;
+            [_conditionLock unlockWithCondition:MAKING_IMAGE];
+        }
     }
     else if (_requestedTime < 0) {
+        [_conditionLock lock];
         MSubtitleStringImage* image;
         int i, count = [_subtitleImages count];
         for (i = 0; i < count; i++) {
@@ -351,11 +381,12 @@
                 break;
             }
             else if (time < [image endTime]) {
+                int condition = MAKING_IMAGE;
                 if (0 == i) {
                     //TRACE(@"%s [%.03f] image[%d] => ok", __PRETTY_FUNCTION__, time, i);
-                    int condition = (0 < _removeCount || 0 <= _requestedTime) ?
-                                        MAKING_IMAGE : [_conditionLock condition];
-                    [_conditionLock unlockWithCondition:condition];
+                    if (_removeCount == 0 && _requestedTime < 0) {
+                        condition = [_conditionLock condition];
+                    }
                 }
                 else {
                     if (_removeCount < i) {
@@ -363,8 +394,8 @@
                         //      __PRETTY_FUNCTION__, time, i, i);
                         _removeCount = i;
                     }
-                    [_conditionLock unlockWithCondition:MAKING_IMAGE];
                 }
+                [_conditionLock unlockWithCondition:condition];
                 return [image image];
             }
         }
@@ -375,8 +406,12 @@
             _canRequestNewTime = FALSE;
             _requestedTime = time;
         }
+        [_conditionLock unlockWithCondition:MAKING_IMAGE];
     }
-    [_conditionLock unlockWithCondition:MAKING_IMAGE];
+    else {
+        [_conditionLock lock];
+        [_conditionLock unlockWithCondition:MAKING_IMAGE];
+    }
 
     return resultImage;
 }
@@ -406,7 +441,7 @@
         [_subtitleImages removeAllObjects];
         _removeCount = 0;
         _renderInterval = 0;
-        [_subtitleOSD1 clearContent];
+        [_subtitleOSD clearContent];
     }
     else if (0 < _removeCount) {
         //TRACE(@"%s removing oldest %d...", __PRETTY_FUNCTION__, _removeCount);
@@ -424,7 +459,7 @@
     _running = TRUE;
 
     float time;
-    BOOL playing;
+    //BOOL playing;     // for adding only one image on paused.
     NSImage* texImage;
     NSAutoreleasePool* outerPool;
     NSAutoreleasePool* innerPool;
@@ -434,7 +469,7 @@
         outerPool = [[NSAutoreleasePool alloc] init];
 
         [_conditionLock lockWhenCondition:MAKING_IMAGE];
-        if ([self hasSubtitle]) {
+        if (_subtitles) {
             [self removeOldestImages];
             [_conditionLock unlockWithCondition:MAKING_IMAGE];  // maintain locking
 
@@ -442,15 +477,18 @@
                 //TRACE(@"%s new time requested: %.03f", __PRETTY_FUNCTION__, _requestedTime);
                 time = _requestedTime;
                 _requestedTime = -1;
-                [_subtitleOSD1 clearContent];
+                [_subtitlesLock lock];
+                [_subtitleOSD clearContent];
+                [_subtitlesLock unlock];
                 [image release], image = nil;
             }
             //TRACE(@"%s making images from %.03f...", __PRETTY_FUNCTION__, time);
-            playing = TRUE;     // for adding one image at least on paused.
-            while (!_quitRequested && [self hasSubtitle] && playing &&
+            //playing = TRUE;
+            while (!_quitRequested && _subtitles && //playing &&
                    _requestedTime < 0 && _renderInterval < _maxRenderInterval) {
                 innerPool = [[NSAutoreleasePool alloc] init];
-                if ([self updateSubtitleOSD:_subtitleOSD1 forTime:time] & STRING_UPDATED) {
+                [_subtitlesLock lock];
+                if ([self updateSubtitleOSD:time] & STRING_UPDATED) {
                     if (image) {
                         [_conditionLock lock];
                         [image setEndTime:time];
@@ -461,30 +499,35 @@
                         [image release], image = nil;
                         [self updateRenderInterval];
                         _canRequestNewTime = TRUE;
-                        playing = ([[_movieView movie] rate] != 0.0);
+                        //playing = ([[_movieView movie] rate] != 0.0);
                         [_conditionLock unlockWithCondition:MAKING_IMAGE];
                     }
-                    texImage = [_subtitleOSD1 makeTexImage];
+                    texImage = [_subtitleOSD makeTexImage];
                     if (texImage) {
                         image = [[MSubtitleStringImage alloc] initWithStringImage:texImage];
                         [image setBeginTime:time];
                         //TRACE(@"%s new-image at %.03f", __PRETTY_FUNCTION__, time);
                     }
                 }
+                [_subtitlesLock unlock];
                 [innerPool release];
                 time += 0.01;
             }
             [_conditionLock lock];
         }
-        if (_quitRequested && image) {
-            [image release];
-            image = nil;
+        else {
+            _requestedTime = -1;
+            _canRequestNewTime = TRUE;
         }
-        [_conditionLock unlockWithCondition:WAITING];
+        [_conditionLock unlockWithCondition:(_requestedTime < 0) ? WAITING : MAKING_IMAGE];
 
         [outerPool release];
     }
-
+    if (image) {
+        [image release];
+        image = nil;
+    }
+    
     _running = FALSE;
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }

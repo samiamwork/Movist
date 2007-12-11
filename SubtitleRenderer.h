@@ -27,19 +27,19 @@
 
 @interface SubtitleRenderer : NSObject
 {
+    MMovieView* _movieView;
+
     NSArray* _subtitles;
-    MSubtitleOSD* _subtitleOSD1;        // for rendering on playing
-    MSubtitleOSD* _subtitleOSD2;        // for rendering on paused
+    NSLock* _subtitlesLock;
+    MSubtitleOSD* _subtitleOSD;
     NSMutableArray* _subtitleImages;    // for MSubtitleStringImage
+    NSConditionLock* _conditionLock;
     float _maxRenderInterval;
     float _renderInterval;
     float _lastRequestedTime;
     float _requestedTime;
     int _removeCount;
     BOOL _canRequestNewTime;
-    MMovieView* _movieView;
-    NSRecursiveLock* _subtitlesLock;
-    NSConditionLock* _conditionLock;
 
     NSImage* _emptyImage;
 

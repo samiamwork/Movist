@@ -345,7 +345,7 @@
         }
     }
     s = (i < count) ? [_strings objectAtIndex:i] : [_strings lastObject];
-    return ([s beginTime] + [s endTime]) / 2;   // center for sure to display subtitle
+    return [s beginTime] + 0.1;   // add margin to ensure to display subtitle
 }
 
 - (float)prevSubtitleTime:(float)time

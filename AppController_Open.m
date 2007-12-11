@@ -409,6 +409,36 @@
     }
 }
 
+- (void)updateDecoderUI
+{
+    NSString* decoder;
+    BOOL enable;
+    if ([_movieView movie]) {
+        decoder = [[[_movieView movie] class] name];
+        enable = TRUE;
+    }
+    else {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        decoder = ([defaults integerForKey:MDefaultDecoderKey] == DECODER_QUICKTIME) ?
+                                        [MMovie_QuickTime name] : [MMovie_FFMPEG name];
+        enable = FALSE;
+    }
+
+    if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
+        [_decoderButton setImage:[NSImage imageNamed:@"QuickTime16"]];
+        [_panelDecoderButton setImage:[NSImage imageNamed:@"QuickTime16"]];
+        [_controlPanelDecoderButton setImage:(enable) ? [NSImage imageNamed:@"QuickTime16"] : nil];
+    }
+    else {  // [decoder isEqualToString:[MMovie_FFMPEG name]]
+        [_decoderButton setImage:[NSImage imageNamed:@"FFMPEG16"]];
+        [_panelDecoderButton setImage:[NSImage imageNamed:@"FFMPEG16"]];
+        [_controlPanelDecoderButton setImage:(enable) ? [NSImage imageNamed:@"FFMPEG16"] : nil];
+    }
+    [_decoderButton setEnabled:enable];
+    [_panelDecoderButton setEnabled:enable];
+    [_controlPanelDecoderButton setEnabled:enable];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark IB actions

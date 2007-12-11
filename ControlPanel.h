@@ -48,12 +48,10 @@
 
     // Properties
     IBOutlet NSTextField* _filenameTextField;
-    IBOutlet NSImageView* _decoderImageView;
 }
 
 - (void)showPanel;
 - (void)hidePanel;
-- (void)setDecoder:(NSString*)decoder;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

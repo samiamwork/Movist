@@ -316,6 +316,7 @@
     // draw content
     NSImage* img = [[NSImage alloc] initWithSize:_contentSize];
     [img setCacheMode:NSImageCacheNever];
+    [img setCachedSeparately:TRUE]; // for thread safety
     [img lockFocus];
         NSRect rect = NSMakeRect(0, 0, _contentSize.width, _contentSize.height);
         [self drawContent:rect];

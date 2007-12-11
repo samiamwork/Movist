@@ -103,19 +103,6 @@
     }
 }
 
-- (void)setDecoder:(NSString*)decoder
-{
-    if (!decoder) {
-        [_decoderImageView setImage:nil];
-    }
-    else if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
-        [_decoderImageView setImage:[NSImage imageNamed:@"QuickTime16"]];
-    }
-    else {  // [decoder isEqualToString:[MMovie_FFMPEG name]]
-        [_decoderImageView setImage:[NSImage imageNamed:@"FFMPEG16"]];
-    }
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark video

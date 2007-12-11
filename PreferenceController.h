@@ -89,7 +89,8 @@
     // advanced
     IBOutlet NSView* _advancedPane;
     IBOutlet NSPopUpButton* _defaultDecoderPopUpButton;
-    IBOutlet NSPopUpButton* _checkForUpdatesPopUpButton;
+    IBOutlet NSPopUpButton* _updateCheckIntervalPopUpButton;
+    IBOutlet NSTextField* _lastUpdateCheckTimeTextField;
 
     NSUserDefaults* _defaults;
     AppController* _appController;
@@ -170,7 +171,9 @@
 @interface PreferenceController (Advanced)
 
 - (void)initAdvancedPane;
+- (void)updateLastUpdateCheckTimeTextField;
 - (IBAction)defaultDecoderAction:(id)sender;
-- (IBAction)checkForUpdatesAction:(id)sender;
+- (IBAction)updateCheckIntervalAction:(id)sender;
+- (IBAction)checkUpdateNowAction:(id)sender;
 
 @end

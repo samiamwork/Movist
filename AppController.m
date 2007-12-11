@@ -70,6 +70,7 @@
     [_volumeSlider      setMinValue:0.0];   [_volumeSlider      setMaxValue:MAX_VOLUME];
     [_panelVolumeSlider setMinValue:0.0];   [_panelVolumeSlider setMaxValue:MAX_VOLUME];
     [self updateVolumeUI];
+    [self updateDecoderUI];
 
     // set modifier keys (I don't know how to set Shift key mask)
     unsigned int mask = NSAlternateKeyMask | NSShiftKeyMask;
@@ -224,10 +225,8 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSURL* movieURL = [self movieURL];
     [_mainWindow setMovieURL:movieURL];
-    [_mainWindow setDecoder:[[_movie class] name]];
     [_fullScreener setMovieURL:movieURL];
     [_controlPanel setMovieURL:movieURL];
-    [_controlPanel setDecoder:[[_movie class] name]];
     [_propertiesView reloadData];
     [self updateAspectRatioMenu];
     [self updateAudioTrackMenuItems];
@@ -236,6 +235,7 @@
     [self updateVolumeUI];
     [self updateTimeUI];
     [self updatePlayUI];
+    [self updateDecoderUI];
     [_playlistController updateUI];
 }
 
@@ -251,21 +251,21 @@
 - (void)checkForUpdatesOnStartup
 {
     NSTimeInterval timeInterval;
-    switch ([_defaults integerForKey:MCheckUpdateIntervalKey]) {
+    switch ([_defaults integerForKey:MUpdateCheckIntervalKey]) {
         case CHECK_UPDATE_NEVER   : return; // don't check automatically
         case CHECK_UPDATE_DAILY   : timeInterval =  1 * 24 * 60 * 60;   break;
         case CHECK_UPDATE_WEEKLY  : timeInterval =  7 * 24 * 60 * 60;   break;
         case CHECK_UPDATE_MONTHLY :
         default                   : timeInterval = 30 * 24 * 60 * 60;   break;
     }
-    NSDate* lastCheckTime = [_defaults objectForKey:MLastCheckUpdateTimeKey];
+    NSDate* lastCheckTime = [_defaults objectForKey:MLastUpdateCheckTimeKey];
     NSTimeInterval interval = [[NSDate date] timeIntervalSinceDate:lastCheckTime];
     if (timeInterval <= interval) {
-        [self checkForUpdates:self];
+        [self checkForUpdates:FALSE];
     }
 }
 
-- (IBAction)checkForUpdates:(id)sender
+- (void)checkForUpdates:(BOOL)manual
 {
     [_movieView setMessage:NSLocalizedString(@"Checking for Updates...", nil)];
     [_movieView display];
@@ -273,19 +273,20 @@
     NSError* error;
     NewVersionChecker* checker = [[NewVersionChecker alloc] init];
     int ret = [checker checkNewVersion:&error];
-    [_defaults setObject:[NSDate date] forKey:MLastCheckUpdateTimeKey];
+    [_defaults setObject:[NSDate date] forKey:MLastUpdateCheckTimeKey];
+    [_preferenceController updateLastUpdateCheckTimeTextField];
 
     [_movieView setMessage:@""];
     [_movieView display];
 
     if (ret == NEW_VERSION_CHECK_FAILED) {
-        if (sender != self) {   // only for manual checking
+        if (manual) {   // only for manual checking
             NSString* s = [NSString stringWithFormat:@"%@", error];
             NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
         }
     }
     else if (ret == NEW_VERSION_NONE) {
-        if (sender != self) {   // only for manual checking
+        if (manual) {   // only for manual checking
             NSString* s = NSLocalizedString(@"No new version", nil);
             NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
         }

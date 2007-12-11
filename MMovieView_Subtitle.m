@@ -71,6 +71,9 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _subtitleVisible = visible;
+    if (_subtitleVisible) {
+        [self updateSubtitle];
+    }
     [self redisplay];
 }
 

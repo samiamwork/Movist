@@ -23,8 +23,7 @@
 #import "PreferenceController.h"
 #import "UserDefaults.h"
 
-#import "MMovieView.h"
-#import "MainWindow.h"
+#import "AppController.h"
 
 @implementation PreferenceController (Advanced)
 
@@ -32,20 +31,39 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaultDecoderPopUpButton selectItemWithTag:[_defaults integerForKey:MDefaultDecoderKey]];
-    [_checkForUpdatesPopUpButton selectItemWithTag:[_defaults integerForKey:MCheckUpdateIntervalKey]];
+
+    [_updateCheckIntervalPopUpButton selectItemWithTag:[_defaults integerForKey:MUpdateCheckIntervalKey]];
+
+    [NSDateFormatter setDefaultFormatterBehavior:NSDateFormatterBehavior10_4];
+    NSDateFormatter* formatter = [[[NSDateFormatter alloc] init] autorelease];
+    [formatter setDateStyle:NSDateFormatterLongStyle];
+    [formatter setTimeStyle:NSDateFormatterLongStyle];
+    [_lastUpdateCheckTimeTextField setFormatter:formatter];
+    [self updateLastUpdateCheckTimeTextField];
+}
+
+- (void)updateLastUpdateCheckTimeTextField
+{
+    [_lastUpdateCheckTimeTextField setObjectValue:[_defaults objectForKey:MLastUpdateCheckTimeKey]];
 }
 
 - (IBAction)defaultDecoderAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaults setInteger:[[sender selectedItem] tag] forKey:MDefaultDecoderKey];
-    [(MainWindow*)[NSApp mainWindow] setDecoder:nil];    // update as new decoder
+    [[NSApp delegate] updateDecoderUI];
 }
 
-- (IBAction)checkForUpdatesAction:(id)sender
+- (IBAction)updateCheckIntervalAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_defaults setInteger:[[sender selectedItem] tag] forKey:MCheckUpdateIntervalKey];
+    [_defaults setInteger:[[sender selectedItem] tag] forKey:MUpdateCheckIntervalKey];
+}
+
+- (IBAction)checkUpdateNowAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [[NSApp delegate] checkForUpdates:TRUE];    // manual checking
 }
 
 @end

@@ -15,7 +15,7 @@
                 activateOnDraggingAction = id;
                 alwaysOnTopAction = id;
                 autoFullScreenAction = id;
-                checkForUpdatesAction = id;
+                checkUpdateNowAction = id;
                 defaultDecoderAction = id;
                 fullScreenEffectAction = id;
                 fullScreenFillAction = id;
@@ -30,6 +30,7 @@
                 subtitleFontAction = id;
                 subtitlePositionAction = id;
                 subtitleReplaceNLWithBRAction = id;
+                updateCheckIntervalAction = id;
             };
             CLASS = PreferenceController;
             LANGUAGE = ObjC;
@@ -39,13 +40,13 @@
                 "_alwaysOnTopButton" = NSButton;
                 "_audioPane" = NSView;
                 "_autoFullScreenButton" = NSButton;
-                "_checkForUpdatesPopUpButton" = NSPopUpButton;
                 "_defaultDecoderPopUpButton" = NSPopUpButton;
                 "_fullScreenEffectPopUpButton" = NSPopUpButton;
                 "_fullScreenFillForStdMoviePopUpButton" = NSPopUpButton;
                 "_fullScreenFillForWideMoviePopUpButton" = NSPopUpButton;
                 "_fullScreenUnderScanSlider" = NSSlider;
                 "_generalPane" = NSView;
+                "_lastUpdateCheckTimeTextField" = NSTextField;
                 "_quitWhenWindowCloseButton" = NSButton;
                 "_seekInterval0Stepper" = NSStepper;
                 "_seekInterval0TextField" = NSTextField;
@@ -86,6 +87,7 @@
                 "_subtitleTextOpacityTextField" = NSTextField;
                 "_subtitleVMarginSlider" = NSSlider;
                 "_subtitleVMarginTextField" = NSTextField;
+                "_updateCheckIntervalPopUpButton" = NSPopUpButton;
                 "_videoPane" = NSView;
             };
             SUPERCLASS = NSWindowController;
