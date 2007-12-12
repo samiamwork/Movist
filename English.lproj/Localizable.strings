@@ -65,7 +65,8 @@
 /* Message: Subtitle */
 "Display Subtitle on Letter Box" = "Display Subtitle on Letter Box";
 "Display Subtitle on Movie" = "Display Subtitle on Movie";
-"Min. Letter Box Height %d" = "Letter Box Min. Height %d";
+"%d Lines in Letter Box" = "%d Lines in Letter Box";
+"Letter Box Default Size" = "Letter Box Default Size";
 "Subtitle HMargin %.1f %%" = "Subtitle HMargin %.1f %%";
 "Subtitle VMargin %.1f %%" = "Subtitle VMargin %.1f %%";
 "Subtitle Size %.1f" = "Subtitle Size %.1f";
@@ -80,7 +81,7 @@
 "Audio" = "Audio";
 "Subtitle" = "Subtitle";
 "Advanced" = "Advanced";
-"SubtitleAutoSizeTestChar" = "*";
+"SubtitleTestChar" = "*";
 
 /* Playlist */
 "%d items" = "%d items";

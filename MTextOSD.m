@@ -175,8 +175,8 @@
 - (void)updateFont
 {
     [_font release];
-    float size = MAX(15.0, [self autoSize:_fontSize]);
-    _font = [[NSFont fontWithName:_fontName size:size] retain];
+    float size = [self autoSize:_fontSize];
+    _font = [[NSFont fontWithName:_fontName size:MAX(15.0, size)] retain];
     //TRACE(@"font recreated: name=\"%@\" size=%g", _fontName, [_font pointSize]);
 }
 
@@ -276,8 +276,8 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
         float vmargin = _movieRect.size.height * _vMargin;
         maxSize.width -= (_movieRect.size.width * _hMargin) * 2;
         NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
-            NSStringDrawingUsesFontLeading |
-            NSStringDrawingUsesDeviceMetrics;
+                                         NSStringDrawingUsesFontLeading |
+                                         NSStringDrawingUsesDeviceMetrics;
         _contentSize = [_string boundingRectWithSize:maxSize options:options].size;
         // add margins for outline & shadow
         _contentSize.width  += _contentLeftMargin + _contentRightMargin;

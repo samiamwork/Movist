@@ -39,7 +39,7 @@
                 subtitleDisplayOnLetterBoxAction = id;
                 subtitleFontSizeAction = id;
                 subtitleLanguageAction = id;
-                subtitleLetterBoxHeightAction = id;
+                subtitleLinesInLetterBoxAction = id;
                 subtitleSyncAction = id;
                 subtitleVMarginAction = id;
                 subtitleVisibleAction = id;

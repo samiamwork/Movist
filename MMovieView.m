@@ -428,6 +428,28 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [nc postNotificationName:MMovieRectUpdateNotification object:self];
 }
 
+- (float)heightOfSubtitleLinesInLetterBox:(NSRect)movieRect
+{
+    if (_subtitleLinesInLetterBox == 0) {
+        return 0.0;
+    }
+
+    float fontSize = [_subtitleRenderer fontSize] * movieRect.size.width / 640.0;
+    //fontSize = MAX(15.0, fontSize);
+    NSFont* font = [NSFont fontWithName:[_subtitleRenderer fontName] size:fontSize];
+
+    NSMutableAttributedString* s = [[[NSMutableAttributedString alloc]
+        initWithString:NSLocalizedString(@"SubtitleTestChar", nil)] autorelease];
+    [s addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, 1)];
+
+    NSSize maxSize = NSMakeSize(1000, 1000);
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
+                                     NSStringDrawingUsesFontLeading |
+                                     NSStringDrawingUsesDeviceMetrics;
+    return _subtitleLinesInLetterBox *
+                [s boundingRectWithSize:maxSize options:options].size.height;
+}
+
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromSize(boundingSize));
@@ -451,13 +473,14 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             rect.size.width = bs.width;
             rect.size.height = rect.size.width * ms.height / ms.width;
 
+            float letterBoxMinHeight = [self heightOfSubtitleLinesInLetterBox:rect];
             float letterBoxHeight = (bs.height - rect.size.height) / 2;
-            if (letterBoxHeight < _minLetterBoxHeight) {
-                if (bs.height < rect.size.height + _minLetterBoxHeight) {
+            if (letterBoxHeight < letterBoxMinHeight) {
+                if (bs.height < rect.size.height + letterBoxMinHeight) {
                     letterBoxHeight = bs.height - rect.size.height;
                 }
-                else if (bs.height < rect.size.height + _minLetterBoxHeight * 2) {
-                    letterBoxHeight = _minLetterBoxHeight;
+                else if (bs.height < rect.size.height + letterBoxMinHeight * 2) {
+                    letterBoxHeight = letterBoxMinHeight;
                 }
             }
             rect.origin.y += letterBoxHeight;
@@ -615,10 +638,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible]; break;
         case 's' : case 'S' : [[NSApp delegate] changeSubtitle:-1];     break;
 
-        case 'l' : case 'L' : [[NSApp delegate] subtitleDisplayOnLetterBoxAction:self];break;
-        case 'k' : case 'K' : [[NSApp delegate] changeMinLetterBoxHeight:+1];   break;
-        case 'j' : case 'J' : [[NSApp delegate] changeMinLetterBoxHeight:-1];   break;
-        case 'h' : case 'H' : [[NSApp delegate] changeMinLetterBoxHeight: 0];   break;
+        case 'l' : case 'L' : [[NSApp delegate] subtitleDisplayOnLetterBoxAction:self]; break;
+        case 'k' : case 'K' : [[NSApp delegate] changeSubtitleLinesInLetterBox:+1];     break;
+        case 'j' : case 'J' : [[NSApp delegate] changeSubtitleLinesInLetterBox:-1];     break;
+        case 'h' : case 'H' : [[NSApp delegate] changeSubtitleLinesInLetterBox: 0];     break;
 
         case ',' : case '<' : [[NSApp delegate] changePlayRate:-1];     break;
         case '.' : case '>' : [[NSApp delegate] changePlayRate:+1];     break;

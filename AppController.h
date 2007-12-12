@@ -282,8 +282,8 @@
 - (void)setSubtitleFontSize:(float)size;
 - (void)changeSubtitleFontSize:(int)tag;
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox;
-- (void)setMinLetterBoxHeight:(float)minLetterBoxHeight;
-- (void)changeMinLetterBoxHeight:(int)tag;
+- (void)setSubtitleLinesInLetterBox:(int)lines;
+- (void)changeSubtitleLinesInLetterBox:(int)tag;
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
 - (void)changeSubtitleVMargin:(int)tag;
@@ -299,8 +299,8 @@
 - (IBAction)subtitleLanguageAction:(id)sender;
 - (IBAction)subtitleFontSizeAction:(id)sender;
 - (IBAction)subtitleVMarginAction:(id)sender;
-- (IBAction)subtitleLetterBoxHeightAction:(id)sender;
 - (IBAction)subtitleDisplayOnLetterBoxAction:(id)sender;
+- (IBAction)subtitleLinesInLetterBoxAction:(id)sender;
 - (IBAction)subtitleSyncAction:(id)sender;
 
 @end

@@ -64,8 +64,8 @@
                 "_subtitleFontButton" = NSButton;
                 "_subtitleHMarginSlider" = NSSlider;
                 "_subtitleHMarginTextField" = NSTextField;
-                "_subtitleMinLetterBoxHeightSlider" = NSSlider;
-                "_subtitleMinLetterBoxHeightTextField" = NSTextField;
+                "_subtitleLinesInLetterBoxSlider" = NSSlider;
+                "_subtitleLinesInLetterBoxTextField" = NSTextField;
                 "_subtitlePane" = NSView;
                 "_subtitleReplaceNLWithBRButton" = NSButton;
                 "_subtitleShadowBlurSlider" = NSSlider;

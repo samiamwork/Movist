@@ -84,6 +84,9 @@ enum {
 #define MIN_PLAY_RATE   0.5
 #define MAX_PLAY_RATE   3.0
 
+#define MIN_SUBTITLE_LINES_IN_LETTER_BOX    0
+#define MAX_SUBTITLE_LINES_IN_LETTER_BOX    5
+
 #pragma mark -
 #pragma mark notifications: movie
 extern NSString* MMovieIndexDurationNotification;

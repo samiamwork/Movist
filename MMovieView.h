@@ -54,7 +54,7 @@
     SubtitleRenderer* _subtitleRenderer;
     MTextImageOSD* _subtitleImageOSD;
     BOOL _subtitleVisible;
-    float _minLetterBoxHeight;
+    int _subtitleLinesInLetterBox;
     float _subtitleSync;
 
     // icon, error, message
@@ -150,14 +150,11 @@
 - (void)setSubtitleShadowDarkness:(int)shadowDarkness;
 
 - (BOOL)subtitleDisplayOnLetterBox;
-- (float)minLetterBoxHeight;
+- (int)subtitleLinesInLetterBox;
 - (float)subtitleHMargin;
 - (float)subtitleVMargin;
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox;
-- (void)setMinLetterBoxHeight:(float)height;
-- (void)revertLetterBoxHeight;
-- (void)increaseLetterBoxHeight;
-- (void)decreaseLetterBoxHeight;
+- (void)setSubtitleLinesInLetterBox:(int)lines;
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
 

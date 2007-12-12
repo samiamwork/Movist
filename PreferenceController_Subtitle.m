@@ -65,9 +65,15 @@
 
     [_subtitleDisplayOnLetterBoxButton setState:[_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey]];
 
-    float minLetterBoxHeight = [_defaults floatForKey:MSubtitleMinLetterBoxHeightKey];
-    [_subtitleMinLetterBoxHeightSlider setFloatValue:minLetterBoxHeight];
-    [_subtitleMinLetterBoxHeightTextField setIntValue:(int)minLetterBoxHeight];
+    int linesInLetterBox = [_defaults integerForKey:MSubtitleLinesInLetterBoxKey];
+    [_subtitleLinesInLetterBoxSlider setIntValue:linesInLetterBox];
+    if (linesInLetterBox == 0) {
+        [_subtitleLinesInLetterBoxTextField setStringValue:
+                    NSLocalizedString(@"Letter Box Default Size", nil)];
+    }
+    else {
+        [_subtitleLinesInLetterBoxTextField setIntValue:linesInLetterBox];
+    }
 
     float hMargin = [_defaults floatForKey:MSubtitleHMarginKey];
     [_subtitleHMarginSlider setFloatValue:hMargin];
@@ -131,7 +137,7 @@
     return fontSize;
      */
 
-    NSString* testChar = NSLocalizedString(@"SubtitleAutoSizeTestChar", nil);
+    NSString* testChar = NSLocalizedString(@"SubtitleTestChar", nil);
     NSMutableString* s = [NSMutableString stringWithCapacity:100];
     int i;
     for (i = 0; i < chars; i++) {
@@ -305,7 +311,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     enum {
         SUBTITLE_DISPLAY_ON_LETTER_BOX,
-        SUBTITLE_MIN_LETTER_BOX_HEIGHT,
+        SUBTITLE_LINES_IN_LETTER_BOX,
         SUBTITLE_H_MARGIN,
         SUBTITLE_V_MARGIN,
     };
@@ -317,11 +323,17 @@
             [_appController subtitleDisplayOnLetterBoxAction:self];
             break;
         }
-        case SUBTITLE_MIN_LETTER_BOX_HEIGHT : {
-            float minLetterBoxHeight = [_subtitleMinLetterBoxHeightSlider floatValue];
-            [_subtitleMinLetterBoxHeightTextField setIntValue:(int)minLetterBoxHeight];
-            [_defaults setFloat:minLetterBoxHeight forKey:MSubtitleMinLetterBoxHeightKey];
-            [_appController setMinLetterBoxHeight:minLetterBoxHeight];
+        case SUBTITLE_LINES_IN_LETTER_BOX : {
+            int lines = [_subtitleLinesInLetterBoxSlider intValue];
+            if (lines == 0) {
+                [_subtitleLinesInLetterBoxTextField setStringValue:
+                                NSLocalizedString(@"Letter Box Default Size", nil)];
+            }
+            else {
+                [_subtitleLinesInLetterBoxTextField setIntValue:lines];
+            }
+            [_defaults setInteger:lines forKey:MSubtitleLinesInLetterBoxKey];
+            [_appController setSubtitleLinesInLetterBox:lines];
             break;
         }
         case SUBTITLE_H_MARGIN : {

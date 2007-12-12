@@ -190,7 +190,7 @@
     [_movieView setSubtitleShadowOffset:[_defaults floatForKey:MSubtitleShadowOffsetKey]];
     [_movieView setSubtitleShadowDarkness:[_defaults integerForKey:MSubtitleShadowDarknessKey]];
     [_movieView setSubtitleDisplayOnLetterBox:[_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey]];
-    [_movieView setMinLetterBoxHeight:[_defaults floatForKey:MSubtitleMinLetterBoxHeightKey]];
+    [_movieView setSubtitleLinesInLetterBox:[_defaults integerForKey:MSubtitleLinesInLetterBoxKey]];
     [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
     [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
     
@@ -417,8 +417,8 @@
         [menuItem action] == @selector(subtitleVisibleAction:) ||
         [menuItem action] == @selector(subtitleFontSizeAction:) ||
         [menuItem action] == @selector(subtitleVMarginAction:) ||
-        [menuItem action] == @selector(subtitleLetterBoxHeightAction:) ||
         [menuItem action] == @selector(subtitleDisplayOnLetterBoxAction:) ||
+        [menuItem action] == @selector(subtitleLinesInLetterBoxAction:) ||
         [menuItem action] == @selector(subtitleSyncAction:)) {
         return (_subtitles != nil);
     }

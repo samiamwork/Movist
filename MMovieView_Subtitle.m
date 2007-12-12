@@ -90,6 +90,7 @@
     [_subtitleRenderer setFontName:fontName size:size];
     [_messageOSD setFontName:fontName size:15.0];
     [_errorOSD setFontName:fontName size:24.0];
+    [self updateMovieRect:TRUE];
     [self updateSubtitle];
 }
 
@@ -161,7 +162,7 @@
 #pragma mark subtitle attributes
 
 - (BOOL)subtitleDisplayOnLetterBox { return [_subtitleImageOSD displayOnLetterBox]; }
-- (float)minLetterBoxHeight { return _minLetterBoxHeight; }
+- (int)subtitleLinesInLetterBox { return _subtitleLinesInLetterBox; }
 - (float)subtitleHMargin { return [_subtitleImageOSD hMargin]; }
 - (float)subtitleVMargin { return [_subtitleImageOSD vMargin]; }
 - (float)subtitleSync { return _subtitleSync; }
@@ -177,36 +178,12 @@
     }
 }
 
-- (void)setMinLetterBoxHeight:(float)height
+- (void)setSubtitleLinesInLetterBox:(int)lines
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_minLetterBoxHeight != height) {
-        _minLetterBoxHeight = height;
+    if (_subtitleLinesInLetterBox != lines) {
+        _subtitleLinesInLetterBox = lines;
         [self updateMovieRect:TRUE];
-    }
-}
-
-- (void)revertLetterBoxHeight
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self setMinLetterBoxHeight:0.0];
-}
-
-- (void)increaseLetterBoxHeight
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    float letterBoxHeight = _movieRect.origin.y + 1.0;
-    if (_movieRect.size.height + letterBoxHeight < [self frame].size.height) {
-        [self setMinLetterBoxHeight:letterBoxHeight];
-    }
-}
-
-- (void)decreaseLetterBoxHeight
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    float letterBoxHeight = _movieRect.origin.y - 1.0;
-    if (([self frame].size.height - _movieRect.size.height) / 2 < letterBoxHeight) {
-        [self setMinLetterBoxHeight:letterBoxHeight];
     }
 }
 
