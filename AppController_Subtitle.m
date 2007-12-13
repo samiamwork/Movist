@@ -93,6 +93,9 @@
 
     [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
     [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
+    [_subtitleLinesInLetterBoxMoreButton setEnabled:displayOnLetterBox];
+    [_subtitleLinesInLetterBoxLessButton setEnabled:displayOnLetterBox];
+    [_subtitleLinesInLetterBoxDefaultButton setEnabled:displayOnLetterBox];
 }
 
 - (void)setSubtitleLinesInLetterBox:(int)lines

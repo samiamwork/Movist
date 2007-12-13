@@ -174,7 +174,7 @@
         // need not update _subtitleRenderer.
         [_subtitleImageOSD setDisplayOnLetterBox:displayOnLetterBox];
         [_messageOSD setDisplayOnLetterBox:displayOnLetterBox];
-        [self redisplay];
+        [self updateMovieRect:TRUE];
     }
 }
 

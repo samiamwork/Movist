@@ -190,8 +190,6 @@
     [self autoenableAudioTracks];
     [_movie setVolume:normalizedVolume([_defaults floatForKey:MVolumeKey])];
     [_movie setMuted:([_muteButton state] == NSOnState)];
-    [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForWideMovieKey] forWideMovie:TRUE];
-    [self setFullScreenFill:[_defaults integerForKey:MFullScreenFillForStdMovieKey] forWideMovie:FALSE];
     
     // open subtitle
     if (subtitleURL && [_defaults boolForKey:MSubtitleEnableKey]) {
@@ -208,16 +206,23 @@
     }
 
     // update movie-view
+    NSSize ss = [[_mainWindow screen] frame].size;
+    NSSize ms = [_movie adjustedSize];
+    int fill = (ss.width / ss.height < ms.width / ms.height) ?
+        [_defaults integerForKey:MFullScreenFillForWideMovieKey] :
+        [_defaults integerForKey:MFullScreenFillForStdMovieKey];
+    [_movieView setFullScreenFill:fill];
+    [_movieView updateMovieRect:TRUE];
     [_movieView hideLogo];
     [_movieView setMovie:_movie];
     [self setMessageWithURL:movieURL info:[[_movie class] name]];
-    // subtitles should be set after resizing window.
     if (![self isFullScreen]) {
         [self resizeWithMagnification:1.0];
         if ([_defaults boolForKey:MAutoFullScreenKey]) {
             [self beginFullScreen];
         }
     }
+    // subtitles should be set after resizing window.
     [_movieView setSubtitles:_subtitles];
 
     // update etc. UI

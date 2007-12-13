@@ -430,7 +430,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (float)heightOfSubtitleLinesInLetterBox:(NSRect)movieRect
 {
-    if (_subtitleLinesInLetterBox == 0) {
+    if (![self subtitleDisplayOnLetterBox] ||
+        [self subtitleLinesInLetterBox] == 0) {
         return 0.0;
     }
 

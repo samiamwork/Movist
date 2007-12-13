@@ -94,6 +94,9 @@
                 "_subtitleDisplayOnLetterBoxButton" = NSButton;
                 "_subtitleDisplayOnLetterBoxMenuItem" = NSMenuItem;
                 "_subtitleEncodingMenu" = NSMenu;
+                "_subtitleLinesInLetterBoxDefaultButton" = NSButton;
+                "_subtitleLinesInLetterBoxLessButton" = NSButton;
+                "_subtitleLinesInLetterBoxMoreButton" = NSButton;
                 "_subtitleMenu" = NSMenu;
                 "_subtitleVisibleMenuItem" = NSMenuItem;
                 "_syncDefaultMenuItem" = NSMenuItem;

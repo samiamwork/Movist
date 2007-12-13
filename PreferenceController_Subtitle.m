@@ -63,10 +63,12 @@
     [_subtitleShadowDarknessSlider setIntValue:shadowDarkness];
     [_subtitleShadowDarknessTextField setIntValue:shadowDarkness];
 
-    [_subtitleDisplayOnLetterBoxButton setState:[_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey]];
+    BOOL displayOnLetterBox = [_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey];
+    [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
 
     int linesInLetterBox = [_defaults integerForKey:MSubtitleLinesInLetterBoxKey];
     [_subtitleLinesInLetterBoxSlider setIntValue:linesInLetterBox];
+    [_subtitleLinesInLetterBoxSlider setEnabled:displayOnLetterBox];
     if (linesInLetterBox == 0) {
         [_subtitleLinesInLetterBoxTextField setStringValue:
                     NSLocalizedString(@"Letter Box Default Size", nil)];
@@ -74,6 +76,7 @@
     else {
         [_subtitleLinesInLetterBoxTextField setIntValue:linesInLetterBox];
     }
+    [_subtitleLinesInLetterBoxTextField setEnabled:displayOnLetterBox];
 
     float hMargin = [_defaults floatForKey:MSubtitleHMarginKey];
     [_subtitleHMarginSlider setFloatValue:hMargin];
@@ -320,6 +323,8 @@
         case SUBTITLE_DISPLAY_ON_LETTER_BOX : {
             BOOL displayOnLetterBox = [_subtitleDisplayOnLetterBoxButton state];
             [_defaults setBool:displayOnLetterBox forKey:MSubtitleDisplayOnLetterBoxKey];
+            [_subtitleLinesInLetterBoxSlider setEnabled:displayOnLetterBox];
+            [_subtitleLinesInLetterBoxTextField setEnabled:displayOnLetterBox];
             [_appController subtitleDisplayOnLetterBoxAction:self];
             break;
         }

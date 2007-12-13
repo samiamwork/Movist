@@ -107,6 +107,9 @@
 
     // control panel
     IBOutlet ControlPanel* _controlPanel;
+    IBOutlet NSButton* _subtitleLinesInLetterBoxMoreButton;
+    IBOutlet NSButton* _subtitleLinesInLetterBoxLessButton;
+    IBOutlet NSButton* _subtitleLinesInLetterBoxDefaultButton;
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
     IBOutlet NSButton* _controlPanelDecoderButton;

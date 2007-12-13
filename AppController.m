@@ -56,10 +56,9 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [self initRemoteControl];
 
+    // init UI
     [_mainWindow setReleasedWhenClosed:FALSE];
     [_mainWindow setExcludedFromWindowsMenu:TRUE];
-
-    _defaults = [NSUserDefaults standardUserDefaults];
 
     initSubtitleEncodingMenu(_subtitleEncodingMenu, @selector(reopenSubtitleAction:));
 
@@ -67,6 +66,8 @@
     [_lTimeTextField setClickable:FALSE];   [_panelLTimeTextField setClickable:FALSE];
     [_rTimeTextField setClickable:TRUE];    [_panelRTimeTextField setClickable:TRUE];
 
+    _playRate = 1.0;
+    _prevMovieTime = 0.0;
     [_volumeSlider      setMinValue:0.0];   [_volumeSlider      setMaxValue:MAX_VOLUME];
     [_panelVolumeSlider setMinValue:0.0];   [_panelVolumeSlider setMaxValue:MAX_VOLUME];
     [self updateVolumeUI];
@@ -91,7 +92,8 @@
     [_syncEarlierMenuItem setKeyEquivalentModifierMask:mask];
     [_syncDefaultMenuItem setKeyEquivalentModifierMask:mask];
 
-    [self checkForUpdatesOnStartup];
+    _defaults = [NSUserDefaults standardUserDefaults];
+    // _defaults will be applied in -applicationWillFinishLaunching:.
 }
 
 - (void)dealloc
@@ -180,6 +182,7 @@
     // initial update preferences: audio
 
     // initial update preferences: subtitle
+    BOOL displayOnLetterBox = [_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey];
     [_movieView setSubtitleFontName:[_defaults stringForKey:MSubtitleFontNameKey]
                                size:[_defaults floatForKey:MSubtitleFontSizeKey]];
     [_movieView setSubtitleTextColor:[_defaults colorForKey:MSubtitleTextColorKey]];
@@ -189,21 +192,22 @@
     [_movieView setSubtitleShadowBlur:[_defaults floatForKey:MSubtitleShadowBlurKey]];
     [_movieView setSubtitleShadowOffset:[_defaults floatForKey:MSubtitleShadowOffsetKey]];
     [_movieView setSubtitleShadowDarkness:[_defaults integerForKey:MSubtitleShadowDarknessKey]];
-    [_movieView setSubtitleDisplayOnLetterBox:[_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey]];
+    [_movieView setSubtitleDisplayOnLetterBox:displayOnLetterBox];
     [_movieView setSubtitleLinesInLetterBox:[_defaults integerForKey:MSubtitleLinesInLetterBoxKey]];
     [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
     [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
-    
-    // initial update preferences: advanced
-
-    BOOL displayOnLetterBox = [_movieView subtitleDisplayOnLetterBox];
     [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
     [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
+    [_subtitleLinesInLetterBoxMoreButton setEnabled:displayOnLetterBox];
+    [_subtitleLinesInLetterBoxLessButton setEnabled:displayOnLetterBox];
+    [_subtitleLinesInLetterBoxDefaultButton setEnabled:displayOnLetterBox];
 
-    _playRate = 1.0;
-    _prevMovieTime = 0.0;
+    // initial update preferences: advanced
+    // ...
 
     [self updateUI];
+
+    [self checkForUpdatesOnStartup];
 }
 
 - (void)windowWillClose:(NSNotification*)aNotification
@@ -418,9 +422,11 @@
         [menuItem action] == @selector(subtitleFontSizeAction:) ||
         [menuItem action] == @selector(subtitleVMarginAction:) ||
         [menuItem action] == @selector(subtitleDisplayOnLetterBoxAction:) ||
-        [menuItem action] == @selector(subtitleLinesInLetterBoxAction:) ||
         [menuItem action] == @selector(subtitleSyncAction:)) {
         return (_subtitles != nil);
+    }
+    if ([menuItem action] == @selector(subtitleLinesInLetterBoxAction:)) {
+        return (_subtitles && [_movieView subtitleDisplayOnLetterBox]);
     }
 
     return TRUE;
