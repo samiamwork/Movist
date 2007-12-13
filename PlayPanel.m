@@ -109,7 +109,7 @@
             _lastShowTime = nil;
         }
     }
-    else if (CGCursorIsVisible()) {
+    else if (CGCursorIsVisible() && [[_movieView window] isKeyWindow]) {
         [NSCursor setHiddenUntilMouseMoves:TRUE];
     }
 }
