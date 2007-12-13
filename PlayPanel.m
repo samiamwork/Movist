@@ -46,22 +46,15 @@
 - (void)awakeFromNib
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self setDelegate:self];
     [self setBackgroundColor:[self makeHUDBackgroundColor]];
-}
-
-- (void)invalidateHideTimer
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_hideTimer && [_hideTimer isValid]) {
-        [_hideTimer invalidate];
-        _hideTimer = nil;
-    }
+    _movingByDragging = FALSE;
 }
 
 - (void)dealloc
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self invalidateHideTimer];
+    [_lastShowTime release];
     [super dealloc];
 }
 
@@ -78,67 +71,46 @@
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (void)windowWillMove:(NSNotification*)aNotification { _movingByDragging = TRUE; }
+- (void)windowDidMove:(NSNotification*)aNotification  { _movingByDragging = FALSE; }
+
 #define PLAY_PANEL_FADE_DURATION     0.5
 
 - (void)showPanel
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self isVisible]) {
-        [self setAlphaValue:0.0];
-        [self orderFront:self];
-        [self fadeWithEffect:NSViewAnimationFadeInEffect
-                blockingMode:NSAnimationBlocking
-                    duration:PLAY_PANEL_FADE_DURATION];
+    if ([_movieView movie]) {
+        [_lastShowTime release];
+        _lastShowTime = [[NSDate date] retain];
+        if (![self isVisible]) {
+            [self setAlphaValue:0.0];
+            [self orderFront:self];
+            [self fadeWithEffect:NSViewAnimationFadeInEffect
+                    blockingMode:NSAnimationBlocking
+                        duration:PLAY_PANEL_FADE_DURATION];
+        }
     }
 }
 
-- (void)hidePanel
+- (void)autoHidePanel
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([self isVisible] && (!_hideTimer || ![_hideTimer isValid])) {
-        _hideTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-                                    target:self selector:@selector(fadeHide:)
-                                    userInfo:nil repeats:FALSE];
-    }
-}
-
-- (void)fadeHide:(NSTimer*)timer
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    _hideTimer = nil;
-
-    if ([_movieView movie]) {
-        [self fadeWithEffect:NSViewAnimationFadeOutEffect
-                blockingMode:NSAnimationBlocking
-                    duration:PLAY_PANEL_FADE_DURATION];
-        [self orderOut:self];
-
-        if ([[_movieView window] isKeyWindow]) {
+    if ([self isVisible]) {
+        if (!_movingByDragging &&
+            [[_movieView window] isKeyWindow] &&
+            [_lastShowTime timeIntervalSinceNow] < -1.0 &&
+            !NSPointInRect([NSEvent mouseLocation], [self frame])) {
+            [self fadeWithEffect:NSViewAnimationFadeOutEffect
+                    blockingMode:NSAnimationBlocking
+                        duration:PLAY_PANEL_FADE_DURATION];
+            [self orderOut:self];
             [NSCursor setHiddenUntilMouseMoves:TRUE];
+            [_lastShowTime release];
+            _lastShowTime = nil;
         }
     }
-}
-
-- (void)updateAutoShowHideByMouseMoved:(BOOL)byMouseMoved
-{
-    if (![_movieView movie] || [_movieView window] == [NSApp mainWindow]) {
-        return;
-    }
-
-    NSPoint point = [NSEvent mouseLocation];
-    if (NSPointInRect(point, [[_movieView window] frame])) {
-        if (byMouseMoved) {
-            [self invalidateHideTimer];
-        }
-        if (![self isVisible]) {
-            [self showPanel];
-        }
-        else if (!NSPointInRect(point, [self frame])) {
-            [self hidePanel];
-        }
-    }
-    else if ([self isVisible]) {
-        [self hidePanel];
+    else if (CGCursorIsVisible()) {
+        [NSCursor setHiddenUntilMouseMoves:TRUE];
     }
 }
 

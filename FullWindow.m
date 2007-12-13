@@ -104,7 +104,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isNavigating]) {
-        [_playPanel updateAutoShowHideByMouseMoved:TRUE];
+        [_playPanel showPanel];
     }
 }
 

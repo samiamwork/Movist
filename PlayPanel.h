@@ -29,11 +29,11 @@
     IBOutlet MMovieView* _movieView;
     IBOutlet NSTextField* _titleTextField;
 
-    NSTimer* _hideTimer;
+    NSDate* _lastShowTime;
+    BOOL _movingByDragging;
 }
 
 - (void)showPanel;
-- (void)hidePanel;
-- (void)updateAutoShowHideByMouseMoved:(BOOL)byMouseMoved;
+- (void)autoHidePanel;
 
 @end

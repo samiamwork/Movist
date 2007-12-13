@@ -218,12 +218,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     UpdateSystemActivity(UsrActivity);
 
-    if ([_playPanel isVisible]) {
-        [_playPanel updateAutoShowHideByMouseMoved:FALSE];
-    }
-    else if ([[_movieView window] isKeyWindow] && CGCursorIsVisible()) {
-        [NSCursor setHiddenUntilMouseMoves:TRUE];
-    }
+    [_playPanel autoHidePanel];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

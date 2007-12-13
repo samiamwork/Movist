@@ -45,7 +45,7 @@
 
     _alwaysOnTop = FALSE;
 
-    //[self setDelegate:self];    // for windowDidResize:
+    [self setDelegate:self];
     [self useOptimizedDrawing:TRUE];
     [self setMovableByWindowBackground:TRUE];
     [self setAcceptsMouseMovedEvents:TRUE];
