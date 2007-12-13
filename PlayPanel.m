@@ -127,7 +127,15 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([self screen] != [[_movieView window] screen]) {
-        // FIXME: move self to [[_movieView window] screen].
+        // move self to [[_movieView window] screen].
+        NSRect fr = [self frame];
+        NSRect sr = [[self screen] frame];
+        float dx = fr.origin.x - sr.origin.x;
+        float dy = NSMaxY(sr) - (fr.origin.y - sr.origin.y);
+        sr = [[[_movieView window] screen] frame];
+        fr.origin.x = sr.origin.x + dx;
+        fr.origin.y = sr.origin.y + (NSMaxY(sr) - dy);
+        [self setFrameOrigin:fr.origin];
     }
     [super orderFront:sender];
     [[_movieView window] addChildWindow:self ordered:NSWindowAbove];
