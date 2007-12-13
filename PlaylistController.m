@@ -155,8 +155,13 @@
 - (IBAction)closeAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[self window] orderOut:self];
-    [NSApp endSheet:[self window]];
+    if ([[self window] isSheet]) {
+        [[self window] orderOut:self];
+        [NSApp endSheet:[self window]];
+    }
+    else {
+        [[self window] performClose:self];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
