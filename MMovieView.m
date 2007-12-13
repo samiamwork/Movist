@@ -484,6 +484,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                     letterBoxHeight = letterBoxMinHeight;
                 }
             }
+            else if (0 < letterBoxMinHeight) {
+                letterBoxHeight = letterBoxMinHeight;
+            }
             rect.origin.y += letterBoxHeight;
         }
         else {
