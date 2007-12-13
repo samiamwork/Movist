@@ -60,6 +60,8 @@
 
 - (BOOL)canBecomeKeyWindow { return FALSE; }
 
+- (void)setControlPanel:(NSWindow*)panel { _controlPanel = panel; }
+
 - (void)setMovieURL:(NSURL*)movieURL
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -79,7 +81,10 @@
 - (void)showPanel
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([_movieView movie]) {
+    if ([_movieView movie] &&
+        [[_movieView window] isKeyWindow] &&
+        (![_controlPanel isVisible] ||
+         !NSPointInRect([NSEvent mouseLocation], [_controlPanel frame]))) {
         [_lastShowTime release];
         _lastShowTime = [[NSDate date] retain];
         if (![self isVisible]) {
@@ -104,12 +109,16 @@
                     blockingMode:NSAnimationBlocking
                         duration:PLAY_PANEL_FADE_DURATION];
             [self orderOut:self];
-            [NSCursor setHiddenUntilMouseMoves:TRUE];
+            if (![_controlPanel isVisible]) {
+                [NSCursor setHiddenUntilMouseMoves:TRUE];
+            }
             [_lastShowTime release];
             _lastShowTime = nil;
         }
     }
-    else if (CGCursorIsVisible() && [[_movieView window] isKeyWindow]) {
+    else if (CGCursorIsVisible() &&
+             ![_controlPanel isVisible] &&
+             [[_movieView window] isKeyWindow]) {
         [NSCursor setHiddenUntilMouseMoves:TRUE];
     }
 }

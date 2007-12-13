@@ -34,6 +34,7 @@
 #import "MainWindow.h"
 #import "FullScreener.h"
 #import "FullWindow.h"
+#import "PlayPanel.h"
 #import "CustomControls.h"
 #import "ControlPanel.h"
 
@@ -59,6 +60,7 @@
     // init UI
     [_mainWindow setReleasedWhenClosed:FALSE];
     [_mainWindow setExcludedFromWindowsMenu:TRUE];
+    [_playPanel setControlPanel:_controlPanel];
 
     initSubtitleEncodingMenu(_subtitleEncodingMenu, @selector(reopenSubtitleAction:));
 
@@ -346,6 +348,7 @@
     [_preferenceController showWindow:self];
     [[_preferenceController window] setDelegate:self];
     [[_preferenceController window] makeKeyWindow];
+    [_playPanel orderOut:self];
 }
 
 @end

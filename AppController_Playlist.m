@@ -110,6 +110,7 @@
             [_playlistController showWindow:self];
             [[_playlistController window] setDelegate:self];
             [[_playlistController window] makeKeyWindow];
+            [_playPanel orderOut:self];
         }
         else {
             [_playlistController runSheetForWindow:_mainWindow];

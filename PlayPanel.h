@@ -31,9 +31,11 @@
 
     NSDate* _lastShowTime;
     BOOL _movingByDragging;
+    NSWindow* _controlPanel;
 }
 
 - (void)showPanel;
 - (void)autoHidePanel;
+- (void)setControlPanel:(NSWindow*)panel;
 
 @end
