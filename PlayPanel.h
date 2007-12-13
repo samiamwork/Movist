@@ -34,8 +34,10 @@
     NSWindow* _controlPanel;
 }
 
+- (void)setControlPanel:(NSWindow*)panel;
+- (void)orderFrontWithFadeIn:(id)sender;
+- (void)orderOutWithFadeOut:(id)sender;
 - (void)showPanel;
 - (void)autoHidePanel;
-- (void)setControlPanel:(NSWindow*)panel;
 
 @end

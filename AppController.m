@@ -348,7 +348,7 @@
     [_preferenceController showWindow:self];
     [[_preferenceController window] setDelegate:self];
     [[_preferenceController window] makeKeyWindow];
-    [_playPanel orderOut:self];
+    [_playPanel orderOutWithFadeOut:self];
 }
 
 @end

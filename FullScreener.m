@@ -156,7 +156,7 @@
     [_updateSystemActivityTimer invalidate];
 
     [_fullWindow setAcceptsMouseMovedEvents:FALSE];
-    [_playPanel orderOut:self];
+    [_playPanel orderOutWithFadeOut:self];
 
     BOOL subtitleVisible = [_movieView subtitleVisible];
     if (subtitleVisible) {

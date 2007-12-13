@@ -78,6 +78,23 @@
 
 #define PLAY_PANEL_FADE_DURATION     0.5
 
+- (void)orderFrontWithFadeIn:(id)sender
+{
+    [self setAlphaValue:0.0];
+    [self orderFront:sender];
+    [self fadeWithEffect:NSViewAnimationFadeInEffect
+            blockingMode:NSAnimationBlocking
+                duration:PLAY_PANEL_FADE_DURATION];
+}
+
+- (void)orderOutWithFadeOut:(id)sender
+{
+    [self fadeWithEffect:NSViewAnimationFadeOutEffect
+            blockingMode:NSAnimationBlocking
+                duration:PLAY_PANEL_FADE_DURATION];
+    [self orderOut:sender];
+}
+
 - (void)showPanel
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -88,11 +105,7 @@
         [_lastShowTime release];
         _lastShowTime = [[NSDate date] retain];
         if (![self isVisible]) {
-            [self setAlphaValue:0.0];
-            [self orderFront:self];
-            [self fadeWithEffect:NSViewAnimationFadeInEffect
-                    blockingMode:NSAnimationBlocking
-                        duration:PLAY_PANEL_FADE_DURATION];
+            [self orderFrontWithFadeIn:self];
         }
     }
 }
@@ -105,10 +118,7 @@
             [[_movieView window] isKeyWindow] &&
             [_lastShowTime timeIntervalSinceNow] < -1.0 &&
             !NSPointInRect([NSEvent mouseLocation], [self frame])) {
-            [self fadeWithEffect:NSViewAnimationFadeOutEffect
-                    blockingMode:NSAnimationBlocking
-                        duration:PLAY_PANEL_FADE_DURATION];
-            [self orderOut:self];
+            [self orderOutWithFadeOut:self];
             if (![_controlPanel isVisible]) {
                 [NSCursor setHiddenUntilMouseMoves:TRUE];
             }
