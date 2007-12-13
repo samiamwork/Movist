@@ -85,9 +85,11 @@
 - (void)beginFullScreen
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    // hide system UI elements(main-menu, dock)
     GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
-    SetSystemUIMode(kUIModeAllSuppressed, 0);
+    // if currently in main screen, hide system UI elements(main-menu, dock)
+    if ([[_mainWindow screen] isEqualTo:[NSScreen mainScreen]]) {
+        SetSystemUIMode(kUIModeAllSuppressed, 0);
+    }
     [NSCursor setHiddenUntilMouseMoves:TRUE];
 
     BOOL forNavigation = (_movieURL == nil);
@@ -198,8 +200,12 @@
         [_movieView setSubtitleVisible:TRUE];
     }
 
-    // restore system UI elements(main-menu, dock) & cursor
-    SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
+    // restore system UI elements(main-menu, dock)
+    SystemUIMode systemUIMode;
+    GetSystemUIMode(&systemUIMode, 0);
+    if (systemUIMode == kUIModeAllSuppressed) {
+        SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
+    }
     [NSCursor setHiddenUntilMouseMoves:FALSE];
 
     [_fullWindow release];
