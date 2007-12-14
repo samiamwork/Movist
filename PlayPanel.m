@@ -100,6 +100,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([_movieView movie] &&
         [[_movieView window] isKeyWindow] &&
+        NSPointInRect([NSEvent mouseLocation], [[_movieView window] frame]) &&
         (![_controlPanel isVisible] ||
          !NSPointInRect([NSEvent mouseLocation], [_controlPanel frame]))) {
         [_lastShowTime release];

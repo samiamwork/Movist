@@ -87,7 +87,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
     // if currently in main screen, hide system UI elements(main-menu, dock)
-    if ([[_mainWindow screen] isEqualTo:[NSScreen mainScreen]]) {
+    if ([[_mainWindow screen] isEqualTo:[[NSScreen screens] objectAtIndex:0]]) {
         SetSystemUIMode(kUIModeAllSuppressed, 0);
     }
     [NSCursor setHiddenUntilMouseMoves:TRUE];
