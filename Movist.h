@@ -84,8 +84,14 @@ enum {
 #define MIN_PLAY_RATE   0.5
 #define MAX_PLAY_RATE   3.0
 
-#define MIN_SUBTITLE_LINES_IN_LETTER_BOX    0
-#define MAX_SUBTITLE_LINES_IN_LETTER_BOX    5
+#define LETTER_BOX_HEIGHT_DEFAULT   0
+#define LETTER_BOX_HEIGHT_1_LINE    1
+#define LETTER_BOX_HEIGHT_2_LINES   2
+#define LETTER_BOX_HEIGHT_3_LINES   3
+#define LETTER_BOX_HEIGHT_4_LINES   4
+#define LETTER_BOX_HEIGHT_5_LINES   5
+#define MIN_LETTER_BOX_HEIGHT       LETTER_BOX_HEIGHT_DEFAULT
+#define MAX_LETTER_BOX_HEIGHT       LETTER_BOX_HEIGHT_5_LINES
 
 #pragma mark -
 #pragma mark notifications: movie
@@ -143,9 +149,18 @@ extern NSString* MMovieRectUpdateNotification;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-NSString* localizedAppName();
+@interface NSApplication (Movist)
+
+- (NSString*)localizedAppName;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 float normalizedVolume(float volume);
 NSString* NSStringFromMovieTime(float time);
+NSString* NSStringFromLetterBoxHeight(int height);
 void runAlertPanelForOpenError(NSError* error, NSURL* url);
 
 #define MPlaylistItemDataType  @"MPlaylistItemDataType"

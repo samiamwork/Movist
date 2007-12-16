@@ -94,7 +94,7 @@
     }
     if (![subtitleURL isFileURL]) {
         TRACE(@"remote subtitle is not supported yet");
-        *error = [NSError errorWithDomain:localizedAppName() code:0 userInfo:0];
+        *error = [NSError errorWithDomain:[NSApp localizedAppName] code:0 userInfo:0];
         return nil;
     }
     
@@ -102,7 +102,7 @@
     NSString* path = [subtitleURL path];
     Class parserClass = [MSubtitle subtitleParserClassForType:[path pathExtension]];
     if (!parserClass) {
-        *error = [NSError errorWithDomain:localizedAppName() code:1 userInfo:0];
+        *error = [NSError errorWithDomain:[NSApp localizedAppName] code:1 userInfo:0];
         return nil;
     }
 
@@ -137,7 +137,7 @@
         }
         s = [NSString stringWithCString:contents encoding:nsEncoding];
         if (!s) {
-            *error = [NSError errorWithDomain:localizedAppName() code:2 userInfo:0];
+            *error = [NSError errorWithDomain:[NSApp localizedAppName] code:2 userInfo:0];
             return nil;
         }
     }
@@ -267,7 +267,8 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     NSString* s = @"\"Open URL...\" is not implemented yet.";
-    NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
+    NSRunAlertPanel([NSApp localizedAppName], s,
+                    NSLocalizedString(@"OK", nil), nil, nil);
     return FALSE;
     /*
     if ([[url absoluteString] hasAnyExtension:[MSubtitle subtitleTypes]]) {
@@ -340,6 +341,7 @@
     [_movieView setSubtitles:   // select first language by default
         [NSArray arrayWithObject:[_subtitles objectAtIndex:0]]];
 
+    [self autoenableSubtitles];
     [self updateSubtitleLanguageMenuItems];
 
     [_movie gotoBeginning];
@@ -430,13 +432,13 @@
     }
 
     if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
-        [_decoderButton setImage:[NSImage imageNamed:@"QuickTime16"]];
-        [_panelDecoderButton setImage:[NSImage imageNamed:@"QuickTime16"]];
+        [_decoderButton setImage:[NSImage imageNamed:@"MainQuickTime"]];
+        [_panelDecoderButton setImage:[NSImage imageNamed:@"FSQuickTime"]];
         [_controlPanelDecoderButton setImage:(enable) ? [NSImage imageNamed:@"QuickTime16"] : nil];
     }
     else {  // [decoder isEqualToString:[MMovie_FFMPEG name]]
-        [_decoderButton setImage:[NSImage imageNamed:@"FFMPEG16"]];
-        [_panelDecoderButton setImage:[NSImage imageNamed:@"FFMPEG16"]];
+        [_decoderButton setImage:[NSImage imageNamed:@"MainFFMPEG"]];
+        [_panelDecoderButton setImage:[NSImage imageNamed:@"FSFFMPEG"]];
         [_controlPanelDecoderButton setImage:(enable) ? [NSImage imageNamed:@"FFMPEG16"] : nil];
     }
     [_decoderButton setEnabled:enable];

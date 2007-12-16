@@ -43,7 +43,7 @@ NSString* MMovieRectUpdateNotification          = @"MMovieRectUpdateNotification
 {
     if (!movieURL) {
         [self setTitleWithRepresentedFilename:@""];
-        [self setTitle:NSLocalizedString(@"Movist", nil)];
+        [self setTitle:[NSApp localizedAppName]];
     }
     else if ([movieURL isFileURL]) {
         [self setTitleWithRepresentedFilename:[movieURL path]];
@@ -239,12 +239,19 @@ static NSWindow* _fadeWindow = 0;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-NSString* localizedAppName()
+@implementation NSApplication (Movist)
+
+- (NSString*)localizedAppName
 {
     return [[NSBundle mainBundle] localizedStringForKey:@"CFBundleName"
                                                   value:@"Movist"
                                                   table:@"InfoPlist"];
 }
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 
 float normalizedVolume(float volume)
 {
@@ -261,11 +268,20 @@ NSString* NSStringFromMovieTime(float time)
             totalMinutes / 60, totalMinutes % 60, totalSeconds % 60];
 }
 
+NSString* NSStringFromLetterBoxHeight(int height)
+{
+    return (height == LETTER_BOX_HEIGHT_DEFAULT) ?
+                NSLocalizedString(@"Default Height", nil) :
+                [NSString stringWithFormat:
+                    NSLocalizedString(@"%d Line(s) Height", nil), height];
+}
+
 void runAlertPanelForOpenError(NSError* error, NSURL* url)
 {
     NSString* s = [NSString stringWithFormat:@"%@\n\n%@",
                     error, [url isFileURL] ? [url path] : [url absoluteString]];
-    NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
+    NSRunAlertPanel([NSApp localizedAppName], s,
+                    NSLocalizedString(@"OK", nil), nil, nil);
 }
 
 unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)

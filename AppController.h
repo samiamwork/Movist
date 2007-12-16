@@ -36,12 +36,15 @@
 
 @class MMovieView;
 @class MainWindow;
+@class HoverButton;
 @class ControlPanel;
 @class FullScreener;
 @class PlayPanel;
 
 @interface AppController : NSObject
 {
+    BOOL _isSystemLeopard;
+
     MultiClickRemoteBehavior* _remoteControlBehavior;
     RemoteControlContainer* _remoteControlContainer;
     PreferenceController* _preferenceController;
@@ -100,16 +103,17 @@
     IBOutlet NSButton* _playButton;
     IBOutlet TimeTextField* _lTimeTextField;
     IBOutlet TimeTextField* _rTimeTextField;
-    IBOutlet NSButton* _playlistButton;
-    IBOutlet NSButton* _decoderButton;
+    IBOutlet HoverButton* _controlPanelButton;
+    IBOutlet HoverButton* _playlistButton;
+    NSButton* _decoderButton;
     float _prevMovieTime;
     BOOL _viewDuration;
 
     // control panel
     IBOutlet ControlPanel* _controlPanel;
-    IBOutlet NSButton* _subtitleLinesInLetterBoxMoreButton;
-    IBOutlet NSButton* _subtitleLinesInLetterBoxLessButton;
-    IBOutlet NSButton* _subtitleLinesInLetterBoxDefaultButton;
+    IBOutlet NSButton* _letterBoxHigherButton;
+    IBOutlet NSButton* _letterBoxLowerButton;
+    IBOutlet NSButton* _letterBoxDefaultHeightButton;
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
     IBOutlet NSButton* _controlPanelDecoderButton;
@@ -129,6 +133,8 @@
     IBOutlet NSButton* _panelPlaylistButton;
     IBOutlet NSButton* _panelDecoderButton;
 }
+
+- (BOOL)isSystemLeopard;
 
 - (MMovie*)movie;
 - (NSURL*)movieURL;
@@ -285,8 +291,8 @@
 - (void)setSubtitleFontSize:(float)size;
 - (void)changeSubtitleFontSize:(int)tag;
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox;
-- (void)setSubtitleLinesInLetterBox:(int)lines;
-- (void)changeSubtitleLinesInLetterBox:(int)tag;
+- (void)setLetterBoxHeight:(int)height;
+- (void)changeLetterBoxHeight:(int)tag;
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
 - (void)changeSubtitleVMargin:(int)tag;
@@ -303,7 +309,7 @@
 - (IBAction)subtitleFontSizeAction:(id)sender;
 - (IBAction)subtitleVMarginAction:(id)sender;
 - (IBAction)subtitleDisplayOnLetterBoxAction:(id)sender;
-- (IBAction)subtitleLinesInLetterBoxAction:(id)sender;
+- (IBAction)letterBoxHeightAction:(id)sender;
 - (IBAction)subtitleSyncAction:(id)sender;
 
 @end

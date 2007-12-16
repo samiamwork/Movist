@@ -27,6 +27,7 @@
 
 #import "MainWindow.h"
 #import "MMovieView.h"
+#import "PlayPanel.h"
 
 @implementation AppController (Playlist)
 

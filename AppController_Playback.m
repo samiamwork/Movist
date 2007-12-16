@@ -320,26 +320,37 @@
 - (void)updatePlayUI
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_movie) {
-        if ([_movie rate] != 0) {
-            [_playMenuItem setTitle:NSLocalizedString(@"Pause_space", nil)];
-            [_playButton setImage:[NSImage imageNamed:@"MainPause"]];
-            [_playButton setAlternateImage:[NSImage imageNamed:@"MainPausePressed"]];
-            [_panelPlayButton setImage:[NSImage imageNamed:@"FSPause"]];
-            [_panelPlayButton setAlternateImage:[NSImage imageNamed:@"FSPausePressed"]];
+    if (_movie && [_movie rate] != 0) {
+        NSImage* mainPauseImage, *mainPausePressedImage;
+        if ([self isSystemLeopard]) {
+            mainPauseImage = [NSImage imageNamed:@"MainPause"];
+            mainPausePressedImage = [NSImage imageNamed:@"MainPausePressed"];
         }
         else {
-            [_playMenuItem setTitle:NSLocalizedString(@"Play_space", nil)];
-            [_playButton setImage:[NSImage imageNamed:@"MainPlay"]];
-            [_playButton setAlternateImage:[NSImage imageNamed:@"MainPlayPressed"]];
-            [_panelPlayButton setImage:[NSImage imageNamed:@"FSPlay"]];
-            [_panelPlayButton setAlternateImage:[NSImage imageNamed:@"FSPlayPressed"]];
+            mainPauseImage = [NSImage imageNamed:@"MainPauseTiger"];
+            mainPausePressedImage = [NSImage imageNamed:@"MainPausePressedTiger"];
         }
+        [_playMenuItem setTitle:NSLocalizedString(@"Pause_space", nil)];
+        [_playButton setImage:mainPauseImage];
+        [_playButton setAlternateImage:mainPausePressedImage];
+        [_panelPlayButton setImage:[NSImage imageNamed:@"FSPause"]];
+        [_panelPlayButton setAlternateImage:[NSImage imageNamed:@"FSPausePressed"]];
     }
     else {
+        NSImage* mainPlayImage, *mainPlayPressedImage;
+        if ([self isSystemLeopard]) {
+            mainPlayImage = [NSImage imageNamed:@"MainPlay"];
+            mainPlayPressedImage = [NSImage imageNamed:@"MainPlayPressed"];
+        }
+        else {
+            mainPlayImage = [NSImage imageNamed:@"MainPlayTiger"];
+            mainPlayPressedImage = [NSImage imageNamed:@"MainPlayPressedTiger"];
+        }
         [_playMenuItem setTitle:NSLocalizedString(@"Play_space", nil)];
-        [_playButton setImage:[NSImage imageNamed:@"MainPlay"]];
+        [_playButton setImage:mainPlayImage];
+        [_playButton setAlternateImage:mainPlayPressedImage];
         [_panelPlayButton setImage:[NSImage imageNamed:@"FSPlay"]];
+        [_panelPlayButton setAlternateImage:[NSImage imageNamed:@"FSPlayPressed"]];
     }
 }
 

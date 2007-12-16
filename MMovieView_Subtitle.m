@@ -162,7 +162,7 @@
 #pragma mark subtitle attributes
 
 - (BOOL)subtitleDisplayOnLetterBox { return [_subtitleImageOSD displayOnLetterBox]; }
-- (int)subtitleLinesInLetterBox { return _subtitleLinesInLetterBox; }
+- (int)letterBoxHeight { return _letterBoxHeight; }
 - (float)subtitleHMargin { return [_subtitleImageOSD hMargin]; }
 - (float)subtitleVMargin { return [_subtitleImageOSD vMargin]; }
 - (float)subtitleSync { return _subtitleSync; }
@@ -178,11 +178,11 @@
     }
 }
 
-- (void)setSubtitleLinesInLetterBox:(int)lines
+- (void)setLetterBoxHeight:(int)height
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_subtitleLinesInLetterBox != lines) {
-        _subtitleLinesInLetterBox = lines;
+    if (_letterBoxHeight != height) {
+        _letterBoxHeight =  height;
         [self updateMovieRect:TRUE];
     }
 }

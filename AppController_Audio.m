@@ -261,14 +261,7 @@
 - (IBAction)muteAction:(id)sender
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL muted;
-    if ([sender isMemberOfClass:[NSButton class]]) {
-        muted = ([sender state] == NSOnState);
-    }
-    else {  // menu-item
-        muted = ([sender state] == NSOffState);
-    }
-    [self setMuted:muted];
+    [self setMuted:([_muteMenuItem state] == NSOffState)];
 }
 
 - (IBAction)audioTrackAction:(id)sender

@@ -36,6 +36,7 @@
     BOOL _alwaysOnTop;
 }
 
+- (NSButton*)createDecoderButton;
 - (MMovieView*)movieView;
 
 - (BOOL)alwaysOnTop;

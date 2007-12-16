@@ -89,7 +89,7 @@
         case kRemoteButtonRight_Hold    : [self appleRemoteRightHoldAction:self];   break;
         case kRemoteButtonPlay          : [self appleRemotePlayAction:self];        break;
         case kRemoteButtonPlay_Hold     : [self appleRemotePlayHoldAction:self];    break;
-        case kRemoteButtonMenu          : [self appleRemoteMenuAction:self];        break;			
+        case kRemoteButtonMenu          : [self appleRemoteMenuAction:self];        break;
         case kRemoteButtonMenu_Hold     : [self appleRemoteMenuHoldAction:self];    break;
         case kRemoteControl_Switched    : TRACE(@"AppleRemote Switched");           break;
         default : TRACE(@"Unmapped event for button %d", buttonIdentifier);         break;

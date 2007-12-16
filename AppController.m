@@ -44,10 +44,17 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
+        NSDictionary* dict = [NSDictionary dictionaryWithContentsOfFile:
+                            @"/System/Library/CoreServices/SystemVersion.plist"];
+        NSString* systemVersion = [dict objectForKey:@"ProductVersion"];
+        _isSystemLeopard = (0 <= [systemVersion compare:@"10.5"]);
+
         _playlist = [[Playlist alloc] init];
         _audioTrackIndexSet = [[NSMutableIndexSet alloc] init];
         _subtitleNameSet = [[NSMutableSet alloc] init];
         _fullScreenLock = [[NSLock alloc] init];
+
+        _defaults = [NSUserDefaults standardUserDefaults];
     }
     return self;
 }
@@ -55,25 +62,26 @@
 - (void)awakeFromNib
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self initRemoteControl];
-
     // init UI
     [_mainWindow setReleasedWhenClosed:FALSE];
     [_mainWindow setExcludedFromWindowsMenu:TRUE];
     [_playPanel setControlPanel:_controlPanel];
+    [self updatePlayUI];
 
-    initSubtitleEncodingMenu(_subtitleEncodingMenu, @selector(reopenSubtitleAction:));
+    [_volumeSlider      setMinValue:0.0];   [_volumeSlider      setMaxValue:MAX_VOLUME];
+    [_panelVolumeSlider setMinValue:0.0];   [_panelVolumeSlider setMaxValue:MAX_VOLUME];
+    [self updateVolumeUI];
 
+    _playRate = 1.0;
+    _prevMovieTime = 0.0;
     _viewDuration = [_defaults boolForKey:MViewDurationKey];
     [_lTimeTextField setClickable:FALSE];   [_panelLTimeTextField setClickable:FALSE];
     [_rTimeTextField setClickable:TRUE];    [_panelRTimeTextField setClickable:TRUE];
 
-    _playRate = 1.0;
-    _prevMovieTime = 0.0;
-    [_volumeSlider      setMinValue:0.0];   [_volumeSlider      setMaxValue:MAX_VOLUME];
-    [_panelVolumeSlider setMinValue:0.0];   [_panelVolumeSlider setMaxValue:MAX_VOLUME];
-    [self updateVolumeUI];
+    _decoderButton = [_mainWindow createDecoderButton];
     [self updateDecoderUI];
+
+    initSubtitleEncodingMenu(_subtitleEncodingMenu, @selector(reopenSubtitleAction:));
 
     // set modifier keys (I don't know how to set Shift key mask)
     unsigned int mask = NSAlternateKeyMask | NSShiftKeyMask;
@@ -94,8 +102,7 @@
     [_syncEarlierMenuItem setKeyEquivalentModifierMask:mask];
     [_syncDefaultMenuItem setKeyEquivalentModifierMask:mask];
 
-    _defaults = [NSUserDefaults standardUserDefaults];
-    // _defaults will be applied in -applicationWillFinishLaunching:.
+    [self initRemoteControl];
 }
 
 - (void)dealloc
@@ -103,6 +110,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [self cleanupRemoteControl];
     [self closeMovie];
+    [_decoderButton release];
     [_fullScreenLock release];
     [_subtitleNameSet release];
     [_audioTrackIndexSet release];
@@ -116,6 +124,56 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+
+- (void)applicationWillFinishLaunching:(NSNotification*)aNotification
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    // hover-images should be set after -awakeFromNib.
+    [_controlPanelButton setHoverImage:[NSImage imageNamed:@"MainControlPanelHover"]];
+    [_playlistButton setHoverImage:[NSImage imageNamed:@"MainPlaylistHover"]];
+
+    // initial update preferences: general
+    [_mainWindow setAlwaysOnTop:[_defaults boolForKey:MAlwaysOnTopKey]];
+    [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
+    [self setQuitWhenWindowClose:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
+    [self setSeekInterval:[_defaults floatForKey:MSeekInterval0Key] atIndex:0];
+    [self setSeekInterval:[_defaults floatForKey:MSeekInterval1Key] atIndex:1];
+    [self setSeekInterval:[_defaults floatForKey:MSeekInterval2Key] atIndex:2];
+
+    // initial update preferences: video
+    [_movieView setFullScreenUnderScan:[_defaults floatForKey:MFullScreenUnderScanKey]];
+
+    // initial update preferences: audio
+    // ...
+
+    // initial update preferences: subtitle
+    BOOL displayOnLetterBox = [_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey];
+    [_movieView setSubtitleFontName:[_defaults stringForKey:MSubtitleFontNameKey]
+                               size:[_defaults floatForKey:MSubtitleFontSizeKey]];
+    [_movieView setSubtitleTextColor:[_defaults colorForKey:MSubtitleTextColorKey]];
+    [_movieView setSubtitleStrokeColor:[_defaults colorForKey:MSubtitleStrokeColorKey]];
+    [_movieView setSubtitleStrokeWidth:[_defaults floatForKey:MSubtitleStrokeWidthKey]];
+    [_movieView setSubtitleShadowColor:[_defaults colorForKey:MSubtitleShadowColorKey]];
+    [_movieView setSubtitleShadowBlur:[_defaults floatForKey:MSubtitleShadowBlurKey]];
+    [_movieView setSubtitleShadowOffset:[_defaults floatForKey:MSubtitleShadowOffsetKey]];
+    [_movieView setSubtitleShadowDarkness:[_defaults integerForKey:MSubtitleShadowDarknessKey]];
+    [_movieView setSubtitleDisplayOnLetterBox:displayOnLetterBox];
+    [_movieView setLetterBoxHeight:[_defaults integerForKey:MSubtitleLetterBoxHeightKey]];
+    [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
+    [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
+    [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
+    [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
+    [_letterBoxHigherButton setEnabled:displayOnLetterBox];
+    [_letterBoxLowerButton setEnabled:displayOnLetterBox];
+    [_letterBoxDefaultHeightButton setEnabled:displayOnLetterBox];
+
+    // initial update preferences: advanced
+    // ...
+
+    [self updateUI];
+    
+    [self checkForUpdatesOnStartup];
+}
 
 - (void)applicationWillBecomeActive:(NSNotification*)aNotification
 {
@@ -166,58 +224,14 @@
     }
 }
 
-- (void)applicationWillFinishLaunching:(NSNotification*)aNotification
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-
-    // initial update preferences: general
-    [_mainWindow setAlwaysOnTop:[_defaults boolForKey:MAlwaysOnTopKey]];
-    [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
-    [self setQuitWhenWindowClose:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
-    [self setSeekInterval:[_defaults floatForKey:MSeekInterval0Key] atIndex:0];
-    [self setSeekInterval:[_defaults floatForKey:MSeekInterval1Key] atIndex:1];
-    [self setSeekInterval:[_defaults floatForKey:MSeekInterval2Key] atIndex:2];
-
-    // initial update preferences: video
-    [_movieView setFullScreenUnderScan:[_defaults floatForKey:MFullScreenUnderScanKey]];
-
-    // initial update preferences: audio
-
-    // initial update preferences: subtitle
-    BOOL displayOnLetterBox = [_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey];
-    [_movieView setSubtitleFontName:[_defaults stringForKey:MSubtitleFontNameKey]
-                               size:[_defaults floatForKey:MSubtitleFontSizeKey]];
-    [_movieView setSubtitleTextColor:[_defaults colorForKey:MSubtitleTextColorKey]];
-    [_movieView setSubtitleStrokeColor:[_defaults colorForKey:MSubtitleStrokeColorKey]];
-    [_movieView setSubtitleStrokeWidth:[_defaults floatForKey:MSubtitleStrokeWidthKey]];
-    [_movieView setSubtitleShadowColor:[_defaults colorForKey:MSubtitleShadowColorKey]];
-    [_movieView setSubtitleShadowBlur:[_defaults floatForKey:MSubtitleShadowBlurKey]];
-    [_movieView setSubtitleShadowOffset:[_defaults floatForKey:MSubtitleShadowOffsetKey]];
-    [_movieView setSubtitleShadowDarkness:[_defaults integerForKey:MSubtitleShadowDarknessKey]];
-    [_movieView setSubtitleDisplayOnLetterBox:displayOnLetterBox];
-    [_movieView setSubtitleLinesInLetterBox:[_defaults integerForKey:MSubtitleLinesInLetterBoxKey]];
-    [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
-    [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
-    [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
-    [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
-    [_subtitleLinesInLetterBoxMoreButton setEnabled:displayOnLetterBox];
-    [_subtitleLinesInLetterBoxLessButton setEnabled:displayOnLetterBox];
-    [_subtitleLinesInLetterBoxDefaultButton setEnabled:displayOnLetterBox];
-
-    // initial update preferences: advanced
-    // ...
-
-    [self updateUI];
-
-    [self checkForUpdatesOnStartup];
-}
-
 - (void)windowWillClose:(NSNotification*)aNotification
 {
     if ([aNotification object] != [_movieView window]) {
         [[_movieView window] makeKeyWindow];
     }
 }
+
+- (BOOL)isSystemLeopard { return _isSystemLeopard; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -282,19 +296,24 @@
     [_defaults setObject:[NSDate date] forKey:MLastUpdateCheckTimeKey];
     [_preferenceController updateLastUpdateCheckTimeTextField];
 
-    [_movieView setMessage:@""];
-    [_movieView display];
-
     if (ret == NEW_VERSION_CHECK_FAILED) {
+        NSString* s = [NSString stringWithFormat:@"%@", error];
         if (manual) {   // only for manual checking
-            NSString* s = [NSString stringWithFormat:@"%@", error];
-            NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
+            NSRunAlertPanel([NSApp localizedAppName], s,
+                            NSLocalizedString(@"OK", nil), nil, nil);
+        }
+        else {
+            [_movieView setMessage:s];
         }
     }
     else if (ret == NEW_VERSION_NONE) {
+        NSString* s = NSLocalizedString(@"No new version", nil);
         if (manual) {   // only for manual checking
-            NSString* s = NSLocalizedString(@"No new version", nil);
-            NSRunAlertPanel(localizedAppName(), s, NSLocalizedString(@"OK", nil), nil, nil);
+            NSRunAlertPanel([NSApp localizedAppName], s,
+                            NSLocalizedString(@"OK", nil), nil, nil);
+        }
+        else {
+            [_movieView setMessage:s];
         }
     }
     else if (ret == NEW_VERSION_IS_AVAILABLE) {
@@ -304,7 +323,7 @@
         NSString* s = [NSString stringWithFormat:
                         NSLocalizedString(@"New version is available. (v%@)", nil),
                         newVersion];
-        ret = NSRunAlertPanel(localizedAppName(), s,
+        ret = NSRunAlertPanel([NSApp localizedAppName], s,
                               NSLocalizedString(@"Show New Version", nil),
                               NSLocalizedString(@"Cancel", nil), nil);
         if (ret == NSAlertDefaultReturn) {
@@ -428,7 +447,7 @@
         [menuItem action] == @selector(subtitleSyncAction:)) {
         return (_subtitles != nil);
     }
-    if ([menuItem action] == @selector(subtitleLinesInLetterBoxAction:)) {
+    if ([menuItem action] == @selector(letterBoxHeightAction:)) {
         return (_subtitles && [_movieView subtitleDisplayOnLetterBox]);
     }
 

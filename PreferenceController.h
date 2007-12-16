@@ -78,8 +78,8 @@
     IBOutlet NSSlider*      _subtitleShadowDarknessSlider;
     IBOutlet NSTextField*   _subtitleShadowDarknessTextField;
     IBOutlet NSButton*      _subtitleDisplayOnLetterBoxButton;
-    IBOutlet NSSlider*      _subtitleLinesInLetterBoxSlider;
-    IBOutlet NSTextField*   _subtitleLinesInLetterBoxTextField;
+    IBOutlet NSSlider*      _subtitleLetterBoxHeightSlider;
+    IBOutlet NSTextField*   _subtitleLetterBoxHeightTextField;
     IBOutlet NSSlider*      _subtitleHMarginSlider;
     IBOutlet NSTextField*   _subtitleHMarginTextField;
     IBOutlet NSSlider*      _subtitleVMarginSlider;

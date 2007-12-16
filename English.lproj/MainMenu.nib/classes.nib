@@ -20,6 +20,7 @@
                 fullScreenAction = id;
                 fullScreenFillAction = id;
                 fullScreenUnderScanAction = id;
+                letterBoxHeightAction = id;
                 moviePropertyAction = id;
                 movieSizeAction = id;
                 muteAction = id;
@@ -39,7 +40,6 @@
                 subtitleDisplayOnLetterBoxAction = id;
                 subtitleFontSizeAction = id;
                 subtitleLanguageAction = id;
-                subtitleLinesInLetterBoxAction = id;
                 subtitleSyncAction = id;
                 subtitleVMarginAction = id;
                 subtitleVisibleAction = id;
@@ -51,9 +51,12 @@
             OUTLETS =             {
                 "_aspectRatioMenu" = NSMenu;
                 "_controlPanel" = ControlPanel;
+                "_controlPanelButton" = HoverButton;
                 "_controlPanelDecoderButton" = NSButton;
-                "_decoderButton" = NSButton;
                 "_lTimeTextField" = TimeTextField;
+                "_letterBoxDefaultHeightButton" = NSButton;
+                "_letterBoxHigherButton" = NSButton;
+                "_letterBoxLowerButton" = NSButton;
                 "_mainWindow" = MainWindow;
                 "_movieMenu" = NSMenu;
                 "_movieView" = MMovieView;
@@ -70,7 +73,7 @@
                 "_playButton" = NSButton;
                 "_playMenuItem" = NSMenuItem;
                 "_playPanel" = PlayPanel;
-                "_playlistButton" = NSButton;
+                "_playlistButton" = HoverButton;
                 "_propertiesView" = NSTableView;
                 "_rTimeTextField" = TimeTextField;
                 "_rateDefaultMenuItem" = NSMenuItem;
@@ -94,9 +97,6 @@
                 "_subtitleDisplayOnLetterBoxButton" = NSButton;
                 "_subtitleDisplayOnLetterBoxMenuItem" = NSMenuItem;
                 "_subtitleEncodingMenu" = NSMenu;
-                "_subtitleLinesInLetterBoxDefaultButton" = NSButton;
-                "_subtitleLinesInLetterBoxLessButton" = NSButton;
-                "_subtitleLinesInLetterBoxMoreButton" = NSButton;
                 "_subtitleMenu" = NSMenu;
                 "_subtitleVisibleMenuItem" = NSMenuItem;
                 "_syncDefaultMenuItem" = NSMenuItem;
@@ -131,7 +131,7 @@
                 {
             CLASS = FSSeekSlider;
             LANGUAGE = ObjC;
-            SUPERCLASS = NSSlider;
+            SUPERCLASS = SeekSlider;
         },
                 {
             CLASS = FSVolumeSlider;
@@ -147,6 +147,11 @@
             SUPERCLASS = NSObject;
         },
                 {
+            CLASS = HoverButton;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSButton;
+        },
+                {
             CLASS = MMovieView;
             LANGUAGE = ObjC;
             SUPERCLASS = NSOpenGLView;
@@ -154,7 +159,7 @@
                 {
             CLASS = MainSeekSlider;
             LANGUAGE = ObjC;
-            SUPERCLASS = NSSlider;
+            SUPERCLASS = SeekSlider;
         },
                 {
             CLASS = MainVolumeSlider;
@@ -194,6 +199,11 @@
                 "_tableView" = NSTableView;
             };
             SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = SeekSlider;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSlider;
         },
                 {
             CLASS = TimeTextField;

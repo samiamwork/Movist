@@ -93,39 +93,45 @@
 
     [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
     [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
-    [_subtitleLinesInLetterBoxMoreButton setEnabled:displayOnLetterBox];
-    [_subtitleLinesInLetterBoxLessButton setEnabled:displayOnLetterBox];
-    [_subtitleLinesInLetterBoxDefaultButton setEnabled:displayOnLetterBox];
+    [_letterBoxHigherButton setEnabled:displayOnLetterBox];
+    [_letterBoxLowerButton setEnabled:displayOnLetterBox];
+    [_letterBoxDefaultHeightButton setEnabled:displayOnLetterBox];
 }
 
-- (void)setSubtitleLinesInLetterBox:(int)lines
+- (void)setLetterBoxHeight:(int)height
 {
-    if (lines < MIN_SUBTITLE_LINES_IN_LETTER_BOX) {
-        lines = MIN_SUBTITLE_LINES_IN_LETTER_BOX;
+    if (height == LETTER_BOX_HEIGHT_DEFAULT) {
+        // nothing to do...
     }
-    else if (MAX_SUBTITLE_LINES_IN_LETTER_BOX < lines) {
-        lines = MAX_SUBTITLE_LINES_IN_LETTER_BOX;
+    else if (height < MIN_LETTER_BOX_HEIGHT) {
+        height = MIN_LETTER_BOX_HEIGHT;
     }
-    [_movieView setSubtitleLinesInLetterBox:lines];
-    if (lines == 0) {
-        [_movieView setMessage:NSLocalizedString(@"Letter Box Default Size", nil)];
+    else if (MAX_LETTER_BOX_HEIGHT < height) {
+        height = MAX_LETTER_BOX_HEIGHT;
     }
-    else {
-        [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"%d Lines in Letter Box", nil),
-            [_movieView subtitleLinesInLetterBox]]];
-    }
+    [_movieView setLetterBoxHeight:height];
+    [_movieView setMessage:[NSString stringWithFormat:
+                            NSLocalizedString(@"Letter Box Height: %@", nil),
+                            NSStringFromLetterBoxHeight(height)]];
 }
 
-- (void)changeSubtitleLinesInLetterBox:(int)tag
+- (void)changeLetterBoxHeight:(int)tag
 {
-    int lines = [_defaults integerForKey:MSubtitleLinesInLetterBoxKey];
+    int height;
     switch (tag) {
-        case -1 : lines = [_movieView subtitleLinesInLetterBox] - 1;    break;
-        case  0 : /* use as it is */                                    break;
-        case +1 : lines = [_movieView subtitleLinesInLetterBox] + 1;    break;
+        case -1 : height = [_movieView letterBoxHeight] - 1;     break;
+        case +1 : height = [_movieView letterBoxHeight] + 1;     break;
+        default : height = [_defaults integerForKey:MSubtitleLetterBoxHeightKey];   break;
     }
-    [self setSubtitleLinesInLetterBox:lines];
+    if (tag != 0) {
+        if (height < MIN_LETTER_BOX_HEIGHT) {
+            height = MIN_LETTER_BOX_HEIGHT;
+        }
+        else if (MAX_LETTER_BOX_HEIGHT < height) {
+            height = MAX_LETTER_BOX_HEIGHT;
+        }
+    }
+    [self setLetterBoxHeight:height];
 }
 
 - (void)setSubtitleHMargin:(float)hMargin
@@ -147,11 +153,11 @@
 - (void)changeSubtitleVMargin:(int)tag
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    float vmargin = [_defaults floatForKey:MSubtitleVMarginKey];
+    float vmargin;
     switch (tag) {
-        case -1 : vmargin = [_movieView subtitleVMargin] - 1.0; break;
-        case  0 : /* use as it is */                            break;
-        case +1 : vmargin = [_movieView subtitleVMargin] + 1.0; break;
+        case -1 : vmargin = [_movieView subtitleVMargin] - 1.0;         break;
+        case +1 : vmargin = [_movieView subtitleVMargin] + 1.0;         break;
+        default : vmargin = [_defaults floatForKey:MSubtitleVMarginKey];break;
     }
     [self setSubtitleVMargin:vmargin];
 }
@@ -165,11 +171,11 @@
 
 - (void)changeSubtitleSync:(int)tag
 {
-    float sync = 0.0;
+    float sync;
     switch (tag) {
         case -1 : sync = [_movieView subtitleSync] - 0.1;   break;
-        case  0 : /* use as it is */                        break;
         case +1 : sync = [_movieView subtitleSync] + 0.1;   break;
+        default : sync = 0.0;                               break;
     }
     [self setSubtitleSync:sync];
 }
@@ -227,23 +233,72 @@
 - (void)changeSubtitle:(int)tag
 {
     int index = tag;
-    if (index < 0) { // rotation
-        int i, count = [_subtitles count];
-        for (i = 0; i < count; i++) {
+    if (0 <= index) {
+        int i, subtitleCount = [_subtitles count];
+        for (i = 0; i < subtitleCount; i++) {
+            [[_subtitles objectAtIndex:i] setEnabled:(i == index)];
+        }
+    }
+    else {  // rotation
+        if ([_subtitles count] <= 1) {
+            return;
+        }
+        // make index set combination (max 2 subtitles)
+        NSMutableIndexSet* indexSet;
+        int i, j, subtitleCount = [_subtitles count];
+        NSMutableArray* combiSets = [NSMutableArray arrayWithCapacity:10];
+        for (i = 0; i < subtitleCount; i++) {
+            indexSet = [[[NSMutableIndexSet alloc] init] autorelease];
+            [indexSet addIndex:i];
+            [combiSets addObject:indexSet];
+        }
+        for (i = 0; i < subtitleCount; i++) {
+            for (j = i + 1; j < subtitleCount; j++) {
+                indexSet = [[[NSMutableIndexSet alloc] init] autorelease];
+                [indexSet addIndex:i];
+                [indexSet addIndex:j];
+                [combiSets addObject:indexSet];
+            }
+        }
+        //TRACE(@"combiSets=%@", combiSets);
+
+        // current index set
+        indexSet = [[[NSMutableIndexSet alloc] init] autorelease];
+        for (i = 0; i < subtitleCount; i++) {
             if ([[_subtitles objectAtIndex:i] isEnabled]) {
+                [indexSet addIndex:i];
+            }
+        }
+
+        // find next index set
+        for (i = 0; i < [combiSets count]; i++) {
+            if ([indexSet isEqualToIndexSet:[combiSets objectAtIndex:i]]) {
+                indexSet = [combiSets objectAtIndex:(i + 1) % [combiSets count]];
                 break;
             }
         }
-        index = (i + 1) % count;
+        for (i = 0; i < subtitleCount; i++) {
+            [[_subtitles objectAtIndex:i] setEnabled:[indexSet containsIndex:i]];
+        }
     }
-    int i, count = [_subtitles count];
-    for (i = 0; i < count; i++) {
-        [[_subtitles objectAtIndex:i] setEnabled:(i == index)];
+
+    MSubtitle* subtitle;
+    int i, subtitleCount = [_subtitles count];
+    NSMutableString* names = [[NSMutableString alloc] initWithCapacity:64];
+    for (i = 0; i < subtitleCount; i++) {
+        subtitle = [_subtitles objectAtIndex:i];
+        if ([subtitle isEnabled]) {
+            if ([names length] == 0) {
+                [names appendString:[subtitle name]];
+            }
+            else {
+                [names appendFormat:@", %@", [subtitle name]];
+            }
+        }
     }
     [_movieView setSubtitles:_subtitles];   // for update
     [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Subtitle %@ selected", nil),
-        [[_subtitles objectAtIndex:index] name]]];
+        NSLocalizedString(@"Subtitle %@ selected", nil), names]];
     [self updateSubtitleLanguageMenuItems];
     [_propertiesView reloadData];
 }
@@ -340,15 +395,14 @@
     [self setSubtitleDisplayOnLetterBox:display];
 }
 
-- (IBAction)subtitleLinesInLetterBoxAction:(id)sender
+- (IBAction)letterBoxHeightAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (sender == _preferenceController) {
-        int lines = [_defaults integerForKey:MSubtitleLinesInLetterBoxKey];
-        [self setSubtitleLinesInLetterBox:lines];
+        [self setLetterBoxHeight:[_defaults integerForKey:MSubtitleLetterBoxHeightKey]];
     }
     else {
-        [self changeSubtitleLinesInLetterBox:[sender tag]];
+        [self changeLetterBoxHeight:[sender tag]];
     }
 }
 

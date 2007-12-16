@@ -66,7 +66,7 @@ NSString* MSubtitleShadowDarknessKey        = @"SubtitleShadowDarkness";
 NSString* MSubtitleHMarginKey               = @"SubtitleHMargin";
 NSString* MSubtitleVMarginKey               = @"SubtitleVMargin";
 NSString* MSubtitleDisplayOnLetterBoxKey    = @"SubtitleDisplayOnLetterBox";
-NSString* MSubtitleLinesInLetterBoxKey      = @"SubtitleLinesInLetterBox";
+NSString* MSubtitleLetterBoxHeightKey       = @"SubtitleLetterBoxHeight";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 
 #pragma mark -
@@ -124,11 +124,11 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     [dict setObject:[NSNumber numberWithFloat:2.0] forKey:MSubtitleStrokeWidthKey];
     color = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
     [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleShadowColorKey];
-    [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleShadowOffsetKey];
+    [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleShadowOffsetKey];
     [dict setObject:[NSNumber numberWithFloat:2.5] forKey:MSubtitleShadowBlurKey];
     [dict setObject:[NSNumber numberWithInt:5] forKey:MSubtitleShadowDarknessKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleDisplayOnLetterBoxKey];
-    [dict setObject:[NSNumber numberWithInt:2] forKey:MSubtitleLinesInLetterBoxKey];
+    [dict setObject:[NSNumber numberWithInt:LETTER_BOX_HEIGHT_DEFAULT] forKey:MSubtitleLetterBoxHeightKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleHMarginKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleVMarginKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];

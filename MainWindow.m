@@ -76,6 +76,23 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (NSButton*)createDecoderButton
+{
+    NSButton* closeButton = [self standardWindowButton:NSWindowCloseButton];
+    NSView* superview = [closeButton superview];
+    NSRect rc = [closeButton frame];
+    rc.origin.x = NSMaxX([superview bounds]) - rc.origin.x - rc.size.width;
+    NSButton* decoderButton = [[NSButton alloc] initWithFrame:rc];
+    [decoderButton setAutoresizingMask:NSViewMinXMargin | NSViewMinYMargin];
+    [decoderButton setBordered:FALSE];
+    [decoderButton setTitle:@""];
+    [decoderButton setTarget:[NSApp delegate]];
+    [decoderButton setAction:@selector(reopenMovieAction:)];
+    [decoderButton setToolTip:NSLocalizedString(@"Decoder", nil)];
+    [superview addSubview:decoderButton];
+    return decoderButton;
+}
+
 - (MMovieView*)movieView { return _movieView; }
 
 - (BOOL)alwaysOnTop { return _alwaysOnTop; }

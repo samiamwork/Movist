@@ -1,5 +1,7 @@
 /* App General */
+"Unsupported OS Version Warning" = "Movist supports only Mac OS X 10.4 or higher";
 "Cancel" = "Cancel";
+"Decoder" = "Decoder";
 
 /* Check for Updates */
 "Checking for Updates..." = "Checking for Updates...";
@@ -65,8 +67,9 @@
 /* Message: Subtitle */
 "Display Subtitle on Letter Box" = "Display Subtitle on Letter Box";
 "Display Subtitle on Movie" = "Display Subtitle on Movie";
-"%d Lines in Letter Box" = "%d Lines in Letter Box";
-"Letter Box Default Size" = "Letter Box Default Size";
+"Letter Box Height: %@" = "Letter Box Height: %@";
+"Default Height" = "Default Height";
+"%d Line(s) Height" = "%d Line(s) Height";
 "Subtitle HMargin %.1f %%" = "Subtitle HMargin %.1f %%";
 "Subtitle VMargin %.1f %%" = "Subtitle VMargin %.1f %%";
 "Subtitle Size %.1f" = "Subtitle Size %.1f";

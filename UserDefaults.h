@@ -72,7 +72,7 @@ extern NSString* MSubtitleShadowBlurKey;
 extern NSString* MSubtitleShadowOffsetKey;
 extern NSString* MSubtitleShadowDarknessKey;
 extern NSString* MSubtitleDisplayOnLetterBoxKey;
-extern NSString* MSubtitleLinesInLetterBoxKey;
+extern NSString* MSubtitleLetterBoxHeightKey;
 extern NSString* MSubtitleHMarginKey;
 extern NSString* MSubtitleVMarginKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;

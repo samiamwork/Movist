@@ -22,6 +22,16 @@
 
 #import "Movist.h"
 
+@interface HoverButton : NSButton
+{
+}
+
+- (void)setHoverImage:(NSImage*)image;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
 @interface TimeTextField : NSTextField
 {
     BOOL _clickable;

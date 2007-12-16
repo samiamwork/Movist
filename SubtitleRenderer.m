@@ -136,7 +136,7 @@
 
 - (int)requestRemakeImages
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_subtitles) {
         _removeCount = [_subtitleImages count];
         _requestedTime = _lastRequestedTime;
@@ -419,7 +419,7 @@
 - (void)clearImages
 {
     [_conditionLock lock];
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     int condition = [self requestRemakeImages];
     [_conditionLock unlockWithCondition:condition];
 }
@@ -430,8 +430,8 @@
 - (void)updateRenderInterval
 {
     _renderInterval = ([_subtitleImages count] == 0) ? 0 :
-                                ([[_subtitleImages lastObject] endTime] -
-                                 [[_subtitleImages objectAtIndex:0] beginTime]);
+                ([(MSubtitleStringImage*)[_subtitleImages lastObject] endTime] -
+                 [(MSubtitleStringImage*)[_subtitleImages objectAtIndex:0] beginTime]);
 }
 
 - (void)removeOldestImages
