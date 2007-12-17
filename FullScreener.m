@@ -187,7 +187,9 @@
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [[_mainWindow contentView] addSubview:_movieView];
     [_movieView setFrame:_movieViewRect];
+    [_movieView updateMovieRect:FALSE];
     [_movieView unlockDraw];
+    [_movieView display];
 
     [_mainWindow makeFirstResponder:_movieView];
     [_mainWindow makeKeyAndOrderFront:nil];
@@ -213,7 +215,6 @@
 
     if (effect == FS_EFFECT_FADE) {
         [_mainWindow flushWindow];
-        [_movieView display];
         [[_mainWindow screen] fadeIn:FADE_EFFECT_DURATION];
         [[_movieView movie] setRate:rate];
     }

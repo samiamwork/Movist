@@ -377,11 +377,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, display ? @"display" : @"no-display");
     [_drawLock lock];
     if (!_movie) {
-        if (![[NSApp delegate] isFullScreen]) {
-            NSRect mr = [self bounds];
-            [_iconOSD setMovieRect:mr];
-            [_messageOSD setMovieRect:mr];
-        }
+        NSRect mr = [self bounds];
+        [_iconOSD setMovieRect:mr];
+        [_messageOSD setMovieRect:mr];
     }
     else {
         NSSize bs = [self bounds].size;
