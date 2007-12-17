@@ -253,14 +253,14 @@
 
 - (void)addNavListWithParentItem:(FullNavItem*)parentItem items:(NSArray*)items
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_listArray addObject:[[FullNavList alloc] initWithParentItem:parentItem items:items]];
     [self updateListUI];
 }
 
 - (void)removeLastNavList
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([self canCloseCurrent]) {    // cannot remove root list
         [_listArray removeLastObject];
         [self updateListUI];
@@ -273,6 +273,7 @@
 
 - (void)selectUpper
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     FullNavList* list = (FullNavList*)[_listArray lastObject];
     if (0 < [list selectedIndex]) {
         //[self hidePreview];
@@ -285,6 +286,7 @@
 
 - (void)selectLower
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     FullNavList* list = (FullNavList*)[_listArray lastObject];
     if ([list selectedIndex] < [list count] - 1) {
         //[self hidePreview];
@@ -297,6 +299,7 @@
 
 - (void)selectMovie:(NSURL*)movieURL
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     FullNavList* list = (FullNavList*)[_listArray lastObject];
 
     // assume movieURL is file URL.
@@ -330,6 +333,7 @@
 
 - (void)openSubContents:(FullNavItem*)item
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSWindow* window = [self window];
     NSScreen* screen = [window screen];
     [screen fadeOut:FADE_DURATION];
@@ -342,6 +346,7 @@
 
 - (void)closeSubContents
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // exit from sub-contents
     NSWindow* window = [self window];
     NSScreen* screen = [window screen];
@@ -356,6 +361,7 @@
 
 - (void)openCurrentMovie:(FullNavItem*)item
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSWindow* window = [self window];
     NSScreen* screen = [window screen];
 
@@ -396,6 +402,7 @@
 
 - (void)closeCurrentMovie
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // exit from full-screen movie
     NSWindow* window = [self window];
     NSScreen* screen = [window screen];
@@ -422,7 +429,7 @@
 
 - (void)openCurrent
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     FullNavItem* item = [(FullNavList*)[_listArray lastObject] selectedItem];
     if (item == nil) {
         // do nothing
@@ -437,7 +444,7 @@
 
 - (BOOL)closeCurrent
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([self isHidden]) {
         [self closeCurrentMovie];
         return TRUE;
@@ -464,8 +471,13 @@
 
 - (void)showPreview:(NSTimer*)timer
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self endPreviewTimer];
     [_movieView setError:nil info:nil]; // clear previous error
+
+    if ([_movieView window] != [self window]) {
+        return; // if timer is expired after exiting navigation, then ignore it.
+    }
 
     FullNavItem* item = [(FullNavList*)[_listArray lastObject] selectedItem];
     if (item == nil) {
@@ -490,6 +502,7 @@
 
 - (void)showPreview
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self endPreviewTimer];    // release previous timer
     _previewTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
                                 target:self selector:@selector(showPreview:)
@@ -498,6 +511,7 @@
 
 - (void)hidePreview
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![_movieView isHidden]) {
         [[NSApp delegate] closeMovie];
         [_movieView setError:nil info:nil];

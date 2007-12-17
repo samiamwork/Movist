@@ -150,7 +150,7 @@
 
 @implementation FullWindow (Navigation)
 
-- (BOOL)isNavigatable   {return (nil != _navView); }
+- (BOOL)isNavigatable   { return (nil != _navView); }
 - (BOOL)isNavigating    { return (_navView && ![_navView isHidden]); }
 - (BOOL)isPreviewing    { return ([self isNavigating] && ![_movieView isHidden]); }
 
