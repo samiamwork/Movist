@@ -381,6 +381,19 @@
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [menuItem title]);
     if ([[NSApp keyWindow] firstResponder] != _movieView) {
+        if ([NSApp keyWindow] == [_fullScreener fullWindow]) {
+            if ([menuItem action] == @selector(prevNextMovieAction:)) {
+                return (0 < [_playlist count]);
+            }
+            if ([menuItem action] == @selector(seekAction:)) {
+                if ([menuItem tag] == 40 || [menuItem tag] == -40) {
+                    return (_movie != nil && _subtitles != nil);
+                }
+                else {
+                    return (_movie != nil);
+                }
+            }
+        }
         if ([NSApp keyWindow] == [_playlistController window] &&
             [menuItem action] == @selector(playlistAction:)) {
             return TRUE;

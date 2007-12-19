@@ -23,6 +23,7 @@
 #import "FullNavView.h"
 
 #import "AppController.h"
+#import "Playlist.h"
 #import "MMovieView.h"
 #import "FullNavItems.h"
 #import "FullNavListView.h"
@@ -201,13 +202,11 @@
         case ' ' :                          // space: toggle play/pause
         case NSCarriageReturnCharacter :    // return : toggle full-screen
         case NSEnterCharacter :             // enter (in keypad)
-        //case NSRightArrowFunctionKey :      // right arrow
             [self openCurrent];
             break;
 
         case 27 :                           // ESC
         //case NSBackspaceCharacter :         // backsapce
-        //case NSLeftArrowFunctionKey :       // left arrow
             if (![self closeCurrent]) {
                 [[NSApp delegate] endFullNavigation];
             }
@@ -301,11 +300,9 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     FullNavList* list = (FullNavList*)[_listArray lastObject];
     if (0 < [list selectedIndex]) {
-        //[self hidePreview];
         [list selectUpper];
         [self showPreview];
         [_listView slideSelBox];
-        //[_listView setNeedsDisplay:TRUE];
     }
 }
 
@@ -314,11 +311,9 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     FullNavList* list = (FullNavList*)[_listArray lastObject];
     if ([list selectedIndex] < [list count] - 1) {
-        //[self hidePreview];
         [list selectLower];
         [self showPreview];
         [_listView slideSelBox];
-        //[_listView setNeedsDisplay:TRUE];
     }
 }
 
@@ -338,15 +333,9 @@
         }
     }
     if (i < count && i != [list selectedIndex]) {
-        //if (![self isHidden]) {
-        //    [self hidePreview];
-        //}
         [list selectAtIndex:i];
-        if (![self isHidden]) {
-            [self showPreview];
-            [_listView slideSelBox];
-            //[_listView setNeedsDisplay:TRUE];
-        }
+        [self showPreview];
+        [_listView slideSelBox];
     }
 }
 
@@ -496,11 +485,12 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self endPreviewTimer];
-    [_movieView setError:nil info:nil]; // clear previous error
 
-    if ([_movieView window] != [self window]) {
+    if ([self isHidden] || [_movieView window] != [self window]) {
         return; // if timer is expired after exiting navigation, then ignore it.
     }
+
+    [_movieView setError:nil info:nil]; // clear previous error
 
     FullNavItem* item = [(FullNavList*)[_listArray lastObject] selectedItem];
     if (item == nil) {
@@ -511,8 +501,7 @@
     }
     else {
         if ([item isMemberOfClass:[FullNavFileItem class]]) {
-            [[NSApp delegate] openFile:[(FullNavFileItem*)item path]
-                             addSeries:FALSE];
+            [[NSApp delegate] openFile:[(FullNavFileItem*)item path] option:OPTION_ALL];
         }
         else if ([item isMemberOfClass:[FullNavURLItem class]]) {
             [[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
@@ -527,15 +516,18 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self endPreviewTimer];    // release previous timer
-    _previewTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
-                                target:self selector:@selector(showPreview:)
-                                userInfo:nil repeats:FALSE];
+
+    if (![self isHidden]) {
+        _previewTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                    target:self selector:@selector(showPreview:)
+                                    userInfo:nil repeats:FALSE];
+    }
 }
 
 - (void)hidePreview
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![_movieView isHidden]) {
+    if (![self isHidden] && ![_movieView isHidden]) {
         [[NSApp delegate] closeMovie];
         [_movieView setError:nil info:nil];
         [_movieView display];

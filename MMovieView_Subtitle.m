@@ -230,9 +230,11 @@
     MSubtitle* subtitle;
     NSEnumerator* enumerator = [_subtitles objectEnumerator];
     while (subtitle = [enumerator nextObject]) {
-        t = [subtitle prevSubtitleTime:ct];
-        if (prevTime < t) {
-            prevTime = t;
+        if ([subtitle isEnabled]) {
+            t = [subtitle prevSubtitleTime:ct];
+            if (prevTime < t) {
+                prevTime = t;
+            }
         }
     }
     return prevTime;
@@ -246,9 +248,11 @@
     MSubtitle* subtitle;
     NSEnumerator* enumerator = [_subtitles objectEnumerator];
     while (subtitle = [enumerator nextObject]) {
-        t = [subtitle nextSubtitleTime:ct];
-        if (t < nextTime) {
-            nextTime = t;
+        if ([subtitle isEnabled]) {
+            t = [subtitle nextSubtitleTime:ct];
+            if (t < nextTime) {
+                nextTime = t;
+            }
         }
     }
     return nextTime;

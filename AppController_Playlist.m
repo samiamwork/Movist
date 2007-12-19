@@ -27,6 +27,7 @@
 
 #import "MainWindow.h"
 #import "MMovieView.h"
+#import "FullScreener.h"
 #import "PlayPanel.h"
 
 @implementation AppController (Playlist)
@@ -67,6 +68,27 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist setNextItem];
     return [self openCurrentPlaylistItem];
+}
+
+- (void)playlistEnded
+{
+    if ([self isFullScreen]) {
+        if ([_fullScreener isNavigating]) {
+            // preview is over => do nothing
+        }
+        else if ([_fullScreener isNavigatable]) {
+            [_fullScreener closeCurrent];
+        }
+        else {
+            [self endFullScreen];
+            [_movieView setMessage:@""];
+            [_movieView showLogo];
+        }
+    }
+    else {
+        [_movieView setMessage:@""];
+        [_movieView showLogo];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -148,11 +170,7 @@
     BOOL ret = ([sender tag] < 0) ? [self openPrevPlaylistItem] :
                                     [self openNextPlaylistItem];
     if (!ret) {
-        if ([self isFullScreen]) {
-            [self endFullScreen];
-        }
-        [_movieView setMessage:@""];
-        [_movieView showLogo];
+        [self playlistEnded];
     }
 }
 

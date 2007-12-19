@@ -242,23 +242,7 @@
         [_playlistController updateUI];
 
         if (![self openNextPlaylistItem]) {
-            if ([self isFullScreen]) {
-                if ([_fullScreener isNavigating]) {
-                    // preview is over => do nothing
-                }
-                else if ([_fullScreener isNavigatable]) {
-                    [_fullScreener closeCurrent];
-                }
-                else {
-                    [self endFullScreen];
-                    [_movieView setMessage:@""];
-                    [_movieView showLogo];
-                }
-            }
-            else {
-                [_movieView setMessage:@""];
-                [_movieView showLogo];
-            }
+            [self playlistEnded];
         }
     }
 }

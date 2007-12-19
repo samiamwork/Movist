@@ -123,7 +123,7 @@
     [panel setCanChooseDirectories:TRUE];
     if (NSOKButton == [panel runModalForTypes:nil]) {
         int row = MAX(0, [[_tableView selectedRowIndexes] firstIndex]);
-        [_playlist insertFile:[panel filename] atIndex:row addSeries:FALSE];
+        [_playlist insertFile:[panel filename] atIndex:row option:OPTION_ONLY];
         [self updateUI];
 
         [_tableView selectRow:row byExtendingSelection:FALSE];

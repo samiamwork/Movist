@@ -170,11 +170,12 @@
 - (int)count                            { return [_array count]; }
 - (PlaylistItem*)itemAtIndex:(int)index { return [_array objectAtIndex:index]; }
 
-- (void)addFile:(NSString*)filename addSeries:(BOOL)addSeries
+- (void)addFile:(NSString*)filename option:(int)option
 {
-    TRACE(@"%s \"%@\" %@", __PRETTY_FUNCTION__,
-          filename, addSeries ? @"addSeries" : @"only one");
-    [self insertFile:filename atIndex:[_array count] addSeries:addSeries];
+    TRACE(@"%s \"%@\" %@", __PRETTY_FUNCTION__, filename,
+          (option == OPTION_ONLY) ? @"only" :
+          (option == OPTION_SERIES)  ? @"series" : @"all");
+    [self insertFile:filename atIndex:[_array count] option:option];
 }
 
 - (void)addFiles:(NSArray*)filenames
@@ -189,11 +190,11 @@
     [self insertURL:movieURL atIndex:[_array count]];
 }
 
-- (int)insertFile:(NSString*)filename atIndex:(unsigned int)index
-        addSeries:(BOOL)addSeries
+- (int)insertFile:(NSString*)filename atIndex:(unsigned int)index option:(int)option
 {
-    TRACE(@"%s \"%@\" at %d %@", __PRETTY_FUNCTION__,
-          filename, index, addSeries ? @"addSeries" : @"only one");
+    TRACE(@"%s \"%@\" at %d %@", __PRETTY_FUNCTION__, filename, index,
+          (option == OPTION_ONLY) ? @"only" :
+          (option == OPTION_SERIES)  ? @"series" : @"all");
     BOOL isDirectory;
     NSFileManager* fileManager = [NSFileManager defaultManager];
     if (![fileManager fileExistsAtPath:filename isDirectory:&isDirectory]) {
@@ -212,7 +213,7 @@
         }
         return [contents count];
     }
-    else if (addSeries) {
+    else if (option != OPTION_ONLY) {
         NSString* directory = [filename stringByDeletingLastPathComponent];
         NSString* movieFilename = [filename lastPathComponent];
 
@@ -220,7 +221,8 @@
         NSEnumerator* enumerator = [contents objectEnumerator];
         while (filename = [enumerator nextObject]) {
             if ([filename hasAnyExtension:[MMovie movieTypes]] &&
-                [self checkMovieSeriesFile:filename forMovieFile:movieFilename]) {
+                (option == OPTION_ALL || (option == OPTION_SERIES &&
+                  [self checkMovieSeriesFile:filename forMovieFile:movieFilename]))) {
                 [self insertURL:[NSURL fileURLWithPath:
                             [directory stringByAppendingPathComponent:filename]]
                         atIndex:index++];
@@ -245,7 +247,7 @@
     NSString* filename;
     NSEnumerator* enumerator = [filenames objectEnumerator];
     while (filename = [enumerator nextObject]) {
-        index += [self insertFile:filename atIndex:index addSeries:FALSE];
+        index += [self insertFile:filename atIndex:index option:OPTION_ONLY];
     }
 }
 

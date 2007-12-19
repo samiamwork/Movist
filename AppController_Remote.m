@@ -152,7 +152,7 @@
         [self seekBackward:seekIndex];
     }
     else {                                      // full navigation mode
-        // do nothing
+        [self seekBackward:seekIndex];
     }
 }
 
@@ -165,7 +165,7 @@
         [self seekForward:seekIndex];
     }
     else {                                      // full navigation mode
-        // do nothing
+        [self seekForward:seekIndex];
     }
 }
 

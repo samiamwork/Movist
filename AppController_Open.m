@@ -260,7 +260,7 @@
 - (BOOL)openFiles:(NSArray*)filenames
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    return [self openFiles:filenames addSeries:TRUE];
+    return [self openFiles:filenames option:OPTION_SERIES];
 }
 
 - (BOOL)openURL:(NSURL*)url
@@ -288,14 +288,13 @@
      */
 }
 
-- (BOOL)openFile:(NSString*)filename addSeries:(BOOL)addSeries
+- (BOOL)openFile:(NSString*)filename option:(int)option
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    return [self openFiles:[NSArray arrayWithObject:filename]
-                 addSeries:addSeries];
+    return [self openFiles:[NSArray arrayWithObject:filename] option:option];
 }
 
-- (BOOL)openFiles:(NSArray*)filenames addSeries:(BOOL)addSeries
+- (BOOL)openFiles:(NSArray*)filenames option:(int)option
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![_mainWindow isVisible]) {
@@ -315,7 +314,7 @@
     else {
         [_playlist removeAllItems];
         if ([filenames count] == 1) {
-            [_playlist addFile:[filenames objectAtIndex:0] addSeries:addSeries];
+            [_playlist addFile:[filenames objectAtIndex:0] option:option];
         }
         else {
             [_playlist addFiles:filenames];

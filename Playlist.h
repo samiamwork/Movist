@@ -51,6 +51,12 @@ enum {
     MAX_REPEAT_MODE,
 };
 
+enum {
+    OPTION_ONLY,
+    OPTION_SERIES,
+    OPTION_ALL,
+};
+
 @interface Playlist : NSObject
 {
     NSMutableArray* _array;     // array of PlaylistItem
@@ -63,11 +69,10 @@ enum {
 #pragma mark add/remove
 - (int)count;
 - (PlaylistItem*)itemAtIndex:(int)index;
-- (void)addFile:(NSString*)filename addSeries:(BOOL)addSeries;
+- (void)addFile:(NSString*)filename option:(int)option;
 - (void)addFiles:(NSArray*)filenames;
 - (void)addURL:(NSURL*)movieURL;
-- (int)insertFile:(NSString*)filename atIndex:(unsigned int)index
-        addSeries:(BOOL)addSeries;
+- (int)insertFile:(NSString*)filename atIndex:(unsigned int)index option:(int)option;
 - (void)insertFiles:(NSArray*)filenames atIndex:(unsigned int)index;
 - (void)insertURL:(NSURL*)movieURL atIndex:(unsigned int)index;
 - (unsigned int)moveItemsAtIndexes:(NSIndexSet*)indexes

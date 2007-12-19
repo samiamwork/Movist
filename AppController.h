@@ -158,8 +158,8 @@
 - (BOOL)openFile:(NSString*)filename;
 - (BOOL)openFiles:(NSArray*)filenames;
 - (BOOL)openURL:(NSURL*)url;
-- (BOOL)openFile:(NSString*)filename addSeries:(BOOL)addSeries;
-- (BOOL)openFiles:(NSArray*)filenames addSeries:(BOOL)addSeries;
+- (BOOL)openFile:(NSString*)filename option:(int)option;
+- (BOOL)openFiles:(NSArray*)filenames option:(int)option;
 - (BOOL)openMovie:(NSURL*)movieURL movieClass:(Class)movieClass
          subtitle:(NSURL*)subtitleURL subtitleEncoding:(CFStringEncoding)subtitleEncoding;
 - (BOOL)openSubtitle:(NSURL*)subtitleURL encoding:(CFStringEncoding)encoding;
@@ -189,6 +189,7 @@
 - (BOOL)openCurrentPlaylistItem;
 - (BOOL)openPrevPlaylistItem;
 - (BOOL)openNextPlaylistItem;
+- (void)playlistEnded;
 
 - (BOOL)playlistWindowVisible;
 - (void)showPlaylistWindow;
