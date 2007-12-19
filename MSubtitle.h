@@ -42,6 +42,8 @@
 - (NSString*)type;
 - (NSString*)name;
 - (BOOL)isEmpty;
+- (float)beginTime;
+- (float)endTime;
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
 - (void)setName:(NSString*)name;

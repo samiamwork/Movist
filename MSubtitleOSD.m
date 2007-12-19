@@ -66,12 +66,7 @@
     assert(string != nil && name != nil);
     NSAttributedString* prevString = [self stringForName:name];
     if (!prevString || ![prevString isEqualToAttributedString:string]) {
-        if ([string length] == 0) {
-            [_strings removeObjectForKey:name];
-        }
-        else {
-            [_strings setObject:string forKey:name];
-        }
+        [_strings setObject:string forKey:name];
         _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
         return TRUE;
     }

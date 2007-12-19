@@ -160,6 +160,9 @@
 }
 
 - (BOOL)isEmpty { return ([_strings count] == 0); }
+- (float)beginTime { return [self isEmpty] ? 0 : [[_strings objectAtIndex:0] beginTime]; }
+- (float)endTime   { return [self isEmpty] ? 0 : [[_strings lastObject] endTime]; }
+
 - (BOOL)isEnabled { return _enabled; }
 - (void)setEnabled:(BOOL)enabled { _enabled = enabled; }
 

@@ -30,6 +30,8 @@
     MMovieView* _movieView;
 
     NSArray* _subtitles;
+    float _subtitlesBeginTime;
+    float _subtitlesEndTime;
     NSLock* _subtitlesLock;
     MSubtitleOSD* _subtitleOSD;
     NSMutableArray* _subtitleImages;    // for MSubtitleStringImage
