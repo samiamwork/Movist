@@ -1,13 +1,12 @@
 /* App General */
-"Unsupported OS Version Warning" = "Movist supports only Mac OS X 10.4 or higher";
 "Cancel" = "Cancel";
 "Decoder" = "Decoder";
 
 /* Check for Updates */
 "Checking for Updates..." = "Checking for Updates...";
-"No new version" = "No new version";
-"New version is available. (v%@)" = "New version is available. (v%@)";
-"Show New Version" = "Show New Version";
+"No update available." = "No update available.";
+"New version %@ is available." = "New version %@ is available.";
+"Show Updates" = "Show Updates";
 
 /* MainMenu: File */
 "Opening with %@..." = "Opening with %@...";

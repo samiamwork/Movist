@@ -132,11 +132,7 @@
         // enter into navigation mode
         NSRect rc = [[self contentView] bounds];
         rc.size.width /= 2;
-
-        float IN_MARGIN  = (float)(int)(rc.size.width * 0.075);
-        float OUT_MARGIN = (float)(int)(rc.size.width * 0.195);
-        rc.origin.x += rc.size.width + IN_MARGIN;
-        rc.size.width -= IN_MARGIN + OUT_MARGIN;
+        rc.origin.x += rc.size.width;
         _navView = [[FullNavView alloc] initWithFrame:rc movieView:_movieView];
         [[self contentView] addSubview:_navView];
         [self makeFirstResponder:_navView];

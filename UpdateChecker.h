@@ -22,11 +22,11 @@
 
 #import "Movist.h"
 
-#define NEW_VERSION_CHECK_FAILED    0
-#define NEW_VERSION_IS_AVAILABLE    1
-#define NEW_VERSION_NONE            2
+#define UPDATE_CHECK_FAILED    0
+#define NO_UPDATE_AVAILABLE    1
+#define NEW_VERSION_AVAILABLE  2
 
-@interface NewVersionChecker : NSObject
+@interface UpdateChecker : NSObject
 {
     NSString* CURRENT_VERSION;
     NSString* _newVersion;
@@ -36,6 +36,6 @@
 - (NSString*)newVersion;
 - (NSURL*)newVersionURL;
 
-- (int)checkNewVersion:(NSError**)error;
+- (int)checkUpdate:(NSError**)error;
 
 @end

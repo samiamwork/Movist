@@ -121,6 +121,9 @@
 
 @implementation FullNavView
 
+#define SEL_BOX_HMARGIN     60
+#define SEL_BOX_VMARGIN     16
+
 - (id)initWithFrame:(NSRect)rect movieView:(MMovieView*)movieView
 {
     if (self = [super initWithFrame:rect]) {
@@ -130,16 +133,21 @@
         float gap           = (float)(int)(rect.size.height * 0.025);
         float listHeight    = (float)(int)(rect.size.height * 0.66);
         float BOTTOM_MARGIN = (float)(int)(rect.size.height * 0.115);
+        float LEFT_MARGIN   = (float)(int)(rect.size.width  * 0.075);
+        float RIGHT_MARGIN  = (float)(int)(rect.size.width  * 0.195);
 
-        // list view
+        // list view & sel-box
         rect = [self bounds];
+        rect.origin.x += LEFT_MARGIN;
+        rect.size.width -= LEFT_MARGIN + RIGHT_MARGIN;
         rect.origin.y = BOTTOM_MARGIN;
         rect.size.height = listHeight;
         NSView* lcv = [[FullNavListContainerView alloc] initWithFrame:rect];
         _listView = [[FullNavListView alloc] initWithFrame:[lcv bounds]
                                                     window:[movieView window]];
-        [self addSubview:[lcv autorelease]];
         [lcv addSubview:_listView];
+        [self addSubview:[lcv autorelease]];
+        [self addSubview:[_listView createSelBox]];
 
         // title view
         rect.origin.y += listHeight + gap;
@@ -167,12 +175,6 @@
     NSFrameRect([self bounds]);
 }
 */
-- (void)setHidden:(BOOL)hidden
-{
-    (hidden) ? [_listView hideSelBox] : [_listView showSelBox];
-    [super setHidden:hidden];
-}
-
 - (void)keyDown:(NSEvent*)event
 {
     //TRACE(@"%s \"%@\" (modifierFlags=%u)", __PRETTY_FUNCTION__,
@@ -180,25 +182,48 @@
     unichar key = [[event characters] characterAtIndex:0];
     //unsigned int modifierFlags = [event modifierFlags] &
     //    (NSCommandKeyMask | NSAlternateKeyMask | NSControlKeyMask | NSShiftKeyMask);
+    NSDate* now = [NSDate date];
     switch (key) {
         case NSUpArrowFunctionKey :         // up arrow
-            [self selectUpper];
-            break;
         case NSDownArrowFunctionKey :       // down arrow
-            [self selectLower];
+            if (!_lastUpDownKeyTime ||
+                0.02 <= [now timeIntervalSinceDate:_lastUpDownKeyTime]) {
+                if (key == NSUpArrowFunctionKey) {
+                    [self selectUpper];
+                }
+                else {
+                    [self selectLower];
+                }
+                _lastUpDownKeyTime = [now retain];
+            }
             break;
+
         case ' ' :                          // space: toggle play/pause
         case NSCarriageReturnCharacter :    // return : toggle full-screen
         case NSEnterCharacter :             // enter (in keypad)
         //case NSRightArrowFunctionKey :      // right arrow
             [self openCurrent];
             break;
+
         case 27 :                           // ESC
         //case NSBackspaceCharacter :         // backsapce
         //case NSLeftArrowFunctionKey :       // left arrow
             if (![self closeCurrent]) {
                 [[NSApp delegate] endFullNavigation];
             }
+            break;
+    }
+}
+
+- (void)keyUp:(NSEvent*)event
+{
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [event characters]);
+    unichar key = [[event characters] characterAtIndex:0];
+    switch (key) {
+        case NSUpArrowFunctionKey :         // up arrow
+        case NSDownArrowFunctionKey :       // down arrow
+            [_lastUpDownKeyTime release];
+            _lastUpDownKeyTime = nil;
             break;
     }
 }
@@ -375,7 +400,6 @@
         [self hidePreview];
     }
     [self setHidden:TRUE];
-    [_listView hideSelBox];
     [_movieView hideLogo];
 
     [movie gotoBeginning];
@@ -415,7 +439,6 @@
     [_movieView setFrame:[self previewRect]];
     [_movieView updateSubtitle];
     [_movieView setHidden:FALSE];
-    [_listView showSelBox];
     [window makeFirstResponder:self];
 
     [window flushWindow];

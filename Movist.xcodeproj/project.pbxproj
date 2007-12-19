@@ -82,7 +82,6 @@
 		AF5143170C3C252C00BDACB7 /* FSSeekSliderLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5143140C3C252C00BDACB7 /* FSSeekSliderLeft.tiff */; };
 		AF5143180C3C252C00BDACB7 /* FSSeekSliderRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5143150C3C252C00BDACB7 /* FSSeekSliderRight.tiff */; };
 		AF5143190C3C252C00BDACB7 /* FSSeekSliderCenter.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5143160C3C252C00BDACB7 /* FSSeekSliderCenter.tiff */; };
-		AF51FF320D0BBA47005824F1 /* NewVersionChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = AF51FF300D0BBA47005824F1 /* NewVersionChecker.m */; };
 		AF5A29430C2CEC0D00483AEB /* AppController_Open.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5A29420C2CEC0D00483AEB /* AppController_Open.m */; };
 		AF5A29930C2CF05000483AEB /* AppController_Subtitle.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5A29920C2CF05000483AEB /* AppController_Subtitle.m */; };
 		AF5A29970C2CF14A00483AEB /* AppController_Playlist.m in Sources */ = {isa = PBXBuildFile; fileRef = AF5A29960C2CF14A00483AEB /* AppController_Playlist.m */; };
@@ -106,6 +105,10 @@
 		AF76EF180BF60AE3000995C9 /* Playlist.nib in Resources */ = {isa = PBXBuildFile; fileRef = AF76EF160BF60AE2000995C9 /* Playlist.nib */; };
 		AF76EF260BF60B11000995C9 /* PlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = AF76EF250BF60B11000995C9 /* PlaylistController.m */; };
 		AF9569820BFEEABF002A60BE /* Movist.m in Sources */ = {isa = PBXBuildFile; fileRef = AF9569810BFEEABF002A60BE /* Movist.m */; };
+		AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */; };
+		AFADAB4C0D16F11C001686FA /* FSNavSelBoxCenter.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFADAB490D16F11C001686FA /* FSNavSelBoxCenter.tiff */; };
+		AFADAB4D0D16F11C001686FA /* FSNavSelBoxLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFADAB4A0D16F11C001686FA /* FSNavSelBoxLeft.tiff */; };
+		AFADAB4E0D16F11C001686FA /* FSNavSelBoxRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFADAB4B0D16F11C001686FA /* FSNavSelBoxRight.tiff */; };
 		AFAE79670C0A69FA005A988C /* MainPause.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFAE79520C0A69FA005A988C /* MainPause.tiff */; };
 		AFAE79680C0A69FA005A988C /* MainPausePressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFAE79530C0A69FA005A988C /* MainPausePressed.tiff */; };
 		AFAE79690C0A69FA005A988C /* MainPlaylist.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFAE79540C0A69FA005A988C /* MainPlaylist.tiff */; };
@@ -263,8 +266,6 @@
 		AF5143140C3C252C00BDACB7 /* FSSeekSliderLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderLeft.tiff; path = Images/FSSeekSliderLeft.tiff; sourceTree = "<group>"; };
 		AF5143150C3C252C00BDACB7 /* FSSeekSliderRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderRight.tiff; path = Images/FSSeekSliderRight.tiff; sourceTree = "<group>"; };
 		AF5143160C3C252C00BDACB7 /* FSSeekSliderCenter.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderCenter.tiff; path = Images/FSSeekSliderCenter.tiff; sourceTree = "<group>"; };
-		AF51FF300D0BBA47005824F1 /* NewVersionChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewVersionChecker.m; sourceTree = "<group>"; };
-		AF51FF310D0BBA47005824F1 /* NewVersionChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewVersionChecker.h; sourceTree = "<group>"; };
 		AF5A29420C2CEC0D00483AEB /* AppController_Open.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Open.m; sourceTree = "<group>"; };
 		AF5A29920C2CF05000483AEB /* AppController_Subtitle.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Subtitle.m; sourceTree = "<group>"; };
 		AF5A29960C2CF14A00483AEB /* AppController_Playlist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Playlist.m; sourceTree = "<group>"; };
@@ -289,6 +290,11 @@
 		AF76EF240BF60B11000995C9 /* PlaylistController.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = PlaylistController.h; sourceTree = "<group>"; };
 		AF76EF250BF60B11000995C9 /* PlaylistController.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = PlaylistController.m; sourceTree = "<group>"; };
 		AF9569810BFEEABF002A60BE /* Movist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = Movist.m; sourceTree = "<group>"; };
+		AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateChecker.h; sourceTree = "<group>"; };
+		AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateChecker.m; sourceTree = "<group>"; };
+		AFADAB490D16F11C001686FA /* FSNavSelBoxCenter.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNavSelBoxCenter.tiff; path = Images/FSNavSelBoxCenter.tiff; sourceTree = "<group>"; };
+		AFADAB4A0D16F11C001686FA /* FSNavSelBoxLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNavSelBoxLeft.tiff; path = Images/FSNavSelBoxLeft.tiff; sourceTree = "<group>"; };
+		AFADAB4B0D16F11C001686FA /* FSNavSelBoxRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNavSelBoxRight.tiff; path = Images/FSNavSelBoxRight.tiff; sourceTree = "<group>"; };
 		AFAE79520C0A69FA005A988C /* MainPause.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainPause.tiff; path = Images/MainPause.tiff; sourceTree = "<group>"; };
 		AFAE79530C0A69FA005A988C /* MainPausePressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainPausePressed.tiff; path = Images/MainPausePressed.tiff; sourceTree = "<group>"; };
 		AFAE79540C0A69FA005A988C /* MainPlaylist.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainPlaylist.tiff; path = Images/MainPlaylist.tiff; sourceTree = "<group>"; };
@@ -555,6 +561,9 @@
 				AFF80E1F0C31E16A00ADFD22 /* FSPlaylist.tiff */,
 				AF5E2FBA0D12E0EB00F49909 /* FSFFMPEG.tiff */,
 				AF5E2FBB0D12E0EB00F49909 /* FSQuickTime.tiff */,
+				AFADAB4A0D16F11C001686FA /* FSNavSelBoxLeft.tiff */,
+				AFADAB4B0D16F11C001686FA /* FSNavSelBoxRight.tiff */,
+				AFADAB490D16F11C001686FA /* FSNavSelBoxCenter.tiff */,
 				AF3492C20C48915C00CBDA34 /* ControlPanel_PrevMovie.tiff */,
 				AF3492BB0C48915C00CBDA34 /* ControlPanel_Beginning.tiff */,
 				AF3492C00C48915C00CBDA34 /* ControlPanel_Prev0.tiff */,
@@ -630,8 +639,8 @@
 				AF5A29EA0C2CF84F00483AEB /* AppController_Audio.m */,
 				AF5A29AE0C2CF64D00483AEB /* AppController_Video.m */,
 				AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */,
-				AF51FF310D0BBA47005824F1 /* NewVersionChecker.h */,
-				AF51FF300D0BBA47005824F1 /* NewVersionChecker.m */,
+				AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */,
+				AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */,
 				AFF4A8650C1B1E3F00B4F481 /* UserDefaults.h */,
 				AFF4A8660C1B1E3F00B4F481 /* UserDefaults.m */,
 			);
@@ -818,6 +827,9 @@
 				AF5E31E90D13905200F49909 /* MainPauseTiger.tiff in Resources */,
 				AF5E31EA0D13905200F49909 /* MainPlayPressedTiger.tiff in Resources */,
 				AF5E31EB0D13905200F49909 /* MainPlayTiger.tiff in Resources */,
+				AFADAB4C0D16F11C001686FA /* FSNavSelBoxCenter.tiff in Resources */,
+				AFADAB4D0D16F11C001686FA /* FSNavSelBoxLeft.tiff in Resources */,
+				AFADAB4E0D16F11C001686FA /* FSNavSelBoxRight.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -883,8 +895,8 @@
 				AF3568F60CF1D6AB00C0621A /* FullNavItems.m in Sources */,
 				AF3568F70CF1D6AB00C0621A /* FullNavListView.m in Sources */,
 				AFEE91F70CFC706800DB5C7A /* SubtitleRenderer.m in Sources */,
-				AF51FF320D0BBA47005824F1 /* NewVersionChecker.m in Sources */,
 				AFDCCCCF0D0CC5330098206C /* MMovie_FFMPEG_Index.m in Sources */,
+				AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

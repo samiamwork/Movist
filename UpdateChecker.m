@@ -20,10 +20,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#import "NewVersionChecker.h"
+#import "UpdateChecker.h"
 #import "MSubtitle.h"   // for NSString (MSubtitleParser) extension
 
-@implementation NewVersionChecker
+@implementation UpdateChecker
 
 - (id)init
 {
@@ -50,14 +50,14 @@
 - (NSString*)newVersion { return _newVersion; }
 - (NSURL*)newVersionURL { return _newVersionURL; }
 
-- (int)checkNewVersion:(NSError**)error
+- (int)checkUpdate:(NSError**)error
 {
     NSString* address = @"http://code.google.com/p/movist/downloads/list";
     NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:address]
                                          options:NSMappedRead | NSUncachedRead
                                            error:error];
     if (!data || [data length] == 0) {
-        return NEW_VERSION_CHECK_FAILED;
+        return UPDATE_CHECK_FAILED;
     }
 
     [_newVersion release], _newVersion = nil;
@@ -128,9 +128,9 @@
         TRACE(@"new version=\"%@\":\"%@\"", newVersion, newVersionURLString);
         _newVersion = [newVersion retain];
         _newVersionURL = [[NSURL URLWithString:newVersionURLString] retain];
-        return NEW_VERSION_IS_AVAILABLE;
+        return NEW_VERSION_AVAILABLE;
     }
-    return NEW_VERSION_NONE;
+    return NO_UPDATE_AVAILABLE;
 }
 
 @end

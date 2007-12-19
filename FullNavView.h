@@ -36,6 +36,7 @@
 
     FullNavTitleView* _titleView;
     FullNavListView* _listView;
+    NSDate* _lastUpDownKeyTime;
 }
 
 - (id)initWithFrame:(NSRect)rect movieView:(MMovieView*)movieView;

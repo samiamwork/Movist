@@ -21,23 +21,34 @@
 //
 
 #import "Movist.h"
+#import <QuartzCore/QuartzCore.h>
 
 @class FullNavList;
 
 @interface FullNavListView : NSView
 {
     FullNavList* _list;
-    int _listItemHeight;
-    NSWindow* _selBox;
+    float _itemHeight;
+    NSView* _selBox;
     NSViewAnimation* _animation;
+
+    // list vscroll-fade gradation
+    CIFilter* _tFilter;
+    CIFilter* _bFilter;
+
+    // item hscroll-fade gradation
+    CIFilter* _lFilter;
+    CIFilter* _rFilter;
+    NSTimer* _itemScrollTimer;
+    NSRect _itemScrollRect;
+    float _itemScrollSize;
 }
 
 - (id)initWithFrame:(NSRect)frame window:(NSWindow*)window;
 
 - (void)setNavList:(FullNavList*)list;
 
-- (void)showSelBox;
-- (void)hideSelBox;
+- (NSView*)createSelBox;
 - (void)slideSelBox;
 
 @end

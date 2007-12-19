@@ -21,7 +21,7 @@
 //
 
 #import "AppController.h"
-#import "NewVersionChecker.h"
+#import "UpdateChecker.h"
 #import "UserDefaults.h"
 
 #import "MMovie_FFMPEG.h"
@@ -291,12 +291,12 @@
     [_movieView display];
 
     NSError* error;
-    NewVersionChecker* checker = [[NewVersionChecker alloc] init];
-    int ret = [checker checkNewVersion:&error];
+    UpdateChecker* checker = [[UpdateChecker alloc] init];
+    int ret = [checker checkUpdate:&error];
     [_defaults setObject:[NSDate date] forKey:MLastUpdateCheckTimeKey];
     [_preferenceController updateLastUpdateCheckTimeTextField];
 
-    if (ret == NEW_VERSION_CHECK_FAILED) {
+    if (ret == UPDATE_CHECK_FAILED) {
         NSString* s = [NSString stringWithFormat:@"%@", error];
         if (manual) {   // only for manual checking
             NSRunAlertPanel([NSApp localizedAppName], s,
@@ -306,8 +306,8 @@
             [_movieView setMessage:s];
         }
     }
-    else if (ret == NEW_VERSION_NONE) {
-        NSString* s = NSLocalizedString(@"No new version", nil);
+    else if (ret == NO_UPDATE_AVAILABLE) {
+        NSString* s = NSLocalizedString(@"No update available.", nil);
         if (manual) {   // only for manual checking
             NSRunAlertPanel([NSApp localizedAppName], s,
                             NSLocalizedString(@"OK", nil), nil, nil);
@@ -316,15 +316,15 @@
             [_movieView setMessage:s];
         }
     }
-    else if (ret == NEW_VERSION_IS_AVAILABLE) {
+    else if (ret == NEW_VERSION_AVAILABLE) {
         // new version alert always show.
         NSString* newVersion = [checker newVersion];
         NSURL* newVersionURL = [checker newVersionURL];
         NSString* s = [NSString stringWithFormat:
-                        NSLocalizedString(@"New version is available. (v%@)", nil),
+                        NSLocalizedString(@"New version %@ is available.", nil),
                         newVersion];
         ret = NSRunAlertPanel([NSApp localizedAppName], s,
-                              NSLocalizedString(@"Show New Version", nil),
+                              NSLocalizedString(@"Show Updates", nil),
                               NSLocalizedString(@"Cancel", nil), nil);
         if (ret == NSAlertDefaultReturn) {
             [[NSWorkspace sharedWorkspace] openURL:newVersionURL];
