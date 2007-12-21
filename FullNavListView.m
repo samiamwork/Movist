@@ -27,9 +27,8 @@
 
 @interface FullNavItem (Drawing)
 
-- (void)drawInRect:(NSRect)rect withAttributes:(NSDictionary*)attrs;
 - (void)drawInRect:(NSRect)rect withAttributes:(NSDictionary*)attrs
-        scrollSize:(float)scrollSize
+          selected:(BOOL)selected scrollSize:(float)scrollSize
           nameSize:(NSSize*)nameSize nameRect:(NSRect*)nameRect;
 
 @end
@@ -37,24 +36,19 @@
 @implementation FullNavItem (Drawing)
 
 - (void)drawInRect:(NSRect)rect withAttributes:(NSDictionary*)attrs
-{
-    [self drawInRect:rect withAttributes:attrs
-          scrollSize:0 nameSize:nil nameRect:nil];
-}
-
-- (void)drawInRect:(NSRect)rect withAttributes:(NSDictionary*)attrs
-        scrollSize:(float)scrollSize
+          selected:(BOOL)selected scrollSize:(float)scrollSize
           nameSize:(NSSize*)nameSize nameRect:(NSRect*)nameRect
 {
     float LEFT_MARGIN = 0;
-    float CONTAINER_MARK_WIDTH = (float)(int)(rect.size.width * 0.05);
+    float CONTAINER_MARK_MARGIN = 10;
+    float CONTAINER_MARK_WIDTH = rect.size.height / 2;
     NSSize size = [_name sizeWithAttributes:attrs];
     NSRect rc = NSMakeRect(rect.origin.x + LEFT_MARGIN,
                            rect.origin.y + (rect.size.height - size.height) / 2,
                            rect.size.width - LEFT_MARGIN,
                            size.height);
     if ([self hasSubContents]) {
-        rc.size.width -= CONTAINER_MARK_WIDTH;
+        rc.size.width -= CONTAINER_MARK_MARGIN + CONTAINER_MARK_WIDTH;
     }
     if (nameSize) {
         *nameSize = size;
@@ -85,9 +79,31 @@
     }
     // container mark
     if ([self hasSubContents]) {
+        rc.size.height = rect.size.height / 3;
+        rc.origin.y = rect.origin.y + (rect.size.height - rc.size.height) / 2;
         rc.size.width = CONTAINER_MARK_WIDTH;
-        rc.origin.x = NSMaxX(rect) - rc.size.width + 5;
-        [@">" drawInRect:rc withAttributes:attrs];
+        rc.origin.x = NSMaxX(rect) - rc.size.width - 8;
+        float cx = rc.origin.x + rc.size.width  / 2 + 5;
+        float cy = rc.origin.y + rc.size.height / 2;
+        [NSGraphicsContext saveGraphicsState];
+        if (selected) {
+            [[NSColor whiteColor] set];
+            NSShadow* shadow = [[[NSShadow alloc] init] autorelease];
+            [shadow setShadowColor:[NSColor whiteColor]];
+            [shadow setShadowBlurRadius:5];
+            [shadow set];
+        }
+        else {
+            [[NSColor colorWithCalibratedWhite:0.5 alpha:1.0] set];
+        }
+        [NSBezierPath setDefaultLineWidth:8];
+        [NSBezierPath setDefaultLineJoinStyle:NSRoundLineJoinStyle];
+        [NSBezierPath setDefaultLineCapStyle:NSRoundLineCapStyle];
+        [NSBezierPath strokeLineFromPoint:NSMakePoint(cx, NSMaxY(rc))
+                                  toPoint:NSMakePoint(NSMaxX(rc), cy)];
+        [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMaxX(rc), cy)
+                                  toPoint:NSMakePoint(cx, NSMinY(rc))];
+        [NSGraphicsContext restoreGraphicsState];
     }
     //[[NSColor greenColor] set];
     //NSFrameRect(rect);
@@ -223,7 +239,6 @@
 
     NSMutableParagraphStyle* paragraphStyle;
     paragraphStyle = [[[NSMutableParagraphStyle alloc] init] autorelease];
-    [paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
 
     NSMutableDictionary* attrs;
     attrs = [[[NSMutableDictionary alloc] init] autorelease];
@@ -250,11 +265,12 @@
             item = [_list itemAtIndex:i];
             if (i != [_list selectedIndex]) {
                 [paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-                [item drawInRect:r withAttributes:attrs];
+                [item drawInRect:r withAttributes:attrs selected:FALSE
+                      scrollSize:0 nameSize:nil nameRect:nil];
             }
             else {
                 [paragraphStyle setLineBreakMode:NSLineBreakByClipping];
-                [item drawInRect:r withAttributes:attrs
+                [item drawInRect:r withAttributes:attrs selected:TRUE
                       scrollSize:_itemNameScrollSize nameSize:&ns nameRect:&nr];
 
                 if (ns.width <= nr.size.width) {
