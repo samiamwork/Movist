@@ -300,6 +300,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     FullNavList* list = (FullNavList*)[_listArray lastObject];
     if (0 < [list selectedIndex]) {
+        [_listView resetItemNameScroll];
         [list selectUpper];
         [self showPreview];
         [_listView slideSelBox];
@@ -311,6 +312,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     FullNavList* list = (FullNavList*)[_listArray lastObject];
     if ([list selectedIndex] < [list count] - 1) {
+        [_listView resetItemNameScroll];
         [list selectLower];
         [self showPreview];
         [_listView slideSelBox];
@@ -333,6 +335,7 @@
         }
     }
     if (i < count && i != [list selectedIndex]) {
+        [_listView resetItemNameScroll];
         [list selectAtIndex:i];
         [self showPreview];
         [_listView slideSelBox];

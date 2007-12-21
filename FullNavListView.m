@@ -197,6 +197,9 @@
         [_rFilter setValue:p1 forKey:@"inputPoint1"];
         [_rFilter setValue:c0 forKey:@"inputColor0"];
         [_rFilter setValue:c1 forKey:@"inputColor1"];
+
+        _nameScrollItem = nil;
+        _itemNameScrollSize = 0;
     }
     return self;
 }
@@ -238,36 +241,38 @@
     r.size.height = _itemHeight;
     r.origin.x = br.origin.x;
     r.origin.y = NSMaxY(br) - _itemHeight;
+    FullNavItem* item;
     CGPoint fadePoint;
     CGRect fadeRect = CGRectMake(0, 0, ITEM_HSCROLL_FADE_SIZE, r.size.height);
     int i, count = [_list count];
     for (i = 0; i < count; i++) {
         if (NSIntersectsRect(rect, r)) {
+            item = [_list itemAtIndex:i];
             if (i != [_list selectedIndex]) {
                 [paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
-                [[_list itemAtIndex:i] drawInRect:r withAttributes:attrs];
+                [item drawInRect:r withAttributes:attrs];
             }
             else {
                 [paragraphStyle setLineBreakMode:NSLineBreakByClipping];
-                [[_list itemAtIndex:i] drawInRect:r withAttributes:attrs
-                                       scrollSize:_itemScrollSize
-                                         nameSize:&ns nameRect:&nr];
+                [item drawInRect:r withAttributes:attrs
+                      scrollSize:_itemNameScrollSize nameSize:&ns nameRect:&nr];
 
-                if (nr.size.width < ns.width) {
+                if (ns.width <= nr.size.width) {
+                    _nameScrollItem = nil;
+                }
+                else {
                     fadePoint.y = NSMinY(r);
                     fadePoint.x = NSMinX(nr);
-                    if (0 < _itemScrollSize) {
+                    if (0 < _itemNameScrollSize) {
                         [ciContext drawImage:[_lFilter valueForKey:@"outputImage"]
                                      atPoint:fadePoint fromRect:fadeRect];
                     }
                     fadePoint.x = NSMaxX(nr) - ITEM_HSCROLL_FADE_SIZE;
                     [ciContext drawImage:[_rFilter valueForKey:@"outputImage"]
                                  atPoint:fadePoint fromRect:fadeRect];
-                    if (_itemScrollRect.size.width == 0) {
-                        _itemScrollRect = nr;
-                        [NSTimer scheduledTimerWithTimeInterval:1.0
-                                    target:self selector:@selector(startScrollTimer:)
-                                    userInfo:nil repeats:FALSE];
+                    if (_nameScrollItem != item) {
+                        _nameScrollItem = item;
+                        _itemNameScrollRect = nr;
                     }
                 }
             }
@@ -297,30 +302,46 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark
 
-- (void)startScrollTimer:(NSTimer*)timer
+- (void)startItemNameScrollInvokeTimer
 {
-    if (0 < _itemScrollRect.size.width) {
-        _itemScrollSize = 0;
-        _itemScrollTimer = [NSTimer scheduledTimerWithTimeInterval:0.01
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_list selectedItem] == _nameScrollItem) {
+        [NSTimer scheduledTimerWithTimeInterval:1.0
+                        target:self selector:@selector(startItemNameScrollTimer:)
+                        userInfo:_nameScrollItem repeats:FALSE];
+    }
+}
+
+- (void)startItemNameScrollTimer:(NSTimer*)timer
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([timer userInfo] == _nameScrollItem) {
+        _itemNameScrollSize = 0;
+        _itemNameScrollTimer = [NSTimer scheduledTimerWithTimeInterval:0.01
                                     target:self selector:@selector(scrollItemName:)
-                                    userInfo:nil repeats:TRUE];
+                                    userInfo:_nameScrollItem repeats:TRUE];
     }
 }
 
 - (void)scrollItemName:(NSTimer*)timer
 {
-    _itemScrollSize++;
-    [self setNeedsDisplayInRect:_itemScrollRect];
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([timer userInfo] == _nameScrollItem) {
+        _itemNameScrollSize += 1.0;
+        [self setNeedsDisplayInRect:_itemNameScrollRect];
+    }
 }
 
-- (void)resetItemScroll
+- (void)resetItemNameScroll
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    _itemScrollRect.size.width = 0;
-    _itemScrollSize = 0;
-    [_itemScrollTimer invalidate];
-    _itemScrollTimer = nil;
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_itemNameScrollTimer invalidate];
+    _itemNameScrollTimer = nil;
+    _itemNameScrollSize = 0;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark
 
 - (int)topIndex
 {
@@ -382,20 +403,13 @@
 
 - (void)slideSelBox
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self resetItemScroll];
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self resetItemNameScroll];
 
     if (_animation && [_animation isAnimating]) {
-        [_animation stopAnimation];/*
-        NSArray* array = [_animation viewAnimations];
-        NSDictionary* dict = [array objectAtIndex:0];
-        NSValue* value = [dict objectForKey:NSViewAnimationEndFrameKey];
-        [self setFrame:[value rectValue]];
-        [self display];
-        dict = [array objectAtIndex:1];
-        value = [dict objectForKey:NSViewAnimationEndFrameKey];
-        [_selBox setFrame:[value rectValue]];*/
+        [_animation stopAnimation];
         [_animation release];
+        _animation = nil;
     }
 
     NSRect frame = [self calcViewRect];
@@ -422,13 +436,16 @@
     _animation = animation;
 }
 
-- (void)animatioinDidEnd:(NSAnimation*)animation
+- (void)animationDidEnd:(NSAnimation*)animation
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_animation == animation) {
         [_animation release];
         _animation = nil;
     }
+
+    [self resetItemNameScroll];
+    [self startItemNameScrollInvokeTimer];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -436,15 +453,17 @@
 
 - (void)setNavList:(FullNavList*)list
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self resetItemScroll];
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self resetItemNameScroll];
 
     _list = list;   // no retain
-    
+
     [self setFrame:[self calcViewRect]];
     [[self superview] display];
     [_selBox setFrame:[self selBoxRect]];
     [[_selBox superview] display];
+
+    [self startItemNameScrollInvokeTimer];  // for scrolling name of top-item
 }
 
 @end
