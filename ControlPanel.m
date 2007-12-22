@@ -41,7 +41,7 @@
 
 - (void)awakeFromNib
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_videoBrightnessSlider setMinValue:-1.0];
     [_videoBrightnessSlider setMaxValue:+1.0];
     [_videoBrightnessSlider setFloatValue:0.0];
@@ -75,7 +75,7 @@
 
 - (void)orderOut:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSString* identifier = (NSString*)[[_tabView selectedTabViewItem] identifier];
     [defaults setObject:identifier forKey:MControlTabKey];

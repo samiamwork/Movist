@@ -63,6 +63,10 @@
     float _playRate;
     float _seekInterval[3];
 
+    // last-played-movie
+    NSURL* _lastPlayedMovieURL;
+    float _lastPlayedMovieTime;
+
     // subtitle
     IBOutlet NSMenu* _subtitleMenu;
     IBOutlet NSMenu* _subtitleEncodingMenu;
@@ -197,6 +201,9 @@
 
 - (void)setRepeatMode:(unsigned int)mode;
 - (void)updateRepeatUI;
+
+- (void)loadLastPlayedMovieInfo;
+- (void)saveLastPlayedMovieInfo;
 
 - (IBAction)playlistAction:(id)sender;
 - (IBAction)prevNextMovieAction:(id)sender;

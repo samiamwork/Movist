@@ -24,12 +24,13 @@
 #import "UserDefaults.h"
 
 #import "AppController.h"
+#import "MMovieView.h"
 
 @implementation PreferenceController (Advanced)
 
 - (void)initAdvancedPane
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaultDecoderPopUpButton selectItemWithTag:[_defaults integerForKey:MDefaultDecoderKey]];
 
     [_updateCheckIntervalPopUpButton selectItemWithTag:[_defaults integerForKey:MUpdateCheckIntervalKey]];

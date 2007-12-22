@@ -29,8 +29,7 @@
 
 - (void)initVideoPane
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullScreenEffectPopUpButton selectItemWithTag:
                         [_defaults integerForKey:MFullScreenEffectKey]];
     [_fullScreenFillForWideMoviePopUpButton selectItemWithTag:

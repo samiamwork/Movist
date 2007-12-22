@@ -116,7 +116,7 @@
 
 - (void)setFontName:(NSString*)name size:(float)size
 {
-    TRACE(@"%s \"%@\" %g", __PRETTY_FUNCTION__, name, size);
+    //TRACE(@"%s \"%@\" %g", __PRETTY_FUNCTION__, name, size);
     if (![_fontName isEqualToString:name]) {
         [_fontName release];
         _fontName = [name retain];

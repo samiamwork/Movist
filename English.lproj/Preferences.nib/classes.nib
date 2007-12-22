@@ -17,10 +17,12 @@
                 autoFullScreenAction = id;
                 checkUpdateNowAction = id;
                 defaultDecoderAction = id;
+                fullNavUseAction = id;
                 fullScreenEffectAction = id;
                 fullScreenFillAction = id;
                 fullScreenUnderScanAction = id;
                 quitWhenWindowCloseAction = id;
+                rememberLastPlayAction = id;
                 seekIntervalAction = id;
                 subtitleAttributesAction = id;
                 subtitleAutoFontSizeAction = id;
@@ -30,6 +32,7 @@
                 subtitleFontAction = id;
                 subtitlePositionAction = id;
                 subtitleReplaceNLWithBRAction = id;
+                supportAppleRemoteAction = id;
                 updateCheckIntervalAction = id;
             };
             CLASS = PreferenceController;
@@ -41,6 +44,7 @@
                 "_audioPane" = NSView;
                 "_autoFullScreenButton" = NSButton;
                 "_defaultDecoderPopUpButton" = NSPopUpButton;
+                "_fullNavUseButton" = NSButton;
                 "_fullScreenEffectPopUpButton" = NSPopUpButton;
                 "_fullScreenFillForStdMoviePopUpButton" = NSPopUpButton;
                 "_fullScreenFillForWideMoviePopUpButton" = NSPopUpButton;
@@ -48,6 +52,7 @@
                 "_generalPane" = NSView;
                 "_lastUpdateCheckTimeTextField" = NSTextField;
                 "_quitWhenWindowCloseButton" = NSButton;
+                "_rememberLastPlayButton" = NSButton;
                 "_seekInterval0Stepper" = NSStepper;
                 "_seekInterval0TextField" = NSTextField;
                 "_seekInterval1Stepper" = NSStepper;
@@ -87,6 +92,7 @@
                 "_subtitleTextOpacityTextField" = NSTextField;
                 "_subtitleVMarginSlider" = NSSlider;
                 "_subtitleVMarginTextField" = NSTextField;
+                "_supportAppleRemoteButton" = NSButton;
                 "_updateCheckIntervalPopUpButton" = NSPopUpButton;
                 "_videoPane" = NSView;
             };

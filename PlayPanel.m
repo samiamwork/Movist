@@ -45,7 +45,7 @@
 
 - (void)awakeFromNib
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self setDelegate:self];
     [self setBackgroundColor:[self makeHUDBackgroundColor]];
     _movingByDragging = FALSE;
@@ -53,7 +53,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_lastShowTime release];
     [super dealloc];
 }

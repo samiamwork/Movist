@@ -49,12 +49,12 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)awakeFromNib
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // _displayLink
     _displayID = CGMainDisplayID();
     CVReturn cvRet = CVDisplayLinkCreateWithCGDisplay(_displayID, &_displayLink);
     if (cvRet != kCVReturnSuccess) {
-        TRACE(@"CVDisplayLinkCreateWithCGDisplay() failed: %d", cvRet);
+        //TRACE(@"CVDisplayLinkCreateWithCGDisplay() failed: %d", cvRet);
         // FIXME: alert...
         return;
     }
@@ -122,7 +122,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self invalidateMessageHideTimer];
     if (_displayLink) {
         CVDisplayLinkStop(_displayLink);
@@ -171,7 +171,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)prepareOpenGL
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     
 	GLint swapInterval = 1;
@@ -330,7 +330,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)setMovie:(MMovie*)movie
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
     [_drawLock lock];
     [movie retain], [_movie release], _movie = movie;
     [_subtitles release], _subtitles = nil;
@@ -358,7 +358,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)showLogo
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_drawLock lock];
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
     [_drawLock unlock];
@@ -366,7 +366,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)hideLogo
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_drawLock lock];
     [_iconOSD clearContent];
     [_drawLock unlock];
@@ -551,7 +551,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)setBrightness:(float)brightness
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
     [_drawLock lock];
     [_colorFilter setValue:[NSNumber numberWithFloat:brightness]
                     forKey:@"inputBrightness"];
@@ -561,7 +561,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)setSaturation:(float)saturation
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, saturation);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, saturation);
     [_drawLock lock];
     [_colorFilter setValue:[NSNumber numberWithFloat:saturation]
                     forKey:@"inputSaturation"];
@@ -571,7 +571,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)setContrast:(float)contrast
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, contrast);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, contrast);
     [_drawLock lock];
     [_colorFilter setValue:[NSNumber numberWithFloat:contrast]
                     forKey:@"inputContrast"];
@@ -581,7 +581,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)setHue:(float)hue
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, hue);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, hue);
     [_drawLock lock];
     [_hueFilter setValue:[NSNumber numberWithFloat:hue]
                   forKey:@"inputAngle"];
@@ -600,8 +600,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s \"%@\" (modifierFlags=%u)", __PRETTY_FUNCTION__,
     //      [event characters], [event modifierFlags]);
     unichar key = [[event characters] characterAtIndex:0];
-    //unsigned int modifierFlags = [event modifierFlags] &
-    //    (NSCommandKeyMask | NSAlternateKeyMask | NSControlKeyMask | NSShiftKeyMask);
     switch (key) {
         case ' ' :  // space: toggle play/pause
             [[NSApp delegate] playAction:self];
@@ -624,15 +622,15 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                 [[NSApp mainWindow] performClose:self];
             }
             break;
-        /*
-        case 'f' : case 'F' :
+
+        case 'n' : case 'N' :
             if (!_movie && ![[NSApp delegate] isFullScreen]) {
                 [[NSApp delegate] fullScreenAction:self];   // begin navigation
             }
             break;
-        */
-        case 'p' : case 'P' : [[NSApp delegate] stepBackward];          break;
-        case 'n' : case 'N' : [[NSApp delegate] stepForward];           break;
+
+        case '[' : case '{' : [[NSApp delegate] stepBackward];          break;
+        case ']' : case '}' : [[NSApp delegate] stepForward];           break;
 
         case 'c' : case 'C' : [[NSApp delegate] changePlayRate:+1];     break;
         case 'x' : case 'X' : [[NSApp delegate] changePlayRate:-1];     break;

@@ -41,7 +41,7 @@ NSString* PANE_ID[] = {
 - (id)initWithAppController:(AppController*)appController
                  mainWindow:(MainWindow*)mainWindow;
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super initWithWindowNibName:@"Preferences"]) {
         [self setWindowFrameAutosaveName:@"PreferencesWindow"];
         _defaults = [[NSUserDefaults standardUserDefaults] retain];
@@ -54,7 +54,7 @@ NSString* PANE_ID[] = {
 
 - (void)windowDidLoad
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSToolbar* toolbar = [[NSToolbar alloc] initWithIdentifier:@"MPrefsToolbar"];
     [toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
     [toolbar setAllowsUserCustomization:FALSE];
@@ -79,7 +79,7 @@ NSString* PANE_ID[] = {
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_appController release];
     [_mainWindow release];
     [_defaults synchronize];

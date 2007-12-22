@@ -26,7 +26,7 @@
 
 - (void)initAudioPane
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
 }
 
 @end

@@ -62,7 +62,7 @@
 
 - (id)initWithURL:(NSURL*)url error:(NSError**)error
 {
-    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [url absoluteString]);
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [url absoluteString]);
     if ([url isFileURL]) {
         NSFileManager* fileManager = [NSFileManager defaultManager];
         NSString* path = [url path];
@@ -91,13 +91,13 @@
              pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
                    error:(NSError**)error
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     return TRUE;
 }
 
 - (void)cleanup
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_audioTracks release];
     [_videoTracks release];
     [self release];
@@ -105,7 +105,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [super dealloc];
 }
 
@@ -122,7 +122,7 @@
 
 - (void)setAspectRatio:(int)aspectRatio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _aspectRatio = aspectRatio;
 }
 

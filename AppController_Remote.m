@@ -34,7 +34,7 @@
 
 - (void)initRemoteControl
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _remoteControlBehavior = [[MultiClickRemoteBehavior alloc] init];
     [_remoteControlBehavior setDelegate:self];
     [_remoteControlBehavior setSimulateHoldEvent:TRUE];
@@ -50,7 +50,7 @@
 
 - (void)cleanupRemoteControl
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self stopRemoteControl];
     [_remoteControlContainer release];
     [_remoteControlBehavior release];
@@ -58,14 +58,18 @@
 
 - (void)startRemoteControl
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_remoteControlContainer startListening:self];
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (![_remoteControlContainer isListeningToRemote]) {
+        [_remoteControlContainer startListening:self];
+    }
 }
 
 - (void)stopRemoteControl
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_remoteControlContainer stopListening:self];
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_remoteControlContainer isListeningToRemote]) {
+        [_remoteControlContainer stopListening:self];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,7 +78,7 @@
 - (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier
          pressedDown:(BOOL)pressed clickCount:(unsigned int)clickCount
 {
-    TRACE(@"%s pressed=%d, clickCount=%d", __PRETTY_FUNCTION__, pressed, clickCount);
+    //TRACE(@"%s pressed=%d, clickCount=%d", __PRETTY_FUNCTION__, pressed, clickCount);
     if (!pressed) {
         return;
     }
@@ -99,13 +103,13 @@
 - (void)sendRemoteButtonEvent:(RemoteControlEventIdentifier)buttonIdentifier
                   pressedDown:(BOOL)pressedDown remoteControl:(RemoteControl*)remoteControl
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self remoteButton:buttonIdentifier pressedDown:pressedDown clickCount:1];
 }
 
 - (IBAction)appleRemotePlusAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {                 // window mode
         [self volumeUp];
     }
@@ -119,13 +123,13 @@
 
 - (IBAction)appleRemotePlusHoldAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self appleRemotePlusAction:sender];
 }
 
 - (IBAction)appleRemoteMinusAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {                 // window mode
         [self volumeDown];
     }
@@ -139,7 +143,7 @@
 
 - (IBAction)appleRemoteMinusHoldAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self appleRemoteMinusAction:sender];
 }
 
@@ -171,31 +175,31 @@
 
 - (IBAction)appleRemoteLeftAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self appleRemoteSeekBackward:0];
 }
 
 - (IBAction)appleRemoteLeftHoldAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self appleRemoteSeekBackward:1];
 }
 
 - (IBAction)appleRemoteRightAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self appleRemoteSeekForward:0];
 }
 
 - (IBAction)appleRemoteRightHoldAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self appleRemoteSeekForward:1];
 }
 
 - (IBAction)appleRemotePlayAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {                 // window mode
         if (!_movie) {
             // go to folder navigation directly
@@ -221,18 +225,18 @@
 
 - (IBAction)appleRemotePlayHoldAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
 }
 
 - (IBAction)appleRemoteMenuAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self fullScreenAction:sender];
 }
 
 - (IBAction)appleRemoteMenuHoldAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {                 // window mode
         // do nothing
     }

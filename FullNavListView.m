@@ -248,6 +248,16 @@
     [attrs setObject:[NSFont boldSystemFontOfSize:38 * br.size.width / 640.0]
               forKey:NSFontAttributeName];
 
+    if ([_list count] == 0) {
+        NSString* s = NSLocalizedString(@"No movie file", nil);
+        NSSize size = [s sizeWithAttributes:attrs];
+        NSRect r = NSMakeRect((rect.size.width  - size.width)  / 2,
+                              rect.size.height * 2 / 3 - size.height,
+                              size.width, size.height);
+        [s drawInRect:r withAttributes:attrs];
+        return;
+    }
+
     CIContext* ciContext = [[NSGraphicsContext currentContext] CIContext];
 
     NSSize ns;
@@ -378,13 +388,13 @@
 
 - (NSRect)calcViewRect
 {
-    float height = [_list count] * _itemHeight;
-    
     NSRect rc = [[self superview] bounds];
-    rc.origin.y = NSMaxY(rc) - height;
-    rc.size.height = height;
-
-    rc.origin.y += [self topIndex] * _itemHeight;
+    if (0 < [_list count]) {
+        float height = [_list count] * _itemHeight;
+        rc.origin.y = NSMaxY(rc) - height;
+        rc.size.height = height;
+        rc.origin.y += [self topIndex] * _itemHeight;
+    }
     //TRACE(@"listViewRect=%@", NSStringFromRect(rc));
     return rc;
 }

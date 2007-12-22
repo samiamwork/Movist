@@ -24,6 +24,7 @@
 
 @interface NSUserDefaults (Movist)
 
+- (void)registerMovistDefaults;
 - (void)setColor:(NSColor*)color forKey:(NSString*)key;
 - (NSColor*)colorForKey:(NSString*)key;
 
@@ -34,6 +35,8 @@
 extern NSString* MPreferencePaneKey;
 extern NSString* MControlTabKey;
 extern NSString* MViewDurationKey;
+extern NSString* MPlaylistKey;
+extern NSString* MLastPlayedMovieTimeKey;
 
 #pragma mark -
 #pragma mark prefs: general
@@ -41,9 +44,15 @@ extern NSString* MAutoFullScreenKey;
 extern NSString* MAlwaysOnTopKey;
 extern NSString* MActivateOnDraggingKey;
 extern NSString* MQuitWhenWindowCloseKey;
+extern NSString* MRememberLastPlayKey;
 extern NSString* MSeekInterval0Key;
 extern NSString* MSeekInterval1Key;
 extern NSString* MSeekInterval2Key;
+extern NSString* MSupportAppleRemoteKey;
+extern NSString* MFullNavUseKey;
+extern NSString* MFullNavPathKey;
+extern NSString* MFullNavShowiTunesMoviesKey;
+extern NSString* MFullNavShowVideoPodcastKey;
 
 #pragma mark -
 #pragma mark prefs: video

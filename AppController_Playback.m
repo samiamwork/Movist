@@ -33,7 +33,7 @@
 
 - (void)play
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie && [_movie rate] == 0.0) {
         [_movieView setMessage:NSLocalizedString(@"Play", nil)];
         [_movie setRate:_playRate];
@@ -42,7 +42,7 @@
 
 - (void)pause
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie && [_movie rate] != 0.0) {
         [_movieView setMessage:NSLocalizedString(@"Pause", nil)];
         [_movie setRate:0.0];
@@ -51,7 +51,7 @@
 
 - (void)gotoBeginning
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         [_movieView setMessage:NSLocalizedString(@"Beginning", nil)];
         [_movie gotoBeginning];
@@ -60,7 +60,7 @@
 
 - (void)gotoEnd
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         [_movieView setMessage:NSLocalizedString(@"End", nil)];
         //[_movie gotoEnd];
@@ -72,7 +72,7 @@
 
 - (void)gotoTime:(float)time
 {
-    TRACE(@"%s %f sec", __PRETTY_FUNCTION__, time);
+    //TRACE(@"%s %f sec", __PRETTY_FUNCTION__, time);
     if (_movie) {
         [_movieView setMessage:[NSString stringWithFormat:
             @"%@/%@", NSStringFromMovieTime(time),
@@ -83,19 +83,19 @@
 
 - (void)seekPrevSubtitle
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self gotoTime:[_movieView prevSubtitleTime]];
 }
 
 - (void)seekNextSubtitle
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self gotoTime:[_movieView nextSubtitleTime]];
 }
 
 - (void)seekBackward:(unsigned int)indexOfValue
 {
-    TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
+    //TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
         float t = MAX(0, [_movie currentTime] - dt);
@@ -108,7 +108,7 @@
 
 - (void)seekForward:(unsigned int)indexOfValue
 {
-    TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
+    //TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
         float t = MIN([_movie currentTime] + dt, [_movie duration]);
@@ -121,7 +121,7 @@
 
 - (void)stepBackward
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         [_movieView setMessage:NSLocalizedString(@"Previous Frame", nil)];
         [_movie setRate:0.0];
@@ -131,7 +131,7 @@
 
 - (void)stepForward
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         [_movieView setMessage:NSLocalizedString(@"Next Frame", nil)];
         [_movie setRate:0.0];
@@ -141,7 +141,7 @@
 
 - (void)setSeekInterval:(float)interval atIndex:(unsigned int)index
 {
-    TRACE(@"%s [%d]:%.1f sec", __PRETTY_FUNCTION__, index, interval);
+    //TRACE(@"%s [%d]:%.1f sec", __PRETTY_FUNCTION__, index, interval);
     _seekInterval[index] = interval;
     
     NSMenuItem* backwardItem[3] = {
@@ -158,7 +158,7 @@
 
 - (void)setPlayRate:(float)rate
 {
-    TRACE(@"%s %.1f", __PRETTY_FUNCTION__, rate);
+    //TRACE(@"%s %.1f", __PRETTY_FUNCTION__, rate);
     rate = MAX(MIN_PLAY_RATE, rate);
     rate = MIN(rate, MAX_PLAY_RATE);
     
@@ -193,7 +193,7 @@
                                withObject:nil waitUntilDone:FALSE];   // don't wait
     }
     else {
-        TRACE(@"%s", __PRETTY_FUNCTION__);
+        //TRACE(@"%s", __PRETTY_FUNCTION__);
         [self updateTimeUI];
     }
 }
@@ -205,7 +205,7 @@
                                withObject:nil waitUntilDone:FALSE];   // don't wait
     }
     else {
-        TRACE(@"%s", __PRETTY_FUNCTION__);
+        //TRACE(@"%s", __PRETTY_FUNCTION__);
         [self updatePlayUI];
         [_playlistController updateUI];
     }
@@ -236,7 +236,7 @@
                                withObject:nil waitUntilDone:FALSE];   // don't wait
     }
     else {
-        TRACE(@"%s", __PRETTY_FUNCTION__);
+        //TRACE(@"%s", __PRETTY_FUNCTION__);
         [self updateTimeUI];
         [self updatePlayUI];
         [_playlistController updateUI];
@@ -344,7 +344,7 @@
 
 - (IBAction)playAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         if ([_movie rate] == 0.0) {
             if ([_seekSlider repeatEnabled] &&
@@ -373,7 +373,7 @@
 
 - (IBAction)seekAction:(id)sender
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
     switch ([sender tag]) {
         case -100 : [self gotoBeginning];       break;
         case  -40 : [self seekPrevSubtitle];    break;

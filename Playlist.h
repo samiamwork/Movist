@@ -22,7 +22,7 @@
 
 #import "Movist.h"
 
-@interface PlaylistItem : NSObject <NSCopying>
+@interface PlaylistItem : NSObject <NSCopying, NSCoding>
 {
     NSURL* _movieURL;
     NSURL* _subtitleURL;
@@ -57,7 +57,7 @@ enum {
     OPTION_ALL,
 };
 
-@interface Playlist : NSObject
+@interface Playlist : NSObject <NSCoding>
 {
     NSMutableArray* _array;     // array of PlaylistItem
     PlaylistItem* _currentItem;

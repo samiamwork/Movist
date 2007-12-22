@@ -23,6 +23,7 @@
 #import "FullNavView.h"
 
 #import "AppController.h"
+#import "UserDefaults.h"
 #import "Playlist.h"
 #import "MMovieView.h"
 #import "FullNavItems.h"
@@ -235,21 +236,35 @@
 {
     NSMutableArray* items = [NSMutableArray arrayWithCapacity:6];
 
-    // home Movies folder
-    NSString* path = [@"~/Movies" stringByExpandingTildeInPath];
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+
+    // default navigation path
+    NSString* path = [defaults stringForKey:MFullNavPathKey];
+    if (!path || ![fileManager fileExistsAtPath:path]) {
+        path = [@"~/Movies" stringByExpandingTildeInPath];
+    }
     NSString* name = nil;
     [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:name]];
-/*
+
     // iTunes Movies folder
-    path = [@"~/Music/iTunes/iTunes Music/Movies" stringByExpandingTildeInPath];
-    name = [NSString stringWithFormat:@"iTunes %@", [(FullNavDirectoryItem*)[items lastObject] name]];
-    [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:name]];
+    if ([defaults boolForKey:MFullNavShowiTunesMoviesKey]) {
+        path = [@"~/Music/iTunes/iTunes Music/Movies" stringByExpandingTildeInPath];
+        if ([fileManager fileExistsAtPath:path]) {
+            name = NSLocalizedString(@"iTunes Movies", nil);
+            [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:name]];
+        }
+    }
 
     // iTunes Podcast folder (for video podcast)
-    path = [@"~/Music/iTunes/iTunes Music/Podcast" stringByExpandingTildeInPath];
-    name = nil;
-    [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:name]];
-*/
+    if ([defaults boolForKey:MFullNavShowVideoPodcastKey]) {
+        path = [@"~/Music/iTunes/iTunes Music/Podcast" stringByExpandingTildeInPath];
+        if ([fileManager fileExistsAtPath:path]) {
+            name = NSLocalizedString(@"Video Podcast", nil);
+            [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:name]];
+        }
+    }
+
     [self addNavListWithParentItem:nil items:items];
 }
 

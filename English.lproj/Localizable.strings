@@ -1,6 +1,9 @@
 /* App General */
 "Cancel" = "Cancel";
 "Decoder" = "Decoder";
+"iTunes Movies" = "iTunes Movies";
+"Video Podcast" = "Video Podcast";
+"No movie file" = "No movie file";
 
 /* Check for Updates */
 "Checking for Updates..." = "Checking for Updates...";

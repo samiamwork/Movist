@@ -74,7 +74,7 @@ typedef struct _SRTTag {
 
 - (void)readyWithString:(NSString*)string options:(NSDictionary*)options
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _source = [string retain];
     _sourceRange = NSMakeRange(0, [_source length]);
     if (options) {
@@ -216,7 +216,7 @@ extern NSString* MFontBoldAttributeName;
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self readyWithString:string options:options];
 
     NSCharacterSet* set = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];

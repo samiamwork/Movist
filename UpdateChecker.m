@@ -125,7 +125,7 @@
     [string release];
 
     if (newVersionURLString) {
-        TRACE(@"new version=\"%@\":\"%@\"", newVersion, newVersionURLString);
+        //TRACE(@"new version=\"%@\":\"%@\"", newVersion, newVersionURLString);
         _newVersion = [newVersion retain];
         _newVersionURL = [[NSURL URLWithString:newVersionURLString] retain];
         return NEW_VERSION_AVAILABLE;

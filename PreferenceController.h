@@ -34,12 +34,23 @@
     IBOutlet NSButton* _alwaysOnTopButton;
     IBOutlet NSButton* _activateOnDraggingButton;
     IBOutlet NSButton* _quitWhenWindowCloseButton;
+    IBOutlet NSButton* _rememberLastPlayButton;
     IBOutlet NSTextField* _seekInterval0TextField;
     IBOutlet NSTextField* _seekInterval1TextField;
     IBOutlet NSTextField* _seekInterval2TextField;
     IBOutlet NSStepper* _seekInterval0Stepper;
     IBOutlet NSStepper* _seekInterval1Stepper;
     IBOutlet NSStepper* _seekInterval2Stepper;
+    IBOutlet NSButton* _supportAppleRemoteButton;
+    IBOutlet NSButton* _fullNavUseButton;
+    /*
+    IBOutlet NSTextField* _fullNavPathLabelTextField;
+    IBOutlet NSTextField* _fullNavPathTextField;
+    IBOutlet NSButton* _fullNavPathBrowseButton;
+    IBOutlet NSButton* _fullNavShowiTunesMoviesButton;
+    IBOutlet NSButton* _fullNavShowVideoPodcastButton;
+    IBOutlet NSTextField* _fullNavHelpTextField;
+     */
 
     // video
     IBOutlet NSView* _videoPane;
@@ -116,10 +127,17 @@
 - (IBAction)alwaysOnTopAction:(id)sender;
 - (IBAction)activateOnDraggingAction:(id)sender;
 - (IBAction)quitWhenWindowCloseAction:(id)sender;
+- (IBAction)rememberLastPlayAction:(id)sender;
 - (IBAction)seekIntervalAction:(id)sender;
+- (IBAction)supportAppleRemoteAction:(id)sender;
+- (IBAction)fullNavUseAction:(id)sender;
+/*
+- (IBAction)fullNavPathBrowseAction:(id)sender;
+- (IBAction)fullNavShowiTunesMoviesAction:(id)sender;
+- (IBAction)fullNavShowVideoPodcastAction:(id)sender;
+*/
 
 @end
-
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

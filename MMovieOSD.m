@@ -154,13 +154,13 @@
 
 - (void)setHAlign:(unsigned int)hAlign
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, hAlign);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, hAlign);
     _hAlign = hAlign;
 }
 
 - (void)setVAlign:(unsigned int)vAlign
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, vAlign);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, vAlign);
     _vAlign = vAlign;
 }
 

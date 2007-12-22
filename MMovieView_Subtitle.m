@@ -35,7 +35,7 @@
 
 - (void)setSubtitles:(NSArray*)subtitles
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, subtitles);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, subtitles);
     [subtitles retain], [_subtitles release], _subtitles = subtitles;
     MSubtitle* subtitle;
     NSEnumerator* enumerator = [_subtitles objectEnumerator];
@@ -69,7 +69,7 @@
 
 - (void)setSubtitleVisible:(BOOL)visible
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _subtitleVisible = visible;
     if (_subtitleVisible) {
         [self updateSubtitle];
@@ -86,7 +86,7 @@
 
 - (void)setSubtitleFontName:(NSString*)fontName size:(float)size
 {
-    TRACE(@"%s \"%@\" %g", __PRETTY_FUNCTION__, fontName, size);
+    //TRACE(@"%s \"%@\" %g", __PRETTY_FUNCTION__, fontName, size);
     [_subtitleRenderer setFontName:fontName size:size];
     [_messageOSD setFontName:fontName size:15.0];
     [_errorOSD setFontName:fontName size:24.0];
@@ -96,7 +96,7 @@
 
 - (void)setSubtitleTextColor:(NSColor*)textColor
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setTextColor:textColor];
     //[_messageOSD setTextColor:textColor];
     //[_errorOSD setTextColor:textColor];
@@ -105,7 +105,7 @@
 
 - (void)setSubtitleStrokeColor:(NSColor*)strokeColor
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setStrokeColor:strokeColor];
     //[_messageOSD setStrokeColor:strokeColor];
     //[_errorOSD setStrokeColor:strokeColor];
@@ -114,7 +114,7 @@
 
 - (void)setSubtitleStrokeWidth:(float)strokeWidth
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setStrokeWidth:strokeWidth];
     //[_messageOSD setStrokeWidth:strokeWidth];
     //[_errorOSD setStrokeWidth:strokeWidth];
@@ -123,7 +123,7 @@
 
 - (void)setSubtitleShadowColor:(NSColor*)shadowColor
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setShadowColor:shadowColor];
     //[_messageOSD setShadowColor:shadowColor];
     //[_errorOSD setShadowColor:shadowColor];
@@ -132,7 +132,7 @@
 
 - (void)setSubtitleShadowBlur:(float)shadowBlur
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setShadowBlur:shadowBlur];
     //[_messageOSD setShadowBlur:shadowBlur];
     //[_errorOSD setShadowBlur:shadowBlur];
@@ -141,7 +141,7 @@
 
 - (void)setSubtitleShadowOffset:(float)shadowOffset
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setShadowOffset:shadowOffset];
     //[_messageOSD setShadowOffset:shadowOffset];
     //[_errorOSD setShadowOffset:shadowOffset];
@@ -150,7 +150,7 @@
 
 - (void)setSubtitleShadowDarkness:(int)shadowDarkness
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setShadowDarkness:shadowDarkness];
     //[_messageOSD setShadowDarkness:shadowDarkness];
     //[_errorOSD setShadowDarkness:shadowDarkness];
@@ -180,7 +180,7 @@
 
 - (void)setLetterBoxHeight:(int)height
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_letterBoxHeight != height) {
         _letterBoxHeight =  height;
         [self updateMovieRect:TRUE];
@@ -189,7 +189,7 @@
 
 - (void)setSubtitleHMargin:(float)hMargin
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (hMargin != [self subtitleHMargin]) {
         [_subtitleRenderer setHMargin:hMargin];
         [_subtitleImageOSD setHMargin:hMargin];
@@ -200,7 +200,7 @@
 
 - (void)setSubtitleVMargin:(float)vMargin
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (vMargin != [self subtitleVMargin]) {
         // need not update _subtitleRenderer.
         [_subtitleImageOSD setVMargin:vMargin];
@@ -212,7 +212,7 @@
 
 - (void)setSubtitleSync:(float)sync
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _subtitleSync = sync;
     [self updateSubtitle];
 }

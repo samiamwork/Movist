@@ -34,7 +34,7 @@
 
 - (void)awakeFromNib
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSView* cv = [self contentView];
     NSRect cr = [cv bounds];
     NSRect mr = [_movieView frame];
@@ -68,7 +68,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
 }
@@ -99,7 +99,7 @@
 
 - (void)setAlwaysOnTop:(BOOL)alwaysOnTop
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, alwaysOnTop);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, alwaysOnTop);
     _alwaysOnTop = alwaysOnTop;
     [self setLevel:(_alwaysOnTop) ? kCGDraggingWindowLevel : NSNormalWindowLevel];
 /*
@@ -121,7 +121,7 @@
 
 - (void)orderFrontRegardless
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (!_alwaysOnTop) {
         [super orderFrontRegardless];
     }
@@ -129,7 +129,7 @@
 
 - (void)setLevel:(int)newLevel
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
     [super setLevel:MIN(kCGDraggingWindowLevel, newLevel)];
 }
 
@@ -144,7 +144,7 @@
 
 - (BOOL)windowShouldClose:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [[NSApp delegate] closeMovie];
     return TRUE;
 }
@@ -182,13 +182,13 @@
 
 - (NSRect)windowWillUseStandardFrame:(NSWindow*)sender defaultFrame:(NSRect)defaultFrame
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(defaultFrame));
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(defaultFrame));
     return [self frameRectForScreen];
 }
 
 - (void)zoom:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([_movieView movie]) {
         [_movieView setSubtitleVisible:FALSE];
         if ([self isZoomed]) {

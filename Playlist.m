@@ -36,6 +36,25 @@
     return self;
 }
 
+- (id)initWithCoder:(NSCoder*)coder
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (self = [super init]) {
+        [self setMovieURL:[coder decodeObjectForKey:@"MovieURL"]];
+        [self setSubtitleURL:[coder decodeObjectForKey:@"SubtitleURL"]];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder*)coder
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [coder encodeObject:_movieURL forKey:@"MovieURL"];
+    if (_subtitleURL) {
+        [coder encodeObject:_subtitleURL forKey:@"SubtitleURL"];
+    }
+}
+
 - (void)dealloc
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -88,7 +107,7 @@
 
 - (id)init
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         _array = [[NSMutableArray alloc] initWithCapacity:10];
         _repeatMode = REPEAT_OFF;
@@ -96,9 +115,30 @@
     return self;
 }
 
+- (id)initWithCoder:(NSCoder*)coder
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (self = [super init]) {
+        _array = [[coder decodeObjectForKey:@"Array"] retain];
+        int index = [coder decodeInt32ForKey:@"CurrentIndex"];
+        _currentItem = (0 <= index && index < [_array count]) ?
+                                [_array objectAtIndex:index] : nil;
+        _repeatMode = [coder decodeInt32ForKey:@"RepeatMode"];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder*)coder
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [coder encodeObject:_array forKey:@"Array"];
+    [coder encodeInt32:[_array indexOfObject:_currentItem] forKey:@"CurrentIndex"];
+    [coder encodeInt32:_repeatMode forKey:@"RepeatMode"];
+}
+
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_array release];
     [super dealloc];
 }
@@ -344,8 +384,9 @@
 
 - (void)setCurrentItemAtIndex:(unsigned int)index
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, index);
-    _currentItem = [_array objectAtIndex:index];
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, index);
+    _currentItem = (0 <= index && index < [_array count]) ?
+                                        [_array objectAtIndex:index] : nil;
 }
 
 - (void)setNextItem_RepeatOff:(BOOL)forward

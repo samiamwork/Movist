@@ -100,7 +100,7 @@
 
 - (void)awakeFromNib
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([[self cell] class] != [HoverButtonCell class]) {
         // replace cell
         NSButtonCell* oldCell = [self cell];
@@ -123,7 +123,7 @@
 
 - (void)setHoverImage:(NSImage*)image
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [(HoverButtonCell*)[self cell] setHoverImage:image];
 }
 
@@ -381,8 +381,8 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 
 - (void)mouseDown:(NSEvent*)theEvent
 {
-    NSPoint p = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    TRACE(@"%s (%f,%f)", __PRETTY_FUNCTION__, p.x, p.y);
+    //NSPoint p = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    //TRACE(@"%s (%f,%f)", __PRETTY_FUNCTION__, p.x, p.y);
     [super mouseDown:theEvent];
 }
 
@@ -390,7 +390,7 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 
 - (void)setIndexDuration:(float)duration
 {
-    TRACE(@"%s %.1f", __PRETTY_FUNCTION__, duration);
+    //TRACE(@"%s %.1f", __PRETTY_FUNCTION__, duration);
     [(SeekSliderCell*)[self cell] setIndexDuration:duration];
     [self setNeedsDisplay];
 }
@@ -401,21 +401,21 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 
 - (void)setRepeatBeginning:(float)beginning
 {
-    TRACE(@"%s %.1f", __PRETTY_FUNCTION__, beginning);
+    //TRACE(@"%s %.1f", __PRETTY_FUNCTION__, beginning);
     [(SeekSliderCell*)[self cell] setRepeatBeginning:beginning];
     [self setNeedsDisplay];
 }
 
 - (void)setRepeatEnd:(float)end
 {
-    TRACE(@"%s %.1f", __PRETTY_FUNCTION__, end);
+    //TRACE(@"%s %.1f", __PRETTY_FUNCTION__, end);
     [(SeekSliderCell*)[self cell] setRepeatEnd:end];
     [self setNeedsDisplay];
 }
 
 - (void)clearRepeat
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [(SeekSliderCell*)[self cell] clearRepeat];
     [self setNeedsDisplay];
 }
@@ -450,7 +450,6 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 - (void)awakeFromNib
 {
     replaceSliderCell(self, [MainSeekSliderCell class]);
-
     SeekSliderCell* cell = [self cell];
     [cell setBgImage:[NSImage imageNamed:@"MainLCD"]
               lImage:[NSImage imageNamed:@"MainSeekSliderLeft"]

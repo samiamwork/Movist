@@ -33,7 +33,7 @@
 
 - (void)resizeWithMagnification:(float)magnification
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, magnification);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, magnification);
     if (_movie && ![self isFullScreen]) {
         NSSize size = [_movie adjustedSize];
         if (magnification != 1.0) {
@@ -50,7 +50,7 @@
 
 - (void)resizeToScreen
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {
         NSRect frame = [_mainWindow frameRectForScreen];
         [_movieView setSubtitleVisible:FALSE];
@@ -67,7 +67,7 @@
 
 - (void)beginFullScreen
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullScreenLock lock];
     if (_movie && ![self isFullScreen]) {
         NSEvent* event = [NSApp currentEvent];
@@ -99,7 +99,7 @@
 
 - (void)endFullScreen
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullScreenLock lock];
     if ([self isFullScreen]) {
         [_fullScreener endFullScreen];
@@ -112,7 +112,11 @@
 
 - (void)beginFullNavigation
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (![_defaults boolForKey:MFullNavUseKey]) {
+        return;
+    }
+
     [_fullScreenLock lock];
     if ([self isFullScreen]) {
         // enter from full-screen-mode with playing movie
@@ -130,7 +134,7 @@
 
 - (void)endFullNavigation
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullScreenLock lock];
     if ([self isFullScreen]) {
         [_movieView showLogo];
@@ -144,7 +148,7 @@
 
 - (void)setFullScreenFill:(int)fill forWideMovie:(BOOL)forWideMovie
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         NSSize ss = [[_mainWindow screen] frame].size;
         NSSize ms = [_movie adjustedSize];
@@ -163,7 +167,7 @@
 
 - (void)setFullScreenFill:(int)fill
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_movieView setFullScreenFill:fill];
     [_movieView updateMovieRect:TRUE];
 
@@ -176,7 +180,7 @@
 
 - (void)setFullScreenUnderScan:(float)underScan
 {
-    TRACE(@"%s %f", __PRETTY_FUNCTION__, underScan);
+    //TRACE(@"%s %f", __PRETTY_FUNCTION__, underScan);
     [_movieView setFullScreenUnderScan:underScan];
     [_movieView updateMovieRect:TRUE];
 
@@ -199,7 +203,7 @@
 
 - (void)setAspectRatio:(int)aspectRatio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         NSMenuItem* item;
         unsigned int i, count = [_aspectRatioMenu numberOfItems];
@@ -220,7 +224,7 @@
 
 - (void)updateAspectRatioMenu
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSMenuItem* item;
     unsigned int i, count = [_aspectRatioMenu numberOfItems];
     for (i = 0; i < count; i++) {
@@ -235,7 +239,7 @@
 
 - (IBAction)movieSizeAction:(id)sender
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
     switch ([sender tag]) {
         case 0 : [self resizeWithMagnification:0.5];    break;
         case 1 : [self resizeWithMagnification:1.0];    break;
@@ -246,7 +250,7 @@
 
 - (IBAction)fullScreenAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {
         if (!_movie) {
             [self beginFullNavigation];
@@ -281,7 +285,7 @@
 
 - (IBAction)aspectRatioAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self setAspectRatio:[sender tag]];
 }
 

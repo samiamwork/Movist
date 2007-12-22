@@ -26,7 +26,7 @@
 
 - (id)initWithQTTrack:(QTTrack*)qtTrack
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, qtTrack);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, qtTrack);
     if (self = [super init]) {
         _qtTrack = [qtTrack retain];
     }
@@ -35,7 +35,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_qtTrack release];
     [super dealloc];
 }
@@ -111,7 +111,7 @@
 
 - (id)initWithURL:(NSURL*)url error:(NSError**)error
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     if ((self = [super initWithURL:url error:error])) {
         if ([url isFileURL]) {
             _qtMovie = [[QTMovie movieWithFile:[url path] error:error] retain];
@@ -150,14 +150,14 @@
              pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
                    error:(NSError**)error
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // create visual context
     OSStatus ret = QTOpenGLTextureContextCreate(kCFAllocatorDefault,
                                                 [openGLContext CGLContextObj],
                                                 [openGLPixelFormat CGLPixelFormatObj],
                                                 0, &_visualContext);
     if (ret != noErr) {
-        TRACE(@"QTOpenGLTextureContextCreate() failed: %d", ret);
+        //TRACE(@"QTOpenGLTextureContextCreate() failed: %d", ret);
         if (error) {
             NSDictionary* dict =
             [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:ret]
@@ -181,7 +181,7 @@
 
 - (void)cleanup
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     SetMovieVisualContext([_qtMovie quickTimeMovie], 0);
@@ -222,13 +222,13 @@
 
 - (void)setVolume:(float)volume
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, volume);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, volume);
     [_qtMovie setVolume:volume];
 }
 
 - (void)setMuted:(BOOL)muted
 {
-    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, muted ? @"muted" : @"unmuted");
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, muted ? @"muted" : @"unmuted");
     [_qtMovie setMuted:muted];
 }
 
@@ -246,37 +246,37 @@
 
 - (void)setRate:(float)rate
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, rate);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, rate);
     [_qtMovie setRate:rate];
 }
 
 - (void)stepBackward
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_qtMovie stepBackward];
 }
 
 - (void)stepForward
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_qtMovie stepForward];
 }
 
 - (void)gotoBeginning
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_qtMovie gotoBeginning];
 }
 
 - (void)gotoEnd
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_qtMovie gotoEnd];
 }
 
 - (void)gotoTime:(float)time
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, time);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, time);
     QTTime t = [_qtMovie currentTime];    // to fill timeScale & flags
     t.timeValue = (long long)(time * t.timeScale);
 
@@ -295,7 +295,7 @@
 
 - (void)seekByTime:(float)dt
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, dt);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, dt);
     float time = [self currentTime] + dt;
     time = (dt < 0) ? MAX(0, time) : MIN(time, [self duration]);
     [self gotoTime:time];

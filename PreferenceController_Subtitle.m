@@ -30,7 +30,7 @@
 
 - (void)initSubtitlePane
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleEnableButton setState:[_defaults boolForKey:MSubtitleEnableKey]];
     [self initSubtitleEncodingPopUpButton];
 
@@ -195,6 +195,7 @@
 
 - (IBAction)subtitleAutoFontSizeCharsAction:(id)sender
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaults setInteger:[sender intValue] forKey:MSubtitleAutoFontSizeCharsKey];
 
     [self updateFontSizeForAutoFontSizeChars];
@@ -395,8 +396,7 @@
 
     int chars = [_defaults integerForKey:MSubtitleAutoFontSizeCharsKey];
     [_subtitleAutoFontSizeButton setState:autoFontSize];
-    [_subtitleAutoFontSizeLabelTextField setTextColor:
-        autoFontSize ? [NSColor controlTextColor] : [NSColor disabledControlTextColor]];
+    [_subtitleAutoFontSizeLabelTextField setEnabled:autoFontSize];
     [_subtitleAutoFontSizeTextField setEnabled:autoFontSize];
     [_subtitleAutoFontSizeTextField setIntValue:chars];
     [_subtitleAutoFontSizeStepper setEnabled:autoFontSize];

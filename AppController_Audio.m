@@ -32,7 +32,7 @@
 
 - (void)setVolume:(float)volume
 {
-    TRACE(@"%s %f %g", __PRETTY_FUNCTION__, volume, volume);
+    //TRACE(@"%s %f %g", __PRETTY_FUNCTION__, volume, volume);
     if ([_muteButton state] == NSOnState) {
         [self setMuted:FALSE];
     }
@@ -46,7 +46,7 @@
 
 - (void)setMuted:(BOOL)muted
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, muted);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, muted);
     [_movie setMuted:muted];
     [_movieView setMessage:(muted) ? NSLocalizedString(@"Mute", nil) :
                                      NSLocalizedString(@"Unmute", nil)];
@@ -55,7 +55,7 @@
 
 - (void)updateVolumeUI
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     float volume = (_movie) ? [_movie volume] : [_defaults floatForKey:MVolumeKey];
     BOOL muted = (_movie) ? [_movie muted] : FALSE;
 
@@ -190,7 +190,7 @@
 
 - (void)updateAudioTrackMenuItems
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // remove all items
     int i, index;
     NSMenuItem* item;
@@ -243,7 +243,7 @@
 
 - (IBAction)volumeAction:(id)sender
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
     if ([sender tag] < 0) {
         [self volumeDown];
     }
@@ -260,13 +260,13 @@
 
 - (IBAction)muteAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self setMuted:([_muteMenuItem state] == NSOffState)];
 }
 
 - (IBAction)audioTrackAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self changeAudioTrack:[sender tag]];
 }
 

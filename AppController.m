@@ -40,9 +40,14 @@
 
 @implementation AppController
 
++ (void)initialize
+{
+    [[NSUserDefaults standardUserDefaults] registerMovistDefaults];
+}
+
 - (id)init
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         NSDictionary* dict = [NSDictionary dictionaryWithContentsOfFile:
                             @"/System/Library/CoreServices/SystemVersion.plist"];
@@ -61,7 +66,7 @@
 
 - (void)awakeFromNib
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // init UI
     [_mainWindow setReleasedWhenClosed:FALSE];
     [_mainWindow setExcludedFromWindowsMenu:TRUE];
@@ -74,6 +79,8 @@
 
     _playRate = 1.0;
     _prevMovieTime = 0.0;
+    _lastPlayedMovieURL = nil;
+    _lastPlayedMovieTime = 0.0;
     _viewDuration = [_defaults boolForKey:MViewDurationKey];
     [_lTimeTextField setClickable:FALSE];   [_panelLTimeTextField setClickable:FALSE];
     [_rTimeTextField setClickable:TRUE];    [_panelRTimeTextField setClickable:TRUE];
@@ -107,13 +114,14 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self cleanupRemoteControl];
     [self closeMovie];
     [_decoderButton release];
     [_fullScreenLock release];
     [_subtitleNameSet release];
     [_audioTrackIndexSet release];
+    [_lastPlayedMovieURL release];
     [_playlist release];
     [_playlistController release];
     [_preferenceController release];
@@ -127,7 +135,7 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification*)aNotification
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // hover-images should be set after -awakeFromNib.
     [_controlPanelButton setHoverImage:[NSImage imageNamed:@"MainControlPanelHover"]];
     [_playlistButton setHoverImage:[NSImage imageNamed:@"MainPlaylistHover"]];
@@ -171,51 +179,69 @@
     // ...
 
     [self updateUI];
-    
+
     [self checkForUpdatesOnStartup];
+
+    [self loadLastPlayedMovieInfo];
+}
+
+- (void)applicationDidFinishLaunching:(NSNotification*)aNotification
+{
+    // open last played movie (but, no play)
+    if (!_movie && _lastPlayedMovieURL) {
+        float rate = _playRate;
+        _playRate = 0.0;    // no play
+        [self openCurrentPlaylistItem];
+        _playRate = rate;
+    }
 }
 
 - (void)applicationWillBecomeActive:(NSNotification*)aNotification
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self startRemoteControl];
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_defaults boolForKey:MSupportAppleRemoteKey]) {
+        [self startRemoteControl];
+    }
 }
 
 - (void)applicationWillResignActive:(NSNotification*)aNotification
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self stopRemoteControl];
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_defaults boolForKey:MSupportAppleRemoteKey]) {
+        [self stopRemoteControl];
+    }
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     return _quitWhenWindowClose;
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication*)theApplication
                     hasVisibleWindows:(BOOL)flag
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, flag);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, flag);
     [_mainWindow makeKeyAndOrderFront:self];
     return FALSE;
 }
 
 - (void)applicationWillTerminate:(NSNotification*)aNotification
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self saveLastPlayedMovieInfo];
     [_defaults synchronize];
 }
 
 - (BOOL)application:(NSApplication*)theApplication openFile:(NSString*)filename
 {
-    TRACE(@"%s:\"%@\"", __PRETTY_FUNCTION__, filename);
+    //TRACE(@"%s:\"%@\"", __PRETTY_FUNCTION__, filename);
     return [self openFile:filename];
 }
 
 - (void)application:(NSApplication*)theApplication openFiles:(NSArray*)filenames
 {
-    TRACE(@"%s:{%@}", __PRETTY_FUNCTION__, filenames);
+    //TRACE(@"%s:{%@}", __PRETTY_FUNCTION__, filenames);
     if ([self openFiles:filenames]) {
         [NSApp replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
     }
@@ -261,7 +287,7 @@
 
 - (void)setQuitWhenWindowClose:(BOOL)quitWhenWindowClose
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, quitWhenWindowClose);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, quitWhenWindowClose);
     _quitWhenWindowClose = quitWhenWindowClose;
 }
 
@@ -347,7 +373,7 @@
 
 - (IBAction)controlPanelAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([_controlPanel isVisible]) {
         [_controlPanel hidePanel];
     }
@@ -359,7 +385,7 @@
 
 - (IBAction)preferencePanelAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (!_preferenceController) {
         _preferenceController = [[PreferenceController alloc]
                             initWithAppController:self mainWindow:_mainWindow];

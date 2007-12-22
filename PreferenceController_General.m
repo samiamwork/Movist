@@ -28,14 +28,25 @@
 #import "MainWindow.h"
 
 @implementation PreferenceController (General)
-
+/*
+- (void)setFullNavControlesEnabled:(BOOL)enabled
+{
+    [_fullNavPathLabelTextField setEnabled:enabled];
+    [_fullNavPathTextField setEnabled:enabled];
+    [_fullNavPathBrowseButton setEnabled:enabled];
+    [_fullNavShowiTunesMoviesButton setEnabled:enabled];
+    [_fullNavShowVideoPodcastButton setEnabled:enabled];
+    [_fullNavHelpTextField setEnabled:enabled];
+}
+*/
 - (void)initGeneralPane
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_autoFullScreenButton setState:[_defaults boolForKey:MAutoFullScreenKey]];
     [_alwaysOnTopButton setState:[_defaults boolForKey:MAlwaysOnTopKey]];
     [_activateOnDraggingButton setState:[_defaults boolForKey:MActivateOnDraggingKey]];
     [_quitWhenWindowCloseButton setState:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
+    [_rememberLastPlayButton setState:[_defaults boolForKey:MRememberLastPlayKey]];
 
     [_seekInterval0TextField setFloatValue:[_defaults floatForKey:MSeekInterval0Key]];
     [_seekInterval1TextField setFloatValue:[_defaults floatForKey:MSeekInterval1Key]];
@@ -43,6 +54,15 @@
     [_seekInterval0Stepper setFloatValue:[_defaults floatForKey:MSeekInterval0Key]];
     [_seekInterval1Stepper setFloatValue:[_defaults floatForKey:MSeekInterval1Key]];
     [_seekInterval2Stepper setFloatValue:[_defaults floatForKey:MSeekInterval2Key]];
+
+    [_supportAppleRemoteButton setState:[_defaults boolForKey:MSupportAppleRemoteKey]];
+    [_fullNavUseButton setState:[_defaults boolForKey:MFullNavUseKey]];
+    /*
+    [_fullNavPathTextField setStringValue:[_defaults stringForKey:MFullNavPathKey]];
+    [_fullNavShowiTunesMoviesButton setState:[_defaults boolForKey:MFullNavShowiTunesMoviesKey]];
+    [_fullNavShowVideoPodcastButton setState:[_defaults boolForKey:MFullNavShowVideoPodcastKey]];
+    [self setFullNavControlesEnabled:[_defaults boolForKey:MFullNavUseKey]];
+     */
 }
 
 - (IBAction)autoFullScreenAction:(id)sender
@@ -77,6 +97,13 @@
     [_appController setQuitWhenWindowClose:quitWhenWindowClose];
 }
 
+- (IBAction)rememberLastPlayAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL rememberLastPlay = [_rememberLastPlayButton state];
+    [_defaults setBool:rememberLastPlay forKey:MRememberLastPlayKey];
+}
+
 - (IBAction)seekIntervalAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -98,4 +125,67 @@
     [_appController setSeekInterval:interval atIndex:index];
 }
 
+- (IBAction)supportAppleRemoteAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL supportAppleRemote = [_supportAppleRemoteButton state];
+    [_defaults setBool:supportAppleRemote forKey:MSupportAppleRemoteKey];
+
+    if (supportAppleRemote) {
+        [_appController startRemoteControl];
+    }
+    else {
+        [_appController stopRemoteControl];
+    }
+}
+
+- (IBAction)fullNavUseAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL useFullNav = [_fullNavUseButton state];
+    [_defaults setBool:useFullNav forKey:MFullNavUseKey];
+    //[self setFullNavControlesEnabled:useFullNav];
+}
+/*
+- (IBAction)fullNavPathBrowseAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSOpenPanel* panel = [NSOpenPanel openPanel];
+    [panel setCanChooseFiles:FALSE];
+    [panel setCanChooseDirectories:TRUE];
+    [panel setAllowsMultipleSelection:FALSE];
+    NSString* path = [_defaults stringForKey:MFullNavPathKey];
+    [panel beginSheetForDirectory:[path stringByDeletingLastPathComponent]
+                             file:[path lastPathComponent]
+                            types:nil modalForWindow:[self window]
+                    modalDelegate:self
+                   didEndSelector:@selector(fullNavPathOpenPanelDidEnd:returnCode:contextInfo:)
+                      contextInfo:nil];
+}
+
+- (void)fullNavPathOpenPanelDidEnd:(NSOpenPanel*)panel
+                        returnCode:(int)returnCode contextInfo:(void*)contextInfo
+{
+    if (returnCode == NSOKButton) {
+        NSString* path = [[panel filenames] objectAtIndex:0];
+        [_fullNavPathTextField setStringValue:path];
+        [_defaults setObject:path forKey:MFullNavPathKey];
+    }
+}
+
+- (IBAction)fullNavShowiTunesMoviesAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL showiTunesMovies = [_fullNavShowiTunesMoviesButton state];
+    [_defaults setBool:showiTunesMovies forKey:MFullNavShowiTunesMoviesKey];
+}
+
+
+- (IBAction)fullNavShowVideoPodcastAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL showVideoPodcast = [_fullNavShowVideoPodcastButton state];
+    [_defaults setBool:showVideoPodcast forKey:MFullNavShowVideoPodcastKey];
+}
+*/
 @end

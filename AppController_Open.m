@@ -49,8 +49,8 @@
 - (MMovie*)movieFromURL:(NSURL*)movieURL withMovieClass:(Class)movieClass
                    error:(NSError**)error
 {
-    TRACE(@"%s \"%@\" with \"%@\"", __PRETTY_FUNCTION__,
-          [movieURL absoluteString], movieClass);
+    //TRACE(@"%s \"%@\" with \"%@\"", __PRETTY_FUNCTION__,
+    //      [movieURL absoluteString], movieClass);
     NSArray* classes;
     if (movieClass) {
         // if movieClass is specified, then try it only
@@ -88,12 +88,12 @@
                withEncoding:(CFStringEncoding)cfEncoding
                       error:(NSError**)error
 {
-    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [subtitleURL absoluteString]);
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [subtitleURL absoluteString]);
     if (!subtitleURL) {
         return nil;
     }
     if (![subtitleURL isFileURL]) {
-        TRACE(@"remote subtitle is not supported yet");
+        //TRACE(@"remote subtitle is not supported yet");
         *error = [NSError errorWithDomain:[NSApp localizedAppName] code:0 userInfo:0];
         return nil;
     }
@@ -150,7 +150,7 @@
 - (BOOL)openMovie:(NSURL*)movieURL movieClass:(Class)movieClass
          subtitle:(NSURL*)subtitleURL subtitleEncoding:(CFStringEncoding)subtitleEncoding
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         [self closeMovie];
     }
@@ -190,7 +190,11 @@
     [self autoenableAudioTracks];
     [_movie setVolume:normalizedVolume([_defaults floatForKey:MVolumeKey])];
     [_movie setMuted:([_muteButton state] == NSOnState)];
-    
+    if ([_lastPlayedMovieURL isEqualTo:movieURL] && 0 < _lastPlayedMovieTime) {
+        [_movie gotoTime:_lastPlayedMovieTime];
+    }
+    _lastPlayedMovieURL = [movieURL retain];
+
     // open subtitle
     if (subtitleURL && [_defaults boolForKey:MSubtitleEnableKey]) {
         NSArray* subtitles = [self subtitleFromURL:subtitleURL
@@ -253,19 +257,19 @@
 
 - (BOOL)openFile:(NSString*)filename
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     return [self openFiles:[NSArray arrayWithObject:filename]];
 }
 
 - (BOOL)openFiles:(NSArray*)filenames
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     return [self openFiles:filenames option:OPTION_SERIES];
 }
 
 - (BOOL)openURL:(NSURL*)url
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSString* s = @"\"Open URL...\" is not implemented yet.";
     NSRunAlertPanel([NSApp localizedAppName], s,
                     NSLocalizedString(@"OK", nil), nil, nil);
@@ -290,17 +294,17 @@
 
 - (BOOL)openFile:(NSString*)filename option:(int)option
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     return [self openFiles:[NSArray arrayWithObject:filename] option:option];
 }
 
 - (BOOL)openFiles:(NSArray*)filenames option:(int)option
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![_mainWindow isVisible]) {
         [_mainWindow makeKeyAndOrderFront:self];
     }
-    
+
     if ([filenames count] == 1 &&
         [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle subtitleTypes]]) {
         if (_movie) {   // reopen subtitle
@@ -357,7 +361,7 @@
 
 - (BOOL)reopenMovieWithMovieClass:(Class)movieClass
 {
-    TRACE(@"%s:%@", __PRETTY_FUNCTION__, movieClass);
+    //TRACE(@"%s:%@", __PRETTY_FUNCTION__, movieClass);
     [self closeMovie];
 
     PlaylistItem* item = [_playlist currentItem];
@@ -367,7 +371,7 @@
 
 - (void)reopenSubtitle
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         [self openSubtitle:[[_playlist currentItem] subtitleURL]
                   encoding:kCFStringEncodingInvalidId];
@@ -376,8 +380,10 @@
 
 - (void)closeMovie
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
+        _lastPlayedMovieTime = [_movie currentTime];
+
         // init _audioTrackIndexSet for next open.
         [_audioTrackIndexSet removeAllIndexes];
         NSArray* audioTracks = [_movie audioTracks];
@@ -451,9 +457,11 @@
 
 - (IBAction)openFileAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSOpenPanel* panel = [NSOpenPanel openPanel];
+    [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:TRUE];
+    [panel setAllowsMultipleSelection:FALSE];
     if (NSOKButton == [panel runModalForTypes:[MMovie movieTypes]]) {
         [self openFile:[panel filename]];
     }
@@ -461,16 +469,18 @@
 
 - (IBAction)openURLAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // FIXME : not implemented yet
     [self openURL:nil];
 }
 
 - (IBAction)openSubtitleFileAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSOpenPanel* panel = [NSOpenPanel openPanel];
-    [panel setCanChooseDirectories:TRUE];
+    [panel setCanChooseFiles:TRUE];
+    [panel setCanChooseDirectories:FALSE];
+    [panel setAllowsMultipleSelection:FALSE];
     if (NSOKButton == [panel runModalForTypes:[MSubtitle subtitleTypes]]) {
         [self openSubtitle:[NSURL fileURLWithPath:[panel filename]]
                   encoding:kCFStringEncodingInvalidId];
@@ -479,7 +489,7 @@
 
 - (IBAction)reopenMovieAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         if ([_movie isMemberOfClass:[MMovie_FFMPEG class]]) {
             [self reopenMovieWithMovieClass:[MMovie_QuickTime class]];
@@ -492,7 +502,7 @@
 
 - (IBAction)reopenSubtitleAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self openSubtitle:[[_playlist currentItem] subtitleURL]
               encoding:[sender tag]];
 }

@@ -26,6 +26,8 @@
 NSString* MPreferencePaneKey                = @"PreferencePane";
 NSString* MControlTabKey                    = @"ControlTab";
 NSString* MViewDurationKey                  = @"ViewDuration";
+NSString* MPlaylistKey                      = @"Playlist";
+NSString* MLastPlayedMovieTimeKey           = @"LastPlayedMovieTime";
 
 #pragma mark -
 #pragma mark prefs: general
@@ -33,9 +35,15 @@ NSString* MAutoFullScreenKey                = @"AutoFullScreen";
 NSString* MAlwaysOnTopKey                   = @"AlwaysOnTop";
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
 NSString* MQuitWhenWindowCloseKey           = @"QuitWhenWindowClose";
+NSString* MRememberLastPlayKey              = @"RememberLastPlay";
 NSString* MSeekInterval0Key                 = @"SeekInterval0";
 NSString* MSeekInterval1Key                 = @"SeekInterval1";
 NSString* MSeekInterval2Key                 = @"SeekInterval2";
+NSString* MSupportAppleRemoteKey            = @"SupportAppleRemote";
+NSString* MFullNavUseKey                    = @"FullNavUse";
+NSString* MFullNavPathKey                   = @"FullNavPath";
+NSString* MFullNavShowiTunesMoviesKey       = @"FullNavShowiTunesMovies";
+NSString* MFullNavShowVideoPodcastKey       = @"FullNavShowVideoPodcast";
 
 #pragma mark -
 #pragma mark prefs: video
@@ -80,11 +88,9 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 
 @implementation NSUserDefaults (Movist)
 
-+ (void)initialize
+- (void)registerMovistDefaults
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    [super initialize];
-
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
     
     // app
@@ -97,9 +103,15 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAlwaysOnTopKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MQuitWhenWindowCloseKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MRememberLastPlayKey];
     [dict setObject:[NSNumber numberWithFloat: 10.0] forKey:MSeekInterval0Key];
     [dict setObject:[NSNumber numberWithFloat: 60.0] forKey:MSeekInterval1Key];
     [dict setObject:[NSNumber numberWithFloat:300.0] forKey:MSeekInterval2Key];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSupportAppleRemoteKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavUseKey];
+    [dict setObject:[@"~/Movies" stringByExpandingTildeInPath] forKey:MFullNavPathKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesMoviesKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowVideoPodcastKey];
 
     // prefs: video
     [dict setObject:[NSNumber numberWithInt:FS_EFFECT_ANIMATION] forKey:MFullScreenEffectKey];
@@ -138,7 +150,7 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MUpdateCheckIntervalKey];
     [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastUpdateCheckTimeKey];
 
-    [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+    [self registerDefaults:dict];
     //TRACE(@"registering defaults: %@", dict);
 }
 

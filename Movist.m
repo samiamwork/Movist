@@ -136,6 +136,19 @@ NSString* MMovieRectUpdateNotification          = @"MMovieRectUpdateNotification
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@implementation NSTextField (Movist)
+
+- (void)setEnabled:(BOOL)enabled
+{
+    [self setTextColor:enabled ? [NSColor controlTextColor] :
+                                 [NSColor disabledControlTextColor]];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @implementation NSScreen (Movist)
 
 static NSWindow* _fadeWindow = 0;

@@ -21,7 +21,9 @@
 //
 
 #import "AppController.h"
+#import "UserDefaults.h"
 
+#import "MMovie.h"
 #import "Playlist.h"
 #import "PlaylistController.h"
 
@@ -36,21 +38,21 @@
 
 - (void)addFiles:(NSArray*)filenames
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist addFiles:filenames];
     [_playlistController updateUI];
 }
 
 - (void)addURL:(NSURL*)url
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist addURL:url];
     [_playlistController updateUI];
 }
 
 - (BOOL)openCurrentPlaylistItem
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     PlaylistItem* item = [_playlist currentItem];
     return [self openMovie:[item movieURL] movieClass:nil
                   subtitle:[item subtitleURL] subtitleEncoding:kCFStringEncodingInvalidId];
@@ -58,14 +60,14 @@
 
 - (BOOL)openPrevPlaylistItem
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist setPrevItem];
     return [self openCurrentPlaylistItem];
 }
 
 - (BOOL)openNextPlaylistItem
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist setNextItem];
     return [self openCurrentPlaylistItem];
 }
@@ -96,9 +98,46 @@
 
 - (void)setRepeatMode:(unsigned int)mode
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, mode);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, mode);
     [_playlist setRepeatMode:mode];
     [self updateRepeatUI];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (void)loadLastPlayedMovieInfo
+{
+    if ([_defaults boolForKey:MRememberLastPlayKey]) {
+        Playlist* list = [NSKeyedUnarchiver unarchiveObjectWithData:
+                                            [_defaults objectForKey:MPlaylistKey]];
+        if (list) {
+            [_playlist release];
+            _playlist = [list retain];
+        }
+        _lastPlayedMovieURL = [[[_playlist currentItem] movieURL] retain];
+        _lastPlayedMovieTime = [_defaults floatForKey:MLastPlayedMovieTimeKey];
+        [_playlistController updateUI];
+    }
+    else {
+        _lastPlayedMovieURL = nil;
+        _lastPlayedMovieTime = 0.0;
+    }
+}
+
+- (void)saveLastPlayedMovieInfo
+{
+    if ([_defaults boolForKey:MRememberLastPlayKey]) {
+        // save last playlist, file and time.
+        [_defaults setObject:[NSKeyedArchiver archivedDataWithRootObject:_playlist]
+                      forKey:MPlaylistKey];
+        [_defaults setObject:[NSNumber numberWithFloat:_lastPlayedMovieTime]
+                      forKey:MLastPlayedMovieTimeKey];
+    }
+    else {
+        [_defaults removeObjectForKey:MPlaylistKey];
+        [_defaults removeObjectForKey:MLastPlayedMovieTimeKey];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -107,7 +146,7 @@
 
 - (void)updateRepeatUI
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     unsigned int repeatMode = [_playlist repeatMode];
     [_repeatOffMenuItem setState:(repeatMode == REPEAT_OFF)];
     [_repeatAllMenuItem setState:(repeatMode == REPEAT_ALL)];
@@ -122,7 +161,7 @@
 
 - (void)showPlaylistWindow
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (!_playlistController) {
         _playlistController = [[PlaylistController alloc]
                                 initWithAppController:self playlist:_playlist];
@@ -143,7 +182,7 @@
 
 - (void)hidePlaylistWindow
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([self playlistWindowVisible]) {
         [_playlistController closeAction:self];
     }
@@ -155,7 +194,7 @@
 
 - (IBAction)playlistAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([self playlistWindowVisible]) {
         [self hidePlaylistWindow];
     }
@@ -166,7 +205,7 @@
 
 - (IBAction)prevNextMovieAction:(id)sender
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
     BOOL ret = ([sender tag] < 0) ? [self openPrevPlaylistItem] :
                                     [self openNextPlaylistItem];
     if (!ret) {
@@ -176,7 +215,7 @@
 
 - (IBAction)repeatAction:(id)sender
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
     [self setRepeatMode:[sender tag]];
 }
 

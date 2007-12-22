@@ -29,7 +29,7 @@
 
 - (void)setSubtitleEnable:(BOOL)enable
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (enable) {
         [self reopenSubtitle];
 
@@ -152,7 +152,7 @@
 
 - (void)changeSubtitleVMargin:(int)tag
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     float vmargin;
     switch (tag) {
         case -1 : vmargin = [_movieView subtitleVMargin] - 1.0;         break;
@@ -305,7 +305,7 @@
 
 - (void)updateSubtitleLanguageMenuItems
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // remove all subtitle language items except rotation item
     int i, index;
     NSMenuItem* item;
@@ -360,13 +360,13 @@
 
 - (IBAction)subtitleVisibleAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self changeSubtitleVisible];
 }
 
 - (IBAction)subtitleLanguageAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self changeSubtitle:[sender tag]];
 }
 
@@ -384,7 +384,7 @@
 
 - (IBAction)subtitleDisplayOnLetterBoxAction:(id)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL display;
     if (sender == _preferenceController) {
         display = [_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey];

@@ -80,32 +80,39 @@
     }
 }
 
-#define FADE_EFFECT_DURATION   0.5
+#define NAV_FADE_DURATION       1.0
+#define FADE_EFFECT_DURATION    0.5
 
 - (void)beginFullScreen
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    float rate; // for FS_EFFECT_FADE
+    BOOL forNavigation = (_movieURL == nil);
+    float fadeDuration = (forNavigation) ? NAV_FADE_DURATION : FADE_EFFECT_DURATION;
+    int effect = (forNavigation) ? FS_EFFECT_FADE : _effect;
+    if (effect == FS_EFFECT_FADE) {
+        [NSCursor setHiddenUntilMouseMoves:TRUE];
+        rate = [[_movieView movie] rate];
+        [[_movieView movie] setRate:0.0];
+        [[_mainWindow screen] fadeOut:fadeDuration];
+    }
+
     GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
     // if currently in main screen, hide system UI elements(main-menu, dock)
     if ([[_mainWindow screen] isEqualTo:[[NSScreen screens] objectAtIndex:0]]) {
         SetSystemUIMode(kUIModeAllSuppressed, 0);
     }
-    [NSCursor setHiddenUntilMouseMoves:TRUE];
 
-    BOOL forNavigation = (_movieURL == nil);
-    int effect = (forNavigation) ? FS_EFFECT_FADE : _effect;
-    float rate; // for FS_EFFECT_FADE
     switch (effect) {
         case FS_EFFECT_FADE :
-            rate = [[_movieView movie] rate];
-            [[_movieView movie] setRate:0.0];
-            [[_mainWindow screen] fadeOut:FADE_EFFECT_DURATION];
+            // already fade-out
             break;
         case FS_EFFECT_ANIMATION :
+            [NSCursor setHiddenUntilMouseMoves:TRUE];
             [_fullWindow setFrame:_restoreRect display:TRUE];
             break;
         default :   // FS_EFFECT_NONE
-            // do nothing
+            [NSCursor setHiddenUntilMouseMoves:TRUE];
             break;
     }
 
@@ -128,7 +135,7 @@
             [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
             [_fullWindow flushWindow];
             [_mainWindow flushWindow];
-            [[_mainWindow screen] fadeIn:FADE_EFFECT_DURATION];
+            [[_mainWindow screen] fadeIn:fadeDuration];
             [[_movieView movie] setRate:rate];
             break;
         case FS_EFFECT_ANIMATION :
@@ -164,11 +171,12 @@
     }
     float rate; // for FS_EFFECT_FADE
     int effect = ([self isNavigatable]) ? FS_EFFECT_FADE : _effect;
+    float fadeDuration = ([self isNavigatable]) ? NAV_FADE_DURATION : FADE_EFFECT_DURATION;
     switch (effect) {
         case FS_EFFECT_FADE :
             rate = [[_movieView movie] rate];
             [[_movieView movie] setRate:0.0];
-            [[_mainWindow screen] fadeOut:FADE_EFFECT_DURATION];
+            [[_mainWindow screen] fadeOut:fadeDuration];
             [_fullWindow removeChildWindow:_mainWindow];
             break;
         case FS_EFFECT_ANIMATION :
@@ -215,7 +223,7 @@
 
     if (effect == FS_EFFECT_FADE) {
         [_mainWindow flushWindow];
-        [[_mainWindow screen] fadeIn:FADE_EFFECT_DURATION];
+        [[_mainWindow screen] fadeIn:fadeDuration];
         [[_movieView movie] setRate:rate];
     }
 }

@@ -526,7 +526,7 @@
 
 - (void)renderThreadFunc:(id)anObject
 {
-    TRACE(@"%s started", __PRETTY_FUNCTION__);
+    //TRACE(@"%s started", __PRETTY_FUNCTION__);
     _running = TRUE;
 
     float time;
@@ -534,7 +534,7 @@
     NSAutoreleasePool* innerPool;
     MSubtitleStringImage* image = nil;
     while (!_quitRequested) {
-        TRACE(@"%s waiting for resume", __PRETTY_FUNCTION__);
+        //TRACE(@"%s waiting for resume", __PRETTY_FUNCTION__);
         outerPool = [[NSAutoreleasePool alloc] init];
 
         [_conditionLock lockWhenCondition:MAKING_IMAGE];
@@ -602,7 +602,7 @@
     }
     
     _running = FALSE;
-    TRACE(@"%s finished", __PRETTY_FUNCTION__);
+    //TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 
 @end

@@ -116,7 +116,7 @@ typedef struct _SMITag {
 
 - (void)readyWithString:(NSString*)string options:(NSDictionary*)options
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _source = [string retain];
     _sourceRange = NSMakeRange(0, [_source length]);
     if (options) {
@@ -139,7 +139,7 @@ typedef struct _SMITag {
 
 - (MSubtitle*)addSubtitleClass:(NSString*)class
 {
-    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, class);
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, class);
     MSubtitle* subtitle = [[[MSubtitle alloc] initWithType:@"SMI"] autorelease];
     [_subtitles addObject:subtitle];
     [_classes setObject:subtitle forKey:class];
@@ -363,7 +363,7 @@ extern NSString* MFontBoldAttributeName;
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self readyWithString:string options:options];
 
     float time = -1.0;

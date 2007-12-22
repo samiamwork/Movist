@@ -123,7 +123,7 @@
 
 - (id)initWithType:(NSString*)type
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, type);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, type);
     if (self = [super init]) {
         _type = [type retain];
         _name = [NSLocalizedString(@"Unnamed", nil) retain];
@@ -138,7 +138,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_strings removeAllObjects];
     [_strings release];
     [_name release];
@@ -155,7 +155,7 @@
 
 - (void)setName:(NSString*)name
 {
-    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, name);
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, name);
     [name retain], [_name release], _name = name;
 }
 
@@ -314,7 +314,7 @@
 
 - (void)clearCache
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _lastIndexOfStringAtTime = -1;
 }
 

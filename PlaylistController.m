@@ -105,8 +105,7 @@
 
 - (void)keyDown:(NSEvent*)event
 {
-    TRACE(@"%s \'0x%x\'", __PRETTY_FUNCTION__,
-          [[event characters] characterAtIndex:0]);
+    //TRACE(@"%s \'0x%x\'", __PRETTY_FUNCTION__, [[event characters] characterAtIndex:0]);
     if (![event isARepeat]) {
         unichar key = [[event characters] characterAtIndex:0];
         if (key == NSDeleteCharacter ||     // backward delete

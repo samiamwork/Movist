@@ -121,6 +121,15 @@ extern NSString* MMovieRectUpdateNotification;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@interface NSTextField (Movist)
+
+- (void)setEnabled:(BOOL)enabled;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @interface NSScreen (Movist)
 
 - (void)fadeOut:(float)duration;

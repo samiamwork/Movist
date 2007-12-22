@@ -49,7 +49,7 @@
 
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([sender draggingSource] == self) {
         return NSDragOperationNone;
     }
@@ -70,7 +70,7 @@
 
 - (void)draggingTimerElapsed:(NSTimer*)timer
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_dragAction != DRAG_ACTION_NONE) {
         [[self window] orderFrontRegardless];
         if (_activateOnDragging) {
@@ -112,20 +112,20 @@
 
 - (void)draggingExited:(id<NSDraggingInfo>)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _dragAction = DRAG_ACTION_NONE;
     [self redisplay];
 }
 
 - (BOOL)prepareForDragOperation:(id<NSDraggingInfo>)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     return TRUE;
 }
 
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSPasteboard* pboard = [sender draggingPasteboard];
     switch (_dragAction) {
         case DRAG_ACTION_PLAY_FILES :
@@ -157,7 +157,7 @@
 
 - (void)concludeDragOperation:(id<NSDraggingInfo>)sender
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _dragAction = DRAG_ACTION_NONE;
     if ([[NSApp delegate] playlistWindowVisible]) {
         [[NSApp delegate] hidePlaylistWindow];

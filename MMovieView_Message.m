@@ -54,7 +54,7 @@
 
 - (void)setAttributedMessage:(NSMutableAttributedString*)s
 {
-    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [s string]);
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [s string]);
     [_messageOSD setString:s];
     [self redisplay];
 
@@ -66,7 +66,7 @@
 
 - (void)hideMessage:(NSTimer*)timer
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _messageHideTimer = nil;
 
     [_messageOSD setString:[[NSMutableAttributedString alloc] initWithString:@""]];
@@ -86,7 +86,7 @@
 
 - (void)setMessageHideInterval:(float)interval
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, interval);
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, interval);
     _messageHideInterval = interval;
 }
 
