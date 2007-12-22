@@ -165,6 +165,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
 }
 
+- (CGDirectDisplayID)displayID { return _displayID; }
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark OpenGL

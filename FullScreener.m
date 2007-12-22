@@ -31,7 +31,7 @@
 
 - (id)initWithMainWindow:(MainWindow*)mainWindow playPanel:(PlayPanel*)playPanel
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         _mainWindow = [mainWindow retain];
         _movieView = [[_mainWindow movieView] retain];
@@ -49,7 +49,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullWindow release];
     [_mainWindow release];
     [_movieView release];
@@ -64,13 +64,13 @@
 
 - (void)setEffect:(int)effect
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, effect);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, effect);
     _effect = effect;
 }
 
 - (void)setMovieURL:(NSURL*)movieURL
 {
-    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [movieURL absoluteString]);
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [movieURL absoluteString]);
     [movieURL retain], [_movieURL release], _movieURL = movieURL;
     [_fullWindow setMovieURL:_movieURL];
     [_playPanel setMovieURL:_movieURL];
@@ -80,12 +80,49 @@
     }
 }
 
+- (void)showMainMenuAndDock
+{
+    SystemUIMode systemUIMode;
+    GetSystemUIMode(&systemUIMode, 0);
+    if (systemUIMode == kUIModeAllSuppressed) {
+        SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
+    }
+}
+
+- (void)hideMainMenuAndDock
+{
+    GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
+
+    // if currently in menu-bar-screen, hide system UI elements(main-menu, dock)
+    NSScreen* menuBarScreen = [[NSScreen screens] objectAtIndex:0];
+    if ([[_mainWindow screen] isEqualTo:menuBarScreen]) {
+        // if cursor is in dock, move cursor out of dock area to hide dock.
+        NSRect rc = [menuBarScreen visibleFrame];
+        NSPoint p = [NSEvent mouseLocation];
+        if (!NSPointInRect(p, rc)) {
+            float margin = 20;   // some margin needed
+            if (p.x < NSMinX(rc)) {         // left-side dock
+                p.x = NSMinX(rc) + margin;
+            }
+            else if (NSMaxX(rc) <= p.x) {   // right-side dock
+                p.x = NSMaxX(rc) - margin;
+            }
+            else if (p.y < NSMinY(rc)) {    // bottom-side dock
+                p.y = NSMinY(rc) + margin;
+            }
+            CGDisplayMoveCursorToPoint([_movieView displayID],
+                                       CGPointMake(p.x, NSMaxY(rc) - p.y));
+        }
+        SetSystemUIMode(kUIModeAllSuppressed, 0);
+    }
+}
+
 #define NAV_FADE_DURATION       1.0
 #define FADE_EFFECT_DURATION    0.5
 
 - (void)beginFullScreen
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     float rate; // for FS_EFFECT_FADE
     BOOL forNavigation = (_movieURL == nil);
     float fadeDuration = (forNavigation) ? NAV_FADE_DURATION : FADE_EFFECT_DURATION;
@@ -97,11 +134,7 @@
         [[_mainWindow screen] fadeOut:fadeDuration];
     }
 
-    GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
-    // if currently in main screen, hide system UI elements(main-menu, dock)
-    if ([[_mainWindow screen] isEqualTo:[[NSScreen screens] objectAtIndex:0]]) {
-        SetSystemUIMode(kUIModeAllSuppressed, 0);
-    }
+    [self hideMainMenuAndDock];
 
     switch (effect) {
         case FS_EFFECT_FADE :
@@ -159,7 +192,7 @@
 
 - (void)endFullScreen
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_updateSystemActivityTimer invalidate];
 
     [_fullWindow setAcceptsMouseMovedEvents:FALSE];
@@ -211,11 +244,7 @@
     }
 
     // restore system UI elements(main-menu, dock)
-    SystemUIMode systemUIMode;
-    GetSystemUIMode(&systemUIMode, 0);
-    if (systemUIMode == kUIModeAllSuppressed) {
-        SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
-    }
+    [self showMainMenuAndDock];
     [NSCursor setHiddenUntilMouseMoves:FALSE];
 
     [_fullWindow release];

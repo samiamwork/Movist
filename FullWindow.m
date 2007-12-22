@@ -64,7 +64,7 @@
 
 - (id)initWithScreen:(NSScreen*)screen playPanel:(PlayPanel*)playPanel
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     unsigned int styleMask = NSBorderlessWindowMask;
 #if defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
     styleMask |= NSUnscaledWindowMask;
@@ -88,7 +88,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playPanel release];
     [_movieView release];
     [_navView release];
@@ -110,6 +110,7 @@
 
 - (void)orderOut:(id)sender
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_movieView setHidden:FALSE];
     [_navView setHidden:TRUE];
     [super orderOut:sender];
@@ -120,7 +121,7 @@
 
 - (void)setMovieView:(MMovieView*)movieView
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _movieView = [movieView retain];
     [[self contentView] addSubview:_movieView];
 

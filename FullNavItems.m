@@ -27,7 +27,7 @@
 
 - (id)initWithParentItem:(FullNavItem*)parentItem items:(NSArray*)items
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         _parentItem = [parentItem retain];
         _items = [items retain];
@@ -39,7 +39,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_items release];
     [super dealloc];
 }
@@ -87,7 +87,7 @@
 
 - (id)initWithName:(NSString*)name
 {
-    TRACE(@"%s name=\"%@\"", __PRETTY_FUNCTION__, name);
+    //TRACE(@"%s name=\"%@\"", __PRETTY_FUNCTION__, name);
     if (self = [super init]) {
         _name = [name retain];
     }
@@ -120,7 +120,7 @@
 
 - (id)initWithPath:(NSString*)path name:(NSString*)name
 {
-    TRACE(@"%s path=\"%@\"", __PRETTY_FUNCTION__, path);
+    //TRACE(@"%s path=\"%@\"", __PRETTY_FUNCTION__, path);
     if (!name) {
         NSFileManager* fm = [NSFileManager defaultManager];
         name = [[fm displayNameAtPath:path] lastPathComponent];
@@ -188,7 +188,7 @@
 
 - (id)initWithURL:(NSURL*)url
 {
-    TRACE(@"%s url=\"%@\"", __PRETTY_FUNCTION__, [url absoluteString]);
+    //TRACE(@"%s url=\"%@\"", __PRETTY_FUNCTION__, [url absoluteString]);
     NSString* name = [[url absoluteString] lastPathComponent];
     if (self = [super initWithName:name]) {
         _url = [url retain];

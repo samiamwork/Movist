@@ -29,7 +29,7 @@
 
 - (void)initAnimation
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     // _restoreRect
     _restoreRect = [[_mainWindow contentView] convertRect:[_movieView frame] toView:nil];
     _restoreRect.origin = [_mainWindow convertBaseToScreen:_restoreRect.origin];

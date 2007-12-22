@@ -72,6 +72,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (CGDirectDisplayID)displayID;
+
 - (MMovie*)movie;
 - (NSRect)movieRect;
 - (void)setMovie:(MMovie*)movie;

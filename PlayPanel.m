@@ -64,7 +64,7 @@
 
 - (void)setMovieURL:(NSURL*)movieURL
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSString* title = (movieURL) ? [[movieURL path] lastPathComponent] : @"";
     [_titleTextField setStringValue:title];
     [self setTitle:title];
