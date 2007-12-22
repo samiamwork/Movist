@@ -171,11 +171,17 @@
     [_movieView setFullScreenFill:fill];
     [_movieView updateMovieRect:TRUE];
 
-    NSString* s = (fill == 0) ? NSLocalizedString(@"Default", nil) :
-                  (fill == 1) ? NSLocalizedString(@"Expand", nil) :
-                                NSLocalizedString(@"Crop", nil);
+    NSMenuItem* item;
+    unsigned int i, count = [_fullScreenFillMenu numberOfItems];
+    for (i = 0; i < count; i++) {
+        item = [_fullScreenFillMenu itemAtIndex:i];
+        if ([item tag] == fill) {
+            break;
+        }
+    }
     [_movieView setMessage:[NSString stringWithFormat:
-        @"%@: %@", NSLocalizedString(@"Full Screen Filling", nil), s]];
+        @"%@: %@", [_fullScreenFillMenu title], [item title]]];
+    [self updateFullScreenFillMenu];
 }
 
 - (void)setFullScreenUnderScan:(float)underScan
@@ -184,14 +190,32 @@
     [_movieView setFullScreenUnderScan:underScan];
     [_movieView updateMovieRect:TRUE];
 
-    [_underScanMenuItem setState:(underScan != 0)];
+    unsigned int count = [_fullScreenFillMenu numberOfItems];
+    NSMenuItem* item = [_fullScreenFillMenu itemAtIndex:count - 1];
+    [item setState:(underScan != 0)];
     if (underScan == 0) {
         [_movieView setMessage:[NSString stringWithFormat:
-            @"%@ %@", [_underScanMenuItem title], NSLocalizedString(@"Never", nil)]];
+            @"%@ %@", [item title], NSLocalizedString(@"Never", nil)]];
     }
     else {
         [_movieView setMessage:[NSString stringWithFormat:
-            @"%@ %.1f %%", [_underScanMenuItem title], underScan]];
+            @"%@ %.1f %%", [item title], underScan]];
+    }
+}
+
+- (void)updateFullScreenFillMenu
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSMenuItem* item;
+    unsigned int i, count = [_fullScreenFillMenu numberOfItems];
+    for (i = 0; i < count; i++) {
+        item = [_fullScreenFillMenu itemAtIndex:i];
+        if ([item tag] <= FS_FILL_CROP) {
+            [item setState:(_movie && [item tag] == [_movieView fullScreenFill])];
+        }
+        else {  // under scan
+            [item setState:(0 < [_movieView fullScreenUnderScan])];
+        }
     }
 }
 
@@ -273,7 +297,12 @@
 
 - (IBAction)fullScreenFillAction:(id)sender
 {
-    [self setFullScreenFill:([_movieView fullScreenFill] + 1) % 3];
+    if ([sender tag] < 0) {
+        [self setFullScreenFill:([_movieView fullScreenFill] + 1) % 3];
+    }
+    else {
+        [self setFullScreenFill:[sender tag]];
+    }
 }
 
 - (IBAction)fullScreenUnderScanAction:(id)sender

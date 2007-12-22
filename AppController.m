@@ -275,6 +275,7 @@
     [_controlPanel setMovieURL:movieURL];
     [_propertiesView reloadData];
     [self updateAspectRatioMenu];
+    [self updateFullScreenFillMenu];
     [self updateAudioTrackMenuItems];
     [self updateSubtitleLanguageMenuItems];
     [self updateRepeatUI];

@@ -2,18 +2,6 @@
     IBClasses =     (
                 {
             ACTIONS =             {
-                appleRemoteLeftAction = id;
-                appleRemoteLeftHoldAction = id;
-                appleRemoteMenuAction = id;
-                appleRemoteMenuHoldAction = id;
-                appleRemoteMinusAction = id;
-                appleRemoteMinusHoldAction = id;
-                appleRemotePlayAction = id;
-                appleRemotePlayHoldAction = id;
-                appleRemotePlusAction = id;
-                appleRemotePlusHoldAction = id;
-                appleRemoteRightAction = id;
-                appleRemoteRightHoldAction = id;
                 aspectRatioAction = id;
                 audioTrackAction = id;
                 controlPanelAction = id;
@@ -33,6 +21,18 @@
                 prevNextMovieAction = id;
                 rangeRepeatAction = id;
                 rateAction = id;
+                remoteControlLeftAction = id;
+                remoteControlLeftHoldAction = id;
+                remoteControlMenuAction = id;
+                remoteControlMenuHoldAction = id;
+                remoteControlMinusAction = id;
+                remoteControlMinusHoldAction = id;
+                remoteControlPlayAction = id;
+                remoteControlPlayHoldAction = id;
+                remoteControlPlusAction = id;
+                remoteControlPlusHoldAction = id;
+                remoteControlRightAction = id;
+                remoteControlRightHoldAction = id;
                 reopenMovieAction = id;
                 reopenSubtitleAction = id;
                 repeatAction = id;
@@ -53,6 +53,7 @@
                 "_controlPanel" = ControlPanel;
                 "_controlPanelButton" = HoverButton;
                 "_controlPanelDecoderButton" = NSButton;
+                "_fullScreenFillMenu" = NSMenu;
                 "_lTimeTextField" = TimeTextField;
                 "_letterBoxDefaultHeightButton" = NSButton;
                 "_letterBoxHigherButton" = NSButton;
@@ -102,7 +103,6 @@
                 "_syncDefaultMenuItem" = NSMenuItem;
                 "_syncEarlierMenuItem" = NSMenuItem;
                 "_syncLaterMenuItem" = NSMenuItem;
-                "_underScanMenuItem" = NSMenuItem;
                 "_volumeSlider" = MainVolumeSlider;
             };
             SUPERCLASS = NSObject;

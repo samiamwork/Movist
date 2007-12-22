@@ -61,7 +61,7 @@
     // movie
     IBOutlet NSMenu* _movieMenu;
     IBOutlet NSMenu* _aspectRatioMenu;
-    IBOutlet NSMenuItem* _underScanMenuItem;
+    IBOutlet NSMenu* _fullScreenFillMenu;
     IBOutlet NSTableView* _propertiesView;
     NSMutableIndexSet* _audioTrackIndexSet;
     MMovie* _movie;
@@ -265,6 +265,7 @@
 - (void)setFullScreenFill:(int)fill forWideMovie:(BOOL)forWideMovie;
 - (void)setFullScreenFill:(int)fill;
 - (void)setFullScreenUnderScan:(float)underScan;
+- (void)updateFullScreenFillMenu;
 
 - (IBAction)movieSizeAction:(id)sender;
 - (IBAction)fullScreenAction:(id)sender;
