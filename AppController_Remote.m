@@ -24,11 +24,13 @@
 #import "UserDefaults.h"
 #import "FullScreener.h"
 
-#import "MultiClickRemoteBehavior.h"
-#import "RemoteControlContainer.h"
-#import "AppleRemote.h"
-#import "GlobalKeyboardDevice.h"
-#import "KeyspanFrontRowControl.h"
+#import "AppleRemote/MultiClickRemoteBehavior.h"
+#import "AppleRemote/RemoteControlContainer.h"
+#import "AppleRemote/AppleRemote.h"
+#import "AppleRemote/GlobalKeyboardDevice.h"
+#import "AppleRemote/KeyspanFrontRowControl.h"
+
+#import <IOKit/pwr_mgt/IOPMKeys.h>
 
 @implementation AppController (Remote)
 
@@ -45,13 +47,16 @@
     [_remoteControlContainer instantiateAndAddRemoteControlDeviceWithClass:[KeyspanFrontRowControl class]];
     [_remoteControlContainer instantiateAndAddRemoteControlDeviceWithClass:[GlobalKeyboardDevice class]];
     [_remoteControlContainer setOpenInExclusiveMode:TRUE];
-    //[self setValue:_remoteControlContainer forKey:@"remoteControl"];	
+    //[self setValue:_remoteControlContainer forKey:@"remoteControl"];
+
+    _remoteControlRepeatTimerLock = [[NSLock alloc] init];
 }
 
 - (void)cleanupRemoteControl
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self stopRemoteControl];
+    [_remoteControlRepeatTimerLock release];
     [_remoteControlContainer release];
     [_remoteControlBehavior release];
 }
@@ -75,31 +80,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier
-         pressedDown:(BOOL)pressed clickCount:(unsigned int)clickCount
-{
-    //TRACE(@"%s pressed=%d, clickCount=%d", __PRETTY_FUNCTION__, pressed, clickCount);
-    if (!pressed) {
-        return;
-    }
-    switch (buttonIdentifier) {
-        case kRemoteButtonPlus          : [self appleRemotePlusAction:self];        break;
-        case kRemoteButtonPlus_Hold     : [self appleRemotePlusHoldAction:self];    break;
-        case kRemoteButtonMinus         : [self appleRemoteMinusAction:self];       break;
-        case kRemoteButtonMinus_Hold    : [self appleRemoteMinusHoldAction:self];   break;
-        case kRemoteButtonLeft          : [self appleRemoteLeftAction:self];        break;
-        case kRemoteButtonLeft_Hold     : [self appleRemoteLeftHoldAction:self];    break;
-        case kRemoteButtonRight         : [self appleRemoteRightAction:self];       break;
-        case kRemoteButtonRight_Hold    : [self appleRemoteRightHoldAction:self];   break;
-        case kRemoteButtonPlay          : [self appleRemotePlayAction:self];        break;
-        case kRemoteButtonPlay_Hold     : [self appleRemotePlayHoldAction:self];    break;
-        case kRemoteButtonMenu          : [self appleRemoteMenuAction:self];        break;
-        case kRemoteButtonMenu_Hold     : [self appleRemoteMenuHoldAction:self];    break;
-        case kRemoteControl_Switched    : TRACE(@"AppleRemote Switched");           break;
-        default : TRACE(@"Unmapped event for button %d", buttonIdentifier);         break;
-    }
-}
-
 - (void)sendRemoteButtonEvent:(RemoteControlEventIdentifier)buttonIdentifier
                   pressedDown:(BOOL)pressedDown remoteControl:(RemoteControl*)remoteControl
 {
@@ -107,7 +87,98 @@
     [self remoteButton:buttonIdentifier pressedDown:pressedDown clickCount:1];
 }
 
-- (IBAction)appleRemotePlusAction:(id)sender
+- (void)startRemoteControlRepeatTimer:(NSTimeInterval)interval
+{
+    [_remoteControlRepeatTimerLock lock];
+    [_remoteControlRepeatTimer invalidate];
+    _remoteControlRepeatTimer = [NSTimer scheduledTimerWithTimeInterval:interval
+                            target:self selector:@selector(remoteControlRepeat:)
+                            userInfo:nil repeats:TRUE];
+    [_remoteControlRepeatTimerLock unlock];
+}
+
+- (void)stopRemoteControlRepeatTimer
+{
+    [_remoteControlRepeatTimerLock lock];
+    if (_remoteControlRepeatTimer) {
+        [_remoteControlRepeatTimer invalidate];
+        _remoteControlRepeatTimer = nil;
+    }
+    [_remoteControlRepeatTimerLock unlock];
+}
+
+- (void)remoteControlRepeat:(NSTimer*)timer
+{
+    if (timer && 0.01 < [timer timeInterval]) {
+        [self startRemoteControlRepeatTimer:0.01];
+    }
+    
+    switch (_remoteControlRepeatButtonID) {
+        case kRemoteButtonPlus      : [self remoteControlPlusAction:self];    break;
+        case kRemoteButtonMinus     : [self remoteControlMinusAction:self];   break;
+        case kRemoteButtonLeft_Hold : [self remoteControlLeftAction:self];    break;
+        case kRemoteButtonRight_Hold: [self remoteControlRightAction:self];   break;
+    }
+}
+
+- (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier
+         pressedDown:(BOOL)pressed clickCount:(unsigned int)clickCount
+{
+    //TRACE(@"%s pressed=%d, clickCount=%d", __PRETTY_FUNCTION__, pressed, clickCount);
+#define _TRACE_APPLE_REMOTE
+#if defined(_TRACE_APPLE_REMOTE)
+    NSString* button;
+    switch (buttonIdentifier) {
+        case kRemoteButtonPlus          : button = @"PLUS";         break;
+        case kRemoteButtonPlus_Hold     : button = @"PLUS hold";    break;
+        case kRemoteButtonMinus         : button = @"MINUS";        break;
+        case kRemoteButtonMinus_Hold    : button = @"MINUS hold";   break;
+        case kRemoteButtonLeft          : button = @"LEFT";         break;
+        case kRemoteButtonLeft_Hold     : button = @"LEFT hold";    break;
+        case kRemoteButtonRight         : button = @"RIGHT";        break;
+        case kRemoteButtonRight_Hold    : button = @"RIGHT hold";   break;
+        case kRemoteButtonPlay          : button = @"PLAY";         break;
+        case kRemoteButtonPlay_Hold     : button = @"PLAY hold";    break;
+        case kRemoteButtonMenu          : button = @"MENU";         break;
+        case kRemoteButtonMenu_Hold     : button = @"MENU hold";    break;
+        case kRemoteControl_Switched    : button = @"SWITCHED";     break;
+        default : button = [NSString stringWithFormat:@"UNMAPPED[%d]", buttonIdentifier];   break;
+    }
+    TRACE(@"RemoteControl %@ %@(%d)", button, pressed ? @"pressed" : @"released", clickCount);
+#endif  // _TRACE_APPLE_REMOTE
+
+    if (pressed) {
+        // pressed only buttons
+        switch (buttonIdentifier) {
+            case kRemoteButtonLeft      : [self remoteControlLeftAction:self];      break;
+            case kRemoteButtonRight     : [self remoteControlRightAction:self];     break;
+            case kRemoteButtonPlay      : [self remoteControlPlayAction:self];      break;
+            case kRemoteButtonPlay_Hold : [self remoteControlPlayHoldAction:self];  break;
+            case kRemoteButtonMenu      : [self remoteControlMenuAction:self];      break;
+            case kRemoteButtonMenu_Hold : [self remoteControlMenuHoldAction:self];  break;
+        }
+    }
+    // repeat-needed buttons
+    switch (buttonIdentifier) {
+        case kRemoteButtonPlus  :
+        case kRemoteButtonMinus :
+        case kRemoteButtonLeft_Hold :
+        case kRemoteButtonRight_Hold :
+            if (pressed) {
+                _remoteControlRepeatButtonID = buttonIdentifier;
+                [self remoteControlRepeat:nil];     // for current event
+                [self startRemoteControlRepeatTimer:0.5];
+            }
+            else {
+                [self stopRemoteControlRepeatTimer];
+            }
+            break;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+- (IBAction)remoteControlPlusAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {                 // window mode
@@ -121,13 +192,7 @@
     }
 }
 
-- (IBAction)appleRemotePlusHoldAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self appleRemotePlusAction:sender];
-}
-
-- (IBAction)appleRemoteMinusAction:(id)sender
+- (IBAction)remoteControlMinusAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {                 // window mode
@@ -141,63 +206,19 @@
     }
 }
 
-- (IBAction)appleRemoteMinusHoldAction:(id)sender
+- (IBAction)remoteControlLeftAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self appleRemoteMinusAction:sender];
+    [self seekBackward:0];
 }
 
-- (void)appleRemoteSeekBackward:(int)seekIndex
-{
-    if (![self isFullScreen]) {                 // window mode
-        [self seekBackward:seekIndex];
-    }
-    else if (![_fullScreener isNavigating]) {   // full play mode
-        [self seekBackward:seekIndex];
-    }
-    else {                                      // full navigation mode
-        [self seekBackward:seekIndex];
-    }
-}
-
-- (void)appleRemoteSeekForward:(int)seekIndex
-{
-    if (![self isFullScreen]) {                 // window mode
-        [self seekForward:seekIndex];
-    }
-    else if (![_fullScreener isNavigating]) {   // full play mode
-        [self seekForward:seekIndex];
-    }
-    else {                                      // full navigation mode
-        [self seekForward:seekIndex];
-    }
-}
-
-- (IBAction)appleRemoteLeftAction:(id)sender
+- (IBAction)remoteControlRightAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self appleRemoteSeekBackward:0];
+    [self seekForward:0];
 }
 
-- (IBAction)appleRemoteLeftHoldAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self appleRemoteSeekBackward:1];
-}
-
-- (IBAction)appleRemoteRightAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self appleRemoteSeekForward:0];
-}
-
-- (IBAction)appleRemoteRightHoldAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self appleRemoteSeekForward:1];
-}
-
-- (IBAction)appleRemotePlayAction:(id)sender
+- (IBAction)remoteControlPlayAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {                 // window mode
@@ -223,22 +244,28 @@
     }
 }
 
-- (IBAction)appleRemotePlayHoldAction:(id)sender
+- (IBAction)remoteControlPlayHoldAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    // go to sleep (emulating normal play-hold action)
+    NSDate* date = [NSDate dateWithTimeIntervalSinceNow:10];
+    IOPMSchedulePowerEvent(date, 0, CFSTR(kIOPMAutoSleep));
 }
 
-- (IBAction)appleRemoteMenuAction:(id)sender
+- (IBAction)remoteControlMenuAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self fullScreenAction:sender];
 }
 
-- (IBAction)appleRemoteMenuHoldAction:(id)sender
+- (IBAction)remoteControlMenuHoldAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {                 // window mode
-        // do nothing
+        if (_movie) {
+            [self closeMovie];
+        }
+        [self beginFullNavigation];
     }
     else if (![_fullScreener isNavigating]) {   // full play mode
         // escape to alternative mode
@@ -253,5 +280,10 @@
         // do nothing
     }
 }
+
+- (IBAction)remoteControlPlusHoldAction:(id)sender {}     // currently not used
+- (IBAction)remoteControlMinusHoldAction:(id)sender {}    // currently not used
+- (IBAction)remoteControlLeftHoldAction:(id)sender {}     // currently not used
+- (IBAction)remoteControlRightHoldAction:(id)sender {}    // currently not used
 
 @end

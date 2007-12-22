@@ -23,6 +23,8 @@
 #import "Movist.h"
 #import "CustomControls.h"
 
+#import "AppleRemote/RemoteControl.h"
+
 @class MTrack;
 @class MMovie;
 @class MSubtitle;
@@ -47,6 +49,10 @@
 
     MultiClickRemoteBehavior* _remoteControlBehavior;
     RemoteControlContainer* _remoteControlContainer;
+    RemoteControlEventIdentifier _remoteControlRepeatButtonID;
+    NSTimer* _remoteControlRepeatTimer;
+    NSLock* _remoteControlRepeatTimerLock;
+
     PreferenceController* _preferenceController;
     PlaylistController* _playlistController;
     NSUserDefaults* _defaults;
@@ -332,17 +338,17 @@
 - (void)startRemoteControl;
 - (void)stopRemoteControl;
 
-- (IBAction)appleRemotePlusAction:(id)sender;
-- (IBAction)appleRemotePlusHoldAction:(id)sender;
-- (IBAction)appleRemoteMinusAction:(id)sender;
-- (IBAction)appleRemoteMinusHoldAction:(id)sender;
-- (IBAction)appleRemoteLeftAction:(id)sender;
-- (IBAction)appleRemoteLeftHoldAction:(id)sender;
-- (IBAction)appleRemoteRightAction:(id)sender;
-- (IBAction)appleRemoteRightHoldAction:(id)sender;
-- (IBAction)appleRemotePlayAction:(id)sender;
-- (IBAction)appleRemotePlayHoldAction:(id)sender;
-- (IBAction)appleRemoteMenuAction:(id)sender;
-- (IBAction)appleRemoteMenuHoldAction:(id)sender;
+- (IBAction)remoteControlPlusAction:(id)sender;
+- (IBAction)remoteControlPlusHoldAction:(id)sender;
+- (IBAction)remoteControlMinusAction:(id)sender;
+- (IBAction)remoteControlMinusHoldAction:(id)sender;
+- (IBAction)remoteControlLeftAction:(id)sender;
+- (IBAction)remoteControlLeftHoldAction:(id)sender;
+- (IBAction)remoteControlRightAction:(id)sender;
+- (IBAction)remoteControlRightHoldAction:(id)sender;
+- (IBAction)remoteControlPlayAction:(id)sender;
+- (IBAction)remoteControlPlayHoldAction:(id)sender;
+- (IBAction)remoteControlMenuAction:(id)sender;
+- (IBAction)remoteControlMenuHoldAction:(id)sender;
 
 @end

@@ -401,7 +401,7 @@
     MMovie* movie = [_movieView movie];
     if (movie) {
         [_movieView setHidden:TRUE];
-        [movie setRate:0.0];
+        [movie gotoBeginning];
     }
     else {
         [self hidePreview];
@@ -409,7 +409,6 @@
     [self setHidden:TRUE];
     [_movieView hideLogo];
 
-    [movie gotoBeginning];
     [_movieView setFrame:[[window contentView] bounds]];
     [_movieView updateSubtitle];
     [_movieView setHidden:FALSE];

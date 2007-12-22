@@ -385,12 +385,37 @@
 			children = (
 				AF079E570BDAC1FE00A3EE52 /* Movist.h */,
 				AF9569810BFEEABF002A60BE /* Movist.m */,
-				AFE099B70C328E9D00EB3877 /* App */,
 				AFE099BB0C328EB100EB3877 /* Movie */,
 				AF6735670C84013E00E16021 /* Subtitle */,
 				AFE099BE0C328F7700EB3877 /* Playlist */,
+				AF31CED50B7EE40100676AC6 /* AppController.h */,
+				AF31CED60B7EE40100676AC6 /* AppController.m */,
+				AF5A29420C2CEC0D00483AEB /* AppController_Open.m */,
+				AF5A29920C2CF05000483AEB /* AppController_Subtitle.m */,
+				AF5A29960C2CF14A00483AEB /* AppController_Playlist.m */,
+				AF5A29A70C2CF35B00483AEB /* AppController_Playback.m */,
+				AF5A29EA0C2CF84F00483AEB /* AppController_Audio.m */,
+				AF5A29AE0C2CF64D00483AEB /* AppController_Video.m */,
+				AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */,
+				AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */,
+				AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */,
+				AFF4A8650C1B1E3F00B4F481 /* UserDefaults.h */,
+				AFF4A8660C1B1E3F00B4F481 /* UserDefaults.m */,
 				AF6735660C84007600E16021 /* Preference */,
-				AFE099BC0C328ED500EB3877 /* UI */,
+				AFFA4D3F0B80B6FB0024700D /* MainWindow.h */,
+				AFFA4D400B80B6FB0024700D /* MainWindow.m */,
+				AF31CEDB0B7EE42F00676AC6 /* MMovieView.h */,
+				AF31CEDC0B7EE42F00676AC6 /* MMovieView.m */,
+				AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */,
+				AF30E2A30C2EB114009DB59C /* MMovieView_Subtitle.m */,
+				AF30E2CD0C2EB3EA009DB59C /* MMovieView_DragDrop.m */,
+				AF07C1BB0C4BAA570007D17B /* OSD */,
+				AF07C1B90C4BAA490007D17B /* FullScreen */,
+				AF16C7F70C296F7400AC0A4B /* ControlPanel.h */,
+				AF16C7F80C296F7400AC0A4B /* ControlPanel.m */,
+				AF5141580C3BDBE600BDACB7 /* CustomControls.h */,
+				AF5141590C3BDBE600BDACB7 /* CustomControls.m */,
+				AF0C4ED50C5CAB0700199932 /* AppleRemote */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -627,26 +652,6 @@
 			name = Subtitle;
 			sourceTree = "<group>";
 		};
-		AFE099B70C328E9D00EB3877 /* App */ = {
-			isa = PBXGroup;
-			children = (
-				AF31CED50B7EE40100676AC6 /* AppController.h */,
-				AF31CED60B7EE40100676AC6 /* AppController.m */,
-				AF5A29420C2CEC0D00483AEB /* AppController_Open.m */,
-				AF5A29920C2CF05000483AEB /* AppController_Subtitle.m */,
-				AF5A29960C2CF14A00483AEB /* AppController_Playlist.m */,
-				AF5A29A70C2CF35B00483AEB /* AppController_Playback.m */,
-				AF5A29EA0C2CF84F00483AEB /* AppController_Audio.m */,
-				AF5A29AE0C2CF64D00483AEB /* AppController_Video.m */,
-				AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */,
-				AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */,
-				AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */,
-				AFF4A8650C1B1E3F00B4F481 /* UserDefaults.h */,
-				AFF4A8660C1B1E3F00B4F481 /* UserDefaults.m */,
-			);
-			name = App;
-			sourceTree = "<group>";
-		};
 		AFE099BB0C328EB100EB3877 /* Movie */ = {
 			isa = PBXGroup;
 			children = (
@@ -662,27 +667,6 @@
 				AF494D890B902DB400EDDB8A /* MMovie_QuickTime.m */,
 			);
 			name = Movie;
-			sourceTree = "<group>";
-		};
-		AFE099BC0C328ED500EB3877 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				AFFA4D3F0B80B6FB0024700D /* MainWindow.h */,
-				AFFA4D400B80B6FB0024700D /* MainWindow.m */,
-				AF31CEDB0B7EE42F00676AC6 /* MMovieView.h */,
-				AF31CEDC0B7EE42F00676AC6 /* MMovieView.m */,
-				AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */,
-				AF30E2A30C2EB114009DB59C /* MMovieView_Subtitle.m */,
-				AF30E2CD0C2EB3EA009DB59C /* MMovieView_DragDrop.m */,
-				AF5141580C3BDBE600BDACB7 /* CustomControls.h */,
-				AF5141590C3BDBE600BDACB7 /* CustomControls.m */,
-				AF16C7F70C296F7400AC0A4B /* ControlPanel.h */,
-				AF16C7F80C296F7400AC0A4B /* ControlPanel.m */,
-				AF07C1BB0C4BAA570007D17B /* OSD */,
-				AF07C1B90C4BAA490007D17B /* FullScreen */,
-				AF0C4ED50C5CAB0700199932 /* AppleRemote */,
-			);
-			name = UI;
 			sourceTree = "<group>";
 		};
 		AFE099BE0C328F7700EB3877 /* Playlist */ = {
