@@ -246,10 +246,17 @@
 
 - (IBAction)remoteControlPlayHoldAction:(id)sender
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    /* I don't know how to get a privilege to sleep machine.
     // go to sleep (emulating normal play-hold action)
-    NSDate* date = [NSDate dateWithTimeIntervalSinceNow:10];
-    IOPMSchedulePowerEvent(date, 0, CFSTR(kIOPMAutoSleep));
+    NSCalendarDate* date = [NSCalendarDate dateWithTimeIntervalSinceNow:100];
+    IOReturn ret = IOPMSchedulePowerEvent((CFDateRef)date, 0, CFSTR(kIOPMAutoSleep));
+    if (ret != kIOReturnSuccess) {
+        TRACE(@"%s error=0x%x", __PRETTY_FUNCTION__, ret);
+    }
+     */
+    // quit movist as temp-impl.
+    [NSApp terminate:self];
 }
 
 - (IBAction)remoteControlMenuAction:(id)sender

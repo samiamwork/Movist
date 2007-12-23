@@ -55,10 +55,12 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 
 - (BOOL)supportDigitalAudio { return _supportDigitalAudio; }
 
-- (BOOL)updateAudioOutput:(id)dummy
+- (BOOL)updateAudioOutput:(id)sender
 {
     if (!_supportDigitalAudio) {
-        [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
+        if (sender) {
+            [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
+        }
         return TRUE;
     }
 
@@ -87,7 +89,9 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
         TRACE(@"could not set the stream format: [%4.4s]\n", (char *)&err);
         return FALSE;
     }
-    [self setVolume:1.0];   // always 1.0
+    if (sender) {
+        [self setVolume:1.0];   // always 1.0
+    }
     return TRUE;
 }
 
@@ -116,7 +120,7 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 - (void)initDigitalAudio
 {
     _supportDigitalAudio = supportDigitalAudio(&_audioStreamID);
-    [self updateAudioOutput:nil];
+    [self updateAudioOutput:nil];   // not to set volume
     [self updateA52CodecProperties];
 
     registerAudioDeviceListener(DeviceListener, self);
@@ -132,7 +136,7 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
     _supportDigitalAudio = support;
 
     [self performSelectorOnMainThread:@selector(updateAudioOutput:)
-                           withObject:nil waitUntilDone:FALSE];
+                           withObject:self waitUntilDone:FALSE];
     BOOL a52Updated = [self updateA52CodecProperties];
     if (a52Updated && _movie) {
         // reopen current movie to use new audio device

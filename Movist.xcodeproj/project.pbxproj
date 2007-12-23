@@ -953,12 +953,11 @@
 				OTHER_LDFLAGS = (
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
+					ffmpeg/libavdevice.a,
 					ffmpeg/libavformat.a,
 					ffmpeg/libavutil.a,
 					ffmpeg/libfaad.a,
-					ffmpeg/libogg.a,
-					ffmpeg/libtheora.a,
-					ffmpeg/libvorbis.a,
+					ffmpeg/libswscale.a,
 					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
@@ -983,13 +982,12 @@
 				OTHER_LDFLAGS = (
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
+					ffmpeg/libavdevice.a,
 					ffmpeg/libavformat.a,
 					ffmpeg/libavutil.a,
 					ffmpeg/libfaad.a,
-					ffmpeg/libogg.a,
-					ffmpeg/libtheora.a,
-					ffmpeg/libvorbis.a,
-					/usr/lib/libz.dylib,
+					ffmpeg/libswscale.a,
+					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Movist;
@@ -1016,12 +1014,11 @@
 				OTHER_LDFLAGS = (
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
+					ffmpeg/libavdevice.a,
 					ffmpeg/libavformat.a,
 					ffmpeg/libavutil.a,
 					ffmpeg/libfaad.a,
-					ffmpeg/libogg.a,
-					ffmpeg/libtheora.a,
-					ffmpeg/libvorbis.a,
+					ffmpeg/libswscale.a,
 					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
@@ -1053,13 +1050,12 @@
 				OTHER_LDFLAGS = (
 					ffmpeg/liba52.a,
 					ffmpeg/libavcodec.a,
+					ffmpeg/libavdevice.a,
 					ffmpeg/libavformat.a,
 					ffmpeg/libavutil.a,
 					ffmpeg/libfaad.a,
-					ffmpeg/libogg.a,
-					ffmpeg/libtheora.a,
-					ffmpeg/libvorbis.a,
-					/usr/lib/libz.dylib,
+					ffmpeg/libswscale.a,
+					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
