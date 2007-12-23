@@ -95,6 +95,8 @@
 
 @implementation MMovie_FFMPEG (Playback)
 
+static MMovie_FFMPEG* s_currentMovie = 0;
+
 - (BOOL)defaultFuncCondition 
 { 
     return !_quitRequested && _reservedCommand == COMMAND_NONE; 
@@ -146,7 +148,9 @@
     _nextVideoBufId = 0;
     
     _needIndexing = FALSE;
-
+ 
+    s_currentMovie = self;
+    
     _playThreading = 0;
     [NSThread detachNewThreadSelector:@selector(backgroundThreadFunc:)
                              toTarget:self withObject:nil];
@@ -154,7 +158,6 @@
                              toTarget:self withObject:nil];
     [NSThread detachNewThreadSelector:@selector(playThreadFunc:)
                              toTarget:self withObject:nil];
-
     return TRUE;
 }
 
@@ -162,7 +165,7 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     // quit and wait for play-thread is finished
-
+    s_currentMovie = 0;
     if (_command == COMMAND_NONE) { // awake if waiting for command
         TRACE(@"%s awake", __PRETTY_FUNCTION__);
         [_commandLock unlockWithCondition:DISPATCHING_COMMAND];
@@ -557,7 +560,7 @@
     }
     //#define _FRAME_DROP
     #ifdef _FRAME_DROP
-    while (imageTime + 1. / 60 < current) {
+    while (imageTime + 1. / 24 < current) {
         if (_decodedImageCount > 0) {
             [self discardImage];
             imageTime = _decodedImageTime[_videoDataBufId];
@@ -577,10 +580,18 @@
     return TRUE;
 }
 
+- (void)pixelBufferReleased
+{
+    _decodedImageBufCount--;
+}
+
 void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
 {
-    int* decodedImageBufCount = (int*)releaseRefCon;
-    (*decodedImageBufCount)--;
+    MMovie_FFMPEG* movie = (MMovie_FFMPEG*)releaseRefCon;
+    if (s_currentMovie != movie) {
+        return;
+    }
+    [movie pixelBufferReleased];
     //TRACE(@"[%s] bufcount %d", __PRETTY_FUNCTION__, *decodedImageBufCount);
 }
 
@@ -596,7 +607,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     int ret = CVPixelBufferCreateWithBytes(0, _videoWidth, _videoHeight, CV_PIXEL_FORMAT,
                                            _videoFrameData[_videoDataBufId]->data[0], 
                                            _videoFrameData[_videoDataBufId]->linesize[0],
-                                           pixelBufferReleaseCallback, &_decodedImageBufCount, 0, 
+                                           pixelBufferReleaseCallback, self, 0, 
                                            bufferRef);
     if (ret != kCVReturnSuccess) {
         TRACE(@"%s CVPixelBufferCreateWithBytes() failed : %d", __PRETTY_FUNCTION__, ret);
