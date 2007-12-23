@@ -44,9 +44,9 @@
     }
     volume = [self preferredVolume:volume];
     [_movie setVolume:volume];
-    [_movieView setMessage:[NSString stringWithFormat:
-                                NSLocalizedString(@"Volume %.1f", nil), volume]];
     if (!_supportDigitalAudio) {
+        [_movieView setMessage:[NSString stringWithFormat:
+                                NSLocalizedString(@"Volume %.1f", nil), volume]];
         [_defaults setFloat:volume forKey:MVolumeKey];
     }
     [self updateVolumeUI];

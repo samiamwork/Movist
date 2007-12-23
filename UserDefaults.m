@@ -103,7 +103,7 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAlwaysOnTopKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MQuitWhenWindowCloseKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MRememberLastPlayKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MRememberLastPlayKey];
     [dict setObject:[NSNumber numberWithFloat: 10.0] forKey:MSeekInterval0Key];
     [dict setObject:[NSNumber numberWithFloat: 60.0] forKey:MSeekInterval1Key];
     [dict setObject:[NSNumber numberWithFloat:300.0] forKey:MSeekInterval2Key];

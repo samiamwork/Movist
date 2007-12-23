@@ -87,7 +87,7 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
         TRACE(@"could not set the stream format: [%4.4s]\n", (char *)&err);
         return FALSE;
     }
-    [self setVolume:1.0];   // always
+    [self setVolume:1.0];   // always 1.0
     return TRUE;
 }
 

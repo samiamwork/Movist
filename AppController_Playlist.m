@@ -108,19 +108,20 @@
 
 - (void)loadLastPlayedMovieInfo
 {
+    _lastPlayedMovieURL = nil;
+    _lastPlayedMovieTime = 0.0;
+
     if ([_defaults boolForKey:MRememberLastPlayKey]) {
         NSData* data = [_defaults objectForKey:MPlaylistKey];
         if (data) {
             [_playlist release];
             _playlist = [[NSKeyedUnarchiver unarchiveObjectWithData:data] retain];
         }
-        _lastPlayedMovieURL = [[[_playlist currentItem] movieURL] retain];
-        _lastPlayedMovieTime = [_defaults floatForKey:MLastPlayedMovieTimeKey];
-        [_playlistController updateUI];
-    }
-    else {
-        _lastPlayedMovieURL = nil;
-        _lastPlayedMovieTime = 0.0;
+        if (0 < [_playlist count]) {
+            _lastPlayedMovieURL = [[[_playlist currentItem] movieURL] retain];
+            _lastPlayedMovieTime = [_defaults floatForKey:MLastPlayedMovieTimeKey];
+            [_playlistController updateUI];
+        }
     }
 }
 

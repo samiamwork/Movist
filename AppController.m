@@ -108,9 +108,6 @@
     [_syncLaterMenuItem setKeyEquivalentModifierMask:mask];
     [_syncEarlierMenuItem setKeyEquivalentModifierMask:mask];
     [_syncDefaultMenuItem setKeyEquivalentModifierMask:mask];
-
-    [self initDigitalAudio];
-    [self initRemoteControl];
 }
 
 - (void)dealloc
@@ -179,6 +176,8 @@
     // initial update preferences: advanced
     // ...
 
+    [self initDigitalAudio];
+    [self initRemoteControl];
     [self updateUI];
 
     [self checkForUpdatesOnStartup];
