@@ -151,7 +151,7 @@ typedef struct {
     aviContext = (AVIContext*)(_indexContext->priv_data);
     aviContext->fsize = fileSize;
     _formatContext->file_size = fileSize;
-    _indexContext->pb.eof_reached = 0;
+    _indexContext->pb->eof_reached = 0;
 }
 
 - (void)backgroundThreadFunc:(id)anObject
@@ -178,6 +178,8 @@ typedef struct {
         _playThreading--;
         return;
     }
+    
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     const NSTimeInterval INDEXING_INTERVAL = 0.1;
     const NSTimeInterval CHECK_FILE_SIZE_INTERVAL = 5;
     const NSTimeInterval SKIP_INTERVAL = 0.01;
@@ -190,8 +192,12 @@ typedef struct {
             continue;
         }
         [self makeIndex];
+        if (!_indexingCompleted) {
+            [nc postNotificationName:MMovieIndexDurationNotification object:self];
+        }
         if (tmpCount < CHECK_FILE_SIZE_INTERVAL / INDEXING_INTERVAL) {
             tmpCount++;
+            continue;
         }
         tmpCount = 0;
         [self updateFileSize:fd];
