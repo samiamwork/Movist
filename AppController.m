@@ -109,6 +109,7 @@
     [_syncEarlierMenuItem setKeyEquivalentModifierMask:mask];
     [_syncDefaultMenuItem setKeyEquivalentModifierMask:mask];
 
+    [self initDigitalAudio];
     [self initRemoteControl];
 }
 

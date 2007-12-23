@@ -106,6 +106,7 @@
 		AF76EF260BF60B11000995C9 /* PlaylistController.m in Sources */ = {isa = PBXBuildFile; fileRef = AF76EF250BF60B11000995C9 /* PlaylistController.m */; };
 		AF9569820BFEEABF002A60BE /* Movist.m in Sources */ = {isa = PBXBuildFile; fileRef = AF9569810BFEEABF002A60BE /* Movist.m */; };
 		AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */; };
+		AFA843C90D1DA8D500D4805C /* AppController_AudioDigital.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA843C80D1DA8D500D4805C /* AppController_AudioDigital.m */; };
 		AFADAB4C0D16F11C001686FA /* FSNavSelBoxCenter.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFADAB490D16F11C001686FA /* FSNavSelBoxCenter.tiff */; };
 		AFADAB4D0D16F11C001686FA /* FSNavSelBoxLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFADAB4A0D16F11C001686FA /* FSNavSelBoxLeft.tiff */; };
 		AFADAB4E0D16F11C001686FA /* FSNavSelBoxRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFADAB4B0D16F11C001686FA /* FSNavSelBoxRight.tiff */; };
@@ -292,6 +293,7 @@
 		AF9569810BFEEABF002A60BE /* Movist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = Movist.m; sourceTree = "<group>"; };
 		AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateChecker.h; sourceTree = "<group>"; };
 		AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateChecker.m; sourceTree = "<group>"; };
+		AFA843C80D1DA8D500D4805C /* AppController_AudioDigital.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController_AudioDigital.m; sourceTree = "<group>"; };
 		AFADAB490D16F11C001686FA /* FSNavSelBoxCenter.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNavSelBoxCenter.tiff; path = Images/FSNavSelBoxCenter.tiff; sourceTree = "<group>"; };
 		AFADAB4A0D16F11C001686FA /* FSNavSelBoxLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNavSelBoxLeft.tiff; path = Images/FSNavSelBoxLeft.tiff; sourceTree = "<group>"; };
 		AFADAB4B0D16F11C001686FA /* FSNavSelBoxRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNavSelBoxRight.tiff; path = Images/FSNavSelBoxRight.tiff; sourceTree = "<group>"; };
@@ -395,6 +397,7 @@
 				AF5A29960C2CF14A00483AEB /* AppController_Playlist.m */,
 				AF5A29A70C2CF35B00483AEB /* AppController_Playback.m */,
 				AF5A29EA0C2CF84F00483AEB /* AppController_Audio.m */,
+				AFA843C80D1DA8D500D4805C /* AppController_AudioDigital.m */,
 				AF5A29AE0C2CF64D00483AEB /* AppController_Video.m */,
 				AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */,
 				AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */,
@@ -881,6 +884,7 @@
 				AFEE91F70CFC706800DB5C7A /* SubtitleRenderer.m in Sources */,
 				AFDCCCCF0D0CC5330098206C /* MMovie_FFMPEG_Index.m in Sources */,
 				AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */,
+				AFA843C90D1DA8D500D4805C /* AppController_AudioDigital.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -57,6 +57,7 @@
     PlaylistController* _playlistController;
     NSUserDefaults* _defaults;
     BOOL _quitWhenWindowClose;
+    BOOL _supportDigitalAudio;
 
     // movie
     IBOutlet NSMenu* _movieMenu;
@@ -293,6 +294,14 @@
 - (IBAction)volumeAction:(id)sender;
 - (IBAction)muteAction:(id)sender;
 - (IBAction)audioTrackAction:(id)sender;
+
+@end
+
+@interface AppController (AudioDigital)
+
+- (BOOL)supportDigitalAudio;
+- (void)initDigitalAudio;
+- (void)updateDigitalAudio;
 
 @end
 
