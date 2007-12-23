@@ -151,6 +151,12 @@
         }
     }
     else if (0 < [_audioTrackIndexSet count]) {
+        if (_supportDigitalAudio && 1 < [_audioTrackIndexSet count]) {
+            // only one audio track should be enabled for digial audio.
+            unsigned int index = [_audioTrackIndexSet firstIndex];
+            [_audioTrackIndexSet removeAllIndexes];
+            [_audioTrackIndexSet addIndex:index];
+        }
         NSArray* tracks = [_movie audioTracks];
         unsigned int i, count = [tracks count];
         for (i = 0; i < count; i++) {

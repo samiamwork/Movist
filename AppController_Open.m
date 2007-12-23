@@ -190,11 +190,14 @@
     [self autoenableAudioTracks];
     [_movie setVolume:[self preferredVolume:[_defaults floatForKey:MVolumeKey]]];
     [_movie setMuted:([_muteButton state] == NSOnState)];
-    if ([_lastPlayedMovieURL isEqualTo:movieURL] && 0 < _lastPlayedMovieTime) {
+    if (!_lastPlayedMovieURL || ![_lastPlayedMovieURL isEqualTo:movieURL]) {
+        [_lastPlayedMovieURL release];
+        _lastPlayedMovieURL = [movieURL retain];
+    }
+    else if (0 < _lastPlayedMovieTime) {
         [_movie gotoTime:_lastPlayedMovieTime];
     }
-    _lastPlayedMovieURL = [movieURL retain];
-
+    
     // open subtitle
     if (subtitleURL && [_defaults boolForKey:MSubtitleEnableKey]) {
         NSArray* subtitles = [self subtitleFromURL:subtitleURL
@@ -248,6 +251,7 @@
     [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[self movieURL]];
 
     [_movie setRate:_playRate];  // auto play
+
     return TRUE;
 }
 
