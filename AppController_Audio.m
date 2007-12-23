@@ -27,6 +27,12 @@
 
 @implementation AppController (Audio)
 
+- (float)preferredVolume:(float)volume
+{
+    return (_supportDigitalAudio) ? 1.0 :   // always 1.0 for digital-audio
+                normalizedVolume(MIN(MAX(0.0, volume), MAX_VOLUME));
+}
+
 - (void)volumeUp   { [self setVolume:[_volumeSlider floatValue] + 0.1]; }
 - (void)volumeDown { [self setVolume:[_volumeSlider floatValue] - 0.1]; }
 
@@ -36,11 +42,13 @@
     if ([_muteButton state] == NSOnState) {
         [self setMuted:FALSE];
     }
-    volume = normalizedVolume(MIN(MAX(0.0, volume), MAX_VOLUME));
+    volume = [self preferredVolume:volume];
     [_movie setVolume:volume];
     [_movieView setMessage:[NSString stringWithFormat:
                                 NSLocalizedString(@"Volume %.1f", nil), volume]];
-    [_defaults setFloat:volume forKey:MVolumeKey];
+    if (!_supportDigitalAudio) {
+        [_defaults setFloat:volume forKey:MVolumeKey];
+    }
     [self updateVolumeUI];
 }
 
@@ -56,7 +64,8 @@
 - (void)updateVolumeUI
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    float volume = (_movie) ? [_movie volume] : [_defaults floatForKey:MVolumeKey];
+    float volume = [self preferredVolume:
+                 (_movie) ? [_movie volume] : [_defaults floatForKey:MVolumeKey]];
     BOOL muted = (_movie) ? [_movie muted] : FALSE;
 
     int state = (muted) ? NSOnState : NSOffState;
@@ -100,6 +109,11 @@
     if ([_volumeSlider isEnabled] != !muted) {
         [_volumeSlider setEnabled:!muted];
         [_panelVolumeSlider setEnabled:!muted];
+    }
+
+    if (_supportDigitalAudio) {
+        [_volumeSlider setEnabled:FALSE];
+        [_panelVolumeSlider setEnabled:FALSE];
     }
 }
 

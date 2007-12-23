@@ -25,7 +25,7 @@
  */
 
 #import "AppController.h"
-#import "MMovieView.h"
+#import "UserDefaults.h"
 
 #import <CoreAudio/CoreAudio.h>
 
@@ -55,9 +55,10 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 
 - (BOOL)supportDigitalAudio { return _supportDigitalAudio; }
 
-- (BOOL)updateAudioOutputDevice:(id)dummy
+- (BOOL)updateAudioOutput:(id)dummy
 {
     if (!_supportDigitalAudio) {
+        [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
         return TRUE;
     }
 
@@ -76,7 +77,6 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 
     // change to 48 kHz
     format.mSampleRate = 48000.000000;
-    TRACE(@"format.mSampleRate=%llf", format.mSampleRate);
 
     // set as current format
     err = AudioStreamSetProperty(_audioStreamID, 0, 0,
@@ -87,6 +87,7 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
         TRACE(@"could not set the stream format: [%4.4s]\n", (char *)&err);
         return FALSE;
     }
+    [self setVolume:1.0];   // always
     return TRUE;
 }
 
@@ -115,7 +116,7 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 - (void)initDigitalAudio
 {
     _supportDigitalAudio = supportDigitalAudio(&_audioStreamID);
-    [self updateAudioOutputDevice:nil];
+    [self updateAudioOutput:nil];
     [self updateA52CodecProperties];
 
     registerAudioDeviceListener(DeviceListener, self);
@@ -130,7 +131,7 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 
     _supportDigitalAudio = support;
 
-    [self performSelectorOnMainThread:@selector(updateAudioOutputDevice:)
+    [self performSelectorOnMainThread:@selector(updateAudioOutput:)
                            withObject:nil waitUntilDone:FALSE];
     BOOL a52Updated = [self updateA52CodecProperties];
     if (a52Updated && _movie) {

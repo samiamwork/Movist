@@ -190,10 +190,8 @@
 {
     // open last played movie (but, no play)
     if (!_movie && _lastPlayedMovieURL) {
-        float rate = _playRate;
         _playRate = 0.0;    // no play
         [self openCurrentPlaylistItem];
-        _playRate = rate;
     }
 }
 

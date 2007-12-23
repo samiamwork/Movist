@@ -188,7 +188,7 @@
 
     // update movie
     [self autoenableAudioTracks];
-    [_movie setVolume:normalizedVolume([_defaults floatForKey:MVolumeKey])];
+    [_movie setVolume:[self preferredVolume:[_defaults floatForKey:MVolumeKey]]];
     [_movie setMuted:([_muteButton state] == NSOnState)];
     if ([_lastPlayedMovieURL isEqualTo:movieURL] && 0 < _lastPlayedMovieTime) {
         [_movie gotoTime:_lastPlayedMovieTime];

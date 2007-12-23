@@ -280,6 +280,7 @@
 
 @interface AppController (Audio)
 
+- (float)preferredVolume:(float)volume;
 - (void)volumeUp;
 - (void)volumeDown;
 - (void)setVolume:(float)volume;
