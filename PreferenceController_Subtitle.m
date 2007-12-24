@@ -220,6 +220,8 @@
                                size:[_defaults floatForKey:MSubtitleFontSizeKey]];
 }
 
+#define normalizedFloat     normalizedVolume
+
 - (IBAction)subtitleAttributesAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -262,7 +264,7 @@
             break;
         }
         case SUBTITLE_STROKE_WIDTH : {
-            float strokeWidth = [_subtitleStrokeWidthSlider floatValue];
+            float strokeWidth = normalizedFloat([_subtitleStrokeWidthSlider floatValue]);
             [_subtitleStrokeWidthTextField setFloatValue:strokeWidth];
             [_defaults setFloat:strokeWidth forKey:MSubtitleStrokeWidthKey];
             [_movieView setSubtitleStrokeWidth:strokeWidth];
@@ -281,21 +283,21 @@
             break;
         }
         case SUBTITLE_SHADOW_BLUR : {
-            float shadowBlur = [_subtitleShadowBlurSlider floatValue];
+            float shadowBlur = normalizedFloat([_subtitleShadowBlurSlider floatValue]);
             [_subtitleShadowBlurTextField setFloatValue:shadowBlur];
-            [_defaults setFloat:shadowBlur   forKey:MSubtitleShadowBlurKey];
+            [_defaults setFloat:shadowBlur forKey:MSubtitleShadowBlurKey];
             [_movieView setSubtitleShadowBlur:shadowBlur];
             break;
         }
         case SUBTITLE_SHADOW_OFFSET : {
-            float shadowOffset = [_subtitleShadowOffsetSlider floatValue];
+            float shadowOffset = normalizedFloat([_subtitleShadowOffsetSlider floatValue]);
             [_subtitleShadowOffsetTextField setFloatValue:shadowOffset];
             [_defaults setFloat:shadowOffset forKey:MSubtitleShadowOffsetKey];
             [_movieView setSubtitleShadowOffset:shadowOffset];
             break;
         }
         case SUBTITLE_SHADOW_DARKNESS : {
-            float shadowDarkness = [_subtitleShadowDarknessSlider intValue];
+            float shadowDarkness = (float)[_subtitleShadowDarknessSlider intValue];
             [_subtitleShadowDarknessTextField setIntValue:shadowDarkness];
             [_defaults setInteger:shadowDarkness forKey:MSubtitleShadowDarknessKey];
             [_movieView setSubtitleShadowDarkness:shadowDarkness];
@@ -398,6 +400,7 @@
     [_subtitleAutoFontSizeButton setState:autoFontSize];
     [_subtitleAutoFontSizeLabelTextField setEnabled:autoFontSize];
     [_subtitleAutoFontSizeTextField setEnabled:autoFontSize];
+    [_subtitleAutoFontSizeTextField setEditable:autoFontSize];
     [_subtitleAutoFontSizeTextField setIntValue:chars];
     [_subtitleAutoFontSizeStepper setEnabled:autoFontSize];
     [_subtitleAutoFontSizeStepper setIntValue:chars];

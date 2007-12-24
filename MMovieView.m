@@ -635,7 +635,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];     break;
 
         case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible]; break;
-        case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1];     break;
+        case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1]; break;
 
         case 'h' : case 'H' : [[NSApp delegate] changeLetterBoxHeight: 0];  break;
         case 'j' : case 'J' : [[NSApp delegate] changeLetterBoxHeight:-1];  break;

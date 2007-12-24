@@ -266,6 +266,26 @@ static NSWindow* _fadeWindow = 0;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+enum {
+    OS_NOT_SUPPORTED,
+    OS_TIGER,
+    OS_LEOPARD,
+};
+
+static int _operatingSystem = OS_LEOPARD;
+
+void detectOperatingSystem()
+{
+    NSDictionary* dict = [NSDictionary dictionaryWithContentsOfFile:
+                            @"/System/Library/CoreServices/SystemVersion.plist"];
+    NSString* version = [dict objectForKey:@"ProductVersion"];
+    _operatingSystem = ([version compare:@"10.4"] < 0) ? OS_NOT_SUPPORTED :
+                       ([version compare:@"10.5"] < 0) ? OS_TIGER : OS_LEOPARD;
+}
+
+BOOL isSystemTiger() { return (_operatingSystem == OS_TIGER); }
+BOOL isSystemLeopard() { return (_operatingSystem == OS_LEOPARD); }
+
 float normalizedVolume(float volume)
 {
     return (float)(int)((volume + 0.05f) * 10) / 10;  // make "x.x"

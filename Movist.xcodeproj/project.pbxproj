@@ -958,7 +958,7 @@
 					ffmpeg/libavutil.a,
 					ffmpeg/libfaad.a,
 					ffmpeg/libswscale.a,
-					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Movist;
@@ -989,7 +989,7 @@
 					ffmpeg/libavutil.a,
 					ffmpeg/libfaad.a,
 					ffmpeg/libswscale.a,
-					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Movist;
@@ -1021,7 +1021,7 @@
 					ffmpeg/libavutil.a,
 					ffmpeg/libfaad.a,
 					ffmpeg/libswscale.a,
-					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -1057,7 +1057,7 @@
 					ffmpeg/libavutil.a,
 					ffmpeg/libfaad.a,
 					ffmpeg/libswscale.a,
-					/Xcode2.5/SDKs/MacOSX10.4u.sdk/usr/lib/libz.dylib,
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
 				);
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;

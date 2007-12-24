@@ -42,6 +42,7 @@
 
 + (void)initialize
 {
+    detectOperatingSystem();
     [[NSUserDefaults standardUserDefaults] registerMovistDefaults];
 }
 
@@ -49,11 +50,6 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
-        NSDictionary* dict = [NSDictionary dictionaryWithContentsOfFile:
-                            @"/System/Library/CoreServices/SystemVersion.plist"];
-        NSString* systemVersion = [dict objectForKey:@"ProductVersion"];
-        _isSystemLeopard = (0 <= [systemVersion compare:@"10.5"]);
-
         _playlist = [[Playlist alloc] init];
         _audioTrackIndexSet = [[NSMutableIndexSet alloc] init];
         _subtitleNameSet = [[NSMutableSet alloc] init];
@@ -256,8 +252,6 @@
         [[_movieView window] makeKeyWindow];
     }
 }
-
-- (BOOL)isSystemLeopard { return _isSystemLeopard; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

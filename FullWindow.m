@@ -103,7 +103,7 @@
 - (void)mouseMoved:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self isNavigating]) {
+    if ([self isVisible] && ![self isNavigating]) {
         [_playPanel showPanel];
     }
 }

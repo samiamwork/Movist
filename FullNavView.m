@@ -92,6 +92,10 @@
 
 - (void)setIcon:(NSImage*)icon title:(NSString*)title
 {
+    if (isSystemTiger()) {
+        [icon setScalesWhenResized:TRUE];
+        [icon setSize:NSMakeSize(128, 128)];
+    }
     [icon retain], [_icon release], _icon = icon;
     [title retain], [_title release], _title = title;
     [self display];
@@ -440,11 +444,10 @@
     [[_movieView movie] setRate:0.0];
     [screen fadeOut:FADE_DURATION];
 
-    [_movieView setHidden:TRUE];
     [self setHidden:FALSE];
     [_movieView setFrame:[self previewRect]];
+    [[_movieView superview] display];   // for Tiger
     [_movieView updateSubtitle];
-    [_movieView setHidden:FALSE];
     [window makeFirstResponder:self];
 
     [window flushWindow];
@@ -523,7 +526,9 @@
         else if ([item isMemberOfClass:[FullNavURLItem class]]) {
             [[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
         }
+        [[_movieView window] disableScreenUpdatesUntilFlush];   // for Tiger
         [_movieView setFrame:[self previewRect]];
+        [[_movieView superview] display];   // for Tiger
         [_movieView updateSubtitle];
         [_movieView setHidden:FALSE];
     }

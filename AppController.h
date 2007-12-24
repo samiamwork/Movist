@@ -45,8 +45,6 @@
 
 @interface AppController : NSObject
 {
-    BOOL _isSystemLeopard;
-
     MultiClickRemoteBehavior* _remoteControlBehavior;
     RemoteControlContainer* _remoteControlContainer;
     RemoteControlEventIdentifier _remoteControlRepeatButtonID;
@@ -144,8 +142,6 @@
     IBOutlet NSButton* _panelPlaylistButton;
     IBOutlet NSButton* _panelDecoderButton;
 }
-
-- (BOOL)isSystemLeopard;
 
 - (MMovie*)movie;
 - (NSURL*)movieURL;

@@ -167,6 +167,8 @@ extern NSString* MMovieRectUpdateNotification;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+BOOL isSystemTiger();
+BOOL isSystemLeopard();
 float normalizedVolume(float volume);
 NSString* NSStringFromMovieTime(float time);
 NSString* NSStringFromLetterBoxHeight(int height);

@@ -161,7 +161,7 @@
 - (int)requestRemakeImages
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_subtitles) {
+    if (_subtitles && [[_movieView movie] rate] != 0.0) {
         _removeCount = [_subtitleImages count];
         _requestedTime = _lastRequestedTime;
         return MAKING_IMAGE;

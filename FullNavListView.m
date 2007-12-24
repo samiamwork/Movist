@@ -24,6 +24,7 @@
 
 #import "FullNavView.h"
 #import "FullNavItems.h"
+#import "AppController.h"
 
 @interface FullNavItem (Drawing)
 
@@ -184,6 +185,7 @@
         CIColor* c1 = [CIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.0];
         CIVector* p0 = [CIVector vectorWithX:0 Y:_itemHeight];
         CIVector* p1 = [CIVector vectorWithX:0 Y:0];
+        if (isSystemTiger()) { CIVector* p; p = p0, p0 = p1, p1 = p; }
         _tFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_tFilter setValue:p0 forKey:@"inputPoint0"];
         [_tFilter setValue:p1 forKey:@"inputPoint1"];
@@ -192,6 +194,7 @@
 
         p0 = [CIVector vectorWithX:0 Y:0];
         p1 = [CIVector vectorWithX:0 Y:_itemHeight];
+        if (isSystemTiger()) { CIVector* p; p = p0, p0 = p1, p1 = p; }
         _bFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_bFilter setValue:p0 forKey:@"inputPoint0"];
         [_bFilter setValue:p1 forKey:@"inputPoint1"];
@@ -200,6 +203,7 @@
 
         p0 = [CIVector vectorWithX:0 Y:0];
         p1 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
+        if (isSystemTiger()) { CIVector* p; p = p0, p0 = p1, p1 = p; }
         _lFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_lFilter setValue:p0 forKey:@"inputPoint0"];
         [_lFilter setValue:p1 forKey:@"inputPoint1"];
@@ -208,6 +212,7 @@
 
         p0 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
         p1 = [CIVector vectorWithX:0 Y:0];
+        if (isSystemTiger()) { CIVector* p; p = p0, p0 = p1, p1 = p; }
         _rFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_rFilter setValue:p0 forKey:@"inputPoint0"];
         [_rFilter setValue:p1 forKey:@"inputPoint1"];
