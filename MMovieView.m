@@ -635,12 +635,12 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];     break;
 
         case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible]; break;
-        case 's' : case 'S' : [[NSApp delegate] changeSubtitle:-1];     break;
+        case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1];     break;
 
-        case 'l' : case 'L' : [[NSApp delegate] subtitleDisplayOnLetterBoxAction:self]; break;
-        case 'k' : case 'K' : [[NSApp delegate] changeLetterBoxHeight:+1];  break;
-        case 'j' : case 'J' : [[NSApp delegate] changeLetterBoxHeight:-1];  break;
         case 'h' : case 'H' : [[NSApp delegate] changeLetterBoxHeight: 0];  break;
+        case 'j' : case 'J' : [[NSApp delegate] changeLetterBoxHeight:-1];  break;
+        case 'k' : case 'K' : [[NSApp delegate] changeLetterBoxHeight:+1];  break;
+        case 'l' : case 'L' : [[NSApp delegate] subtitleDisplayOnLetterBoxAction:self]; break;
 
         case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1]; break;
         case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1]; break;

@@ -325,7 +325,7 @@
 
 - (void)setSubtitle:(MSubtitle*)subtitle enabled:(BOOL)enabled;
 - (void)autoenableSubtitles;
-- (void)changeSubtitle:(int)tag;
+- (void)changeSubtitleLanguage:(int)tag;
 - (void)setSubtitleSync:(float)sync;
 - (void)changeSubtitleSync:(int)tag;
 - (void)updateSubtitleLanguageMenuItems;

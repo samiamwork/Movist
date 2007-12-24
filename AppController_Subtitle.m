@@ -230,7 +230,7 @@
     }
 }
 
-- (void)changeSubtitle:(int)tag
+- (void)changeSubtitleLanguage:(int)tag
 {
     int index = tag;
     if (0 <= index) {
@@ -367,7 +367,7 @@
 - (IBAction)subtitleLanguageAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self changeSubtitle:[sender tag]];
+    [self changeSubtitleLanguage:[sender tag]];
 }
 
 - (IBAction)subtitleFontSizeAction:(id)sender

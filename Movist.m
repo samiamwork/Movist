@@ -284,7 +284,7 @@ NSString* NSStringFromMovieTime(float time)
 NSString* NSStringFromLetterBoxHeight(int height)
 {
     return (height == LETTER_BOX_HEIGHT_DEFAULT) ?
-                NSLocalizedString(@"Default Height", nil) :
+                NSLocalizedString(@"Align Image to Center", nil) :
                 [NSString stringWithFormat:
                     NSLocalizedString(@"%d Line(s) Height", nil), height];
 }
