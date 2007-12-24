@@ -625,11 +625,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             }
             break;
 
-        case 'n' : case 'N' :
-            if (!_movie && ![[NSApp delegate] isFullScreen]) {
-                [[NSApp delegate] fullScreenAction:self];   // begin navigation
-            }
-            break;
+        case 'n' : case 'N' : [[NSApp delegate] fullNavigationAction:self]; break;
 
         case '[' : case '{' : [[NSApp delegate] stepBackward];          break;
         case ']' : case '}' : [[NSApp delegate] stepForward];           break;
@@ -646,9 +642,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         case 'j' : case 'J' : [[NSApp delegate] changeLetterBoxHeight:-1];  break;
         case 'h' : case 'H' : [[NSApp delegate] changeLetterBoxHeight: 0];  break;
 
-        case ',' : case '<' : [[NSApp delegate] changePlayRate:-1];     break;
-        case '.' : case '>' : [[NSApp delegate] changePlayRate:+1];     break;
-        case '/' : case '?' : [[NSApp delegate] changePlayRate: 0];     break;
+        case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1]; break;
+        case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1]; break;
+        case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0]; break;
 
         case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];  break;
     }

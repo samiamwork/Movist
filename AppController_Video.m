@@ -318,4 +318,26 @@
     [self setAspectRatio:[sender tag]];
 }
 
+- (IBAction)fullNavigationAction:(id)sender
+{
+    if (![self isFullScreen]) {                 // window mode
+        if (_movie) {
+            [self closeMovie];
+        }
+        [self beginFullNavigation];
+    }
+    else if (![_fullScreener isNavigating]) {   // full play mode
+                                                // escape to alternative mode
+        if ([_fullScreener isNavigatable]) {
+            [self endFullScreen];
+        }
+        else {
+            [self beginFullNavigation];
+        }
+    }
+    else {                                      // full navigation mode
+        // do nothing
+    }
+}
+
 @end

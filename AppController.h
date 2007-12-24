@@ -273,6 +273,7 @@
 - (IBAction)fullScreenFillAction:(id)sender;
 - (IBAction)fullScreenUnderScanAction:(id)sender;
 - (IBAction)aspectRatioAction:(id)sender;
+- (IBAction)fullNavigationAction:(id)sender;
 
 @end
 

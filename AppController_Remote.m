@@ -268,24 +268,7 @@
 - (IBAction)remoteControlMenuHoldAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self isFullScreen]) {                 // window mode
-        if (_movie) {
-            [self closeMovie];
-        }
-        [self beginFullNavigation];
-    }
-    else if (![_fullScreener isNavigating]) {   // full play mode
-        // escape to alternative mode
-        if ([_fullScreener isNavigatable]) {
-            [self endFullScreen];
-        }
-        else {
-            [self beginFullNavigation];
-        }
-    }
-    else {                                      // full navigation mode
-        // do nothing
-    }
+    [self fullNavigationAction:self];
 }
 
 - (IBAction)remoteControlPlusHoldAction:(id)sender {}     // currently not used
