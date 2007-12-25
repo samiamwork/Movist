@@ -62,7 +62,6 @@
 
 @protocol MSubtitleParser
 
-+ (NSDictionary*)defaultOptions;
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error;
 

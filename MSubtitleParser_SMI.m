@@ -20,9 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#import "MSubtitle.h"
-
-#import "UserDefaults.h"
+#import "MSubtitleParser_SMI.h"
 
 enum {
     TAG_NONE            = -1,
@@ -73,56 +71,23 @@ typedef struct _SMITag {
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface MSubtitleParser_SMI : NSObject <MSubtitleParser>
-{
-    NSString* _source;
-    NSRange _sourceRange;
-
-    NSCharacterSet* _delimSet;
-    NSCharacterSet* _styleDelimSet;
-    NSCharacterSet* _syncDelimSet;
-    NSCharacterSet* _pDelimSet;
-    NSCharacterSet* _fontDelimSet;
-
-    // options
-    BOOL _removeLastBR;
-    BOOL _replaceNewLineWithBR;
-
-    NSMutableDictionary* _classes;
-    NSMutableArray* _subtitles;
-}
-
-+ (NSDictionary*)defaultOptions;
-- (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
-                  error:(NSError**)error;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
+NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR = @"replaceNewLineWithBR";
 
 @implementation MSubtitleParser_SMI
-
-#define replaceNewLineWithBRKey @"replaceNewLineWithBR"
-
-+ (NSDictionary*)defaultOptions
-{
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    NSNumber* replaceNewLineWithBR = [defaults objectForKey:MSubtitleReplaceNLWithBRKey];
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-                            replaceNewLineWithBR, replaceNewLineWithBRKey,
-                            nil];
-}
 
 - (void)readyWithString:(NSString*)string options:(NSDictionary*)options
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _source = [string retain];
     _sourceRange = NSMakeRange(0, [_source length]);
+    _removeLastBR = TRUE;   // always true
+    _replaceNewLineWithBR = TRUE;
     if (options) {
-        _removeLastBR = TRUE;   // always true
-        NSNumber* n = (NSNumber*)[options objectForKey:replaceNewLineWithBRKey];
-        _replaceNewLineWithBR = (n) ? [n boolValue] : TRUE;
+        NSNumber* n = (NSNumber*)[options objectForKey:
+                            MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR];
+        if (n) {
+            _replaceNewLineWithBR = [n boolValue];
+        }
     }
 
     _delimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];

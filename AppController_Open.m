@@ -21,12 +21,14 @@
 //
 
 #import "AppController.h"
+
+#import "Playlist.h"
 #import "UserDefaults.h"
 
 #import "MMovie_FFMPEG.h"
 #import "MMovie_QuickTime.h"
-#import "MSubtitle.h"
-#import "Playlist.h"
+#import "MSubtitleParser_SMI.h"
+#import "MSubtitleParser_SRT.h"
 
 #import "MMovieView.h"
 #import "FullScreener.h"
@@ -143,8 +145,15 @@
     }
 
     // parse subtitles
+    NSDictionary* options = nil;
+    if (parserClass == [MSubtitleParser_SMI class]) {
+        options = [NSDictionary dictionaryWithObjectsAndKeys:
+                        [_defaults objectForKey:MSubtitleReplaceNLWithBRKey],
+                        MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR,
+                        nil];
+    }
     id<MSubtitleParser> parser = [[[parserClass alloc] init] autorelease];
-    return [parser parseString:s options:[parserClass defaultOptions] error:error];
+    return [parser parseString:s options:options error:error];
 }
 
 - (BOOL)openMovie:(NSURL*)movieURL movieClass:(Class)movieClass

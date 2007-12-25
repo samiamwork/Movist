@@ -82,10 +82,20 @@
 }
 @end
 
+@interface AudioDataQueue : NSObject
+{
+    int _bitRate;
+    UInt8* _data;
+    NSRecursiveLock* _mutex;
+    double _time;
+    unsigned int _capacity;
+    unsigned int _front;
+    unsigned int _rear;
+}
+@end
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-
-@class AudioDataQueue;
 
 enum {
     COMMAND_NONE,

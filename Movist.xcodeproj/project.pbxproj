@@ -247,6 +247,8 @@
 		AF3568F30CF1D6AB00C0621A /* FullNavItems.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = FullNavItems.m; sourceTree = "<group>"; };
 		AF3568F40CF1D6AB00C0621A /* FullNavListView.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = FullNavListView.h; sourceTree = "<group>"; };
 		AF3568F50CF1D6AB00C0621A /* FullNavListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullNavListView.m; sourceTree = "<group>"; };
+		AF37E1490D20BA4300F572C4 /* MSubtitleParser_SMI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_SMI.h; sourceTree = "<group>"; };
+		AF37E14A0D20BA4300F572C4 /* MSubtitleParser_SRT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_SRT.h; sourceTree = "<group>"; };
 		AF494D840B902DB400EDDB8A /* MMovie_FFMPEG.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MMovie_FFMPEG.h; sourceTree = "<group>"; };
 		AF494D850B902DB400EDDB8A /* MMovie_FFMPEG.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovie_FFMPEG.m; sourceTree = "<group>"; };
 		AF494D860B902DB400EDDB8A /* MMovie.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MMovie.h; sourceTree = "<group>"; };
@@ -649,7 +651,9 @@
 			children = (
 				AFFA4D430B80B6FB0024700D /* MSubtitle.h */,
 				AFFA4D440B80B6FB0024700D /* MSubtitle.m */,
+				AF37E1490D20BA4300F572C4 /* MSubtitleParser_SMI.h */,
 				AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */,
+				AF37E14A0D20BA4300F572C4 /* MSubtitleParser_SRT.h */,
 				AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */,
 			);
 			name = Subtitle;
@@ -712,6 +716,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "Movist" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -722,6 +727,7 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Movist */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Movist */,
 			);
@@ -942,25 +948,8 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = i386;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					ffmpeg/liba52.a,
-					ffmpeg/libavcodec.a,
-					ffmpeg/libavdevice.a,
-					ffmpeg/libavformat.a,
-					ffmpeg/libavutil.a,
-					ffmpeg/libfaad.a,
-					ffmpeg/libswscale.a,
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
-				);
-				PREBINDING = NO;
 				PRODUCT_NAME = Movist;
 				WRAPPER_EXTENSION = app;
 			};
@@ -969,32 +958,9 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					i386,
-					ppc,
-				);
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PREPROCESSOR_DEFINITIONS = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				OTHER_LDFLAGS = (
-					ffmpeg/liba52.a,
-					ffmpeg/libavcodec.a,
-					ffmpeg/libavdevice.a,
-					ffmpeg/libavformat.a,
-					ffmpeg/libavutil.a,
-					ffmpeg/libfaad.a,
-					ffmpeg/libswscale.a,
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
-				);
-				PREBINDING = NO;
 				PRODUCT_NAME = Movist;
-				SEPARATE_STRIP = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1004,6 +970,8 @@
 			buildSettings = {
 				ARCHS = i386;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1040,6 +1008,7 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

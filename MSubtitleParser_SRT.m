@@ -20,9 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#import "MSubtitle.h"
-
-#import "UserDefaults.h"
+#import "MSubtitleParser_SRT.h"
 
 enum {
     TAG_NONE            = -1,
@@ -51,26 +49,7 @@ typedef struct _SRTTag {
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface MSubtitleParser_SRT : NSObject <MSubtitleParser>
-{
-    NSString* _source;
-    NSRange _sourceRange;
-
-    NSMutableArray* _subtitles;
-}
-
-+ (NSDictionary*)defaultOptions;
-- (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
-                  error:(NSError**)error;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
 @implementation MSubtitleParser_SRT
-
-+ (NSDictionary*)defaultOptions { return nil; }
 
 - (void)readyWithString:(NSString*)string options:(NSDictionary*)options
 {

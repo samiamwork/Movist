@@ -73,18 +73,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface AudioDataQueue : NSObject
-{
-    int _bitRate;
-    UInt8* _data;
-    NSRecursiveLock* _mutex;
-    double _time;
-    unsigned int _capacity;
-    unsigned int _front;
-    unsigned int _rear;
-}
-@end
-
 @implementation AudioDataQueue
 
 - (id)initWithCapacity:(unsigned int)capacity
