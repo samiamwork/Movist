@@ -259,6 +259,14 @@
     }
 }
 
+- (void)completeLastString
+{
+    if ([self endTime] < 0.0) {
+        MSubtitleString* s = (MSubtitleString*)[_strings lastObject];
+        [s setEndTime:[s beginTime] + 5.0];     // add 5 sec. duration
+    }
+}
+
 - (NSMutableAttributedString*)stringAtTime:(float)time
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, time);

@@ -50,6 +50,7 @@
 - (void)addString:(NSMutableAttributedString*)string time:(float)time;
 - (void)addString:(NSMutableAttributedString*)string
         beginTime:(float)beginTime endTime:(float)endTime;
+- (void)completeLastString;
 - (NSMutableAttributedString*)stringAtTime:(float)time;
 - (void)clearCache;
 - (float)prevSubtitleTime:(float)time;

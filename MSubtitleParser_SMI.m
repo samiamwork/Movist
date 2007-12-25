@@ -383,13 +383,17 @@ extern NSString* MFontBoldAttributeName;
 
     [_source release];
 
-    // remove empty subtitle if exist
+    // remove empty subtitle if exist and
+    // make complete not-ended-string if exist.
     int i;
     MSubtitle* subtitle;
     for (i = [_subtitles count] - 1; 0 <= i; i--) {
         subtitle = [_subtitles objectAtIndex:i];
         if ([subtitle isEmpty]) {
             [_subtitles removeObjectAtIndex:i];
+        }
+        else if ([subtitle endTime] < 0.0) { // not-ended
+            [subtitle completeLastString];
         }
     }
 
