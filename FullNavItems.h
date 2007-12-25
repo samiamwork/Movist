@@ -55,8 +55,6 @@
     NSString* _name;
 }
 
-+ (id)fullNavItemWithName:(NSString*)name;
-
 - (id)initWithName:(NSString*)name;
 
 - (NSString*)name;
@@ -73,19 +71,20 @@
     NSString* _path;
 }
 
-+ (id)fullNavFileItemWithPath:(NSString*)path name:(NSString*)name;
 - (id)initWithPath:(NSString*)path name:(NSString*)name;
 
 - (NSString*)path;
 
 @end
 
+extern NSString* PATH_LINK_SYMBOL;
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark
 
 @interface FullNavDirectoryItem : FullNavFileItem
-
-+ (id)fullNavDirectoryItemWithPath:(NSString*)path name:(NSString*)name;
+{
+}
 
 @end
 
@@ -97,8 +96,7 @@
     NSURL* _url;
 }
 
-+ (id)fullNavURLItemWithURL:(NSURL*)url;
-- (id)initWithURL:(NSURL*)url;
+- (id)initWithURL:(NSURL*)url name:(NSString*)name;
 
 - (NSURL*)URL;
 

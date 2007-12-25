@@ -151,6 +151,8 @@ extern NSString* MMovieRectUpdateNotification;
 
 @interface NSFileManager (Movist)
 
+- (NSString*)pathContentOfLinkAtPath:(NSString*)path;
+- (NSString*)pathContentOfAliasAtPath:(NSString*)path;
 - (BOOL)isVisibleFile:(NSString*)path isDirectory:(BOOL*)isDirectory;
 
 @end

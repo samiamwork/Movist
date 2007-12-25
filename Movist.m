@@ -215,6 +215,31 @@ static NSWindow* _fadeWindow = 0;
 
 @implementation NSFileManager (Movist)
 
+- (NSString*)pathContentOfLinkAtPath:(NSString*)path
+{
+    NSString* linkPath = [self pathContentOfSymbolicLinkAtPath:path];
+    if (!linkPath) {
+        linkPath = [self pathContentOfAliasAtPath:path];
+    }
+    return (linkPath) ? linkPath : nil;
+}
+
+- (NSString*)pathContentOfAliasAtPath:(NSString*)path
+{
+    FSRef ref;
+    if (noErr == FSPathMakeRef((const UInt8*)[path UTF8String], &ref, 0)) {
+        Boolean targetIsFolder, wasAliased;
+        if (noErr == FSResolveAliasFile(&ref, TRUE, &targetIsFolder, &wasAliased) &&
+            wasAliased) {
+            UInt8 s[PATH_MAX + 1];
+            if (noErr == FSRefMakePath(&ref, s, PATH_MAX)) {
+                return [NSString stringWithUTF8String:(const char*)s];
+            }
+        }
+    }    
+    return nil;
+}
+
 - (BOOL)isVisibleFile:(NSString*)path isDirectory:(BOOL*)isDirectory
 {
     if (![self fileExistsAtPath:path isDirectory:isDirectory]) {

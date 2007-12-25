@@ -60,22 +60,31 @@
         //NSFrameRect(*nameRect);
     }
 
+    NSMutableAttributedString* name = [[NSMutableAttributedString alloc]
+                                        initWithString:_name attributes:attrs];
+    NSRange r = [_name rangeOfString:PATH_LINK_SYMBOL];
+    if (r.location != NSNotFound) {
+        r.length = [_name length] - r.location;
+        [name addAttribute:NSForegroundColorAttributeName
+                     value:[NSColor grayColor] range:r];
+    }
+
     float unitSize = size.width + 100;  // gap between name & name
     if (unitSize < scrollSize) {
         scrollSize -= unitSize;
     }
     if (0 == scrollSize) {
-        [_name drawInRect:rc withAttributes:attrs];
+        [name drawInRect:rc];
     }
     else {
         rc.origin.x -= scrollSize;
         rc.size.width += scrollSize;
-        [_name drawInRect:rc withAttributes:attrs];
+        [name drawInRect:rc];
 
         if (unitSize < rc.size.width) {
             rc.origin.x += unitSize;
             rc.size.width -= unitSize;
-            [_name drawInRect:rc withAttributes:attrs];
+            [name drawInRect:rc];
         }
     }
     // container mark

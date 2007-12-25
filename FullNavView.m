@@ -248,15 +248,16 @@
     if (!path || ![fileManager fileExistsAtPath:path]) {
         path = [@"~/Movies" stringByExpandingTildeInPath];
     }
-    NSString* name = nil;
-    [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:name]];
+    [items addObject:[[[FullNavDirectoryItem alloc]
+                                        initWithPath:path name:nil]autorelease]];
 
     // iTunes Movies folder
     if ([defaults boolForKey:MFullNavShowiTunesMoviesKey]) {
         path = [@"~/Music/iTunes/iTunes Music/Movies" stringByExpandingTildeInPath];
         if ([fileManager fileExistsAtPath:path]) {
-            name = NSLocalizedString(@"iTunes Movies", nil);
-            [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:name]];
+            NSString* name = NSLocalizedString(@"iTunes Movies", nil);
+            [items addObject:[[[FullNavDirectoryItem alloc]
+                                        initWithPath:path name:name] autorelease]];
         }
     }
 
@@ -264,8 +265,9 @@
     if ([defaults boolForKey:MFullNavShowVideoPodcastKey]) {
         path = [@"~/Music/iTunes/iTunes Music/Podcast" stringByExpandingTildeInPath];
         if ([fileManager fileExistsAtPath:path]) {
-            name = NSLocalizedString(@"Video Podcast", nil);
-            [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:name]];
+            NSString* name = NSLocalizedString(@"Video Podcast", nil);
+            [items addObject:[[[FullNavDirectoryItem alloc]
+                                        initWithPath:path name:name] autorelease]];
         }
     }
 
@@ -288,6 +290,10 @@
             icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
         }
         title = [item name];
+        NSRange r = [title rangeOfString:PATH_LINK_SYMBOL];
+        if (r.location != NSNotFound) {
+            title = [title substringToIndex:r.location];
+        }
     }
     [_titleView setIcon:icon title:title];
     [_listView setNavList:list];

@@ -79,12 +79,6 @@
 
 @implementation FullNavItem
 
-+ (id)fullNavItemWithName:(NSString*)name
-{
-    FullNavItem* item = [[FullNavItem alloc] initWithName:name];
-    return [item autorelease];
-}
-
 - (id)initWithName:(NSString*)name
 {
     //TRACE(@"%s name=\"%@\"", __PRETTY_FUNCTION__, name);
@@ -112,18 +106,11 @@
 
 @implementation FullNavFileItem
 
-+ (id)fullNavFileItemWithPath:(NSString*)path name:(NSString*)name
-{
-    FullNavFileItem* item = [[FullNavFileItem alloc] initWithPath:path name:name];
-    return [item autorelease];
-}
-
 - (id)initWithPath:(NSString*)path name:(NSString*)name
 {
     //TRACE(@"%s path=\"%@\"", __PRETTY_FUNCTION__, path);
     if (!name) {
-        NSFileManager* fm = [NSFileManager defaultManager];
-        name = [[fm displayNameAtPath:path] lastPathComponent];
+        name = [[NSFileManager defaultManager] displayNameAtPath:path];
     }
     if (self = [super initWithName:name]) {
         _path = [path retain];
@@ -131,20 +118,22 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [_path release];
+    [super dealloc];
+}
+
 - (NSString*)path { return _path; }
 
 @end
+
+NSString* PATH_LINK_SYMBOL = @"  @:";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark
 
 @implementation FullNavDirectoryItem
-
-+ (id)fullNavDirectoryItemWithPath:(NSString*)path name:(NSString*)name
-{
-    FullNavDirectoryItem* item = [[FullNavDirectoryItem alloc] initWithPath:path name:name];
-    return [item autorelease];
-}
 
 - (BOOL)hasSubContents { return TRUE; }
 
@@ -156,17 +145,27 @@
     NSMutableArray* items = [[NSMutableArray alloc] initWithCapacity:[contents count]];
 
     BOOL isDirectory;
-    NSString* file, *path;
+    NSString* file, *path, *linkPath, *name;
     NSArray* movieTypes = [MMovie movieTypes];
     NSEnumerator* enumerator = [contents objectEnumerator];
     while (file = [enumerator nextObject]) {
         path = [_path stringByAppendingPathComponent:file];
+        linkPath = [fm pathContentOfLinkAtPath:path];
+        if (linkPath) {
+            path = linkPath;
+            name = [NSString stringWithFormat:@"%@%@%@", file, PATH_LINK_SYMBOL, linkPath];
+        }
+        else {
+            name = nil;
+        }
         if ([fm isVisibleFile:path isDirectory:&isDirectory]) {
             if (isDirectory) {
-                [items addObject:[FullNavDirectoryItem fullNavDirectoryItemWithPath:path name:nil]];
+                [items addObject:[[[FullNavDirectoryItem alloc]
+                                        initWithPath:path name:name] autorelease]];
             }
             else if ([path hasAnyExtension:movieTypes]) {
-                [items addObject:[FullNavFileItem fullNavFileItemWithPath:path name:nil]];
+                [items addObject:[[[FullNavFileItem alloc]
+                                        initWithPath:path name:name] autorelease]];
             }
         }
     }
@@ -180,20 +179,22 @@
 
 @implementation FullNavURLItem
 
-+ (id)fullNavURLItemWithURL:(NSURL*)url
-{
-    FullNavURLItem* item = [[FullNavURLItem alloc] initWithURL:url];
-    return [item autorelease];
-}
-
-- (id)initWithURL:(NSURL*)url
+- (id)initWithURL:(NSURL*)url name:(NSString*)name
 {
     //TRACE(@"%s url=\"%@\"", __PRETTY_FUNCTION__, [url absoluteString]);
-    NSString* name = [[url absoluteString] lastPathComponent];
+    if (!name) {
+        name = [[url absoluteString] lastPathComponent];
+    }
     if (self = [super initWithName:name]) {
         _url = [url retain];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [_url release];
+    [super dealloc];
 }
 
 - (NSURL*)URL { return _url; }
