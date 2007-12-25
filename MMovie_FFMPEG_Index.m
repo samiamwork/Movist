@@ -133,15 +133,19 @@ typedef struct {
     if (!strstr(_indexContext->iformat->name, "avi")) {
         return;
     }
-    int fileSize = lseek(fd, 0, SEEK_END);
+    int64_t fileSize = lseek(fd, (off_t)0, SEEK_END);
+    if (fileSize < 0) {
+        TRACE(@"seek failed (%d:%s)", errno, strerror(errno));
+        return;
+    }
 
     /* AHHHHHH, DIRTY HACK.... */
     AVIContext* aviContext = (AVIContext*)(_formatContext->priv_data);
-    if (aviContext->fsize == fileSize) {
+    if (fileSize <= aviContext->fsize) {
         return;
     }
     _indexingCompleted = FALSE;
-    TRACE(@"file size = %llu", fileSize);
+    TRACE(@"file size = %lld", fileSize);
     
     //TRACE(@"mov_end   = %lld", aviContext->movi_end);
     //TRACE(@"riff_end  = %lld", aviContext->riff_end);
@@ -150,7 +154,7 @@ typedef struct {
     
     aviContext = (AVIContext*)(_indexContext->priv_data);
     aviContext->fsize = fileSize;
-    _formatContext->file_size = fileSize;
+    _indexContext->file_size = fileSize;
     _indexContext->pb->eof_reached = 0;
 }
 
