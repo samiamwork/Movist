@@ -28,17 +28,14 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
-        _paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-        [_paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
-        //[_paragraphStyle setLineSpacing:0.5];
-        //[_paragraphStyle setParagraphSpacing:0.1];
-        //[_paragraphStyle setParagraphSpacingBefore:0];
-        //[self setKern:-0.3];
-
         _textColor = [[NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:1] retain];
         _strokeColor = [[NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1] retain];
         _strokeWidth = [[NSNumber alloc] initWithFloat:10.0];
         _strokeWidth2= [[NSNumber alloc] initWithFloat:-0.01];
+
+        _paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [_paragraphStyle setLineBreakMode:NSLineBreakByWordWrapping];
+        _lineSpacing = 0;
 
         // for stroke & shadow
         _contentLeftMargin  = 10;
@@ -88,6 +85,7 @@
 - (NSMutableAttributedString*)string { return _string; }
 - (NSString*)fontName { return _fontName; }
 - (float)fontSize { return _fontSize; }
+- (float)lineSpacing { return _lineSpacing; }
 
 - (BOOL)hasContent { return _newString && ([_newString length] != 0); }
 
@@ -152,6 +150,15 @@
     if ([_strokeWidth floatValue] != -strokeWidth) {
         [_strokeWidth release];
         _strokeWidth = [[NSNumber alloc] initWithFloat:-strokeWidth];
+        _updateMask |= UPDATE_TEXTURE;
+    }
+}
+
+- (void)setLineSpacing:(float)lineSpacing
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_lineSpacing != lineSpacing) {
+        _lineSpacing = lineSpacing;
         _updateMask |= UPDATE_TEXTURE;
     }
 }
@@ -252,6 +259,8 @@ NSString* MFontItalicAttributeName = @"MFontItalicAttributeName";
         [_string addAttribute:NSStrokeWidthAttributeName value:_strokeWidth range:range];
     }
 
+    float lineSpacing = [self autoSize:_lineSpacing];
+    [_paragraphStyle setLineSpacing:lineSpacing];
     [_string addAttribute:NSParagraphStyleAttributeName value:_paragraphStyle range:range];
     //[_string addAttribute:NSKernAttributeName value:_kern range:range];
 

@@ -170,44 +170,45 @@
 - (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (displayOnLetterBox != [self subtitleDisplayOnLetterBox]) {
-        // need not update _subtitleRenderer.
-        [_subtitleImageOSD setDisplayOnLetterBox:displayOnLetterBox];
-        [_messageOSD setDisplayOnLetterBox:displayOnLetterBox];
-        [self updateMovieRect:TRUE];
-    }
+    // need not update _subtitleRenderer.
+    [_subtitleImageOSD setDisplayOnLetterBox:displayOnLetterBox];
+    [_messageOSD setDisplayOnLetterBox:displayOnLetterBox];
+    [self updateMovieRect:TRUE];
 }
 
 - (void)setLetterBoxHeight:(int)height
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_letterBoxHeight != height) {
-        _letterBoxHeight =  height;
-        [self updateMovieRect:TRUE];
-    }
+    _letterBoxHeight =  height;
+    [self updateMovieRect:TRUE];
 }
 
 - (void)setSubtitleHMargin:(float)hMargin
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (hMargin != [self subtitleHMargin]) {
-        [_subtitleRenderer setHMargin:hMargin];
-        [_subtitleImageOSD setHMargin:hMargin];
-        [_messageOSD setHMargin:hMargin];
-        [self updateSubtitle];
-    }
+    [_subtitleRenderer setHMargin:hMargin];
+    [_subtitleImageOSD setHMargin:hMargin];
+    [_messageOSD setHMargin:hMargin];
+    [self updateSubtitle];
 }
 
 - (void)setSubtitleVMargin:(float)vMargin
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (vMargin != [self subtitleVMargin]) {
-        // need not update _subtitleRenderer.
-        [_subtitleImageOSD setVMargin:vMargin];
-        [_messageOSD setVMargin:vMargin];
-        // need not update subtitle
-        [self redisplay];
-    }
+    // need not update _subtitleRenderer.
+    [_subtitleImageOSD setVMargin:vMargin];
+    [_messageOSD setVMargin:vMargin];
+    // need not update subtitle
+    [self redisplay];
+}
+
+- (void)setSubtitleLineSpacing:(float)lineSpacing
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_subtitleRenderer setLineSpacing:lineSpacing];
+    [_messageOSD setLineSpacing:lineSpacing];
+    [self updateMovieRect:FALSE];
+    [self updateSubtitle];
 }
 
 - (void)setSubtitleSync:(float)sync

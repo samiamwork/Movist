@@ -68,9 +68,10 @@
 "Letter Box Height: %@" = "Letter Box Height: %@";
 "Align Image to Center" = "Align Image to Center";
 "%d Line(s) Height" = "%d Line(s) Height";
+"Subtitle Size %.1f" = "Subtitle Size %.1f";
 "Subtitle HMargin %.1f %%" = "Subtitle HMargin %.1f %%";
 "Subtitle VMargin %.1f %%" = "Subtitle VMargin %.1f %%";
-"Subtitle Size %.1f" = "Subtitle Size %.1f";
+"Subtitle Line Spacing %.1f" = "Subtitle Line Spacing %.1f";
 "Subtitle Sync %.1f sec." = "Subtitle Sync %.1f sec";
 "Subtitle %@ selected" = "Subtitle %@ selected";
 "Subtitle %@ enabled" = "Subtitle %@ enabled";

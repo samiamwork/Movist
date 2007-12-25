@@ -84,6 +84,7 @@ extern NSString* MSubtitleDisplayOnLetterBoxKey;
 extern NSString* MSubtitleLetterBoxHeightKey;
 extern NSString* MSubtitleHMarginKey;
 extern NSString* MSubtitleVMarginKey;
+extern NSString* MSubtitleLineSpacingKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
 
 #pragma mark -

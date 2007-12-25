@@ -447,7 +447,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
                                      NSStringDrawingUsesFontLeading |
                                      NSStringDrawingUsesDeviceMetrics;
-    return _letterBoxHeight * [s boundingRectWithSize:maxSize options:options].size.height;
+    float lineHeight = [s boundingRectWithSize:maxSize options:options].size.height;
+    float lineSpacing = [_subtitleRenderer lineSpacing] * movieRect.size.width / 640.0;
+    // FIXME: how to apply line-spacing for line-height?  it's estimated roughly...
+    return _letterBoxHeight * (lineHeight + lineSpacing / 2);
 }
 
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect

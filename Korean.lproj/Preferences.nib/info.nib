@@ -9,7 +9,7 @@
 		<key>220</key>
 		<string>689 734 541 231 0 0 1920 1178 </string>
 		<key>228</key>
-		<string>689 505 541 537 0 0 1920 1178 </string>
+		<string>189 496 541 559 0 0 1920 1178 </string>
 		<key>270</key>
 		<string>689 785 541 163 0 0 1920 1178 </string>
 		<key>276</key>
@@ -25,11 +25,11 @@
 	</array>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>270</integer>
-		<integer>220</integer>
 		<integer>228</integer>
-		<integer>276</integer>
 		<integer>277</integer>
+		<integer>270</integer>
+		<integer>276</integer>
+		<integer>220</integer>
 	</array>
 	<key>IBSystem Version</key>
 	<string>9B18</string>

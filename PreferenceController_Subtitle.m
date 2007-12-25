@@ -314,6 +314,7 @@
         SUBTITLE_LETTER_BOX_HEIGHT,
         SUBTITLE_H_MARGIN,
         SUBTITLE_V_MARGIN,
+        SUBTITLE_LINE_SPACING,
     };
 
     switch ([sender tag]) {
@@ -347,6 +348,13 @@
             [_subtitleVMarginTextField setFloatValue:vMargin];
             [_defaults setFloat:vMargin forKey:MSubtitleVMarginKey];
             [_appController setSubtitleVMargin:vMargin];
+            break;
+        }
+        case SUBTITLE_LINE_SPACING : {
+            float spacing = [_subtitleLineSpacingSlider floatValue];
+            [_subtitleLineSpacingTextField setFloatValue:spacing];
+            [_defaults setFloat:spacing forKey:MSubtitleLineSpacingKey];
+            [_appController setSubtitleLineSpacing:spacing];
             break;
         }
     }

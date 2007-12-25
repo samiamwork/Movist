@@ -159,6 +159,7 @@
 - (void)setLetterBoxHeight:(int)height;
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
+- (void)setSubtitleLineSpacing:(float)lineSpacing;
 
 - (float)subtitleSync;
 - (void)setSubtitleSync:(float)sync;

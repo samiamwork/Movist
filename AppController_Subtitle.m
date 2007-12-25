@@ -100,6 +100,10 @@
 
 - (void)setLetterBoxHeight:(int)height
 {
+    if (![_movieView subtitleDisplayOnLetterBox]) {
+        return;
+    }
+    
     if (height == LETTER_BOX_HEIGHT_DEFAULT) {
         // nothing to do...
     }
@@ -117,6 +121,10 @@
 
 - (void)changeLetterBoxHeight:(int)tag
 {
+    if (![_movieView subtitleDisplayOnLetterBox]) {
+        return;
+    }
+
     int height;
     switch (tag) {
         case -1 : height = [_movieView letterBoxHeight] - 1;     break;
@@ -160,6 +168,14 @@
         default : vmargin = [_defaults floatForKey:MSubtitleVMarginKey];break;
     }
     [self setSubtitleVMargin:vmargin];
+}
+
+- (void)setSubtitleLineSpacing:(float)spacing
+{
+    spacing = (spacing < 0.0) ? 0.0 : (10.0 < spacing) ? 10.0 : spacing;
+    [_movieView setSubtitleLineSpacing:spacing];
+    [_movieView setMessage:[NSString localizedStringWithFormat:
+        NSLocalizedString(@"Subtitle Line Spacing %.1f", nil), spacing]];
 }
 
 - (void)setSubtitleSync:(float)sync

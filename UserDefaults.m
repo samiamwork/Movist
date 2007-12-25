@@ -71,10 +71,11 @@ NSString* MSubtitleShadowColorKey           = @"SubtitleShadowColor";
 NSString* MSubtitleShadowBlurKey            = @"SubtitleShadowBlur";
 NSString* MSubtitleShadowOffsetKey          = @"SubtitleShadowOffset";
 NSString* MSubtitleShadowDarknessKey        = @"SubtitleShadowDarkness";
-NSString* MSubtitleHMarginKey               = @"SubtitleHMargin";
-NSString* MSubtitleVMarginKey               = @"SubtitleVMargin";
 NSString* MSubtitleDisplayOnLetterBoxKey    = @"SubtitleDisplayOnLetterBox";
 NSString* MSubtitleLetterBoxHeightKey       = @"SubtitleLetterBoxHeight";
+NSString* MSubtitleHMarginKey               = @"SubtitleHMargin";
+NSString* MSubtitleVMarginKey               = @"SubtitleVMargin";
+NSString* MSubtitleLineSpacingKey           = @"SubtitleLineSpacing";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 
 #pragma mark -
@@ -143,6 +144,7 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     [dict setObject:[NSNumber numberWithInt:LETTER_BOX_HEIGHT_DEFAULT] forKey:MSubtitleLetterBoxHeightKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleHMarginKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleVMarginKey];
+    [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleLineSpacingKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
 
     // prefs: advanced

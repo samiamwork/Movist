@@ -321,11 +321,23 @@
 #pragma mark -
 
 - (float)hMargin { return [_subtitleOSD hMargin]; }
+- (float)lineSpacing { return [_subtitleOSD lineSpacing]; }
 
 - (void)setHMargin:(float)hMargin
 {
     [_subtitlesLock lock];
     [_subtitleOSD setHMargin:hMargin];
+    [_subtitlesLock unlock];
+
+    [_conditionLock lock];
+    int condition = [self requestRemakeImages];
+    [_conditionLock unlockWithCondition:condition];
+}
+
+- (void)setLineSpacing:(float)lineSpacing
+{
+    [_subtitlesLock lock];
+    [_subtitleOSD setLineSpacing:lineSpacing];
     [_subtitlesLock unlock];
 
     [_conditionLock lock];

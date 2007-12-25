@@ -318,6 +318,7 @@
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
 - (void)changeSubtitleVMargin:(int)tag;
+- (void)setSubtitleLineSpacing:(float)spacing;
 
 - (void)setSubtitle:(MSubtitle*)subtitle enabled:(BOOL)enabled;
 - (void)autoenableSubtitles;

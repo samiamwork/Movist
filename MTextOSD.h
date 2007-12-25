@@ -41,6 +41,7 @@ enum {  // for _updateMask
     NSNumber* _strokeWidth2;   // for redraw
 
     NSMutableParagraphStyle* _paragraphStyle;
+    float _lineSpacing;
     //NSNumber* _kern;
 }
 
@@ -48,12 +49,14 @@ enum {  // for _updateMask
 - (NSMutableAttributedString*)string;
 - (NSString*)fontName;
 - (float)fontSize;
+- (float)lineSpacing;
 - (void)setTextAlignment:(NSTextAlignment)alignment;
 - (BOOL)setString:(NSMutableAttributedString*)string;
 - (void)setFontName:(NSString*)name size:(float)size;
 - (void)setTextColor:(NSColor*)textColor;
 - (void)setStrokeColor:(NSColor*)strokeColor;
 - (void)setStrokeWidth:(float)strokeWidth;
+- (void)setLineSpacing:(float)lineSpacing;
 //- (void)setKern:(float)kern;
 
 - (void)updateFont;

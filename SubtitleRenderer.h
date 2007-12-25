@@ -72,7 +72,9 @@
 - (void)setShadowDarkness:(int)shadowDarkness;
 
 - (float)hMargin;
+- (float)lineSpacing;
 - (void)setHMargin:(float)hMargin;
+- (void)setLineSpacing:(float)lineSpacing;
 
 - (NSImage*)imageAtTime:(float)time;
 - (void)clearImages;
