@@ -90,15 +90,11 @@ extern NSString* MLastUpdateCheckTimeKey;
 @interface NSUserDefaults (Movist)
 
 - (void)registerMovistDefaults;
+
 - (void)setColor:(NSColor*)color forKey:(NSString*)key;
 - (NSColor*)colorForKey:(NSString*)key;
 
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSUserDefaults (Perian)
+- (void)setA52CodecAttemptPassthrough:(BOOL)enabled;
 
 - (BOOL)isPerianSubtitleEnabled;
 - (void)setPerianSubtitleEnabled:(BOOL)enabled;

@@ -89,9 +89,11 @@
 
 - (void)orderOutWithFadeOut:(id)sender
 {
-    [self fadeWithEffect:NSViewAnimationFadeOutEffect
-            blockingMode:NSAnimationBlocking
-                duration:PLAY_PANEL_FADE_DURATION];
+    if ([self isVisible]) {
+        [self fadeWithEffect:NSViewAnimationFadeOutEffect
+                blockingMode:NSAnimationBlocking
+                    duration:PLAY_PANEL_FADE_DURATION];
+    }
     [self orderOut:sender];
 }
 

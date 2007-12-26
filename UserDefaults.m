@@ -174,15 +174,32 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     return (!data) ? nil : (NSColor*)[NSUnarchiver unarchiveObjectWithData:data];
 }
 
-@end
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark A52Codec
+
+NSString* A52CODEC_DEFAULTS                 = @"com.cod3r.a52codec";
+NSString* A52CODEC_ATTEMPT_PASSTHROUGH_KEY  = @"attemptPassthrough";
+
+- (void)setA52CodecAttemptPassthrough:(BOOL)enabled
+{
+    NSMutableDictionary* a52Codec;
+    a52Codec = [[self persistentDomainForName:A52CODEC_DEFAULTS] mutableCopy];
+
+    [a52Codec setObject:[NSNumber numberWithInt:enabled ? 1 : 0]
+                 forKey:A52CODEC_ATTEMPT_PASSTHROUGH_KEY];
+
+    [self removePersistentDomainForName:A52CODEC_DEFAULTS];
+    [self setPersistentDomain:a52Codec forName:A52CODEC_DEFAULTS];
+    [self synchronize];
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+#pragma mark Perian
 
 NSString* PERIAN_DEFAULTS       = @"org.perian.Perian";
 NSString* PERIAN_SUBTITLE_KEY   = @"LoadExternalSubtitles";
-
-@implementation NSUserDefaults (Perian)
 
 - (BOOL)isPerianSubtitleEnabled
 {

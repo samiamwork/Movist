@@ -97,21 +97,13 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 
 - (BOOL)updateA52CodecProperties
 {
-    // update "com.cod3r.a52codec.plist" for A52Codec.component if exist.
+    // update A52Codec.component's preference if exist.
     NSString* rootPath = @"/Library/Audio/Plug-Ins/Components/A52Codec.component";
     NSString* homePath = [[@"~" stringByExpandingTildeInPath]
                                                 stringByAppendingString:rootPath];
     if ([[NSFileManager defaultManager] fileExistsAtPath:rootPath] ||
         [[NSFileManager defaultManager] fileExistsAtPath:homePath]) {
-        NSTask* defaults = [[NSTask alloc] init];
-        [defaults setLaunchPath:@"/usr/bin/defaults"];
-        [defaults setArguments:[NSArray arrayWithObjects:
-                        @"write", @"com.cod3r.a52codec", @"attemptPassthrough",
-                                            _supportDigitalAudio ? @"1" : @"0", nil]];
-        //TRACE(@"%s \"defaults write com.cod3r.a52codec attemptPassthrough %d\"",
-        //      __PRETTY_FUNCTION__, _supportDigitalAudio ? 1 : 0);
-        [defaults launch];
-        [defaults waitUntilExit];
+        [_defaults setA52CodecAttemptPassthrough:_supportDigitalAudio];
         return TRUE;
     }
     return FALSE;
