@@ -5,6 +5,7 @@
                 aspectRatioAction = id;
                 audioTrackAction = id;
                 controlPanelAction = id;
+                fullNavigationAction = id;
                 fullScreenAction = id;
                 fullScreenFillAction = id;
                 fullScreenUnderScanAction = id;

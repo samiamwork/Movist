@@ -320,23 +320,18 @@
 
 - (IBAction)fullNavigationAction:(id)sender
 {
-    if (![self isFullScreen]) {                 // window mode
-        if (_movie) {
-            [self closeMovie];
-        }
-        [self beginFullNavigation];
-    }
-    else if (![_fullScreener isNavigating]) {   // full play mode
-                                                // escape to alternative mode
-        if ([_fullScreener isNavigatable]) {
+    if (_movie) {
+        if ([self isFullScreen] && ![_fullScreener isNavigating]) {    // full play mode
             [self endFullScreen];
         }
-        else {
-            [self beginFullNavigation];
-        }
+        [self closeMovie];
     }
-    else {                                      // full navigation mode
-        // do nothing
+
+    if (![_fullScreener isNavigating]) {
+        [self beginFullNavigation];
+    }
+    else {
+        [self endFullNavigation];
     }
 }
 

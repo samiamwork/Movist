@@ -235,12 +235,18 @@
 - (BOOL)application:(NSApplication*)theApplication openFile:(NSString*)filename
 {
     //TRACE(@"%s:\"%@\"", __PRETTY_FUNCTION__, filename);
+    if ([self isFullScreen] && [_fullScreener isNavigating]) {
+        return FALSE;
+    }
     return [self openFile:filename];
 }
 
 - (void)application:(NSApplication*)theApplication openFiles:(NSArray*)filenames
 {
     //TRACE(@"%s:{%@}", __PRETTY_FUNCTION__, filenames);
+    if ([self isFullScreen] && [_fullScreener isNavigating]) {
+        return;
+    }
     if ([self openFiles:filenames]) {
         [NSApp replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
     }
@@ -403,11 +409,14 @@
 
 - (BOOL)validateMenuItem:(NSMenuItem*)menuItem
 {
-    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [menuItem title]);
+    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [menuItem title]);
     if ([[NSApp keyWindow] firstResponder] != _movieView) {
         if ([NSApp keyWindow] == [_fullScreener fullWindow]) {
+            if ([menuItem action] == @selector(fullNavigationAction:)) {
+                return TRUE;
+            }
             if ([menuItem action] == @selector(prevNextMovieAction:)) {
-                return (0 < [_playlist count]);
+                return ![_fullScreener isNavigating] && (0 < [_playlist count]);
             }
             if ([menuItem action] == @selector(seekAction:)) {
                 if ([menuItem tag] == 40 || [menuItem tag] == -40) {
