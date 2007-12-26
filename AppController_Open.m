@@ -78,6 +78,11 @@
             NSLocalizedString(@"Opening with %@...", nil), [movieClass name]]];
         [_movieView display];   // force display
 
+        // disable perian-subtitle before using quick-time.
+        if (movieClass == [MMovie_QuickTime class] && _perianSubtitleEnabled) {
+            [_defaults setPerianSubtitleEnabled:FALSE];
+        }
+        
         movie = [[movieClass alloc] initWithURL:movieURL error:error];
         if (movie) {
             return [movie autorelease];
@@ -252,7 +257,8 @@
     [_panelSeekSlider clearRepeat];
     [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
         NSLocalizedString(@"Reopen With %@", nil),
-        ([_movie class] == [MMovie_QuickTime class]) ? @"FFMPEG" : @"QuickTime"]];
+            ([_movie class] == [MMovie_QuickTime class]) ?
+                                [MMovie_FFMPEG name] : [MMovie_QuickTime name]]];
     _prevMovieTime = 0.0;
     [self updateUI];
 
@@ -395,6 +401,8 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
+        BOOL quickTimeUsed = ([_movie class] == [MMovie_QuickTime class]);
+
         _lastPlayedMovieTime = [_movie currentTime];
 
         // init _audioTrackIndexSet for next open.
@@ -431,6 +439,11 @@
         [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
             NSLocalizedString(@"Reopen With %@", nil), @"..."]];
         [self updateUI];
+
+        // re-enable perian-subtitle after using quick-time if needed.
+        if (quickTimeUsed && _perianSubtitleEnabled) {
+            [_defaults setPerianSubtitleEnabled:TRUE];
+        }
     }
 }
 

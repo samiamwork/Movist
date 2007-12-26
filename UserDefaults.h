@@ -22,15 +22,6 @@
 
 #import "Movist.h"
 
-@interface NSUserDefaults (Movist)
-
-- (void)registerMovistDefaults;
-- (void)setColor:(NSColor*)color forKey:(NSString*)key;
-- (NSColor*)colorForKey:(NSString*)key;
-
-@end
-
-#pragma mark -
 #pragma mark app
 extern NSString* MPreferencePaneKey;
 extern NSString* MControlTabKey;
@@ -92,3 +83,24 @@ extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultDecoderKey;
 extern NSString* MUpdateCheckIntervalKey;
 extern NSString* MLastUpdateCheckTimeKey;
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface NSUserDefaults (Movist)
+
+- (void)registerMovistDefaults;
+- (void)setColor:(NSColor*)color forKey:(NSString*)key;
+- (NSColor*)colorForKey:(NSString*)key;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface NSUserDefaults (Perian)
+
+- (BOOL)isPerianSubtitleEnabled;
+- (void)setPerianSubtitleEnabled:(BOOL)enabled;
+
+@end

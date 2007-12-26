@@ -152,9 +152,13 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MUpdateCheckIntervalKey];
     [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastUpdateCheckTimeKey];
 
-    [self registerDefaults:dict];
     //TRACE(@"registering defaults: %@", dict);
+    [self registerDefaults:dict];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark color extension
+#pragma mark -
 
 - (void)setColor:(NSColor*)color forKey:(NSString*)key
 {
@@ -168,6 +172,35 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, key);
     NSData* data = [self dataForKey:key];
     return (!data) ? nil : (NSColor*)[NSUnarchiver unarchiveObjectWithData:data];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+NSString* PERIAN_DEFAULTS       = @"org.perian.Perian";
+NSString* PERIAN_SUBTITLE_KEY   = @"LoadExternalSubtitles";
+
+@implementation NSUserDefaults (Perian)
+
+- (BOOL)isPerianSubtitleEnabled
+{
+    NSDictionary* perian = [self persistentDomainForName:PERIAN_DEFAULTS];
+
+    return [[perian objectForKey:PERIAN_SUBTITLE_KEY] boolValue];
+}
+
+- (void)setPerianSubtitleEnabled:(BOOL)enabled
+{
+    NSMutableDictionary* perian;
+    perian = [[self persistentDomainForName:PERIAN_DEFAULTS] mutableCopy];
+
+    [perian setObject:[NSNumber numberWithBool:enabled] forKey:PERIAN_SUBTITLE_KEY];
+
+    [self removePersistentDomainForName:PERIAN_DEFAULTS];
+    [self setPersistentDomain:perian forName:PERIAN_DEFAULTS];
+    [self synchronize];
 }
 
 @end

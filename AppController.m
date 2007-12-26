@@ -56,6 +56,9 @@
         _fullScreenLock = [[NSLock alloc] init];
 
         _defaults = [NSUserDefaults standardUserDefaults];
+
+        // check if kor-/capri- perian supports external subtitles.
+        _perianSubtitleEnabled = [_defaults isPerianSubtitleEnabled];
     }
     return self;
 }

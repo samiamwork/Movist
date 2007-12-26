@@ -56,6 +56,7 @@
     NSUserDefaults* _defaults;
     BOOL _quitWhenWindowClose;
     BOOL _supportDigitalAudio;
+    BOOL _perianSubtitleEnabled;
 
     // movie
     IBOutlet NSMenu* _movieMenu;
