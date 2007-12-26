@@ -403,7 +403,8 @@
     if (_movie) {
         BOOL quickTimeUsed = ([_movie class] == [MMovie_QuickTime class]);
 
-        _lastPlayedMovieTime = [_movie currentTime];
+        _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?
+                                [_movie currentTime] : 0.0;
 
         // init _audioTrackIndexSet for next open.
         [_audioTrackIndexSet removeAllIndexes];
