@@ -84,6 +84,8 @@ typedef struct {
         _needIndexing = ![self isCompleteFile];
     }
     _indexingTime = 0;
+    _maxFrameSize = 0;
+    _currentIndexingPosition = 0;
     return TRUE;
 }
 
@@ -106,6 +108,10 @@ typedef struct {
         if (_quitRequested) {
             break;
         }
+        if (_indexContext->file_size < _currentIndexingPosition + _maxFrameSize * 4) {
+            _indexingCompleted = TRUE;
+            return;
+        }
         if (av_read_frame(_indexContext, &packet) < 0) {
             _indexingCompleted = TRUE;
             TRACE(@"%s read-error or end-of-file", __PRETTY_FUNCTION__);
@@ -124,6 +130,10 @@ typedef struct {
             TRACE(@"current %f", 1. * packet.dts * av_q2d(_videoStream->time_base)); 
             _indexingTime = packet.dts * av_q2d(_formatContext->streams[packet.stream_index]->time_base);
         }
+        if (_maxFrameSize < packet.size) {
+            _maxFrameSize = packet.size;
+        }
+        _currentIndexingPosition = packet.pos;
         av_free_packet(&packet);
     }
 }
@@ -135,7 +145,7 @@ typedef struct {
     }
     int64_t fileSize = lseek(fd, (off_t)0, SEEK_END);
     if (fileSize < 0) {
-        TRACE(@"seek failed (%d:%s)", errno, strerror(errno));
+        NSLog(@"seek failed (%d:%s)", errno, strerror(errno));
         return;
     }
 
@@ -195,6 +205,7 @@ typedef struct {
             skipCount++;
             continue;
         }
+        skipCount = 0;
         [self makeIndex];
         if (!_indexingCompleted) {
             [nc postNotificationName:MMovieIndexDurationNotification object:self];

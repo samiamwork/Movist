@@ -133,6 +133,8 @@ enum {
     AVCodecContext* _indexCodec;
     BOOL _indexingCompleted;
     BOOL _needIndexing;
+    int _maxFrameSize;
+    int64_t _currentIndexingPosition;
     float _indexingTime;
     
     // playback: control
@@ -150,6 +152,7 @@ enum {
     // playback: play
     float _rate;
     BOOL _playAfterSeek;   // for continuous play after seek
+    BOOL _useFrameDrop;
 
     // playback: seek
     float _seekTime;
