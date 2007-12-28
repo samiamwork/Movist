@@ -49,6 +49,7 @@
 - (id)initWithFrame:(NSRect)frame window:(NSWindow*)window;
 
 - (void)setNavList:(FullNavList*)list;
+- (void)startItemNameScroll;
 - (void)resetItemNameScroll;
 
 - (NSView*)createSelBox;

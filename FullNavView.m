@@ -408,6 +408,7 @@
     NSScreen* screen = [window screen];
 
     [screen fadeOut:FADE_DURATION];
+    [_listView resetItemNameScroll];
     MMovie* movie = [_movieView movie];
     if (movie) {
         [_movieView setHidden:TRUE];
@@ -458,6 +459,7 @@
 
     [window flushWindow];
     [screen fadeIn:FADE_DURATION];
+    [_listView startItemNameScroll];
     [[_movieView movie] setRate:1.0];
 }
 

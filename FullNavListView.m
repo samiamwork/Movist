@@ -70,7 +70,7 @@
     }
 
     float unitSize = size.width + 100;  // gap between name & name
-    if (unitSize < scrollSize) {
+    while (unitSize < scrollSize) {
         scrollSize -= unitSize;
     }
     if (0 == scrollSize) {
@@ -342,7 +342,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark
 
-- (void)startItemNameScrollInvokeTimer
+- (void)startItemNameScroll
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([_list selectedItem] == _nameScrollItem) {
@@ -485,7 +485,7 @@
     }
 
     [self resetItemNameScroll];
-    [self startItemNameScrollInvokeTimer];
+    [self startItemNameScroll];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -503,7 +503,7 @@
     [_selBox setFrame:[self selBoxRect]];
     [[_selBox superview] display];
 
-    [self startItemNameScrollInvokeTimer];  // for scrolling name of top-item
+    [self startItemNameScroll];  // for scrolling name of top-item
 }
 
 @end
