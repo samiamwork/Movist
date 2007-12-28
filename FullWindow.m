@@ -156,7 +156,13 @@
 - (void)selectMovie:(NSURL*)movieURL { [_navView selectMovie:movieURL]; }
 
 - (void)openCurrent     { [_navView openCurrent]; }
-- (BOOL)closeCurrent    { return (_navView) ? [_navView closeCurrent] : FALSE; }
+- (BOOL)closeCurrent
+{
+    if ([_playPanel isVisible]) {
+        [_playPanel orderOut:self];
+    }
+    return (_navView) ? [_navView closeCurrent] : FALSE;
+}
 - (BOOL)canCloseCurrent { return (_navView) ? [_navView canCloseCurrent] : FALSE; }
 
 @end

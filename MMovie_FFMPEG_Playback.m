@@ -166,10 +166,12 @@ static MMovie_FFMPEG* s_currentMovie = 0;
     TRACE(@"%s", __PRETTY_FUNCTION__);
     // quit and wait for play-thread is finished
     s_currentMovie = 0;
-    if (_command == COMMAND_NONE) { // awake if waiting for command
-        TRACE(@"%s awake", __PRETTY_FUNCTION__);
-        [_commandLock unlockWithCondition:DISPATCHING_COMMAND];
-    }
+
+    // awake if waiting for command
+    [_commandLock lock];
+    _reservedCommand = COMMAND_NONE;
+    [_commandLock unlockWithCondition:DISPATCHING_COMMAND];
+
     TRACE(@"%s waiting for finished...", __PRETTY_FUNCTION__);
     while (_playThreading) {
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];

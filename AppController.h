@@ -256,6 +256,7 @@
 - (void)updateAspectRatioMenu;
 
 - (BOOL)isFullScreen;
+- (BOOL)isFullNavigating;
 - (void)beginFullScreen;
 - (void)endFullScreen;
 - (void)beginFullNavigation;

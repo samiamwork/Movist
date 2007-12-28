@@ -409,7 +409,7 @@
 
 - (BOOL)validateMenuItem:(NSMenuItem*)menuItem
 {
-    TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [menuItem title]);
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [menuItem title]);
     if ([[NSApp keyWindow] firstResponder] != _movieView) {
         if ([NSApp keyWindow] == [_fullScreener fullWindow]) {
             if ([menuItem action] == @selector(fullNavigationAction:)) {

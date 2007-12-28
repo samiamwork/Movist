@@ -166,6 +166,10 @@
 - (void)scrollWheel:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([[NSApp delegate] isFullNavigating]) {
+        return;     // volume-change-by-wheel doesn't work in preview of full-navigation.
+    }
+
     if ([event deltaY] < 0.0) {
         [[NSApp delegate] volumeDown];
     }

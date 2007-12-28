@@ -65,6 +65,12 @@
 
 - (BOOL)isFullScreen { return (_fullScreener != nil); }
 
+- (BOOL)isFullNavigating
+{
+    return [self isFullScreen] &&
+           [_fullScreener isNavigating];
+}
+
 - (void)beginFullScreen
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);

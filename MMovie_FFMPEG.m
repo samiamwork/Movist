@@ -31,7 +31,7 @@
     av_register_all();
 }
 
-+ (NSString*)name { return @"FFMPEG"; }
++ (NSString*)name { return @"FFmpeg"; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -40,7 +40,7 @@
 {
     TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     if (![url isFileURL]) {
-        *error = [NSError errorWithDomain:@"FFMPEG"
+        *error = [NSError errorWithDomain:[MMovie_FFMPEG name]
                                      code:10000  // FIXME
                                  userInfo:nil];
         return nil;
@@ -51,7 +51,8 @@
         if (![self initFFMPEGWithMovieURL:url errorCode:&errorCode] ||
             ![self initPlayback:&errorCode] ||
             ![self initAudioPlayback:&errorCode]) {
-            *error = [NSError errorWithDomain:@"FFMPEG" code:errorCode userInfo:nil];
+            *error = [NSError errorWithDomain:[MMovie_FFMPEG name]
+                                         code:errorCode userInfo:nil];
             [self release];
             return nil;
         }
