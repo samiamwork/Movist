@@ -228,7 +228,9 @@
 - (void)applicationWillTerminate:(NSNotification*)aNotification
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self closeMovie];
     [self saveLastPlayedMovieInfo];
+
     [_defaults synchronize];
 }
 
