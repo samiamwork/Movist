@@ -401,8 +401,12 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
+        // re-enable perian-subtitle after using quick-time if needed.
         BOOL quickTimeUsed = ([_movie class] == [MMovie_QuickTime class]);
-
+        if (quickTimeUsed && _perianSubtitleEnabled) {
+            [_defaults setPerianSubtitleEnabled:TRUE];
+        }
+        
         _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?
                                 [_movie currentTime] : 0.0;
 
@@ -440,11 +444,6 @@
         [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
             NSLocalizedString(@"Reopen With %@", nil), @"..."]];
         [self updateUI];
-
-        // re-enable perian-subtitle after using quick-time if needed.
-        if (quickTimeUsed && _perianSubtitleEnabled) {
-            [_defaults setPerianSubtitleEnabled:TRUE];
-        }
     }
 }
 

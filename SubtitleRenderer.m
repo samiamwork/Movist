@@ -407,7 +407,7 @@
         }
         [_subtitlesLock unlock];
 
-        if (0.1 <= ABS(time - lastTime)) {  // to avoid to remake for toggling play/pause.
+        if (0.1 <= ABS(time - lastTime)) {  // not to remake for toggling play/pause.
             [_conditionLock lock];
             _removeCount = [_subtitleImages count];
             _requestedTime = time;
@@ -463,10 +463,13 @@
 
 - (void)clearImages
 {
-    [_conditionLock lock];
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    int condition = [self requestRemakeImages];
-    [_conditionLock unlockWithCondition:condition];
+    if (_subtitles) {
+        [_conditionLock lock];
+        _removeCount = [_subtitleImages count];
+        _requestedTime = _lastRequestedTime;
+        [_conditionLock unlockWithCondition:WAITING];   // will be awaken later
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
