@@ -434,6 +434,9 @@
             [menuItem action] == @selector(playlistAction:)) {
             return TRUE;
         }
+        if ([menuItem action] == @selector(openFileAction:)) {
+            return TRUE;
+        }
         return FALSE;
     }
     if (![self isFullScreen] && _playlistController &&

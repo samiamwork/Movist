@@ -97,26 +97,54 @@
 
 - (BOOL)alwaysOnTop { return _alwaysOnTop; }
 
+- (void)showDuringExpose
+{
+    NSLog(@"- [MainWindow showDuringExpose]");
+    HIWindowRef wndref = (HIWindowRef)[self windowRef];
+    HIWindowAvailability wnd_availability = nil;
+    if (!HIWindowGetAvailability(wndref, &wnd_availability)) {
+        NSLog(@"[previous window availability:%08x]", wnd_availability);
+        if (!(wnd_availability & kHIWindowExposeHidden)) {
+            HIWindowChangeAvailability(wndref, kHIWindowExposeHidden, nil);
+        }
+        HIWindowChangeAvailability(wndref, nil, kHIWindowExposeHidden);
+    }
+    else {
+        NSLog(@"Can't confirm previous window availability");
+    }
+}
+
+- (void)setTopMostWindow
+{
+    TRACE(@"- [MainWindow setTopMostWindow]");
+    [self setLevel:NSScreenSaverWindowLevel];
+    [self showDuringExpose];
+    HIWindowRef wndref = (HIWindowRef)[self windowRef];
+    const int kHIWindowVisibleInAllSpaces = 1 << 8;
+    HIWindowChangeAvailability(wndref, kHIWindowVisibleInAllSpaces, nil);
+}
+
+- (void)setNormalWindow
+{
+    TRACE(@"- [MainWindow setNormalWindow]");
+    [self setLevel:NSNormalWindowLevel];
+    [self showDuringExpose];
+    HIWindowRef wndref = (HIWindowRef)[self windowRef];
+    const int kHIWindowVisibleInAllSpaces = 1 << 8;
+    HIWindowChangeAvailability(wndref, nil, kHIWindowVisibleInAllSpaces);
+}
+
 - (void)setAlwaysOnTop:(BOOL)alwaysOnTop
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, alwaysOnTop);
     _alwaysOnTop = alwaysOnTop;
-    [self setLevel:(_alwaysOnTop) ? kCGDraggingWindowLevel : NSNormalWindowLevel];
-/*
-    CGSWindow wid = [self windowNumber];
-    CGSConnection cid = _CGSDefaultConnection();
-    int tags[2] = { 0, 0 };
-    OSStatus retVal = CGSGetWindowTags(cid, wid, tags, 32);
-    if(!retVal) {
-        if (_alwaysOnTop) {
-            tags[0] = tags[0] | 0x00000800;
-        }
-        else {
-            tags[0] = tags[0] & ~0x00000800;
-        }
-        retVal = CGSSetWindowTags(cid, wid, tags, 32);
+
+    if (_alwaysOnTop) {
+        [self setTopMostWindow];
     }
- */
+    else {
+        [self setNormalWindow];
+    }
 }
 
 - (void)orderFrontRegardless
@@ -137,9 +165,7 @@
 {
     [super makeKeyAndOrderFront:sender];
 
-    if (_alwaysOnTop) {
-        [self setLevel:kCGDraggingWindowLevel];
-    }
+    [self setAlwaysOnTop:_alwaysOnTop] ;
 }
 
 - (BOOL)windowShouldClose:(id)sender
