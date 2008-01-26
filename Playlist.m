@@ -243,7 +243,7 @@
 
     if (isDirectory) {
         NSString* directory = filename;
-        NSArray* contents = [fileManager directoryContentsAtPath:directory];
+        NSArray* contents = [fileManager sortedDirectoryContentsAtPath:directory];
         NSEnumerator* enumerator = [contents objectEnumerator];
         while (filename = [enumerator nextObject]) {
             filename = [directory stringByAppendingPathComponent:filename];
@@ -257,7 +257,7 @@
         NSString* directory = [filename stringByDeletingLastPathComponent];
         NSString* movieFilename = [filename lastPathComponent];
 
-        NSArray* contents = [fileManager directoryContentsAtPath:directory];
+        NSArray* contents = [fileManager sortedDirectoryContentsAtPath:directory];
         NSEnumerator* enumerator = [contents objectEnumerator];
         while (filename = [enumerator nextObject]) {
             if ([filename hasAnyExtension:[MMovie movieTypes]] &&

@@ -143,6 +143,7 @@ extern NSString* MMovieRectUpdateNotification;
 @interface NSString (Movist)
 
 - (BOOL)hasAnyExtension:(NSArray*)extensions;
+- (NSComparisonResult)caseInsensitiveNumericCompare:(NSString*)aString;
 
 @end
 
@@ -154,6 +155,7 @@ extern NSString* MMovieRectUpdateNotification;
 - (NSString*)pathContentOfLinkAtPath:(NSString*)path;
 - (NSString*)pathContentOfAliasAtPath:(NSString*)path;
 - (BOOL)isVisibleFile:(NSString*)path isDirectory:(BOOL*)isDirectory;
+- (NSArray*)sortedDirectoryContentsAtPath:(NSString*)path;
 
 @end
 

@@ -208,6 +208,11 @@ static NSWindow* _fadeWindow = 0;
     return FALSE;
 }
 
+- (NSComparisonResult)caseInsensitiveNumericCompare:(NSString*)aString
+{
+    return [self compare:aString options:NSCaseInsensitiveSearch | NSNumericSearch];
+}
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -270,6 +275,13 @@ static NSWindow* _fadeWindow = 0;
         return FALSE;
     }
     return TRUE;
+}
+
+- (NSArray*)sortedDirectoryContentsAtPath:(NSString*)path
+{
+    NSMutableArray* contents = [[self directoryContentsAtPath:path] mutableCopy];
+    [contents sortUsingSelector:@selector(caseInsensitiveNumericCompare:)];
+    return [contents autorelease];
 }
 
 @end

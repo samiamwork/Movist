@@ -140,7 +140,7 @@ NSString* PATH_LINK_SYMBOL = @"  @:";
 - (NSArray*)subContents
 {
     NSFileManager* fm = [NSFileManager defaultManager];
-    NSArray* contents = [fm directoryContentsAtPath:_path];
+    NSArray* contents = [fm sortedDirectoryContentsAtPath:_path];
 
     NSMutableArray* items = [[NSMutableArray alloc] initWithCapacity:[contents count]];
 
