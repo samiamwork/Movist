@@ -97,59 +97,43 @@
 
 - (BOOL)alwaysOnTop { return _alwaysOnTop; }
 
-- (void)showDuringExpose
-{
-    NSLog(@"- [MainWindow showDuringExpose]");
-    HIWindowRef wndref = (HIWindowRef)[self windowRef];
-    HIWindowAvailability wnd_availability = nil;
-    if (!HIWindowGetAvailability(wndref, &wnd_availability)) {
-        NSLog(@"[previous window availability:%08x]", wnd_availability);
-        if (!(wnd_availability & kHIWindowExposeHidden)) {
-            HIWindowChangeAvailability(wndref, kHIWindowExposeHidden, nil);
-        }
-        HIWindowChangeAvailability(wndref, nil, kHIWindowExposeHidden);
-    }
-    else {
-        NSLog(@"Can't confirm previous window availability");
-    }
-}
-
-- (void)setTopMostWindow
-{
-    TRACE(@"- [MainWindow setTopMostWindow]");
-    [self setLevel:NSScreenSaverWindowLevel];
-    [self showDuringExpose];
-    HIWindowRef wndref = (HIWindowRef)[self windowRef];
-    const int kHIWindowVisibleInAllSpaces = 1 << 8;
-    HIWindowChangeAvailability(wndref, kHIWindowVisibleInAllSpaces, nil);
-}
-
-- (void)setNormalWindow
-{
-    TRACE(@"- [MainWindow setNormalWindow]");
-    [self setLevel:NSNormalWindowLevel];
-    [self showDuringExpose];
-    HIWindowRef wndref = (HIWindowRef)[self windowRef];
-    const int kHIWindowVisibleInAllSpaces = 1 << 8;
-    HIWindowChangeAvailability(wndref, nil, kHIWindowVisibleInAllSpaces);
-}
+#define TopMostWindowLevel  kCGUtilityWindowLevel
 
 - (void)setAlwaysOnTop:(BOOL)alwaysOnTop
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, alwaysOnTop);
     _alwaysOnTop = alwaysOnTop;
 
+    // window-hidden-in-expose bug fixed by Chan-gu Lee <maidaro@gmail.com>.
     if (_alwaysOnTop) {
-        [self setTopMostWindow];
+        [self setLevel:TopMostWindowLevel];
     }
     else {
-        [self setNormalWindow];
+        [self setLevel:NSNormalWindowLevel];
+    }
+
+    HIWindowRef windowRef = (HIWindowRef)[self windowRef];
+    HIWindowAvailability windowAvailability = 0;
+    HIWindowGetAvailability(windowRef, &windowAvailability);
+    if (!(windowAvailability & kHIWindowExposeHidden)) {
+        HIWindowChangeAvailability(windowRef, kHIWindowExposeHidden, 0);
+    }
+    HIWindowChangeAvailability(windowRef, 0, kHIWindowExposeHidden);
+
+    if (isSystemLeopard()) {
+        const int kHIWindowVisibleInAllSpaces = 1 << 8;
+        if (_alwaysOnTop) {
+            HIWindowChangeAvailability(windowRef, kHIWindowVisibleInAllSpaces, 0);
+        }
+        else {
+            HIWindowChangeAvailability(windowRef, 0, kHIWindowVisibleInAllSpaces);
+        }
     }
 }
 
 - (void)orderFrontRegardless
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (!_alwaysOnTop) {
         [super orderFrontRegardless];
     }
@@ -157,15 +141,15 @@
 
 - (void)setLevel:(int)newLevel
 {
-    //TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
-    [super setLevel:MIN(kCGDraggingWindowLevel, newLevel)];
+    TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
+    [super setLevel:MIN(TopMostWindowLevel, newLevel)];
 }
 
 - (void)makeKeyAndOrderFront:(id)sender
 {
     [super makeKeyAndOrderFront:sender];
 
-    [self setAlwaysOnTop:_alwaysOnTop] ;
+    [self setAlwaysOnTop:_alwaysOnTop];
 }
 
 - (BOOL)windowShouldClose:(id)sender
