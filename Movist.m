@@ -389,7 +389,7 @@ void initSubtitleEncodingMenu(NSMenu* menu, SEL action)
 
         // UNICODE
         kCFStringEncodingUTF8,
-        //kCFStringEncodingUTF16,
+        kCFStringEncodingUTF16,
         //kCFStringEncodingUTF16BE,
         //kCFStringEncodingUTF16LE,
         //kCFStringEncodingUTF32,

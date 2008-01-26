@@ -80,6 +80,10 @@
     [_subtitleVMarginSlider setFloatValue:vMargin];
     [_subtitleVMarginTextField setFloatValue:vMargin];
 
+    float lineSpacing = [_defaults floatForKey:MSubtitleLineSpacingKey];
+    [_subtitleLineSpacingSlider setFloatValue:lineSpacing];
+    [_subtitleLineSpacingTextField setFloatValue:lineSpacing];
+
     [_subtitleReplaceNLWithBRButton setState:[_defaults boolForKey:MSubtitleReplaceNLWithBRKey]];
 }
 

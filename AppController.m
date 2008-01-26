@@ -166,6 +166,7 @@
     [_movieView setLetterBoxHeight:[_defaults integerForKey:MSubtitleLetterBoxHeightKey]];
     [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
     [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
+    [_movieView setSubtitleLineSpacing:[_defaults floatForKey:MSubtitleLineSpacingKey]];
     [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
     [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
     [_letterBoxHigherButton setEnabled:displayOnLetterBox];

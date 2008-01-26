@@ -70,9 +70,7 @@
     }
 
     float unitSize = size.width + 100;  // gap between name & name
-    while (unitSize < scrollSize) {
-        scrollSize -= unitSize;
-    }
+    scrollSize = (int)scrollSize % (int)unitSize;
     if (0 == scrollSize) {
         [name drawInRect:rc];
     }

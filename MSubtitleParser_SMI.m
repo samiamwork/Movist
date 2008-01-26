@@ -106,6 +106,7 @@ NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR = @"replaceNewLineW
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, class);
     MSubtitle* subtitle = [[[MSubtitle alloc] initWithType:@"SMI"] autorelease];
+    [subtitle setName:class];
     [_subtitles addObject:subtitle];
     [_classes setObject:subtitle forKey:class];
     return subtitle;
@@ -315,12 +316,7 @@ extern NSString* MFontBoldAttributeName;
     }
     MSubtitle* subtitle = [_classes objectForKey:class];
     if (!subtitle) {
-        if ([_classes count] == 0) {
-            subtitle = [self addSubtitleClass:class];
-        }
-        else {
-            subtitle = [_subtitles objectAtIndex:0];
-        }
+        subtitle = [self addSubtitleClass:class];
     }
     [subtitle addString:mas time:time];
 }

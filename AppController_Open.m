@@ -165,11 +165,11 @@
          subtitle:(NSURL*)subtitleURL subtitleEncoding:(CFStringEncoding)subtitleEncoding
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_movie) {
-        [self closeMovie];
-    }
-    assert(_movie == nil);
+    // -[closeMovie] should be called after opening new-movie not to display black screen.
     if (!movieURL) {
+        if (_movie) {
+            [self closeMovie];
+        }
         return FALSE;
     }
 
@@ -178,6 +178,9 @@
     MMovie* movie = [self movieFromURL:movieURL withMovieClass:movieClass error:&error];
     if (!movie || ![movie setOpenGLContext:[_movieView openGLContext]
                                pixelFormat:[_movieView pixelFormat] error:&error]) {
+        if (_movie) {
+            [self closeMovie];
+        }
         if ([self isFullScreen]) {
             NSString* s = [movieURL isFileURL] ? [movieURL path] : [movieURL absoluteString];
             [_movieView setError:error info:[s lastPathComponent]];
@@ -187,6 +190,10 @@
         }
         return FALSE;
     }
+    if (_movie) {
+        [self closeMovie];
+    }
+    assert(_movie == nil);
     _movie = [movie retain];
 
     // observe movie's notifications
@@ -406,7 +413,7 @@
         if (quickTimeUsed && _perianSubtitleEnabled) {
             [_defaults setPerianSubtitleEnabled:TRUE];
         }
-        
+
         _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?
                                 [_movie currentTime] : 0.0;
 
