@@ -104,7 +104,8 @@
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, alwaysOnTop);
     _alwaysOnTop = alwaysOnTop;
 
-    // window-hidden-in-expose bug fixed by Chan-gu Lee <maidaro@gmail.com>.
+    // enhancement for Expose & Spaces
+    // based on patch of Chan-gu Lee <maidaro@gmail.com>.
     if (_alwaysOnTop) {
         [self setLevel:TopMostWindowLevel];
     }
@@ -128,6 +129,7 @@
         else {
             HIWindowChangeAvailability(windowRef, 0, kHIWindowVisibleInAllSpaces);
         }
+        [self orderFront:self];
     }
 }
 
