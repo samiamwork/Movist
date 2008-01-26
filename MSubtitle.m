@@ -233,7 +233,7 @@
         else if (endTime < [ss endTime]) {
             [ss setBeginTime:endTime];
 
-            NSMutableAttributedString* mas = [[ss string] mutableCopy];
+            NSMutableAttributedString* mas = [[[ss string] mutableCopy] autorelease];
             NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
             [mas appendAttributedString:[as autorelease]];
             [mas appendAttributedString:string];

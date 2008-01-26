@@ -183,8 +183,8 @@ NSString* A52CODEC_ATTEMPT_PASSTHROUGH_KEY  = @"attemptPassthrough";
 
 - (void)setA52CodecAttemptPassthrough:(BOOL)enabled
 {
-    NSMutableDictionary* a52Codec;
-    a52Codec = [[self persistentDomainForName:A52CODEC_DEFAULTS] mutableCopy];
+    NSMutableDictionary* a52Codec =
+        [[[self persistentDomainForName:A52CODEC_DEFAULTS] mutableCopy] autorelease];
 
     [a52Codec setObject:[NSNumber numberWithInt:enabled ? 1 : 0]
                  forKey:A52CODEC_ATTEMPT_PASSTHROUGH_KEY];
@@ -204,14 +204,19 @@ NSString* PERIAN_SUBTITLE_KEY   = @"LoadExternalSubtitles";
 - (BOOL)isPerianSubtitleEnabled
 {
     NSDictionary* perian = [self persistentDomainForName:PERIAN_DEFAULTS];
+    if (!perian) {
+        return TRUE;    // enabled by default of capri-perian
+    }
 
-    return [[perian objectForKey:PERIAN_SUBTITLE_KEY] boolValue];
+    //TRACE(@"perian=%@", perian);
+    NSNumber* number = [perian objectForKey:PERIAN_SUBTITLE_KEY];
+    return (number) ? [number boolValue] : TRUE;    // enabled by default of capri-perian
 }
 
 - (void)setPerianSubtitleEnabled:(BOOL)enabled
 {
-    NSMutableDictionary* perian;
-    perian = [[self persistentDomainForName:PERIAN_DEFAULTS] mutableCopy];
+    NSMutableDictionary* perian =
+        [[[self persistentDomainForName:PERIAN_DEFAULTS] mutableCopy] autorelease];
 
     [perian setObject:[NSNumber numberWithBool:enabled] forKey:PERIAN_SUBTITLE_KEY];
 
