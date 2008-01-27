@@ -174,7 +174,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)prepareOpenGL
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     
 	GLint swapInterval = 1;
 	[[self openGLContext] setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
@@ -538,6 +538,84 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+
+- (NSImage*)captureRect:(NSRect)rect
+{
+    float width = MAX(rect.size.width, _movieRect.size.width);
+    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc]
+        initWithBitmapDataPlanes:0
+        pixelsWide:rect.size.width pixelsHigh:rect.size.height
+        bitsPerSample:8 samplesPerPixel:4 hasAlpha:TRUE isPlanar:FALSE
+        colorSpaceName:NSCalibratedRGBColorSpace
+        bytesPerRow:width * 4 bitsPerPixel:0] autorelease];
+
+    [_drawLock lock];
+    [[self openGLContext] makeCurrentContext];
+    glReadPixels((int)rect.origin.x, (int)rect.origin.y,
+                 (int)rect.size.width, (int)rect.size.height,
+                 GL_RGBA, GL_UNSIGNED_BYTE, [imageRep bitmapData]);
+    [NSOpenGLContext clearCurrentContext];
+    [_drawLock unlock];
+
+    NSImage* image = [[NSImage alloc] initWithSize:rect.size];
+    [image addRepresentation:imageRep];
+
+    // image is flipped. so, flip again. teach me better idea...
+    NSImage* imageFlipped = [[NSImage alloc] initWithSize:rect.size];
+    [imageFlipped lockFocus];
+        [image setFlipped:TRUE];
+        [image drawAtPoint:NSMakePoint(0, 0) fromRect:NSZeroRect
+                 operation:NSCompositeSourceOver fraction:1.0];
+        [image release];
+    [imageFlipped unlockFocus];
+    return [imageFlipped autorelease];
+}
+
+- (void)captureAndSave
+{
+    NSRect rect = (_captureIncludingLetterBox) ? [self bounds] : *(NSRect*)&_movieRect;
+    NSImage* image = [self captureRect:rect];
+
+    NSString* name = [[[[NSApp delegate] movieURL] path] lastPathComponent];
+    NSString* directory = [[@"~/Desktop" stringByExpandingTildeInPath]
+        stringByAppendingPathComponent:[name stringByDeletingPathExtension]];
+    int i = 1;
+    NSString* path;
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    while (TRUE) {
+        path = [directory stringByAppendingFormat:@" %d.tiff", i++];
+        if (![fileManager fileExistsAtPath:path]) {
+            break;
+        }
+    }
+    NSData* data = [image TIFFRepresentation];
+    [data writeToFile:path atomically:TRUE];
+}
+
+- (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox
+{
+    _captureIncludingLetterBox = includingLetterBox;
+}
+
+- (IBAction)copy:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSRect rect;
+    if (_captureIncludingLetterBox) {
+        rect = ([sender tag] == 0) ? [self bounds] : *(NSRect*)&_movieRect;
+    }
+    else {
+        rect = ([sender tag] == 0) ? *(NSRect*)&_movieRect : [self bounds];
+    }
+    NSImage* image = [self captureRect:rect];
+
+    NSPasteboard* pboard = [NSPasteboard generalPasteboard];
+    [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
+    [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 #pragma mark full-screen fill
 
 - (int)fullScreenFill { return _fullScreenFill; }
@@ -630,14 +708,14 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
         case 'n' : case 'N' : [[NSApp delegate] fullNavigationAction:self]; break;
 
-        case '[' : case '{' : [[NSApp delegate] stepBackward];          break;
-        case ']' : case '}' : [[NSApp delegate] stepForward];           break;
+        case '[' : case '{' : [[NSApp delegate] stepBackward];              break;
+        case ']' : case '}' : [[NSApp delegate] stepForward];               break;
 
-        case 'c' : case 'C' : [[NSApp delegate] changePlayRate:+1];     break;
-        case 'x' : case 'X' : [[NSApp delegate] changePlayRate:-1];     break;
-        case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];     break;
+        case 'c' : case 'C' : [[NSApp delegate] changePlayRate:+1];         break;
+        case 'x' : case 'X' : [[NSApp delegate] changePlayRate:-1];         break;
+        case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];         break;
 
-        case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible]; break;
+        case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible];     break;
         case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1]; break;
 
         case 'h' : case 'H' : [[NSApp delegate] changeLetterBoxHeight: 0];  break;
@@ -645,11 +723,13 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         case 'k' : case 'K' : [[NSApp delegate] changeLetterBoxHeight:+1];  break;
         case 'l' : case 'L' : [[NSApp delegate] subtitleDisplayOnLetterBoxAction:self]; break;
 
-        case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1]; break;
-        case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1]; break;
-        case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0]; break;
+        case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1];     break;
+        case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1];     break;
+        case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0];     break;
 
         case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];  break;
+
+        case 'i' : case 'I' : [self captureAndSave];                        break;
     }
 }
 

@@ -86,6 +86,7 @@
 
     // main-menu
     IBOutlet NSMenuItem* _reopenWithMenuItem;
+    IBOutlet NSMenuItem* _altCaptureMenuItem;
     IBOutlet NSMenuItem* _playMenuItem;
     IBOutlet NSMenuItem* _seekBackward1MenuItem;
     IBOutlet NSMenuItem* _seekBackward2MenuItem;
@@ -152,6 +153,7 @@
 
 - (void)updateUI;
 - (void)setQuitWhenWindowClose:(BOOL)quitWhenClose;
+- (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox;
 - (void)checkForUpdatesOnStartup;
 - (void)checkForUpdates:(BOOL)manual;
 

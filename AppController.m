@@ -140,7 +140,6 @@
 
     // initial update preferences: general
     [_mainWindow setAlwaysOnTop:[_defaults boolForKey:MAlwaysOnTopKey]];
-    [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
     [self setQuitWhenWindowClose:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
     [self setSeekInterval:[_defaults floatForKey:MSeekInterval0Key] atIndex:0];
     [self setSeekInterval:[_defaults floatForKey:MSeekInterval1Key] atIndex:1];
@@ -176,6 +175,10 @@
 
     // initial update preferences: advanced
     // ...
+
+    // initial update preferences: advanced details
+    [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
+    [self setCaptureIncludingLetterBox:[_defaults boolForKey:MCaptureIncludingLetterBoxKey]];
 
     [self initDigitalAudio];
     [self initRemoteControl];
@@ -297,6 +300,15 @@
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, quitWhenWindowClose);
     _quitWhenWindowClose = quitWhenWindowClose;
+}
+
+- (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox
+{
+    [_movieView setCaptureIncludingLetterBox:includingLetterBox];
+
+    [_altCaptureMenuItem setTitle:(includingLetterBox) ?
+                        NSLocalizedString(@"Copy (Excluding Letter Box)", nil) :
+                        NSLocalizedString(@"Copy (Including Letter Box)", nil)];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

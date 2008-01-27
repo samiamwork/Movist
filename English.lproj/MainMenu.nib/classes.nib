@@ -50,6 +50,7 @@
             CLASS = AppController;
             LANGUAGE = ObjC;
             OUTLETS =             {
+                "_altCaptureMenuItem" = NSMenuItem;
                 "_aspectRatioMenu" = NSMenu;
                 "_controlPanel" = ControlPanel;
                 "_controlPanelButton" = HoverButton;

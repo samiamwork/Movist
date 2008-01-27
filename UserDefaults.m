@@ -89,6 +89,7 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
 NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
 NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
+NSString* MCaptureIncludingLetterBoxKey     = @"CaptureIncludingLetterBox";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -162,6 +163,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MShowActualPathForLinkKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MCaptureIncludingLetterBoxKey];
 
     //TRACE(@"registering defaults: %@", dict);
     [self registerDefaults:dict];

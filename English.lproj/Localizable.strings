@@ -14,6 +14,10 @@
 /* MainMenu: File */
 "Opening with %@..." = "Opening with %@...";
 
+/* MainMenu: Edit */
+"Copy (Including Letter Box)" = "Copy (Including Letter Box)";
+"Copy (Excluding Letter Box)" = "Copy (Excluding Letter Box)";
+
 /* MainMenu: Controls */
 "Play_space"  = "Play               space";
 "Pause_space" = "Pause              space";
@@ -89,6 +93,7 @@
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
 "Disable Perian Subtitle for using QuickTime *" = "Disable Perian Subtitle for using QuickTime *";
 "Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";
+"Capture Screenshot Including Letter Box" = "Capture Screenshot Including Letter Box";
 
 /* Playlist */
 "%d items" = "%d items";

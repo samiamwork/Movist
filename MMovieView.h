@@ -46,6 +46,7 @@
     CGRect _imageRect;
     int _fullScreenFill;
     float _fullScreenUnderScan;
+    BOOL _captureIncludingLetterBox;
 
     MMovie* _movie;
     NSArray* _subtitles;
@@ -87,6 +88,9 @@
 - (void)redisplay;
 
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
+
+- (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox;
+- (IBAction)copy:(id)sender;
 
 @end
 

@@ -89,6 +89,7 @@ extern NSString* MLastUpdateCheckTimeKey;
 extern NSString* MActivateOnDraggingKey;
 extern NSString* MDisablePerianSubtitleKey;
 extern NSString* MShowActualPathForLinkKey;
+extern NSString* MCaptureIncludingLetterBoxKey;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

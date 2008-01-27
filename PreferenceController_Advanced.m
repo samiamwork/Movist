@@ -80,6 +80,7 @@ enum {
     ACTIVATE_ON_DRAGGING,
     DISABLE_PERIAN_SUBTITLE,
     SHOW_ACTUAL_PATH_FOR_LINK,
+    CAPTURE_INCULDING_LETTER_BOX,
 
     MAX_ADVANCED_DETAILS_COUNT
 };
@@ -102,6 +103,8 @@ enum {
                 return NSLocalizedString(@"Disable Perian Subtitle for using QuickTime *", nil);
             case SHOW_ACTUAL_PATH_FOR_LINK :
                 return NSLocalizedString(@"Show Actual Path for Alias or Symbolic-Link", nil);
+            case CAPTURE_INCULDING_LETTER_BOX :
+                return NSLocalizedString(@"Capture Screenshot Including Letter Box", nil);
         }
     }
     else {  // if ([identifier isEqualToString:@"value"]) {
@@ -112,6 +115,8 @@ enum {
                 return DETAILS_BOOL(MDisablePerianSubtitleKey);
             case SHOW_ACTUAL_PATH_FOR_LINK :
                 return DETAILS_BOOL(MShowActualPathForLinkKey);
+            case CAPTURE_INCULDING_LETTER_BOX :
+                return DETAILS_BOOL(MCaptureIncludingLetterBoxKey);
         }
     }
     return nil;
@@ -125,13 +130,19 @@ enum {
     switch (rowIndex) {
         case ACTIVATE_ON_DRAGGING :
             DETAILS_SET_BOOL(MActivateOnDraggingKey);
-            [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
+            [_movieView setActivateOnDragging:
+                            [_defaults boolForKey:MActivateOnDraggingKey]];
             break;
         case DISABLE_PERIAN_SUBTITLE :
             DETAILS_SET_BOOL(MDisablePerianSubtitleKey);
             break;
         case SHOW_ACTUAL_PATH_FOR_LINK :
             DETAILS_SET_BOOL(MShowActualPathForLinkKey);
+            break;
+        case CAPTURE_INCULDING_LETTER_BOX :
+            DETAILS_SET_BOOL(MCaptureIncludingLetterBoxKey);
+            [[NSApp delegate] setCaptureIncludingLetterBox:
+                        [_defaults boolForKey:MCaptureIncludingLetterBoxKey]];
             break;
     }
 }
@@ -165,11 +176,7 @@ enum {
         return [self textFieldCell];
     }
     else {  // if ([[self identifier] isEqualToString:@"value"]) {
-        switch (rowIndex) {
-            case ACTIVATE_ON_DRAGGING       : return [self checkButtonCell];
-            case DISABLE_PERIAN_SUBTITLE    : return [self checkButtonCell];
-            case SHOW_ACTUAL_PATH_FOR_LINK  : return [self checkButtonCell];
-        }
+        return [self checkButtonCell];  // currently all switchtes
     }
     return [super dataCellForRow:rowIndex];
 }
