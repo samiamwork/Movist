@@ -306,9 +306,12 @@
 {
     [_movieView setCaptureIncludingLetterBox:includingLetterBox];
 
-    [_altCaptureMenuItem setTitle:(includingLetterBox) ?
+    [_altCopyImageMenuItem setTitle:(includingLetterBox) ?
                         NSLocalizedString(@"Copy (Excluding Letter Box)", nil) :
                         NSLocalizedString(@"Copy (Including Letter Box)", nil)];
+    [_altSaveImageMenuItem setTitle:(includingLetterBox) ?
+                        NSLocalizedString(@"Save Current Image (Excluding Letter Box)", nil) :
+                        NSLocalizedString(@"Save Current Image (Including Letter Box)", nil)];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -495,6 +498,9 @@
     }
     if ([menuItem action] == @selector(audioTrackAction:)) {
         return (_movie && 0 < [[_movie audioTracks] count]);
+    }
+    if ([menuItem action] == @selector(saveCurrentImage:)) {
+        return (_movie != nil);
     }
 
     // Subtitle

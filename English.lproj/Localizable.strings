@@ -28,6 +28,8 @@
 "Reopen With %@" = "Reopen With %@";
 "No Sound Track" = "No Sound Track";
 "Sound Track Rotation" = "Sound Track Rotation";
+"Save Current Image (Including Letter Box)" = "Save Current Image (Including Letter Box)";
+"Save Current Image (Excluding Letter Box)" = "Save Current Image (Excluding Letter Box)";
 
 /* MainMenu : Subtitle */
 "Show Subtitle" = "Show Subtitle";

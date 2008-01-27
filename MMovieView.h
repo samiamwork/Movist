@@ -90,6 +90,7 @@
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
 
 - (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox;
+- (void)saveCurrentImage:(BOOL)alternative;
 - (IBAction)copy:(id)sender;
 
 @end

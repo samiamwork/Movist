@@ -37,6 +37,7 @@
                 reopenMovieAction = id;
                 reopenSubtitleAction = id;
                 repeatAction = id;
+                saveCurrentImage = id;
                 seekAction = id;
                 subtitleDisplayOnLetterBoxAction = id;
                 subtitleFontSizeAction = id;
@@ -50,7 +51,8 @@
             CLASS = AppController;
             LANGUAGE = ObjC;
             OUTLETS =             {
-                "_altCaptureMenuItem" = NSMenuItem;
+                "_altCopyImageMenuItem" = NSMenuItem;
+                "_altSaveImageMenuItem" = NSMenuItem;
                 "_aspectRatioMenu" = NSMenu;
                 "_controlPanel" = ControlPanel;
                 "_controlPanelButton" = HoverButton;

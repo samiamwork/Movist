@@ -341,4 +341,9 @@
     }
 }
 
+- (IBAction)saveCurrentImage:(id)sender
+{
+    [_movieView saveCurrentImage:[sender tag] != 0];
+}
+
 @end

@@ -571,10 +571,19 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     return [imageFlipped autorelease];
 }
 
-- (void)captureAndSave
+- (NSRect)rectForCapture:(BOOL)alternative
 {
-    NSRect rect = (_captureIncludingLetterBox) ? [self bounds] : *(NSRect*)&_movieRect;
-    NSImage* image = [self captureRect:rect];
+    if (_captureIncludingLetterBox) {
+        return (alternative) ? *(NSRect*)&_movieRect : [self bounds];
+    }
+    else {
+        return (alternative) ? [self bounds] : *(NSRect*)&_movieRect;
+    }
+}
+
+- (void)saveCurrentImage:(BOOL)alternative
+{
+    NSImage* image = [self captureRect:[self rectForCapture:alternative]];
 
     NSString* name = [[[[NSApp delegate] movieURL] path] lastPathComponent];
     NSString* directory = [[@"~/Desktop" stringByExpandingTildeInPath]
@@ -600,14 +609,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (IBAction)copy:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSRect rect;
-    if (_captureIncludingLetterBox) {
-        rect = ([sender tag] == 0) ? [self bounds] : *(NSRect*)&_movieRect;
-    }
-    else {
-        rect = ([sender tag] == 0) ? *(NSRect*)&_movieRect : [self bounds];
-    }
-    NSImage* image = [self captureRect:rect];
+    NSImage* image = [self captureRect:[self rectForCapture:[sender tag] != 0]];
 
     NSPasteboard* pboard = [NSPasteboard generalPasteboard];
     [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
@@ -729,7 +731,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
         case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];  break;
 
-        case 'i' : case 'I' : [self captureAndSave];                        break;
+        case 'i' : case 'I' : [self saveCurrentImage:FALSE];                break;
     }
 }
 

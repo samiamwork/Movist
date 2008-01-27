@@ -86,7 +86,8 @@
 
     // main-menu
     IBOutlet NSMenuItem* _reopenWithMenuItem;
-    IBOutlet NSMenuItem* _altCaptureMenuItem;
+    IBOutlet NSMenuItem* _altCopyImageMenuItem;
+    IBOutlet NSMenuItem* _altSaveImageMenuItem;
     IBOutlet NSMenuItem* _playMenuItem;
     IBOutlet NSMenuItem* _seekBackward1MenuItem;
     IBOutlet NSMenuItem* _seekBackward2MenuItem;
@@ -276,6 +277,7 @@
 - (IBAction)fullScreenUnderScanAction:(id)sender;
 - (IBAction)aspectRatioAction:(id)sender;
 - (IBAction)fullNavigationAction:(id)sender;
+- (IBAction)saveCurrentImage:(id)sender;
 
 @end
 
