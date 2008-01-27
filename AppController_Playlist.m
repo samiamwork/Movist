@@ -99,6 +99,11 @@
 - (void)setRepeatMode:(unsigned int)mode
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, mode);
+    [_movieView setMessage:
+        (mode == REPEAT_OFF) ? [_repeatOffMenuItem title] :
+        (mode == REPEAT_ALL) ? [_repeatAllMenuItem title] :
+        (mode == REPEAT_ONE) ? [_repeatOneMenuItem title] : @""];
+         
     [_playlist setRepeatMode:mode];
     [self updateRepeatUI];
 }
@@ -151,7 +156,7 @@
     [_repeatOffMenuItem setState:(repeatMode == REPEAT_OFF)];
     [_repeatAllMenuItem setState:(repeatMode == REPEAT_ALL)];
     [_repeatOneMenuItem setState:(repeatMode == REPEAT_ONE)];
-    [_playlistController updateUI];
+    [_playlistController updateRepeatUI];
 }
 
 - (BOOL)playlistWindowVisible

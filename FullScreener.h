@@ -41,7 +41,6 @@
     NSRect _movieViewRect;  // in _mainWindow
     SystemUIMode _normalSystemUIMode;
     SystemUIOptions _normalSystemUIOptions;
-    NSTimer* _updateSystemActivityTimer;
 
     // for animation effect
     NSWindow* _blackWindow;
@@ -58,6 +57,7 @@
 
 - (void)beginFullScreen;
 - (void)endFullScreen;
+- (void)autoHidePlayPanel;
 
 - (BOOL)isNavigatable;
 - (BOOL)isNavigating;

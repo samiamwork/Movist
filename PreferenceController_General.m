@@ -44,9 +44,9 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_autoFullScreenButton setState:[_defaults boolForKey:MAutoFullScreenKey]];
     [_alwaysOnTopButton setState:[_defaults boolForKey:MAlwaysOnTopKey]];
-    [_activateOnDraggingButton setState:[_defaults boolForKey:MActivateOnDraggingKey]];
     [_quitWhenWindowCloseButton setState:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
     [_rememberLastPlayButton setState:[_defaults boolForKey:MRememberLastPlayKey]];
+    [_deactivateScreenSaverButton setState:[_defaults boolForKey:MDeactivateScreenSaverKey]];
 
     [_seekInterval0TextField setFloatValue:[_defaults floatForKey:MSeekInterval0Key]];
     [_seekInterval1TextField setFloatValue:[_defaults floatForKey:MSeekInterval1Key]];
@@ -80,14 +80,6 @@
     [_mainWindow setAlwaysOnTop:alwaysOnTop];
 }
 
-- (IBAction)activateOnDraggingAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL activateOnDragging = [sender state];
-    [_defaults setBool:activateOnDragging forKey:MActivateOnDraggingKey];
-    [_movieView setActivateOnDragging:activateOnDragging];
-}
-
 - (IBAction)quitWhenWindowCloseAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -102,6 +94,13 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL rememberLastPlay = [_rememberLastPlayButton state];
     [_defaults setBool:rememberLastPlay forKey:MRememberLastPlayKey];
+}
+
+- (IBAction)deactivateScreenSaverAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL deactivateScreenSaver = [_deactivateScreenSaverButton state];
+    [_defaults setBool:deactivateScreenSaver forKey:MDeactivateScreenSaverKey];
 }
 
 - (IBAction)seekIntervalAction:(id)sender

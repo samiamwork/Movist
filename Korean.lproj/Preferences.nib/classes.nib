@@ -1,6 +1,11 @@
 {
     IBClasses =     (
                 {
+            CLASS = AdvancedDetailsTableColumn;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTableColumn;
+        },
+                {
             CLASS = ClickableTextField;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTextField;
@@ -12,10 +17,10 @@
         },
                 {
             ACTIONS =             {
-                activateOnDraggingAction = id;
                 alwaysOnTopAction = id;
                 autoFullScreenAction = id;
                 checkUpdateNowAction = id;
+                deactivateScreenSaverAction = id;
                 defaultDecoderAction = id;
                 fullNavUseAction = id;
                 fullScreenEffectAction = id;
@@ -38,12 +43,13 @@
             CLASS = PreferenceController;
             LANGUAGE = ObjC;
             OUTLETS =             {
-                "_activateOnDraggingButton" = NSButton;
                 "_advancedPane" = NSView;
                 "_alwaysOnTopButton" = NSButton;
                 "_audioPane" = NSView;
                 "_autoFullScreenButton" = NSButton;
+                "_deactivateScreenSaverButton" = NSButton;
                 "_defaultDecoderPopUpButton" = NSPopUpButton;
+                "_detailsTableView" = NSTableView;
                 "_fullNavUseButton" = NSButton;
                 "_fullScreenEffectPopUpButton" = NSPopUpButton;
                 "_fullScreenFillForStdMoviePopUpButton" = NSPopUpButton;

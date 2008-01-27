@@ -58,6 +58,7 @@
         _defaults = [NSUserDefaults standardUserDefaults];
 
         // check if kor-/capri- perian supports external subtitles.
+        _disablePerianSubtitle = [_defaults boolForKey:MDisablePerianSubtitleKey];
         _perianSubtitleEnabled = [_defaults isPerianSubtitleEnabled];
     }
     return self;

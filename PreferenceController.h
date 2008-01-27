@@ -32,9 +32,9 @@
     IBOutlet NSView* _generalPane;
     IBOutlet NSButton* _autoFullScreenButton;
     IBOutlet NSButton* _alwaysOnTopButton;
-    IBOutlet NSButton* _activateOnDraggingButton;
     IBOutlet NSButton* _quitWhenWindowCloseButton;
     IBOutlet NSButton* _rememberLastPlayButton;
+    IBOutlet NSButton* _deactivateScreenSaverButton;
     IBOutlet NSTextField* _seekInterval0TextField;
     IBOutlet NSTextField* _seekInterval1TextField;
     IBOutlet NSTextField* _seekInterval2TextField;
@@ -103,7 +103,8 @@
     IBOutlet NSView* _advancedPane;
     IBOutlet NSPopUpButton* _defaultDecoderPopUpButton;
     IBOutlet NSPopUpButton* _updateCheckIntervalPopUpButton;
-    IBOutlet NSTextField* _lastUpdateCheckTimeTextField;
+    IBOutlet NSTextField*   _lastUpdateCheckTimeTextField;
+    IBOutlet NSTableView* _detailsTableView;
 
     NSUserDefaults* _defaults;
     AppController* _appController;
@@ -127,9 +128,9 @@
 - (void)initGeneralPane;
 - (IBAction)autoFullScreenAction:(id)sender;
 - (IBAction)alwaysOnTopAction:(id)sender;
-- (IBAction)activateOnDraggingAction:(id)sender;
 - (IBAction)quitWhenWindowCloseAction:(id)sender;
 - (IBAction)rememberLastPlayAction:(id)sender;
+- (IBAction)deactivateScreenSaverAction:(id)sender;
 - (IBAction)seekIntervalAction:(id)sender;
 - (IBAction)supportAppleRemoteAction:(id)sender;
 - (IBAction)fullNavUseAction:(id)sender;
@@ -195,5 +196,21 @@
 - (IBAction)defaultDecoderAction:(id)sender;
 - (IBAction)updateCheckIntervalAction:(id)sender;
 - (IBAction)checkUpdateNowAction:(id)sender;
+
+- (int)numberOfRowsInTableView:(NSTableView*)tableView;
+- (id)tableView:(NSTableView*)tableView
+    objectValueForTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
+- (void)tableView:(NSTableView*)tableView setObjectValue:(id)object
+   forTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark advanced-details table-column
+
+@interface AdvancedDetailsTableColumn : NSTableColumn
+{
+}
 
 @end

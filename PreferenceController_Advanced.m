@@ -41,6 +41,8 @@
     [formatter setTimeStyle:NSDateFormatterLongStyle];
     [_lastUpdateCheckTimeTextField setFormatter:formatter];
     [self updateLastUpdateCheckTimeTextField];
+
+    [_detailsTableView reloadData];
 }
 
 - (void)updateLastUpdateCheckTimeTextField
@@ -65,6 +67,111 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [[NSApp delegate] checkForUpdates:TRUE];    // manual checking
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark details
+
+#define DETAILS_BOOL(key)       [NSNumber numberWithBool:[_defaults boolForKey:key]]
+#define DETAILS_SET_BOOL(key)   [_defaults setBool:[(NSNumber*)object boolValue] forKey:key]
+
+enum {
+    ACTIVATE_ON_DRAGGING,
+    DISABLE_PERIAN_SUBTITLE,
+    SHOW_ACTUAL_PATH_FOR_LINK,
+
+    MAX_ADVANCED_DETAILS_COUNT
+};
+
+- (int)numberOfRowsInTableView:(NSTableView*)tableView
+{
+    return MAX_ADVANCED_DETAILS_COUNT;
+}
+
+- (id)tableView:(NSTableView*)tableView
+    objectValueForTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
+{
+    //TRACE(@"%s %@:%d", __PRETTY_FUNCTION__, [tableColumn identifier], rowIndex);
+    NSString* identifier = [tableColumn identifier];
+    if ([identifier isEqualToString:@"setting"]) {
+        switch (rowIndex) {
+            case ACTIVATE_ON_DRAGGING :
+                return NSLocalizedString(@"Activate on Dragging over Main Window", nil);
+            case DISABLE_PERIAN_SUBTITLE :
+                return NSLocalizedString(@"Disable Perian Subtitle for using QuickTime *", nil);
+            case SHOW_ACTUAL_PATH_FOR_LINK :
+                return NSLocalizedString(@"Show Actual Path for Alias or Symbolic-Link", nil);
+        }
+    }
+    else {  // if ([identifier isEqualToString:@"value"]) {
+        switch (rowIndex) {
+            case ACTIVATE_ON_DRAGGING :
+                return DETAILS_BOOL(MActivateOnDraggingKey);
+            case DISABLE_PERIAN_SUBTITLE :
+                return DETAILS_BOOL(MDisablePerianSubtitleKey);
+            case SHOW_ACTUAL_PATH_FOR_LINK :
+                return DETAILS_BOOL(MShowActualPathForLinkKey);
+        }
+    }
+    return nil;
+}
+
+- (void)tableView:(NSTableView*)tableView setObjectValue:(id)object
+   forTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
+{
+    TRACE(@"%s column=%@ row=%d value=%@", __PRETTY_FUNCTION__,
+          [tableColumn identifier], rowIndex, object);
+    switch (rowIndex) {
+        case ACTIVATE_ON_DRAGGING :
+            DETAILS_SET_BOOL(MActivateOnDraggingKey);
+            [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
+            break;
+        case DISABLE_PERIAN_SUBTITLE :
+            DETAILS_SET_BOOL(MDisablePerianSubtitleKey);
+            break;
+        case SHOW_ACTUAL_PATH_FOR_LINK :
+            DETAILS_SET_BOOL(MShowActualPathForLinkKey);
+            break;
+    }
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark advanced-details table-column
+
+@implementation AdvancedDetailsTableColumn
+
+- (NSTextFieldCell*)textFieldCell
+{
+    NSTextFieldCell* cell = [[NSTextFieldCell alloc] initTextCell:@""];
+    [cell setControlSize:NSSmallControlSize];
+    return [cell autorelease];
+}
+
+- (NSButtonCell*)checkButtonCell
+{
+    NSButtonCell* cell = [[NSButtonCell alloc] initTextCell:@""];
+    [cell setButtonType:NSSwitchButton];
+    [cell setControlSize:NSSmallControlSize];
+    return [cell autorelease];
+}
+
+- (id)dataCellForRow:(int)rowIndex
+{
+    if ([[self identifier] isEqualToString:@"setting"]) {
+        return [self textFieldCell];
+    }
+    else {  // if ([[self identifier] isEqualToString:@"value"]) {
+        switch (rowIndex) {
+            case ACTIVATE_ON_DRAGGING       : return [self checkButtonCell];
+            case DISABLE_PERIAN_SUBTITLE    : return [self checkButtonCell];
+            case SHOW_ACTUAL_PATH_FOR_LINK  : return [self checkButtonCell];
+        }
+    }
+    return [super dataCellForRow:rowIndex];
 }
 
 @end

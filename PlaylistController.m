@@ -146,9 +146,7 @@
 - (IBAction)modeAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_playlist setRepeatMode:([_playlist repeatMode] + 1) % MAX_REPEAT_MODE];
-    [self updateRepeatUI];
-    [_appController updateRepeatUI];
+    [_appController setRepeatMode:([_playlist repeatMode] + 1) % MAX_REPEAT_MODE];
 }
 
 - (IBAction)closeAction:(id)sender

@@ -21,6 +21,7 @@
 //
 
 #import "FullNavItems.h"
+#import "UserDefaults.h"
 #import "MMovie.h"
 
 @implementation FullNavList
@@ -128,7 +129,7 @@
 
 @end
 
-NSString* PATH_LINK_SYMBOL = @"  @:";
+NSString* PATH_LINK_SYMBOL = @"@";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark
@@ -147,13 +148,21 @@ NSString* PATH_LINK_SYMBOL = @"  @:";
     BOOL isDirectory;
     NSString* file, *path, *linkPath, *name;
     NSArray* movieTypes = [MMovie movieTypes];
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSEnumerator* enumerator = [contents objectEnumerator];
     while (file = [enumerator nextObject]) {
         path = [_path stringByAppendingPathComponent:file];
         linkPath = [fm pathContentOfLinkAtPath:path];
         if (linkPath) {
             path = linkPath;
-            name = [NSString stringWithFormat:@"%@%@%@", file, PATH_LINK_SYMBOL, linkPath];
+            if ([defaults boolForKey:MShowActualPathForLinkKey]) {
+                name = [NSString stringWithFormat:@"%@%@  %@",
+                                    file, PATH_LINK_SYMBOL, linkPath];
+            }
+            else {
+                name = [NSString stringWithFormat:@"%@%@",
+                                    file, PATH_LINK_SYMBOL];
+            }
         }
         else {
             name = nil;

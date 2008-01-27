@@ -184,17 +184,11 @@
     }
 
     [_fullWindow setAcceptsMouseMovedEvents:TRUE];
-
-    // update system activity periodically not to activate screen saver
-    _updateSystemActivityTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-        target:self selector:@selector(updateSystemActivity:) userInfo:nil repeats:TRUE];
 }
 
 - (void)endFullScreen
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_updateSystemActivityTimer invalidate];
-
     [_fullWindow setAcceptsMouseMovedEvents:FALSE];
     [_playPanel orderOut:self];     // immediately without fade-effect
 
@@ -257,13 +251,7 @@
     }
 }
 
-- (void)updateSystemActivity:(NSTimer*)timer
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    UpdateSystemActivity(UsrActivity);
-
-    [_playPanel autoHidePanel];
-}
+- (void)autoHidePlayPanel { [_playPanel autoHidePanel]; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark navigation

@@ -135,7 +135,7 @@
 
 - (void)orderFrontRegardless
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (!_alwaysOnTop) {
         [super orderFrontRegardless];
     }
@@ -143,7 +143,7 @@
 
 - (void)setLevel:(int)newLevel
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
     [super setLevel:MIN(TopMostWindowLevel, newLevel)];
 }
 

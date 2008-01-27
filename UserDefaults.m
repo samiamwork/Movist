@@ -33,9 +33,9 @@ NSString* MLastPlayedMovieTimeKey           = @"LastPlayedMovieTime";
 #pragma mark prefs: general
 NSString* MAutoFullScreenKey                = @"AutoFullScreen";
 NSString* MAlwaysOnTopKey                   = @"AlwaysOnTop";
-NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
 NSString* MQuitWhenWindowCloseKey           = @"QuitWhenWindowClose";
 NSString* MRememberLastPlayKey              = @"RememberLastPlay";
+NSString* MDeactivateScreenSaverKey         = @"DeactivateScreenSaver";
 NSString* MSeekInterval0Key                 = @"SeekInterval0";
 NSString* MSeekInterval1Key                 = @"SeekInterval1";
 NSString* MSeekInterval2Key                 = @"SeekInterval2";
@@ -84,6 +84,12 @@ NSString* MDefaultDecoderKey                = @"DefaultDecoder";
 NSString* MUpdateCheckIntervalKey           = @"UpdateCheckInterval";
 NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 
+#pragma mark -
+#pragma mark prefs: advanced - details
+NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
+NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
+NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
@@ -102,9 +108,9 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     // prefs: general
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAutoFullScreenKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAlwaysOnTopKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MQuitWhenWindowCloseKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MRememberLastPlayKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MDeactivateScreenSaverKey];
     [dict setObject:[NSNumber numberWithFloat: 10.0] forKey:MSeekInterval0Key];
     [dict setObject:[NSNumber numberWithFloat: 60.0] forKey:MSeekInterval1Key];
     [dict setObject:[NSNumber numberWithFloat:300.0] forKey:MSeekInterval2Key];
@@ -151,6 +157,11 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
     [dict setObject:[NSNumber numberWithInt:DECODER_QUICKTIME] forKey:MDefaultDecoderKey];
     [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MUpdateCheckIntervalKey];
     [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastUpdateCheckTimeKey];
+
+    // prefs: advanced - details
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MShowActualPathForLinkKey];
 
     //TRACE(@"registering defaults: %@", dict);
     [self registerDefaults:dict];

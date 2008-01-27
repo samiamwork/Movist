@@ -33,9 +33,9 @@ extern NSString* MLastPlayedMovieTimeKey;
 #pragma mark prefs: general
 extern NSString* MAutoFullScreenKey;
 extern NSString* MAlwaysOnTopKey;
-extern NSString* MActivateOnDraggingKey;
 extern NSString* MQuitWhenWindowCloseKey;
 extern NSString* MRememberLastPlayKey;
+extern NSString* MDeactivateScreenSaverKey;
 extern NSString* MSeekInterval0Key;
 extern NSString* MSeekInterval1Key;
 extern NSString* MSeekInterval2Key;
@@ -83,6 +83,12 @@ extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultDecoderKey;
 extern NSString* MUpdateCheckIntervalKey;
 extern NSString* MLastUpdateCheckTimeKey;
+
+#pragma mark -
+#pragma mark prefs: advanced - details
+extern NSString* MActivateOnDraggingKey;
+extern NSString* MDisablePerianSubtitleKey;
+extern NSString* MShowActualPathForLinkKey;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

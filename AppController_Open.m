@@ -78,11 +78,12 @@
             NSLocalizedString(@"Opening with %@...", nil), [movieClass name]]];
         [_movieView display];   // force display
 
-        // disable perian-subtitle before using quick-time.
-        if (movieClass == [MMovie_QuickTime class] && _perianSubtitleEnabled) {
-            [_defaults setPerianSubtitleEnabled:FALSE];
-        }
-        
+        if (_disablePerianSubtitle) {
+            // disable perian-subtitle before using quick-time.
+            if ([MMovie_QuickTime class] == movieClass && _perianSubtitleEnabled) {
+                [_defaults setPerianSubtitleEnabled:FALSE];
+            }
+        }        
         movie = [[movieClass alloc] initWithURL:movieURL error:error];
         if (movie) {
             return [movie autorelease];
@@ -269,6 +270,10 @@
     _prevMovieTime = 0.0;
     [self updateUI];
 
+    // update system activity periodically not to activate screen saver
+    _updateSystemActivityTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+        target:self selector:@selector(updateSystemActivity:) userInfo:nil repeats:TRUE];
+
     // add to recent-menu
     [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[self movieURL]];
 
@@ -408,12 +413,14 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
-        // re-enable perian-subtitle after using quick-time if needed.
-        BOOL quickTimeUsed = ([_movie class] == [MMovie_QuickTime class]);
-        if (quickTimeUsed && _perianSubtitleEnabled) {
-            [_defaults setPerianSubtitleEnabled:TRUE];
-        }
+        [_updateSystemActivityTimer invalidate];
 
+        if (_disablePerianSubtitle) {
+            // re-enable perian-subtitle after using quick-time if needed.
+            if ([MMovie_QuickTime class] == [_movie class] && _perianSubtitleEnabled) {
+                [_defaults setPerianSubtitleEnabled:TRUE];
+            }
+        }
         _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?
                                 [_movie currentTime] : 0.0;
 
@@ -482,6 +489,18 @@
     [_decoderButton setEnabled:enable];
     [_panelDecoderButton setEnabled:enable];
     [_controlPanelDecoderButton setEnabled:enable];
+}
+
+- (void)updateSystemActivity:(NSTimer*)timer
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([self isFullScreen] ||  // always deactivate in full-screen
+        [_defaults boolForKey:MDeactivateScreenSaverKey]) {
+        UpdateSystemActivity(UsrActivity);
+    }
+    if ([self isFullScreen]) {
+        [_fullScreener autoHidePlayPanel];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
