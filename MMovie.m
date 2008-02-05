@@ -43,7 +43,7 @@
     return [NSArray arrayWithObjects:
         @"avi", @"divx",                            // movie
         @"mpe", @"mpeg", @"mpg", @"m1v", @"m2v",    // MPEG
-        @"dat", @"ifo", @"vob", @"tp",              // MPEG
+        @"dat", @"ifo", @"vob", @"ts", @"tp",       // MPEG
         @"mp4", @"m4v",                             // MPEG4
         @"asf", @"asx",                             // Windows Media
         @"wm", @"wmp", @"wmv", @"wmx", @"wvx",      // Windows Media
@@ -52,7 +52,8 @@
         @"mov",                                     // MOV
         @"mqv",                                     // MQV
         @"mkv",                                     // Matroska
-        //@"flv", @"swf",                           // Flash
+        @"flv",                                     // Flash
+        // @"swf",                                  // Flash
         //@"dmb",                                   // DMB-TS
         //@"3gp", @"dmskm", @"k3g", @"skm", @"lmp4",// Mobile Phone
         nil];

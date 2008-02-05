@@ -241,13 +241,14 @@
         return 0;
     }
 
+    NSArray* movieTypes = [MMovie movieTypes];
     if (isDirectory) {
         NSString* directory = filename;
         NSArray* contents = [fileManager sortedDirectoryContentsAtPath:directory];
         NSEnumerator* enumerator = [contents objectEnumerator];
         while (filename = [enumerator nextObject]) {
             filename = [directory stringByAppendingPathComponent:filename];
-            if ([filename hasAnyExtension:[MMovie movieTypes]]) {
+            if ([filename hasAnyExtension:movieTypes]) {
                 [self insertURL:[NSURL fileURLWithPath:filename] atIndex:index++];
             }
         }
@@ -260,7 +261,7 @@
         NSArray* contents = [fileManager sortedDirectoryContentsAtPath:directory];
         NSEnumerator* enumerator = [contents objectEnumerator];
         while (filename = [enumerator nextObject]) {
-            if ([filename hasAnyExtension:[MMovie movieTypes]] &&
+            if ([filename hasAnyExtension:movieTypes] &&
                 (option == OPTION_ALL || (option == OPTION_SERIES &&
                   [self checkMovieSeriesFile:filename forMovieFile:movieFilename]))) {
                 [self insertURL:[NSURL fileURLWithPath:
@@ -274,7 +275,7 @@
         }
         return [contents count];
     }
-    else if ([filename hasAnyExtension:[MMovie movieTypes]]) {
+    else if ([filename hasAnyExtension:movieTypes]) {
         [self insertURL:[NSURL fileURLWithPath:filename] atIndex:index];
         return 1;
     }
