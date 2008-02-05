@@ -685,6 +685,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s \"%@\" (modifierFlags=%u)", __PRETTY_FUNCTION__,
     //      [event characters], [event modifierFlags]);
     unichar key = [[event characters] characterAtIndex:0];
+    BOOL shiftPressed = ([event modifierFlags] & NSShiftKeyMask) ? TRUE : FALSE;
     switch (key) {
         case ' ' :  // space: toggle play/pause
             [[NSApp delegate] playAction:self];
@@ -731,7 +732,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
         case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];  break;
 
-        case 'i' : case 'I' : [self saveCurrentImage:FALSE];                break;
+        case 'i' : case 'I' : [self saveCurrentImage:shiftPressed];         break;
     }
 }
 

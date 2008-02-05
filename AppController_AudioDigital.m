@@ -120,6 +120,10 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 
 - (void)updateDigitalAudio
 {
+    if (![_defaults boolForKey:MAutodetectDigitalAudioOutKey]) {
+        return;
+    }
+
     BOOL support = supportDigitalAudio(&_audioStreamID);
     if (support == _supportDigitalAudio) {
         return;

@@ -97,6 +97,7 @@
 "Disable Perian Subtitle for using QuickTime *" = "Disable Perian Subtitle for using QuickTime *";
 "Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";
 "Capture Screenshot Including Letter Box" = "Capture Screenshot Including Letter Box";
+"Auto-detect Digital Audio-Out" = "Auto-detect Digital Audio-Out";
 "Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
 
 /* Playlist */

@@ -90,6 +90,7 @@ NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
 NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
 NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 NSString* MCaptureIncludingLetterBoxKey     = @"CaptureIncludingLetterBox";
+NSString* MAutodetectDigitalAudioOutKey     = @"AutodetectDigitalAudioOut";
 NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -163,8 +164,9 @@ NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
     // prefs: advanced - details
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MShowActualPathForLinkKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MShowActualPathForLinkKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MCaptureIncludingLetterBoxKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
     [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
 
     //TRACE(@"registering defaults: %@", dict);

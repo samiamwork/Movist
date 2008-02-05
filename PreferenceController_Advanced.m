@@ -82,6 +82,7 @@ enum {
     DISABLE_PERIAN_SUBTITLE,
     SHOW_ACTUAL_PATH_FOR_LINK,
     CAPTURE_INCULDING_LETTER_BOX,
+    AUTODETECT_DIGITAL_AUDIO_OUT,
     DEFAULT_LANGUAGE_IDENTIFIERS,
 
     MAX_ADVANCED_DETAILS_COUNT
@@ -104,6 +105,8 @@ enum {
                 return NSLocalizedString(@"Show Actual Path for Alias or Symbolic-Link", nil);
             case CAPTURE_INCULDING_LETTER_BOX :
                 return NSLocalizedString(@"Capture Screenshot Including Letter Box", nil);
+            case AUTODETECT_DIGITAL_AUDIO_OUT :
+                return NSLocalizedString(@"Auto-detect Digital Audio-Out", nil);
             case DEFAULT_LANGUAGE_IDENTIFIERS :
                 return NSLocalizedString(@"Default Subtitle Language Identifiers for SAMI", nil);
         }
@@ -118,6 +121,8 @@ enum {
                 return DETAILS_BOOL(MShowActualPathForLinkKey);
             case CAPTURE_INCULDING_LETTER_BOX :
                 return DETAILS_BOOL(MCaptureIncludingLetterBoxKey);
+            case AUTODETECT_DIGITAL_AUDIO_OUT :
+                return DETAILS_BOOL(MAutodetectDigitalAudioOutKey);
             case DEFAULT_LANGUAGE_IDENTIFIERS :
                 return [_defaults stringForKey:MDefaultLanguageIdentifiersKey];
         }
@@ -146,6 +151,10 @@ enum {
             DETAILS_SET_BOOL(MCaptureIncludingLetterBoxKey);
             [[NSApp delegate] setCaptureIncludingLetterBox:
                         [_defaults boolForKey:MCaptureIncludingLetterBoxKey]];
+            break;
+        case AUTODETECT_DIGITAL_AUDIO_OUT :
+            DETAILS_SET_BOOL(MAutodetectDigitalAudioOutKey);
+            [[NSApp delegate] updateDigitalAudio];
             break;
         case DEFAULT_LANGUAGE_IDENTIFIERS :
             [_defaults setObject:object forKey:MDefaultLanguageIdentifiersKey];
@@ -201,6 +210,7 @@ enum {
             case DISABLE_PERIAN_SUBTITLE        : return [self checkButtonCell];
             case SHOW_ACTUAL_PATH_FOR_LINK      : return [self checkButtonCell];
             case CAPTURE_INCULDING_LETTER_BOX   : return [self checkButtonCell];
+            case AUTODETECT_DIGITAL_AUDIO_OUT   : return [self checkButtonCell];
             case DEFAULT_LANGUAGE_IDENTIFIERS   : return [self editFieldCell];
         }
     }

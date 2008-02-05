@@ -90,6 +90,7 @@ extern NSString* MActivateOnDraggingKey;
 extern NSString* MDisablePerianSubtitleKey;
 extern NSString* MShowActualPathForLinkKey;
 extern NSString* MCaptureIncludingLetterBoxKey;
+extern NSString* MAutodetectDigitalAudioOutKey;
 extern NSString* MDefaultLanguageIdentifiersKey;
 
 ////////////////////////////////////////////////////////////////////////////////
