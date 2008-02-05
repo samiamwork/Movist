@@ -28,17 +28,18 @@
 {
     NSString* _source;
     NSRange _sourceRange;
-    
+
     NSCharacterSet* _delimSet;
     NSCharacterSet* _styleDelimSet;
     NSCharacterSet* _syncDelimSet;
     NSCharacterSet* _pDelimSet;
     NSCharacterSet* _fontDelimSet;
-    
+
     // options
     BOOL _removeLastBR;
     BOOL _replaceNewLineWithBR;
-    
+    NSArray* _defaultLanguageIdentifiers;
+
     NSMutableDictionary* _classes;
     NSMutableArray* _subtitles;
 }
@@ -50,3 +51,4 @@
 
 // option keys
 extern NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR;
+extern NSArray* MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers;

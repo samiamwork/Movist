@@ -43,6 +43,7 @@
     [self updateLastUpdateCheckTimeTextField];
 
     [_detailsTableView reloadData];
+    [_detailsTableView setAction:@selector(detailsTableViewAction:)];
 }
 
 - (void)updateLastUpdateCheckTimeTextField
@@ -81,14 +82,12 @@ enum {
     DISABLE_PERIAN_SUBTITLE,
     SHOW_ACTUAL_PATH_FOR_LINK,
     CAPTURE_INCULDING_LETTER_BOX,
+    DEFAULT_LANGUAGE_IDENTIFIERS,
 
     MAX_ADVANCED_DETAILS_COUNT
 };
 
-- (int)numberOfRowsInTableView:(NSTableView*)tableView
-{
-    return MAX_ADVANCED_DETAILS_COUNT;
-}
+- (int)numberOfRowsInTableView:(NSTableView*)tableView { return MAX_ADVANCED_DETAILS_COUNT; }
 
 - (id)tableView:(NSTableView*)tableView
     objectValueForTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
@@ -105,6 +104,8 @@ enum {
                 return NSLocalizedString(@"Show Actual Path for Alias or Symbolic-Link", nil);
             case CAPTURE_INCULDING_LETTER_BOX :
                 return NSLocalizedString(@"Capture Screenshot Including Letter Box", nil);
+            case DEFAULT_LANGUAGE_IDENTIFIERS :
+                return NSLocalizedString(@"Default Subtitle Language Identifiers for SAMI", nil);
         }
     }
     else {  // if ([identifier isEqualToString:@"value"]) {
@@ -117,16 +118,18 @@ enum {
                 return DETAILS_BOOL(MShowActualPathForLinkKey);
             case CAPTURE_INCULDING_LETTER_BOX :
                 return DETAILS_BOOL(MCaptureIncludingLetterBoxKey);
+            case DEFAULT_LANGUAGE_IDENTIFIERS :
+                return [_defaults stringForKey:MDefaultLanguageIdentifiersKey];
         }
     }
     return nil;
 }
 
-- (void)tableView:(NSTableView*)tableView setObjectValue:(id)object
-   forTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
+- (void)tableView:(NSTableView*)tableView
+   setObjectValue:(id)object forTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
 {
-    TRACE(@"%s column=%@ row=%d value=%@", __PRETTY_FUNCTION__,
-          [tableColumn identifier], rowIndex, object);
+    //TRACE(@"%s column=%@ row=%d value=%@", __PRETTY_FUNCTION__,
+    //      [tableColumn identifier], rowIndex, object);
     switch (rowIndex) {
         case ACTIVATE_ON_DRAGGING :
             DETAILS_SET_BOOL(MActivateOnDraggingKey);
@@ -144,6 +147,20 @@ enum {
             [[NSApp delegate] setCaptureIncludingLetterBox:
                         [_defaults boolForKey:MCaptureIncludingLetterBoxKey]];
             break;
+        case DEFAULT_LANGUAGE_IDENTIFIERS :
+            [_defaults setObject:object forKey:MDefaultLanguageIdentifiersKey];
+            break;
+    }
+}
+
+- (void)detailsTableViewAction:(id)sender
+{
+    //TRACE(@"%s column=%d, row=%d", __PRETTY_FUNCTION__,
+    //      [_detailsTableView clickedColumn], [_detailsTableView clickedRow]);
+    if ([_detailsTableView clickedColumn] == 1) {   // "value" column
+        [_detailsTableView editColumn:[_detailsTableView clickedColumn]
+                                  row:[_detailsTableView clickedRow]
+                            withEvent:nil select:TRUE];
     }
 }
 
@@ -155,12 +172,15 @@ enum {
 
 @implementation AdvancedDetailsTableColumn
 
-- (NSTextFieldCell*)textFieldCell
+- (NSTextFieldCell*)textFieldCellWithEditable:(BOOL)editable
 {
     NSTextFieldCell* cell = [[NSTextFieldCell alloc] initTextCell:@""];
     [cell setControlSize:NSSmallControlSize];
+    [cell setEditable:editable];
     return [cell autorelease];
 }
+- (NSTextFieldCell*)textFieldCell { return [self textFieldCellWithEditable:FALSE]; }
+- (NSTextFieldCell*)editFieldCell { return [self textFieldCellWithEditable:TRUE]; }
 
 - (NSButtonCell*)checkButtonCell
 {
@@ -176,7 +196,13 @@ enum {
         return [self textFieldCell];
     }
     else {  // if ([[self identifier] isEqualToString:@"value"]) {
-        return [self checkButtonCell];  // currently all switchtes
+        switch (rowIndex) {
+            case ACTIVATE_ON_DRAGGING           : return [self checkButtonCell];
+            case DISABLE_PERIAN_SUBTITLE        : return [self checkButtonCell];
+            case SHOW_ACTUAL_PATH_FOR_LINK      : return [self checkButtonCell];
+            case CAPTURE_INCULDING_LETTER_BOX   : return [self checkButtonCell];
+            case DEFAULT_LANGUAGE_IDENTIFIERS   : return [self editFieldCell];
+        }
     }
     return [super dataCellForRow:rowIndex];
 }

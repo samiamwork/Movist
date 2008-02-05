@@ -174,7 +174,7 @@
     for (index = [_strings count] - 1; 0 <= index; index--) {
         ss = [_strings objectAtIndex:index];
         if ([ss beginTime] < time) {
-            if ([ss endTime] < 0.0) {
+            if ([ss endTime] < 0.0 || time < [ss endTime]) {
                 [ss setEndTime:time];
                 //TRACE(@"add subtitle: [%g~%g] \"%@\"",
                 //      [ss beginTime], [ss endTime], [[ss string] string]);
@@ -259,11 +259,20 @@
     }
 }
 
-- (void)completeLastString
+- (void)checkEndTimes
 {
-    if ([self endTime] < 0.0) {
-        MSubtitleString* s = (MSubtitleString*)[_strings lastObject];
-        [s setEndTime:[s beginTime] + 5.0];     // add 5 sec. duration
+    MSubtitleString* s;
+    int i, count = [_strings count];
+    for (i = 0; i < count; i++) {
+        s = [_strings objectAtIndex:i];
+        if ([s endTime] < 0.0) {
+            if (i < count - 1) {
+                [s setEndTime:[[_strings objectAtIndex:i + 1] beginTime]];
+            }
+            else {
+                [s setEndTime:[s beginTime] + 5.0];
+            }
+        }
     }
 }
 

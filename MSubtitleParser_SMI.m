@@ -72,6 +72,7 @@ typedef struct _SMITag {
 #pragma mark -
 
 NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR = @"replaceNewLineWithBR";
+NSArray* MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers = @"defaultLanguageIdentifiers";
 
 @implementation MSubtitleParser_SMI
 
@@ -82,12 +83,16 @@ NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR = @"replaceNewLineW
     _sourceRange = NSMakeRange(0, [_source length]);
     _removeLastBR = TRUE;   // always true
     _replaceNewLineWithBR = TRUE;
+    _defaultLanguageIdentifiers = nil;
     if (options) {
         NSNumber* n = (NSNumber*)[options objectForKey:
                             MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR];
         if (n) {
             _replaceNewLineWithBR = [n boolValue];
         }
+
+        _defaultLanguageIdentifiers = (NSArray*)[options objectForKey:
+                            MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers];
     }
 
     _delimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
@@ -106,7 +111,7 @@ NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR = @"replaceNewLineW
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, class);
     MSubtitle* subtitle = [[[MSubtitle alloc] initWithType:@"SMI"] autorelease];
-    [subtitle setName:class];
+    [subtitle setName:class];   // name will be updated later by "Name:" field.
     [_subtitles addObject:subtitle];
     [_classes setObject:subtitle forKey:class];
     return subtitle;
@@ -137,11 +142,33 @@ NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR = @"replaceNewLineW
             subtitle = [self addSubtitleClass:[_source substringWithRange:tr]];
             //TRACE(@"class=\"%@\"", [_source substringWithRange:tr]);
         }
-        else if (subtitle &&
-                 ![_source compare:@"NAME" options:NSCaseInsensitiveSearch range:tr]) {
-            tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
-            [subtitle setName:[_source substringWithRange:tr]];
+        else if ([_source characterAtIndex:tr.location] == '#') {
+            tr.location++, tr.length--;
             subtitle = nil;
+        }
+        else if (subtitle) {
+            if (![_source compare:@"NAME" options:NSCaseInsensitiveSearch range:tr]) {
+                tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
+                [subtitle setName:[_source substringWithRange:tr]];
+            }
+            else if (![_source compare:@"LANG" options:NSCaseInsensitiveSearch range:tr] &&
+                     0 < [_subtitles indexOfObject:subtitle] && _defaultLanguageIdentifiers) {
+                tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
+                NSString* lang = [_source substringWithRange:tr];
+                // reorder by "Lang:" field for default language.
+                NSString* identifier;
+                NSEnumerator* enumerator = [_defaultLanguageIdentifiers objectEnumerator];
+                while (identifier = [enumerator nextObject]) {
+                    r = [lang rangeOfString:identifier options:NSCaseInsensitiveSearch];
+                    if (r.location != NSNotFound) {
+                        [subtitle retain];
+                        [_subtitles removeObject:subtitle];
+                        [_subtitles insertObject:subtitle atIndex:0];
+                        [subtitle release];
+                        break;
+                    }
+                }
+            }
         }
     }
 }
@@ -388,8 +415,8 @@ extern NSString* MFontBoldAttributeName;
         if ([subtitle isEmpty]) {
             [_subtitles removeObjectAtIndex:i];
         }
-        else if ([subtitle endTime] < 0.0) { // not-ended
-            [subtitle completeLastString];
+        else {
+            [subtitle checkEndTimes];
         }
     }
 

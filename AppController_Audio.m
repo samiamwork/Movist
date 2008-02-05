@@ -44,7 +44,11 @@
     }
     volume = [self preferredVolume:volume];
     [_movie setVolume:volume];
-    if (!_supportDigitalAudio) {
+    if (_supportDigitalAudio) {
+        [_movieView setMessage:NSLocalizedString(
+                                @"Volume cannot be changed in Digital-Out", nil)];
+    }
+    else {
         [_movieView setMessage:[NSString stringWithFormat:
                                 NSLocalizedString(@"Volume %.1f", nil), volume]];
         [_defaults setFloat:volume forKey:MVolumeKey];

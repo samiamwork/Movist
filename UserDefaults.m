@@ -90,6 +90,7 @@ NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
 NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
 NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 NSString* MCaptureIncludingLetterBoxKey     = @"CaptureIncludingLetterBox";
+NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -164,6 +165,7 @@ NSString* MCaptureIncludingLetterBoxKey     = @"CaptureIncludingLetterBox";
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MShowActualPathForLinkKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MCaptureIncludingLetterBoxKey];
+    [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
 
     //TRACE(@"registering defaults: %@", dict);
     [self registerDefaults:dict];

@@ -60,6 +60,7 @@
 "Sound Track %@ selected" = "%@ selected";
 "Sound Track %@ enabled" = "%@ enabled";
 "Sound Track %@ disabled" = "%@ disabled";
+"Volume cannot be changed in Digital-Out" = "Volume cannot be changed in Digital-Out";
 
 /* Message : Video */
 "Never" = "Never";
@@ -96,6 +97,7 @@
 "Disable Perian Subtitle for using QuickTime *" = "Disable Perian Subtitle for using QuickTime *";
 "Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";
 "Capture Screenshot Including Letter Box" = "Capture Screenshot Including Letter Box";
+"Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
 
 /* Playlist */
 "%d items" = "%d items";

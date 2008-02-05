@@ -153,10 +153,15 @@
     // parse subtitles
     NSDictionary* options = nil;
     if (parserClass == [MSubtitleParser_SMI class]) {
+        NSString* defaultLanguageIdentifiersString =
+            [_defaults objectForKey:MDefaultLanguageIdentifiersKey];
+
         options = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [_defaults objectForKey:MSubtitleReplaceNLWithBRKey],
-                        MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR,
-                        nil];
+            [_defaults objectForKey:MSubtitleReplaceNLWithBRKey],
+                MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR,
+            [defaultLanguageIdentifiersString componentsSeparatedByString:@" "],
+                MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers,
+            nil];
     }
     id<MSubtitleParser> parser = [[[parserClass alloc] init] autorelease];
     return [parser parseString:s options:options error:error];
