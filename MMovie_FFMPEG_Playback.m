@@ -609,7 +609,8 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     int ret = CVPixelBufferCreateWithBytes(0, _videoWidth, _videoHeight, CV_PIXEL_FORMAT,
                                            _videoFrameData[_videoDataBufId]->data[0], 
                                            _videoFrameData[_videoDataBufId]->linesize[0],
-                                           pixelBufferReleaseCallback, self, 0, 
+//                                           pixelBufferReleaseCallback, self, 0, 
+                                           0, 0, 0, 
                                            bufferRef);
     if (ret != kCVReturnSuccess) {
         TRACE(@"%s CVPixelBufferCreateWithBytes() failed : %d", __PRETTY_FUNCTION__, ret);
@@ -650,7 +651,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     TRACE(@"set thread priority %f", [NSThread threadPriority]);
 */
     while (!_quitRequested) {
-        if (_decodedImageBufCount >= MAX_VIDEO_DATA_BUF_SIZE - 1 ||
+        if (_decodedImageCount >= MAX_VIDEO_DATA_BUF_SIZE - 3||
             !_dispatchPacket) {
             [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
             continue;
