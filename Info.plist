@@ -276,7 +276,7 @@
 	<key>CFBundleSignature</key>
 	<string>mvst</string>
 	<key>CFBundleVersion</key>
-	<string>0.4.2</string>
+	<string>0.4.3</string>
 	<key>LSHasLocalizedDisplayName</key>
 	<true/>
 	<key>NSMainNibFile</key>
