@@ -28,6 +28,7 @@ extern NSString* MControlTabKey;
 extern NSString* MViewDurationKey;
 extern NSString* MPlaylistKey;
 extern NSString* MLastPlayedMovieTimeKey;
+extern NSString* MLastPlayedMovieRepeatRangeKey;
 
 #pragma mark -
 #pragma mark prefs: general
@@ -92,6 +93,7 @@ extern NSString* MShowActualPathForLinkKey;
 extern NSString* MCaptureIncludingLetterBoxKey;
 extern NSString* MAutodetectDigitalAudioOutKey;
 extern NSString* MDefaultLanguageIdentifiersKey;
+extern NSString* MAutodetectMovieSeriesKey;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

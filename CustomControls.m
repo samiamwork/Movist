@@ -204,8 +204,10 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 - (void)setIndexDuration:(float)duration;
 
 - (BOOL)repeatEnabled;
+- (NSRange)repeatRange;
 - (float)repeatBeginning;
 - (float)repeatEnd;
+- (void)setRepeatRange:(NSRange)range;
 - (void)setRepeatBeginning:(float)beginning;
 - (void)setRepeatEnd:(float)end;
 - (void)clearRepeat;
@@ -353,8 +355,23 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 - (void)setIndexDuration:(float)duration { _indexDuration = duration; }
 
 - (BOOL)repeatEnabled { return (0 <= _repeatBeginning && _repeatBeginning <= _repeatEnd); }
+- (NSRange)repeatRange { return NSMakeRange(_repeatBeginning, _repeatEnd - _repeatBeginning); }
 - (float)repeatBeginning { return _repeatBeginning; }
 - (float)repeatEnd { return _repeatEnd; }
+
+- (void)setRepeatRange:(NSRange)range
+{
+    float beginning = range.location;
+    if ([self minValue] <= beginning && beginning <= [self maxValue] &&
+        0.0 < range.length) {
+        float end = NSMaxRange(range);
+        [self setRepeatBeginning:beginning];
+        [self setRepeatEnd:MIN(end, [self maxValue])];
+    }
+    else {
+        [self clearRepeat];
+    }
+}
 
 - (void)setRepeatBeginning:(float)beginning
 {
@@ -396,8 +413,16 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 }
 
 - (BOOL)repeatEnabled    { return [(SeekSliderCell*)[self cell] repeatEnabled]; }
+- (NSRange)repeatRange   { return [(SeekSliderCell*)[self cell] repeatRange]; }
 - (float)repeatBeginning { return [(SeekSliderCell*)[self cell] repeatBeginning]; }
 - (float)repeatEnd       { return [(SeekSliderCell*)[self cell] repeatEnd]; }
+
+- (void)setRepeatRange:(NSRange)range
+{
+    //TRACE(@"%s %.1f ~ %.1f", __PRETTY_FUNCTION__, range.location, NSMaxRange(range));
+    [(SeekSliderCell*)[self cell] setRepeatRange:range];
+    [self setNeedsDisplay];
+}
 
 - (void)setRepeatBeginning:(float)beginning
 {

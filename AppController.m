@@ -81,6 +81,7 @@
     _prevMovieTime = 0.0;
     _lastPlayedMovieURL = nil;
     _lastPlayedMovieTime = 0.0;
+    _lastPlayedMovieRepeatRange.length = 0.0;
     _viewDuration = [_defaults boolForKey:MViewDurationKey];
     [_lTimeTextField setClickable:FALSE];   [_panelLTimeTextField setClickable:FALSE];
     [_rTimeTextField setClickable:TRUE];    [_panelRTimeTextField setClickable:TRUE];

@@ -263,11 +263,11 @@
     [_seekSlider setMinValue:0];
     [_seekSlider setMaxValue:[_movie duration]];
     [_seekSlider setIndexDuration:0];
-    [_seekSlider clearRepeat];
     [_panelSeekSlider setMinValue:0];
     [_panelSeekSlider setMaxValue:[_movie duration]];
     [_panelSeekSlider setIndexDuration:0];
-    [_panelSeekSlider clearRepeat];
+    [self setRangeRepeatRange:_lastPlayedMovieRepeatRange];
+
     [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
         NSLocalizedString(@"Reopen With %@", nil),
             ([_movie class] == [MMovie_QuickTime class]) ?
@@ -300,7 +300,9 @@
 - (BOOL)openFiles:(NSArray*)filenames
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    return [self openFiles:filenames option:OPTION_SERIES];
+    int option = [_defaults boolForKey:MAutodetectMovieSeriesKey] ?
+                                                    OPTION_SERIES : OPTION_ONLY;
+    return [self openFiles:filenames option:option];
 }
 
 - (BOOL)openURL:(NSURL*)url
@@ -428,6 +430,7 @@
         }
         _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?
                                 [_movie currentTime] : 0.0;
+        _lastPlayedMovieRepeatRange = [_seekSlider repeatRange];
 
         // init _audioTrackIndexSet for next open.
         [_audioTrackIndexSet removeAllIndexes];

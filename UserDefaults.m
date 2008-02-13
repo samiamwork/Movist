@@ -28,6 +28,7 @@ NSString* MControlTabKey                    = @"ControlTab";
 NSString* MViewDurationKey                  = @"ViewDuration";
 NSString* MPlaylistKey                      = @"Playlist";
 NSString* MLastPlayedMovieTimeKey           = @"LastPlayedMovieTime";
+NSString* MLastPlayedMovieRepeatRangeKey    = @"LastPlayedMovieRepeatRange";
 
 #pragma mark -
 #pragma mark prefs: general
@@ -92,6 +93,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 NSString* MCaptureIncludingLetterBoxKey     = @"CaptureIncludingLetterBox";
 NSString* MAutodetectDigitalAudioOutKey     = @"AutodetectDigitalAudioOut";
 NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
+NSString* MAutodetectMovieSeriesKey         = @"AutodetectMovieSeries";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -168,6 +170,7 @@ NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MCaptureIncludingLetterBoxKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
     [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectMovieSeriesKey];
 
     //TRACE(@"registering defaults: %@", dict);
     [self registerDefaults:dict];

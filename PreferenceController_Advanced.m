@@ -84,6 +84,7 @@ enum {
     CAPTURE_INCULDING_LETTER_BOX,
     AUTODETECT_DIGITAL_AUDIO_OUT,
     DEFAULT_LANGUAGE_IDENTIFIERS,
+    AUTODETECT_MOVIE_SERIES,
 
     MAX_ADVANCED_DETAILS_COUNT
 };
@@ -100,15 +101,19 @@ enum {
             case ACTIVATE_ON_DRAGGING :
                 return NSLocalizedString(@"Activate on Dragging over Main Window", nil);
             case DISABLE_PERIAN_SUBTITLE :
-                return NSLocalizedString(@"Disable Perian Subtitle for using QuickTime *", nil);
+                return [NSLocalizedString(@"Disable Perian Subtitle for using QuickTime", nil)
+                        stringByAppendingString:@" *"];
             case SHOW_ACTUAL_PATH_FOR_LINK :
                 return NSLocalizedString(@"Show Actual Path for Alias or Symbolic-Link", nil);
             case CAPTURE_INCULDING_LETTER_BOX :
                 return NSLocalizedString(@"Capture Screenshot Including Letter Box", nil);
             case AUTODETECT_DIGITAL_AUDIO_OUT :
-                return NSLocalizedString(@"Auto-detect Digital Audio-Out", nil);
+                return [NSLocalizedString(@"Auto-detect Digital Audio-Out", nil)
+                        stringByAppendingString:@" *"];
             case DEFAULT_LANGUAGE_IDENTIFIERS :
                 return NSLocalizedString(@"Default Subtitle Language Identifiers for SAMI", nil);
+            case AUTODETECT_MOVIE_SERIES :
+                return NSLocalizedString(@"Add Similar Files to Playlist for Opening File", nil);
         }
     }
     else {  // if ([identifier isEqualToString:@"value"]) {
@@ -125,6 +130,8 @@ enum {
                 return DETAILS_BOOL(MAutodetectDigitalAudioOutKey);
             case DEFAULT_LANGUAGE_IDENTIFIERS :
                 return [_defaults stringForKey:MDefaultLanguageIdentifiersKey];
+            case AUTODETECT_MOVIE_SERIES :
+                return DETAILS_BOOL(MAutodetectMovieSeriesKey);
         }
     }
     return nil;
@@ -158,6 +165,9 @@ enum {
             break;
         case DEFAULT_LANGUAGE_IDENTIFIERS :
             [_defaults setObject:object forKey:MDefaultLanguageIdentifiersKey];
+            break;
+        case AUTODETECT_MOVIE_SERIES :
+            DETAILS_SET_BOOL(MAutodetectMovieSeriesKey);
             break;
     }
 }
@@ -212,6 +222,7 @@ enum {
             case CAPTURE_INCULDING_LETTER_BOX   : return [self checkButtonCell];
             case AUTODETECT_DIGITAL_AUDIO_OUT   : return [self checkButtonCell];
             case DEFAULT_LANGUAGE_IDENTIFIERS   : return [self editFieldCell];
+            case AUTODETECT_MOVIE_SERIES        : return [self checkButtonCell];
         }
     }
     return [super dataCellForRow:rowIndex];

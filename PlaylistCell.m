@@ -109,7 +109,7 @@
         // no icon
         rect.origin.x   += 20;
         rect.size.width -= 20;
-        NSString* s = NSLocalizedString(@"no subtitle", nil);
+        NSString* s = NSLocalizedString(@"No Subtitle", nil);
         [self drawString:s subtitle:TRUE inRect:rect];
     }
     else {

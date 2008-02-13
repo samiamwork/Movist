@@ -184,6 +184,63 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+
+- (void)updateRangeRepeatUI
+{
+    if ([_seekSlider repeatEnabled]) {
+        [_repeatBeginningTextField setStringValue:
+            NSStringFromMovieTime([_seekSlider repeatBeginning])];
+        [_repeatEndTextField setStringValue:
+            NSStringFromMovieTime([_seekSlider repeatEnd])];
+    }
+    else {
+        [_repeatBeginningTextField setStringValue:@"--:--:--"];
+        [_repeatEndTextField setStringValue:@"--:--:--"];
+    }
+}
+
+- (void)setRangeRepeatRange:(NSRange)range
+{
+    [_seekSlider setRepeatRange:range];
+    [_panelSeekSlider setRepeatRange:range];
+    [self updateRangeRepeatUI];
+    
+    // no OSD message for range
+}
+
+- (void)setRangeRepeatBeginning:(float)beginning
+{
+    [_seekSlider setRepeatBeginning:beginning];
+    [_panelSeekSlider setRepeatBeginning:beginning];
+    [self updateRangeRepeatUI];
+
+    [_movieView setMessage:[NSString stringWithFormat:
+        NSLocalizedString(@"Range Repeat Beginning %@", nil),
+        NSStringFromMovieTime([_seekSlider repeatBeginning])]];
+}
+
+- (void)setRangeRepeatEnd:(float)end
+{
+    [_seekSlider setRepeatEnd:end];
+    [_panelSeekSlider setRepeatEnd:end];
+    [self updateRangeRepeatUI];
+
+    [_movieView setMessage:[NSString stringWithFormat:
+        NSLocalizedString(@"Range Repeat End %@", nil),
+        NSStringFromMovieTime([_seekSlider repeatEnd])]];
+}
+
+- (void)clearRangeRepeat
+{
+    [_seekSlider clearRepeat];
+    [_panelSeekSlider clearRepeat];
+    [self updateRangeRepeatUI];
+
+    [_movieView setMessage:NSLocalizedString(@"Range Repeat Clear", nil)];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 #pragma mark notifications
 
 - (void)movieIndexDurationChanged:(NSNotification*)notification
@@ -397,52 +454,21 @@
 
 - (IBAction)rangeRepeatAction:(id)sender
 {
-    if ([sender tag] == -1) {   // beginning
-        float beginning = [_movie currentTime];
-        [_seekSlider setRepeatBeginning:beginning];
-        [_panelSeekSlider setRepeatBeginning:beginning];
-        [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Range Repeat Beginning %@", nil),
-            NSStringFromMovieTime([_seekSlider repeatBeginning])]];
+    if ([sender tag] == -1) {
+        [self setRangeRepeatBeginning:[_movie currentTime]];
     }
-    else if ([sender tag] == 1) {   // end
-        float end = [_movie currentTime];
-        [_seekSlider setRepeatEnd:end];
-        [_panelSeekSlider setRepeatEnd:end];
-        [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Range Repeat End %@", nil),
-            NSStringFromMovieTime([_seekSlider repeatEnd])]];
+    else if ([sender tag] == 1) {
+        [self setRangeRepeatEnd:[_movie currentTime]];
     }
-    else if ([sender tag] == 0) {   // clear
-        [_seekSlider clearRepeat];
-        [_panelSeekSlider clearRepeat];
-        [_movieView setMessage:NSLocalizedString(@"Range Repeat Clear", nil)];
+    else if ([sender tag] == 0) {
+        [self clearRangeRepeat];
     }
     /*
     else if ([sender tag] == -100) {    // 10 sec.
-        float beginning = [_movie currentTime];
-        float end = beginning + 10;
-        if ([_movie duration] < end) {
-            end = [_movie duration];
-        }
-        [_seekSlider setRepeatBeginning:beginning];
-        [_panelSeekSlider setRepeatBeginning:beginning];
-        [_seekSlider setRepeatEnd:end];
-        [_panelSeekSlider setRepeatEnd:end];
+        [self setRangeRepeatRange:NSMakeRange([_movie currentTime], 10);
         [_movieView setMessage:NSLocalizedString(@"Range Repeat 10 sec.", nil)];
     }
     */
-
-    if ([_seekSlider repeatEnabled]) {
-        [_repeatBeginningTextField setStringValue:
-            NSStringFromMovieTime([_seekSlider repeatBeginning])];
-        [_repeatEndTextField setStringValue:
-            NSStringFromMovieTime([_seekSlider repeatEnd])];
-    }
-    else {
-        [_repeatBeginningTextField setStringValue:@"--:--:--"];
-        [_repeatEndTextField setStringValue:@"--:--:--"];
-    }
 }
 
 - (IBAction)rateAction:(id)sender

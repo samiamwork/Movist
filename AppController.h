@@ -74,6 +74,7 @@
     // last-played-movie
     NSURL* _lastPlayedMovieURL;
     float _lastPlayedMovieTime;
+    NSRange _lastPlayedMovieRepeatRange;
 
     // subtitle
     IBOutlet NSMenu* _subtitleMenu;
@@ -238,6 +239,10 @@
 - (void)setSeekInterval:(float)interval atIndex:(unsigned int)index;
 - (void)setPlayRate:(float)rate;
 - (void)changePlayRate:(int)tag;
+- (void)setRangeRepeatRange:(NSRange)range;
+- (void)setRangeRepeatBeginning:(float)beginning;
+- (void)setRangeRepeatEnd:(float)end;
+- (void)clearRangeRepeat;
 
 - (void)updateTimeUI;
 - (void)updatePlayUI;

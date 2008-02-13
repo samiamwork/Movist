@@ -125,6 +125,8 @@
         if (0 < [_playlist count]) {
             _lastPlayedMovieURL = [[[_playlist currentItem] movieURL] retain];
             _lastPlayedMovieTime = [_defaults floatForKey:MLastPlayedMovieTimeKey];
+            _lastPlayedMovieRepeatRange = NSRangeFromString(
+                [_defaults objectForKey:MLastPlayedMovieRepeatRangeKey]);
             [_playlistController updateUI];
         }
     }
@@ -133,15 +135,18 @@
 - (void)saveLastPlayedMovieInfo
 {
     if ([_defaults boolForKey:MRememberLastPlayKey]) {
-        // save last playlist, file and time.
+        // save last playlist, file, time & repeat-range.
         [_defaults setObject:[NSKeyedArchiver archivedDataWithRootObject:_playlist]
                       forKey:MPlaylistKey];
         [_defaults setObject:[NSNumber numberWithFloat:_lastPlayedMovieTime]
                       forKey:MLastPlayedMovieTimeKey];
+        [_defaults setObject:NSStringFromRange(_lastPlayedMovieRepeatRange)
+                      forKey:MLastPlayedMovieRepeatRangeKey];
     }
     else {
         [_defaults removeObjectForKey:MPlaylistKey];
         [_defaults removeObjectForKey:MLastPlayedMovieTimeKey];
+        [_defaults removeObjectForKey:MLastPlayedMovieRepeatRangeKey];
     }
 }
 

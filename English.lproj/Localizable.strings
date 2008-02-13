@@ -48,7 +48,6 @@
 "Next Frame" = "Next Frame";
 "Volume %.1f" = "Volume %.1f";
 "Play Rate %.1fx" = "Play Rate %.1fx";
-"Range Repeat 10 sec." = "Range Repeat 10 sec.";
 "Range Repeat Beginning %@" = "Range Repeat Beginning %@";
 "Range Repeat End %@" = "Range Repeat End %@";
 "Range Repeat Clear" = "Range Repeat Clear";
@@ -94,11 +93,12 @@
 
 /* Preferences: advanced details */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
-"Disable Perian Subtitle for using QuickTime *" = "Disable Perian Subtitle for using QuickTime *";
+"Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
 "Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";
 "Capture Screenshot Including Letter Box" = "Capture Screenshot Including Letter Box";
 "Auto-detect Digital Audio-Out" = "Auto-detect Digital Audio-Out";
 "Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
+"Add Similar Files to Playlist for Opening File" = "Add Similar Files to Playlist for Opening File";
 
 /* Playlist */
 "%d items" = "%d items";
