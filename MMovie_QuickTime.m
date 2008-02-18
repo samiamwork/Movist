@@ -109,6 +109,30 @@
 
 + (NSString*)name { return @"QuickTime"; }
 
+- (void)updateIndexDuration:(NSTimer*)timer
+{
+    float duration = _indexDuration;
+    long ret = GetMovieLoadState([_qtMovie quickTimeMovie]);
+    if (ret == kMovieLoadStateComplete) {
+        [_indexDurationTimer invalidate];
+        _indexDurationTimer = nil;
+        duration = [self duration];
+    }
+    else {
+        TimeValue tv;
+        if (noErr == GetMaxLoadedTimeInMovie([_qtMovie quickTimeMovie], &tv)) {
+            duration = tv / 1000.0;
+        }
+    }
+    if (_indexDuration != duration) {
+        _indexDuration = duration;
+        //TRACE(@"%s _indexDuration=%.1f %@", __PRETTY_FUNCTION__, _indexDuration,
+        //      (ret == kMovieLoadStateComplete) ? @"(complete)" : @"");
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName:MMovieIndexDurationNotification object:self];
+    }
+}
+
 - (id)initWithURL:(NSURL*)url error:(NSError**)error
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
@@ -123,6 +147,13 @@
             [self release];
             return nil;
         }
+        // loading-state cannot be get by QTMovieLoadStateDidChangeNotification.
+        // I think it may be already posted before _qtMovie is returned.
+        _indexDuration = 0.0;
+        _indexDurationTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                            target:self selector:@selector(updateIndexDuration:)
+                            userInfo:nil repeats:TRUE];
+        
         // init video tracks
         QTTrack* track;
         NSString* mediaType;
@@ -189,6 +220,10 @@
         CFRelease(_visualContext);
     }
     [_qtMovie release], _qtMovie = nil;
+    if ([_indexDurationTimer isValid]) {
+        [_indexDurationTimer invalidate];
+        _indexDurationTimer = nil;
+    }
     [super cleanup];
 }
 
@@ -201,7 +236,7 @@
     return (float)t.timeValue / t.timeScale;
 }
 
-- (float)indexDuration { return [self duration]; }  // always fully indexed
+- (float)indexDuration { return _indexDuration; }
 
 - (NSSize)size
 {

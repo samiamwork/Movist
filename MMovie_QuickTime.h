@@ -44,6 +44,9 @@
 {
     QTVisualContextRef _visualContext;
     QTMovie* _qtMovie;
+
+    float _indexDuration;
+    NSTimer* _indexDurationTimer;
 }
 
 + (NSString*)name;

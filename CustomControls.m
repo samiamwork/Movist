@@ -199,6 +199,7 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 - (void)setBgImage:(NSImage*)bgImage
             lImage:(NSImage*)lImage cImage:(NSImage*)cImage rImage:(NSImage*)rImage;
 - (void)setKnobColor:(NSColor*)knobColor;
+- (float)locationOfValue:(float)value;
 
 - (float)indexDuration;
 - (void)setIndexDuration:(float)duration;
@@ -257,6 +258,12 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
     [super setKnobThickness:thickness];
 }
 
+- (float)locationOfValue:(float)value
+{
+    float width = [[self controlView] bounds].size.width - _knobSize;
+    return width * value / ([self maxValue] - [self minValue]) + _knobSize / 2 + 1;
+}
+
 - (void)draw:(NSRect)cellFrame inView:(NSView*)controlView
 {
     NSRect knobRect = [self knobRectFlipped:[controlView isFlipped]];
@@ -291,17 +298,15 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
     [_cImage drawInRect:rc fromRect:NSZeroRect
               operation:NSCompositeSourceOver fraction:1.0];
 
-    float minValue = [self minValue];
-    float maxValue = [self maxValue];
     float minY = NSMinY(trackRect) + 1;
     float maxY = NSMaxY(trackRect) - 1;
     // index duration
-    if (_indexDuration < maxValue) {
+    if (_indexDuration < [self maxValue]) {
         // FIXME
         [[NSColor colorWithCalibratedWhite:0.8 alpha:0.7] set];     // FIXME
         NSBezierPath* path = [NSBezierPath bezierPath];
-        float bx = trackRect.size.width * _indexDuration / (maxValue - minValue) + _knobSize / 2 + 1;
-        float ex = trackRect.size.width * maxValue       / (maxValue - minValue) + _knobSize / 2 - 1;
+        float bx = [self locationOfValue:_indexDuration];
+        float ex = [self locationOfValue:[self maxValue]];
         [path moveToPoint:NSMakePoint(bx, minY)];
         [path lineToPoint:NSMakePoint(ex, minY)];
         [path lineToPoint:NSMakePoint(ex, maxY)];
@@ -314,8 +319,8 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
     if (0 <= _repeatBeginning) {
         [[NSColor colorWithCalibratedWhite:0.5 alpha:0.7] set];
         NSBezierPath* path = [NSBezierPath bezierPath];
-        float bx = trackRect.size.width * _repeatBeginning / (maxValue - minValue) + _knobSize / 2 + 1;
-        float ex = trackRect.size.width * _repeatEnd       / (maxValue - minValue) + _knobSize / 2 - 1;
+        float bx = [self locationOfValue:_repeatBeginning];
+        float ex = [self locationOfValue:_repeatEnd];
         [path moveToPoint:NSMakePoint(bx, minY)];
         [path lineToPoint:NSMakePoint(ex, minY)];
         [path lineToPoint:NSMakePoint(ex, maxY)];
@@ -398,9 +403,11 @@ void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
 
 - (void)mouseDown:(NSEvent*)theEvent
 {
-    //NSPoint p = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    //TRACE(@"%s (%f,%f)", __PRETTY_FUNCTION__, p.x, p.y);
-    [super mouseDown:theEvent];
+    NSPoint p = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    float x = [(SeekSliderCell*)[self cell] locationOfValue:[self indexDuration]];
+    if (p.x <= x) {
+        [super mouseDown:theEvent];
+    }
 }
 
 - (float)indexDuration { return [(SeekSliderCell*)[self cell] indexDuration]; }
