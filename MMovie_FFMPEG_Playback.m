@@ -114,12 +114,12 @@ static MMovie_FFMPEG* s_currentMovie = 0;
     _avSyncMutex = [[NSLock alloc] init];
     _frameReadMutex = [[NSLock alloc] init];
 
-    _videoQueue = [[PacketQueue alloc] initWithCapacity:30];  // 30 fps * 5 sec.
+    _videoQueue = [[PacketQueue alloc] initWithCapacity:30 * 5];  // 30 fps * 5 sec.
     _audioDataQueue = [[NSMutableArray alloc] initWithCapacity:MAX_AUDIO_STREAM_COUNT];
     int i;
     AudioDataQueue* audioQ;
     for (i = 0; i < _audioStreamCount; i++) {
-        audioQ = [[AudioDataQueue alloc] initWithCapacity:AVCODEC_MAX_AUDIO_FRAME_SIZE * 20];
+        audioQ = [[AudioDataQueue alloc] initWithCapacity:AVCODEC_MAX_AUDIO_FRAME_SIZE * 20 * 5];
         [_audioDataQueue addObject:audioQ];
         [audioQ release];
     }
@@ -127,6 +127,7 @@ static MMovie_FFMPEG* s_currentMovie = 0;
     _flushPacket.data = (uint8_t*)"FLUSH";
 
     _currentTime = 0;
+    _prevImageTime = 0;
     for (i = 0; i < MAX_VIDEO_DATA_BUF_SIZE; i++) {
         _decodedImageTime[i] = 0;
     }
@@ -135,6 +136,8 @@ static MMovie_FFMPEG* s_currentMovie = 0;
     //TRACE(@"host time frequency %f", _hostTimeFreq);
     _hostTime = 0;
     _hostTime0point = 0;
+    _useFrameDrop = _videoStream->r_frame_rate.num / _videoStream->r_frame_rate.den > 30;
+    _frameInterval = 1. / (_videoStream->r_frame_rate.num / _videoStream->r_frame_rate.den);
     _needKeyFrame = FALSE;
 
     _rate = 1.0;
@@ -480,7 +483,7 @@ static MMovie_FFMPEG* s_currentMovie = 0;
 #pragma mark -
 
 
-- (float)decodeVideo
+- (double)decodeVideo
 {
     //TRACE(@"%s(%d) %d %d", __PRETTY_FUNCTION__, _nextVideoBufId, _decodedImageCount, _decodedImageBufCount);
     AVPacket packet;
@@ -520,7 +523,7 @@ static MMovie_FFMPEG* s_currentMovie = 0;
     else if (_videoFrame->opaque && *(uint64_t*)_videoFrame->opaque != AV_NOPTS_VALUE) {
         pts = *(uint64_t*)_videoFrame->opaque;
     }
-    return (float)(pts * av_q2d(_videoStream->time_base));
+    return (double)(pts * av_q2d(_videoStream->time_base));
 }
 
 - (BOOL)convertImage
@@ -552,30 +555,36 @@ static MMovie_FFMPEG* s_currentMovie = 0;
         return FALSE;
     }
     //float videoTime = (float)timeStamp->videoTime / timeStamp->videoTimeScale;
-    float hostTime = (float)timeStamp->hostTime / _hostTimeFreq;
-    float current = hostTime - _hostTime0point;
-    float imageTime = _decodedImageTime[_videoDataBufId];
-    if (imageTime + 1 < current || current + 1 < imageTime) {
+    double hostTime = (double)timeStamp->hostTime / _hostTimeFreq;
+    double current = hostTime - _hostTime0point;
+    double imageTime = _decodedImageTime[_videoDataBufId];
+    if (imageTime + 0.5 < current || current + 0.5 < imageTime) {
         TRACE(@"reset av sync %f %f", current, imageTime);
         _hostTime0point = hostTime - imageTime;
         current = imageTime;
     }
     //#define _FRAME_DROP
     #ifdef _FRAME_DROP
-    while (imageTime + 1. / 24 < current) {
-        if (_decodedImageCount > 0) {
-            [self discardImage];
-            imageTime = _decodedImageTime[_videoDataBufId];
+    while ((_avFineTuningTime || _useFrameDrop) && 
+           imageTime + _frameInterval < current) {
+        if (_decodedImageCount < 0) {
+            break;
         }
-        else {
-            return FALSE;
-        }
+        [self discardImage];
+        imageTime = _decodedImageTime[_videoDataBufId];
     }
     #endif
-    if (current + 0.002 < imageTime) {
+    if (current < imageTime) {
         //TRACE(@"wait(%d) %f < %f", _videoDataBufId, current, imageTime);
         return FALSE;
     }
+    /*
+    if (_prevImageTime < current && 
+        current - _prevImageTime < _frameInterval * 0.5) {
+        return FALSE;
+    }
+    */
+    _prevImageTime = current;
     _decodedImageCount--;
     _hostTime0point -= _avFineTuningTime;
     //TRACE(@"draw(%d) %f %f", _videoDataBufId, current, imageTime);
@@ -625,7 +634,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     if (![self isNewImageAvailable:timeStamp]) {
         return 0;
     }
-    float hostTime = (float)timeStamp->hostTime / _hostTimeFreq;
+    double hostTime = (double)timeStamp->hostTime / _hostTimeFreq;
     [_avSyncMutex lock];
     _hostTime = hostTime;
     _currentTime = _decodedImageTime[_videoDataBufId];

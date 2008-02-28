@@ -144,7 +144,7 @@
     return TRUE;
 }
 
-- (BOOL)getData:(UInt8*)data size:(int)size time:(float*)time;
+- (BOOL)getData:(UInt8*)data size:(int)size time:(double*)time;
 {
     [_mutex lock];
     if ([self dataSize] < size) {
@@ -161,7 +161,7 @@
     return TRUE;
 }
 
-- (void)removeDataDuring:(float)dt time:(float*)time;
+- (void)removeDataDuring:(double)dt time:(double*)time;
 {
     int size = 1. * dt * _bitRate;
     [_mutex lock];
@@ -175,7 +175,7 @@
 }
 
 /*
-- (void)removeDate:(float)upTo time:(float*)time;
+- (void)removeDate:(double)upTo time:(double*)time;
 {
     [_mutex lock];
     if (_time <= upTo) {
@@ -193,7 +193,7 @@
 }
 */
 
-- (void)getFirstTime:(float*)time;
+- (void)getFirstTime:(double*)time;
 {
     [_mutex lock];
     *time = _time - 1. * [self dataSize] / _bitRate;
@@ -518,7 +518,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     }
 }
 
-- (void)setAvFineTuning:(int)streamId fineTuningTime:(float)time
+- (void)setAvFineTuning:(int)streamId fineTuningTime:(double)time
 {
     if (streamId == _firstAudioStreamId) {
         _avFineTuningTime = time;
@@ -542,7 +542,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     int streamId = [mTrack streamId];
     int channelNumber = ioData->mNumberBuffers;
 	int requestSize = frameNumber * frameSize * channelNumber;
-    float* audioTime = &_nextDecodedAudioTime[streamId];
+    double* audioTime = &_nextDecodedAudioTime[streamId];
     AudioDataQueue* dataQueue = [_audioDataQueue objectAtIndex:streamId];
     AUDIO_DATA_TYPE* dst[MAX_AUDIO_CHANNEL_SIZE];
     assert(AUDIO_BUF_SIZE > requestSize);
@@ -561,32 +561,32 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         return;
     }
     
-    float currentAudioTime = 1. * timeStamp->mHostTime / _hostTimeFreq;
+    double currentAudioTime = 1. * timeStamp->mHostTime / _hostTimeFreq;
     [_avSyncMutex lock];
-    float currentTime = currentAudioTime - _hostTime0point;
+    double currentTime = currentAudioTime - _hostTime0point;
     [_avSyncMutex unlock];    
     [dataQueue getFirstTime:audioTime];
     
-    if (currentTime + 0.05 < *audioTime) {
+    if (currentTime + 0.02 < *audioTime) {
         if (currentTime + 0.2 < *audioTime) {
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             [self setAvFineTuning:streamId fineTuningTime:0];
-            //TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, *audioTime);
+            TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, *audioTime);
             return;
         }
-        float dt = *audioTime - currentTime;
+        double dt = *audioTime - currentTime;
         [self setAvFineTuning:streamId fineTuningTime:dt];
     }
-    else if (*audioTime != 0 && *audioTime + 0.05 < currentTime) {
+    else if (*audioTime != 0 && *audioTime + 0.02 < currentTime) {
         if (*audioTime + 0.2 < currentTime) {
-            float gap = 0.2/*currentTime - *audioTime*/; // FIXME
-            //TRACE(@"currentTime(%f) > audioTime[%d] %f", currentTime, streamId, *audioTime);
+            double gap = 0.2/*currentTime - *audioTime*/; // FIXME
+            TRACE(@"currentTime(%f) > audioTime[%d] %f data removed", currentTime, streamId, *audioTime);
             [dataQueue removeDataDuring:gap time:audioTime];
             [self makeEmptyAudio:dst channelNumber:channelNumber bufSize:frameNumber];
             [self setAvFineTuning:streamId fineTuningTime:0];
             return;
         }
-        float dt = *audioTime - currentTime;
+        double dt = *audioTime - currentTime;
         [self setAvFineTuning:streamId fineTuningTime:dt];
     }
     else {

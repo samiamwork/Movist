@@ -152,12 +152,13 @@ enum {
     // playback: play
     float _rate;
     BOOL _playAfterSeek;   // for continuous play after seek
+    double _frameInterval;
     BOOL _useFrameDrop;
 
     // playback: seek
     float _seekTime;
     float _reservedSeekTime;
-    float _lastDecodedTime;
+    double _lastDecodedTime;
     BOOL _needKeyFrame;
     BOOL _seekKeyFrame;
     
@@ -174,15 +175,16 @@ enum {
     AVPacket _flushPacket;
     int _decodedImageCount;
     int _decodedImageBufCount;
-    float _currentTime;
-    float _decodedImageTime[MAX_VIDEO_DATA_BUF_SIZE];
+    double _currentTime;
+    double _prevImageTime;
+    double _decodedImageTime[MAX_VIDEO_DATA_BUF_SIZE];
     int _videoDataBufId;
     int _nextVideoBufId;
-    float _nextDecodedAudioTime[MAX_AUDIO_STREAM_COUNT];
+    double _nextDecodedAudioTime[MAX_AUDIO_STREAM_COUNT];
     double _hostTimeFreq;
-    float _hostTime;
-    float _hostTime0point;
-    float _avFineTuningTime;
+    double _hostTime;
+    double _hostTime0point;
+    double _avFineTuningTime;
     
     // audio
     float _volume;
