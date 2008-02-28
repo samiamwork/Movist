@@ -104,7 +104,7 @@ typedef struct {
     }
     AVPacket packet;
     int i;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 10; i++) {
         if (_quitRequested) {
             break;
         }
@@ -225,7 +225,7 @@ typedef struct {
 }
 
 /*
-- (float) keyFrameTime:(float)time mode:(int)mode
+- (double) keyFrameTime:(double)time mode:(int)mode
 {
     int left = 0;
     int right = _rebuildedKeyCount - 1;
