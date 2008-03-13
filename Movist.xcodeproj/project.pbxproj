@@ -33,6 +33,9 @@
 		AF0C512C0C5CDB5800199932 /* RemoteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51240C5CDB5800199932 /* RemoteControl.m */; };
 		AF0C512D0C5CDB5800199932 /* RemoteControlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */; };
 		AF16C7F90C296F7400AC0A4B /* ControlPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = AF16C7F80C296F7400AC0A4B /* ControlPanel.m */; };
+		AF1852B20D83FC180017D0A5 /* MSubtitleParser.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1852B00D83FC180017D0A5 /* MSubtitleParser.m */; };
+		AF18535E0D8422A30017D0A5 /* MovistExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = AF18535C0D8422A30017D0A5 /* MovistExtensions.m */; };
+		AF1854680D843D980017D0A5 /* SeekSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1854660D843D980017D0A5 /* SeekSlider.m */; };
 		AF1AF9EC0C7F5E4900B89068 /* FFMPEG16.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF1AF9EA0C7F5E4900B89068 /* FFMPEG16.tiff */; };
 		AF1AF9ED0C7F5E4900B89068 /* QuickTime16.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF1AF9EB0C7F5E4900B89068 /* QuickTime16.tiff */; };
 		AF1C72100BDCF4C60056BAB8 /* MSubtitleParser_SMI.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */; };
@@ -43,7 +46,6 @@
 		AF30E2EE0C2EB5A2009DB59C /* MainControlPanel.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF30E2ED0C2EB5A2009DB59C /* MainControlPanel.tiff */; };
 		AF30E33A0C2EC195009DB59C /* FullScreener_Animation.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E3380C2EC195009DB59C /* FullScreener_Animation.m */; };
 		AF30E3450C2EC453009DB59C /* MMovie_FFMPEG_Playback.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E3440C2EC453009DB59C /* MMovie_FFMPEG_Playback.m */; };
-		AF30E3A80C2ECA87009DB59C /* MMovie_FFMPEG_Init.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E3A70C2ECA87009DB59C /* MMovie_FFMPEG_Init.m */; };
 		AF31CED70B7EE40100676AC6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = AF31CED60B7EE40100676AC6 /* AppController.m */; };
 		AF31CEDD0B7EE42F00676AC6 /* MMovieView.m in Sources */ = {isa = PBXBuildFile; fileRef = AF31CEDC0B7EE42F00676AC6 /* MMovieView.m */; };
 		AF31CFE50B7EF99000676AC6 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF31CFE10B7EF99000676AC6 /* OpenGL.framework */; };
@@ -207,6 +209,12 @@
 		AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControlContainer.m; path = AppleRemote/RemoteControlContainer.m; sourceTree = "<group>"; };
 		AF16C7F70C296F7400AC0A4B /* ControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = ControlPanel.h; sourceTree = "<group>"; };
 		AF16C7F80C296F7400AC0A4B /* ControlPanel.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = ControlPanel.m; sourceTree = "<group>"; };
+		AF1852B00D83FC180017D0A5 /* MSubtitleParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser.m; sourceTree = "<group>"; };
+		AF1852B10D83FC180017D0A5 /* MSubtitleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser.h; sourceTree = "<group>"; };
+		AF18535C0D8422A30017D0A5 /* MovistExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MovistExtensions.m; sourceTree = "<group>"; };
+		AF18535D0D8422A30017D0A5 /* MovistExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovistExtensions.h; sourceTree = "<group>"; };
+		AF1854660D843D980017D0A5 /* SeekSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeekSlider.m; sourceTree = "<group>"; };
+		AF1854670D843D980017D0A5 /* SeekSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeekSlider.h; sourceTree = "<group>"; };
 		AF1AF9EA0C7F5E4900B89068 /* FFMPEG16.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FFMPEG16.tiff; path = Images/FFMPEG16.tiff; sourceTree = "<group>"; };
 		AF1AF9EB0C7F5E4900B89068 /* QuickTime16.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = QuickTime16.tiff; path = Images/QuickTime16.tiff; sourceTree = "<group>"; };
 		AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SMI.m; sourceTree = "<group>"; };
@@ -217,7 +225,6 @@
 		AF30E2ED0C2EB5A2009DB59C /* MainControlPanel.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainControlPanel.tiff; path = Images/MainControlPanel.tiff; sourceTree = "<group>"; };
 		AF30E3380C2EC195009DB59C /* FullScreener_Animation.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = FullScreener_Animation.m; sourceTree = "<group>"; };
 		AF30E3440C2EC453009DB59C /* MMovie_FFMPEG_Playback.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovie_FFMPEG_Playback.m; sourceTree = "<group>"; };
-		AF30E3A70C2ECA87009DB59C /* MMovie_FFMPEG_Init.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovie_FFMPEG_Init.m; sourceTree = "<group>"; };
 		AF31CED50B7EE40100676AC6 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		AF31CED60B7EE40100676AC6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		AF31CEDB0B7EE42F00676AC6 /* MMovieView.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MMovieView.h; sourceTree = "<group>"; };
@@ -389,6 +396,8 @@
 			children = (
 				AF079E570BDAC1FE00A3EE52 /* Movist.h */,
 				AF9569810BFEEABF002A60BE /* Movist.m */,
+				AF18535D0D8422A30017D0A5 /* MovistExtensions.h */,
+				AF18535C0D8422A30017D0A5 /* MovistExtensions.m */,
 				AFE099BB0C328EB100EB3877 /* Movie */,
 				AF6735670C84013E00E16021 /* Subtitle */,
 				AFE099BE0C328F7700EB3877 /* Playlist */,
@@ -420,6 +429,8 @@
 				AF16C7F80C296F7400AC0A4B /* ControlPanel.m */,
 				AF5141580C3BDBE600BDACB7 /* CustomControls.h */,
 				AF5141590C3BDBE600BDACB7 /* CustomControls.m */,
+				AF1854670D843D980017D0A5 /* SeekSlider.h */,
+				AF1854660D843D980017D0A5 /* SeekSlider.m */,
 				AF0C4ED50C5CAB0700199932 /* AppleRemote */,
 			);
 			name = Classes;
@@ -651,6 +662,8 @@
 			children = (
 				AFFA4D430B80B6FB0024700D /* MSubtitle.h */,
 				AFFA4D440B80B6FB0024700D /* MSubtitle.m */,
+				AF1852B10D83FC180017D0A5 /* MSubtitleParser.h */,
+				AF1852B00D83FC180017D0A5 /* MSubtitleParser.m */,
 				AF37E1490D20BA4300F572C4 /* MSubtitleParser_SMI.h */,
 				AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */,
 				AF37E14A0D20BA4300F572C4 /* MSubtitleParser_SRT.h */,
@@ -666,7 +679,6 @@
 				AF494D870B902DB400EDDB8A /* MMovie.m */,
 				AF494D840B902DB400EDDB8A /* MMovie_FFMPEG.h */,
 				AF494D850B902DB400EDDB8A /* MMovie_FFMPEG.m */,
-				AF30E3A70C2ECA87009DB59C /* MMovie_FFMPEG_Init.m */,
 				AFDCCCCE0D0CC5330098206C /* MMovie_FFMPEG_Index.m */,
 				AF30E3440C2EC453009DB59C /* MMovie_FFMPEG_Playback.m */,
 				AFFA0B080C50837600FCBE18 /* MMovie_FFMPEG_Audio.m */,
@@ -864,7 +876,6 @@
 				AF30E2CE0C2EB3EA009DB59C /* MMovieView_DragDrop.m in Sources */,
 				AF30E33A0C2EC195009DB59C /* FullScreener_Animation.m in Sources */,
 				AF30E3450C2EC453009DB59C /* MMovie_FFMPEG_Playback.m in Sources */,
-				AF30E3A80C2ECA87009DB59C /* MMovie_FFMPEG_Init.m in Sources */,
 				AF51415A0C3BDBE600BDACB7 /* CustomControls.m in Sources */,
 				AF34929D0C48851700CBDA34 /* PreferenceController_Advanced.m in Sources */,
 				AF34929E0C48851700CBDA34 /* PreferenceController_Audio.m in Sources */,
@@ -891,6 +902,9 @@
 				AFDCCCCF0D0CC5330098206C /* MMovie_FFMPEG_Index.m in Sources */,
 				AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */,
 				AFA843C90D1DA8D500D4805C /* AppController_AudioDigital.m in Sources */,
+				AF1852B20D83FC180017D0A5 /* MSubtitleParser.m in Sources */,
+				AF18535E0D8422A30017D0A5 /* MovistExtensions.m in Sources */,
+				AF1854680D843D980017D0A5 /* SeekSlider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

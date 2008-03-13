@@ -25,16 +25,23 @@
 
 #import "Movist.h"
 
+@class MMovie;
+
 @interface MTrack : NSObject
 {
+    MMovie* _movie;
+    NSString* _name;
+    NSString* _summary;
+    BOOL _enabled;
 }
 
+- (id)initWithMovie:(MMovie*)movie;
+
+- (MMovie*)movie;
 - (NSString*)name;
-- (NSString*)format;
+- (NSString*)summary;
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
-- (float)volume;
-- (void)setVolume:(float)volume;
 
 @end
 
@@ -43,8 +50,19 @@
 
 @interface MMovie : NSObject
 {
+    NSURL* _url;
     NSMutableArray* _videoTracks;
     NSMutableArray* _audioTracks;
+    NSSize _displaySize;
+    NSSize _encodedSize;
+    NSSize _adjustedSize;   // by _aspectRatio
+    float _duration;
+
+    float _indexedDuration;
+    float _preferredVolume;
+    float _volume;
+    BOOL _muted;
+
     int _aspectRatio;   // ASPECT_RATIO_*
 }
 
@@ -58,23 +76,25 @@
 - (void)cleanup;
 
 #pragma mark -
+- (NSURL*)url;
 - (NSArray*)videoTracks;
-- (float)duration;
-- (float)indexDuration;
-- (NSSize)size;
-
-- (int)aspectRatio;
-- (void)setAspectRatio:(int)aspectRatio;
-- (NSSize)adjustedSize;
-
-#pragma mark -
-#pragma mark audio
 - (NSArray*)audioTracks;
+- (NSSize)displaySize;
+- (NSSize)encodedSize;
+- (NSSize)adjustedSizeByAspectRatio;
+- (float)duration;
+- (void)trackEnabled:(MTrack*)track;
+- (void)trackDisabled:(MTrack*)track;
+
+- (float)indexedDuration;
 - (float)preferredVolume;
 - (float)volume;
 - (BOOL)muted;
 - (void)setVolume:(float)volume;
 - (void)setMuted:(BOOL)muted;
+
+- (int)aspectRatio;
+- (void)setAspectRatio:(int)aspectRatio;
 
 #pragma mark -
 #pragma mark playback

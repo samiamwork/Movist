@@ -81,6 +81,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_colorFilter setDefaults];
     [_hueFilter setDefaults];
     _fullScreenFill = FS_FILL_NEVER;
+    _subtitlePosition = SUBTITLE_POSITION_AUTO; // for initial update
 
     // OSD: icon, message, subtitle
     NSRect rect = [self bounds];
@@ -162,6 +163,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         CVDisplayLinkSetCurrentCGDisplay(_displayLink, displayID);
         _displayID = displayID;
         TRACE(@"main window moved: display changed");
+        [self updateSubtitlePosition];
+        [[NSApp delegate] updateSubtitlePositionMenuItems];
     }
 }
 
@@ -342,18 +345,18 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
 
     if (_movie) {
-        [_cropFilter setValue:[CIVector vectorWithX:1.0
-                                                  Y:1.0
-                                                  Z:[_movie size].width - 2.0
-                                                  W:[_movie size].height - 2.0]
-                       forKey:@"inputRectangle"];
-        NSSize movieSize = [_movie adjustedSize];
+        NSSize es = [_movie encodedSize];
+        CIVector* vector = [CIVector vectorWithX:1.0 Y:1.0
+                                               Z:es.width - 2.0 W:es.height - 2.0];
+        [_cropFilter setValue:vector forKey:@"inputRectangle"];
+        NSSize movieSize = [_movie adjustedSizeByAspectRatio];
         [_messageOSD setMovieSize:movieSize];
         [_subtitleImageOSD setMovieSize:movieSize];
         [_subtitleRenderer setMovieSize:movieSize];
     }
     [_subtitleRenderer clearSubtitleContent];
     [_subtitleImageOSD clearContent];
+    [self updateSubtitlePosition];
     [_drawLock unlock];
     [self updateMovieRect:TRUE];
 }
@@ -384,18 +387,19 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         [_messageOSD setMovieRect:mr];
     }
     else {
-        NSSize bs = [self bounds].size;
-        NSSize ms = [_movie adjustedSize];
         // update _imageRect
+        NSSize es = [_movie encodedSize];
         _imageRect.origin.x = 0;
         _imageRect.origin.y = 0;
-        _imageRect.size.width = [_movie size].width;
-        _imageRect.size.height = [_movie size].height;
+        _imageRect.size.width = es.width;
+        _imageRect.size.height = es.height;
         // always crop!!!
         _imageRect.origin.x++, _imageRect.size.width  -= 2;
         _imageRect.origin.y++, _imageRect.size.height -= 2;
 
         if ([[NSApp delegate] isFullScreen] && _fullScreenFill == FS_FILL_CROP) {
+            NSSize bs = [self bounds].size;
+            NSSize ms = [_movie adjustedSizeByAspectRatio];
             if (bs.width / bs.height < ms.width / ms.height) {
                 float mw = ms.width * bs.height / ms.height;
                 float dw = (mw - bs.width) * ms.width / mw;
@@ -428,29 +432,35 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [nc postNotificationName:MMovieRectUpdateNotification object:self];
 }
 
-- (float)calcLetterBoxHeight:(NSRect)movieRect
+- (float)subtitleLineHeightForMovieWidth:(float)movieWidth
 {
-    if (![self subtitleDisplayOnLetterBox] ||
-        [self letterBoxHeight] == LETTER_BOX_HEIGHT_DEFAULT) {
-        return 0.0;
-    }
-
-    float fontSize = [_subtitleRenderer fontSize] * movieRect.size.width / 640.0;
+    float fontSize = [_subtitleRenderer fontSize] * movieWidth / 640.0;
     //fontSize = MAX(15.0, fontSize);
     NSFont* font = [NSFont fontWithName:[_subtitleRenderer fontName] size:fontSize];
 
     NSMutableAttributedString* s = [[[NSMutableAttributedString alloc]
         initWithString:NSLocalizedString(@"SubtitleTestChar", nil)] autorelease];
     [s addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, 1)];
-
+    
     NSSize maxSize = NSMakeSize(1000, 1000);
     NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
                                      NSStringDrawingUsesFontLeading |
                                      NSStringDrawingUsesDeviceMetrics;
-    float lineHeight = [s boundingRectWithSize:maxSize options:options].size.height;
+    return [s boundingRectWithSize:maxSize options:options].size.height;
+}
+
+- (float)calcLetterBoxHeight:(NSRect)movieRect
+{
+    if (_subtitlePosition == SUBTITLE_POSITION_ON_MOVIE ||
+        _subtitlePosition == SUBTITLE_POSITION_ON_LETTER_BOX) {
+        return 0.0;
+    }
+
+    float lineHeight = [self subtitleLineHeightForMovieWidth:movieRect.size.width];
     float lineSpacing = [_subtitleRenderer lineSpacing] * movieRect.size.width / 640.0;
+    int lines = _subtitlePosition - SUBTITLE_POSITION_ON_LETTER_BOX;
     // FIXME: how to apply line-spacing for line-height?  it's estimated roughly...
-    return _letterBoxHeight * (lineHeight + lineSpacing / 2);
+    return lines * (lineHeight + lineSpacing / 2);
 }
 
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect
@@ -471,7 +481,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         rect.origin = boundingRect.origin;
 
         NSSize bs = boundingRect.size;
-        NSSize ms = [_movie adjustedSize];
+        NSSize ms = [_movie adjustedSizeByAspectRatio];
         if (bs.width / bs.height < ms.width / ms.height) {
             rect.size.width = bs.width;
             rect.size.height = rect.size.width * ms.height / ms.width;
@@ -721,10 +731,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible];     break;
         case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1]; break;
 
-        case 'h' : case 'H' : [[NSApp delegate] changeLetterBoxHeight: 0];  break;
-        case 'j' : case 'J' : [[NSApp delegate] changeLetterBoxHeight:-1];  break;
-        case 'k' : case 'K' : [[NSApp delegate] changeLetterBoxHeight:+1];  break;
-        case 'l' : case 'L' : [[NSApp delegate] subtitleDisplayOnLetterBoxAction:self]; break;
+        case 'h' : case 'H' : [[NSApp delegate] changeSubtitlePosition: 0]; break;
+        case 'j' : case 'J' : [[NSApp delegate] changeSubtitlePosition:-1]; break;
+        case 'k' : case 'K' : [[NSApp delegate] changeSubtitlePosition:+1]; break;
 
         case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1];     break;
         case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1];     break;

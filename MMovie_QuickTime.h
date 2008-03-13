@@ -29,11 +29,11 @@
     QTTrack* _qtTrack;
 }
 
-- (id)initWithQTTrack:(QTTrack*)qtTrack;
++ (id)trackWithMovie:(MMovie*)movie qtTrack:(QTTrack*)qtTrack;
 
-- (NSString*)name;
-- (BOOL)isEnabled;
-- (void)setEnabled:(BOOL)enabled;
+- (id)initWithMovie:(MMovie*)movie qtTrack:(QTTrack*)qtTrack;
+
+- (QTTrack*)qtTrack;
 
 @end
 
@@ -45,8 +45,7 @@
     QTVisualContextRef _visualContext;
     QTMovie* _qtMovie;
 
-    float _indexDuration;
-    NSTimer* _indexDurationTimer;
+    NSTimer* _indexingUpdateTimer;
 }
 
 + (NSString*)name;

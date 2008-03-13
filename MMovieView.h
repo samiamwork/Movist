@@ -55,7 +55,8 @@
     SubtitleRenderer* _subtitleRenderer;
     MTextImageOSD* _subtitleImageOSD;
     BOOL _subtitleVisible;
-    int _letterBoxHeight;
+    int _subtitlePositionByUser;
+    int _subtitlePosition;
     float _subtitleSync;
 
     // icon, error, message
@@ -81,6 +82,7 @@
 - (void)showLogo;
 - (void)hideLogo;
 - (void)updateMovieRect:(BOOL)display;
+- (float)subtitleLineHeightForMovieWidth:(float)movieWidth;
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect;
 
 - (void)lockDraw;
@@ -121,8 +123,9 @@
 
 @interface MMovieView (Message)
 
+- (void)setMessageWithMovieURL:(NSURL*)movieURL movieInfo:(NSString*)movieInfo
+                   subtitleURL:(NSURL*)subtitleURL subtitleInfo:(NSString*)subtitleInfo;
 - (void)setMessage:(NSString*)s;
-- (void)setMessage:(NSString*)s info:(NSString*)info;
 - (void)setAttributedMessage:(NSMutableAttributedString*)s;
 - (void)invalidateMessageHideTimer;
 - (float)messageHideInterval;
@@ -156,12 +159,11 @@
 - (void)setSubtitleShadowOffset:(float)shadowOffset;
 - (void)setSubtitleShadowDarkness:(int)shadowDarkness;
 
-- (BOOL)subtitleDisplayOnLetterBox;
-- (int)letterBoxHeight;
+- (int)subtitlePosition;
 - (float)subtitleHMargin;
 - (float)subtitleVMargin;
-- (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox;
-- (void)setLetterBoxHeight:(int)height;
+- (void)updateSubtitlePosition;
+- (void)setSubtitlePosition:(int)position;
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
 - (void)setSubtitleLineSpacing:(float)lineSpacing;

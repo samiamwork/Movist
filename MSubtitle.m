@@ -98,33 +98,19 @@
 
 @implementation MSubtitle
 
-+ (NSDictionary*)subtitleTypesAndParsers
-{
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"MSubtitleParser_SMI", @"smi",
-                            @"MSubtitleParser_SRT", @"srt",
-                            //@"MSubtitleParser_SUB", @"sub",
-                            nil];
-}
-
 + (NSArray*)subtitleTypes
 {
-    return [[self subtitleTypesAndParsers] allKeys];
-}
-
-+ (Class)subtitleParserClassForType:(NSString*)type
-{
-    return NSClassFromString([[MSubtitle subtitleTypesAndParsers]
-                                            objectForKey:[type lowercaseString]]);
+    return [subtitleTypesAndParsers() allKeys];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (id)initWithType:(NSString*)type
+- (id)initWithURL:(NSURL*)url type:(NSString*)type
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, type);
     if (self = [super init]) {
+        _url = [url retain];
         _type = [type retain];
         _name = [NSLocalizedString(@"Unnamed", nil) retain];
         _enabled = TRUE;
@@ -150,6 +136,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (NSURL*)url { return _url; }
 - (NSString*)type { return _type; }
 - (NSString*)name { return _name; }
 
@@ -376,112 +363,6 @@
 - (float)nextSubtitleTime:(float)time
 {
     return [self nearestSubtitleTime:time nextNeighbor:TRUE];
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@implementation NSString (MSubtitleParser)
-
-#define rangeOfStringOption (NSCaseInsensitiveSearch | NSLiteralSearch)
-
-- (NSRange)rangeOfString:(NSString*)s range:(NSRange)range
-{
-    //TRACE(@"%s \"%@\" %@", __PRETTY_FUNCTION__, NSStringFromRange(range));
-    return [self rangeOfString:s options:rangeOfStringOption range:range];
-}
-
-- (NSRange)rangeOfString:(NSString*)s rangePtr:(NSRange*)range
-{
-    //TRACE(@"%s \"%@\" %@", __PRETTY_FUNCTION__, s, NSStringFromRange(*range));
-    NSRange r = [self rangeOfString:s range:*range];
-    if (r.location != NSNotFound) {
-        int n = NSMaxRange(r) - range->location;
-        range->location += n;
-        range->length   -= n;
-    }
-    return r;
-}
-
-- (NSRange)tokenRangeForDelimiterSet:(NSCharacterSet*)delimiterSet rangePtr:(NSRange*)range
-{
-    //TRACE(@"%s %@ (%@)", __PRETTY_FUNCTION__, delimiterSet, NSStringFromRange(*range));
-    NSRange result;
-    int i = range->location, end = NSMaxRange(*range);
-    while (i < end && [delimiterSet characterIsMember:[self characterAtIndex:i]]) {
-        i++;
-    }
-    result.location = i;
-    while (i < end && ![delimiterSet characterIsMember:[self characterAtIndex:i]]) {
-        i++;
-    }
-    result.length = i - result.location;
-
-    int n = NSMaxRange(result) - range->location;
-    range->location += n;
-    range->length   -= n;
-
-    return result;
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@implementation NSMutableString (MSubtitleParser)
-
-- (void)removeLeftWhitespaces
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSCharacterSet* set = [NSCharacterSet whitespaceCharacterSet];
-
-    int i, length = [self length];
-    for (i = 0; i < length; i++) {
-        if (![set characterIsMember:[self characterAtIndex:i]]) {
-            if (0 < i) {
-                [self deleteCharactersInRange:NSMakeRange(0, i)];
-            }
-            break;
-        }
-    }
-}
-
-- (void)removeRightWhitespaces
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSCharacterSet* set = [NSCharacterSet whitespaceCharacterSet];
-
-    int i, length = [self length];
-    for (i = length - 1; 0 <= i; i--) {
-        if (![set characterIsMember:[self characterAtIndex:i]]) {
-            if (i < length - 1) {
-                [self deleteCharactersInRange:NSMakeRange(i + 1, length - (i + 1))];
-            }
-            break;
-        }
-    }
-}
-
-- (void)removeNewLineCharacters
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self replaceOccurrencesOfString:@"\r" withString:@""
-                             options:0 range:NSMakeRange(0, [self length])];
-    [self replaceOccurrencesOfString:@"\n" withString:@""
-                             options:0 range:NSMakeRange(0, [self length])];
-}
-
-- (unsigned int)replaceOccurrencesOfString:(NSString*)target
-                                withString:(NSString*)replacement
-{
-    //TRACE(@"%s \"%@\" with \"%@\"", __PRETTY_FUNCTION__, target, replacement);
-    return [self replaceOccurrencesOfString:target
-                                 withString:replacement
-                                    options:rangeOfStringOption
-                                      range:NSMakeRange(0, [self length])];
 }
 
 @end

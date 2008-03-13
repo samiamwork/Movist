@@ -60,7 +60,7 @@ typedef struct _SRTTag {
     }
 
     _subtitles = [[[NSMutableArray alloc] initWithCapacity:1] autorelease];
-    [_subtitles addObject:[[[MSubtitle alloc] initWithType:@"SRT"] autorelease]];
+    [_subtitles addObject:[[[MSubtitle alloc] initWithURL:_subtitleURL type:@"SRT"] autorelease]];
 }
 
 - (BOOL)isIndexString:(NSString*)s

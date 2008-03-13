@@ -25,7 +25,7 @@
 #import "Playlist.h"
 #import "UserDefaults.h"
 
-#import "MMovie_FFMPEG.h"
+#import "MMovie_FFmpeg.h"
 #import "MMovie_QuickTime.h"
 #import "MSubtitleParser_SMI.h"
 #import "MSubtitleParser_SRT.h"
@@ -35,18 +35,6 @@
 #import "CustomControls.h"  // for SeekSlider
 
 @implementation AppController (Open)
-
-- (void)setMessageWithURL:(NSURL*)url info:(NSString*)info
-{
-    NSString* name = ([url isFileURL]) ? [[url path] lastPathComponent] :
-                                         [[url absoluteString] lastPathComponent];
-    NSStringEncoding encoding = [NSString defaultCStringEncoding];
-    const char* cString = [name cStringUsingEncoding:encoding];
-    if (cString) {
-        name = [NSString stringWithCString:cString encoding:encoding];
-    }
-    [_movieView setMessage:name info:info];
-}
 
 - (MMovie*)movieFromURL:(NSURL*)movieURL withMovieClass:(Class)movieClass
                    error:(NSError**)error
@@ -63,19 +51,22 @@
         int decoder = [_defaults integerForKey:MDefaultDecoderKey];
         if (decoder == DECODER_QUICKTIME) {
             classes = [NSArray arrayWithObjects:
-                [MMovie_QuickTime class], [MMovie_FFMPEG class], nil];
+                [MMovie_QuickTime class], [MMovie_FFmpeg class], nil];
         }
         else {
             classes = [NSArray arrayWithObjects:
-                [MMovie_FFMPEG class], [MMovie_QuickTime class], nil];
+                [MMovie_FFmpeg class], [MMovie_QuickTime class], nil];
         }
     }
     
     MMovie* movie;
+    NSString* info;
     NSEnumerator* enumerator = [classes objectEnumerator];
     while (movieClass = [enumerator nextObject]) {
-        [self setMessageWithURL:movieURL info:[NSString stringWithFormat:
-            NSLocalizedString(@"Opening with %@...", nil), [movieClass name]]];
+        info = [NSString stringWithFormat:
+                NSLocalizedString(@"Opening with %@...", nil), [movieClass name]];
+        [_movieView setMessageWithMovieURL:movieURL movieInfo:info
+                               subtitleURL:nil subtitleInfo:nil];
         [_movieView display];   // force display
 
         if (_disablePerianSubtitle) {
@@ -105,66 +96,103 @@
         *error = [NSError errorWithDomain:[NSApp localizedAppName] code:0 userInfo:0];
         return nil;
     }
-    
+
     // find parser for subtitle's path extension
     NSString* path = [subtitleURL path];
-    Class parserClass = [MSubtitle subtitleParserClassForType:[path pathExtension]];
+    Class parserClass = [MSubtitleParser parserClassForSubtitleType:[path pathExtension]];
     if (!parserClass) {
         *error = [NSError errorWithDomain:[NSApp localizedAppName] code:1 userInfo:0];
         return nil;
     }
 
-    // open subtitle with subtitle-encoding
-    NSData* data = [NSData dataWithContentsOfFile:path options:0 error:error];
-    if (!data) {
-        return nil;
-    }
     if (cfEncoding == kCFStringEncodingInvalidId) {
         cfEncoding = [_defaults integerForKey:MSubtitleEncodingKey];
-    }
-    NSStringEncoding nsEncoding = CFStringConvertEncodingToNSStringEncoding(cfEncoding);
-    //TRACE(@"CFStringEncoding:%u => NSStringEncoding:%u", cfEncoding, nsEncoding);
-    NSString* s = [[[NSString alloc] initWithData:data encoding:nsEncoding] autorelease];
-    if (!s) {
-        // remove unconvertable characters
-        const char* p = (const char*)[data bytes];
-        int i = 0, length = [data length];
-        char* contents = (char*)malloc(length);
-        while (i < length) {
-            contents[i] = *p++;
-            if (contents[i] & 0x80) {
-                contents[i + 1] = *p++;
-                contents[i + 2] = '\0';
-                if ([NSString stringWithCString:&contents[i] encoding:nsEncoding]) {
-                    i += 2;
-                }
-            }
-            else {
-                i++;
-            }
-        }
-        s = [NSString stringWithCString:contents encoding:nsEncoding];
-        if (!s) {
-            *error = [NSError errorWithDomain:[NSApp localizedAppName] code:2 userInfo:0];
-            return nil;
-        }
     }
 
     // parse subtitles
     NSDictionary* options = nil;
     if (parserClass == [MSubtitleParser_SMI class]) {
-        NSString* defaultLanguageIdentifiersString =
-            [_defaults objectForKey:MDefaultLanguageIdentifiersKey];
-
+        NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
+        NSNumber* replaceNLWithBR = [_defaults objectForKey:MSubtitleReplaceNLWithBRKey];
+        NSArray* defaultLangIDs = [[_defaults objectForKey:MDefaultLanguageIdentifiersKey]
+                                                        componentsSeparatedByString:@" "];
         options = [NSDictionary dictionaryWithObjectsAndKeys:
-            [_defaults objectForKey:MSubtitleReplaceNLWithBRKey],
-                MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR,
-            [defaultLanguageIdentifiersString componentsSeparatedByString:@" "],
-                MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers,
-            nil];
+                   stringEncoding, MSubtitleParserOptionKey_stringEncoding,
+                   replaceNLWithBR, MSubtitleParserOptionKey_SMI_replaceNewLineWithBR,
+                   defaultLangIDs, MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers,
+                   nil];
     }
-    id<MSubtitleParser> parser = [[[parserClass alloc] init] autorelease];
-    return [parser parseString:s options:options error:error];
+    else if (parserClass == [MSubtitleParser_SRT class]) {
+        NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
+        options = [NSDictionary dictionaryWithObjectsAndKeys:
+                   stringEncoding, MSubtitleParserOptionKey_stringEncoding,
+                   nil];
+    }
+    //else if (parserClass == [MSubtitleParser_SUB class]) {
+    //}
+
+    MSubtitleParser* parser = [[[parserClass alloc] initWithURL:subtitleURL] autorelease];
+    NSArray* subtitles = [parser parseWithOptions:options error:error];
+    if (!subtitles) {
+        *error = [NSError errorWithDomain:[NSApp localizedAppName] code:2 userInfo:0];
+        return nil;
+    }
+    return subtitles;
+}
+
+- (void)updateUIForOpenedMovieAndSubtitleEncoding:(CFStringEncoding)subtitleEncoding
+{
+    NSSize ss = [[_mainWindow screen] frame].size;
+    NSSize ms = [_movie adjustedSizeByAspectRatio];
+    [_movieView setFullScreenFill:(ss.width / ss.height < ms.width / ms.height) ?
+                        [_defaults integerForKey:MFullScreenFillForWideMovieKey] :
+                        [_defaults integerForKey:MFullScreenFillForStdMovieKey]];
+    [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
+    [_movieView updateMovieRect:TRUE];
+    [_movieView hideLogo];
+    [_movieView setMovie:_movie];
+
+    if (subtitleEncoding == kCFStringEncodingInvalidId) {
+        subtitleEncoding = [_defaults integerForKey:MSubtitleEncodingKey];
+    }
+    NSString* subtitleInfo = NSStringFromSubtitleEncoding(subtitleEncoding);
+    if (_subtitles && [_subtitles count] == 0) {
+        subtitleInfo = NSLocalizedString(@"No Subtitle: Reopen with other encodings", nil);
+    }
+    [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:[[_movie class] name]
+                           subtitleURL:[self subtitleURL] subtitleInfo:subtitleInfo];
+
+    if (![self isFullScreen]) {
+        [self resizeWithMagnification:1.0];
+        if ([_defaults boolForKey:MAutoFullScreenKey]) {
+            [self beginFullScreen];
+        }
+    }
+    // subtitles should be set after resizing window.
+    [_movieView setSubtitles:_subtitles];
+
+    // update etc. UI
+    [_seekSlider setMinValue:0];
+    [_seekSlider setMaxValue:[_movie duration]];
+    [_seekSlider setIndexedDuration:0];
+    [_panelSeekSlider setMinValue:0];
+    [_panelSeekSlider setMaxValue:[_movie duration]];
+    [_panelSeekSlider setIndexedDuration:0];
+    [self setRangeRepeatRange:_lastPlayedMovieRepeatRange];
+    
+    [_reopenWithMenuItem setTitle:
+        [NSString stringWithFormat:NSLocalizedString(@"Reopen With %@", nil),
+        ([_movie class] == [MMovie_QuickTime class]) ? [MMovie_FFmpeg name] :
+                                                       [MMovie_QuickTime name]]];
+    _prevMovieTime = 0.0;
+    [self updateUI];
+
+    // update system activity periodically not to activate screen saver
+    _updateSystemActivityTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+        target:self selector:@selector(updateSystemActivity:) userInfo:nil repeats:TRUE];
+
+    // add to recent-menu
+    [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[self movieURL]];
 }
 
 - (BOOL)openMovie:(NSURL*)movieURL movieClass:(Class)movieClass
@@ -205,7 +233,7 @@
     // observe movie's notifications
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     [nc addObserver:self selector:@selector(movieIndexDurationChanged:)
-               name:MMovieIndexDurationNotification object:_movie];
+               name:MMovieIndexedDurationNotification object:_movie];
     [nc addObserver:self selector:@selector(movieRateChanged:)
                name:MMovieRateChangeNotification object:_movie];
     [nc addObserver:self selector:@selector(movieCurrentTimeChanged:)
@@ -239,48 +267,7 @@
         }
     }
 
-    // update movie-view
-    NSSize ss = [[_mainWindow screen] frame].size;
-    NSSize ms = [_movie adjustedSize];
-    int fill = (ss.width / ss.height < ms.width / ms.height) ?
-        [_defaults integerForKey:MFullScreenFillForWideMovieKey] :
-        [_defaults integerForKey:MFullScreenFillForStdMovieKey];
-    [_movieView setFullScreenFill:fill];
-    [_movieView updateMovieRect:TRUE];
-    [_movieView hideLogo];
-    [_movieView setMovie:_movie];
-    [self setMessageWithURL:movieURL info:[[_movie class] name]];
-    if (![self isFullScreen]) {
-        [self resizeWithMagnification:1.0];
-        if ([_defaults boolForKey:MAutoFullScreenKey]) {
-            [self beginFullScreen];
-        }
-    }
-    // subtitles should be set after resizing window.
-    [_movieView setSubtitles:_subtitles];
-
-    // update etc. UI
-    [_seekSlider setMinValue:0];
-    [_seekSlider setMaxValue:[_movie duration]];
-    [_seekSlider setIndexDuration:0];
-    [_panelSeekSlider setMinValue:0];
-    [_panelSeekSlider setMaxValue:[_movie duration]];
-    [_panelSeekSlider setIndexDuration:0];
-    [self setRangeRepeatRange:_lastPlayedMovieRepeatRange];
-
-    [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
-        NSLocalizedString(@"Reopen With %@", nil),
-            ([_movie class] == [MMovie_QuickTime class]) ?
-                                [MMovie_FFMPEG name] : [MMovie_QuickTime name]]];
-    _prevMovieTime = 0.0;
-    [self updateUI];
-
-    // update system activity periodically not to activate screen saver
-    _updateSystemActivityTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-        target:self selector:@selector(updateSystemActivity:) userInfo:nil repeats:TRUE];
-
-    // add to recent-menu
-    [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[self movieURL]];
+    [self updateUIForOpenedMovieAndSubtitleEncoding:subtitleEncoding];
 
     [_movie setRate:_playRate];  // auto play
 
@@ -372,6 +359,7 @@
     NSArray* subtitles = [self subtitleFromURL:subtitleURL withEncoding:encoding error:&error];
     if (!subtitles) {
         runAlertPanelForOpenError(error, subtitleURL);
+        [self setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
         return FALSE;
     }
 
@@ -379,20 +367,28 @@
     _subtitles = [subtitles retain];
 
     [[_playlist currentItem] setSubtitleURL:subtitleURL];
-    [_movieView setSubtitles:   // select first language by default
-        [NSArray arrayWithObject:[_subtitles objectAtIndex:0]]];
+    if (0 < [_subtitles count]) {   // select first language by default
+        [_movieView setSubtitles:[NSArray arrayWithObject:[_subtitles objectAtIndex:0]]];
+    }
+    else {
+        [_movieView setSubtitles:nil];
+    }
 
     [self autoenableSubtitles];
     [self updateSubtitleLanguageMenuItems];
+    [self setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
 
     [_movie gotoBeginning];
 
     if (encoding == kCFStringEncodingInvalidId) {
         encoding = [_defaults integerForKey:MSubtitleEncodingKey];
     }
-    NSStringEncoding nsEncoding = CFStringConvertEncodingToNSStringEncoding(encoding);
-    NSString* encodingString = [NSString localizedNameOfStringEncoding:nsEncoding];
-    [self setMessageWithURL:subtitleURL info:encodingString];
+    NSString* subtitleInfo = NSStringFromSubtitleEncoding(encoding);
+    if (_subtitles && [_subtitles count] == 0) {
+        subtitleInfo = NSLocalizedString(@"No Subtitle: Reopen with other encodings", nil);
+    }
+    [_movieView setMessageWithMovieURL:nil movieInfo:nil
+                           subtitleURL:subtitleURL subtitleInfo:subtitleInfo];
 
     return TRUE;
 }
@@ -401,6 +397,10 @@
 {
     //TRACE(@"%s:%@", __PRETTY_FUNCTION__, movieClass);
     [self closeMovie];
+
+    // to play at the beginning
+    [_lastPlayedMovieURL release];
+    _lastPlayedMovieURL = nil;
 
     PlaylistItem* item = [_playlist currentItem];
     return [self openMovie:[item movieURL] movieClass:movieClass
@@ -480,7 +480,7 @@
     else {
         NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
         decoder = ([defaults integerForKey:MDefaultDecoderKey] == DECODER_QUICKTIME) ?
-                                        [MMovie_QuickTime name] : [MMovie_FFMPEG name];
+                                        [MMovie_QuickTime name] : [MMovie_FFmpeg name];
         enable = FALSE;
     }
 
@@ -489,7 +489,7 @@
         [_panelDecoderButton setImage:[NSImage imageNamed:@"FSQuickTime"]];
         [_controlPanelDecoderButton setImage:(enable) ? [NSImage imageNamed:@"QuickTime16"] : nil];
     }
-    else {  // [decoder isEqualToString:[MMovie_FFMPEG name]]
+    else {  // [decoder isEqualToString:[MMovie_FFmpeg name]]
         [_decoderButton setImage:[NSImage imageNamed:@"MainFFMPEG"]];
         [_panelDecoderButton setImage:[NSImage imageNamed:@"FSFFMPEG"]];
         [_controlPanelDecoderButton setImage:(enable) ? [NSImage imageNamed:@"FFMPEG16"] : nil];
@@ -551,11 +551,11 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
-        if ([_movie isMemberOfClass:[MMovie_FFMPEG class]]) {
+        if ([_movie isMemberOfClass:[MMovie_FFmpeg class]]) {
             [self reopenMovieWithMovieClass:[MMovie_QuickTime class]];
         }
         else {
-            [self reopenMovieWithMovieClass:[MMovie_FFMPEG class]];
+            [self reopenMovieWithMovieClass:[MMovie_FFmpeg class]];
         }
     }
 }
@@ -598,9 +598,17 @@
     NSString* identifier = [tableColumn identifier];
     if ([identifier isEqualToString:@"enable"]) {
         if (videoIndex < videoCount) {
-            // video track cannot be unchecked.
-            [[tableColumn dataCellForRow:rowIndex] setEnabled:FALSE];
-            return [NSNumber numberWithBool:TRUE];
+            // at least, one video track should be enabled.
+            int i;
+            NSArray* tracks = [_movie videoTracks];
+            for (i = 0; i < videoCount; i++) {
+                if (i != videoIndex && [[tracks objectAtIndex:i] isEnabled]) {
+                    break;
+                }
+            }
+            [[tableColumn dataCellForRow:rowIndex] setEnabled:i < videoCount];
+            BOOL state = [[tracks objectAtIndex:videoIndex] isEnabled];
+            return [NSNumber numberWithBool:state];
         }
         else {
             [[tableColumn dataCellForRow:rowIndex] setEnabled:TRUE];
@@ -666,8 +674,9 @@
         int subtitleIndex = audioIndex - audioCount;
         
         if (videoIndex < videoCount) {
-            //BOOL enabled = [(NSNumber*)object boolValue];
-            //[self setVideoTrackAtIndex:videoIndex enabled:enabled];
+            BOOL enabled = [(NSNumber*)object boolValue];
+            [self setVideoTrackAtIndex:videoIndex enabled:enabled];
+            [tableView reloadData];  // to update other video tracks availablity
         }
         else if (audioIndex < audioCount) {
             BOOL enabled = [(NSNumber*)object boolValue];

@@ -324,11 +324,11 @@
             _prevMovieTime = ct;
         }
 
-        ct = [_movie indexDuration];
-        dt = ABS(ct - [_seekSlider indexDuration]);
+        ct = [_movie indexedDuration];
+        dt = ABS(ct - [_seekSlider indexedDuration]);
         if (1.0 <= dt * [_seekSlider bounds].size.width / [_movie duration]) {
-            [_seekSlider setIndexDuration:ct];
-            [_panelSeekSlider setIndexDuration:ct];
+            [_seekSlider setIndexedDuration:ct];
+            [_panelSeekSlider setIndexedDuration:ct];
         }
         
         NSString* s = NSStringFromMovieTime([_movie currentTime]);
@@ -346,10 +346,10 @@
     else {
         [_seekSlider setEnabled:FALSE];
         [_seekSlider setFloatValue:0.0];
-        [_seekSlider setIndexDuration:0.0];
+        [_seekSlider setIndexedDuration:0.0];
         [_panelSeekSlider setEnabled:FALSE];
         [_panelSeekSlider setFloatValue:0.0];
-        [_panelSeekSlider setIndexDuration:0.0];
+        [_panelSeekSlider setIndexedDuration:0.0];
 
         [_lTimeTextField setStringValue:@"--:--:--"];
         [_rTimeTextField setStringValue:@"--:--:--"];

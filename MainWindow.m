@@ -23,7 +23,7 @@
 #import "MainWindow.h"
 
 #import "MMovie_QuickTime.h"
-#import "MMovie_FFMPEG.h"
+#import "MMovie_FFmpeg.h"
 #import "AppController.h"       // for NSApp's delegate
 #import "UserDefaults.h"
 
@@ -285,7 +285,7 @@
 - (NSRect)frameRectForScreen
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSSize movieSize = [[_movieView movie] adjustedSize];
+    NSSize movieSize = [[_movieView movie] adjustedSizeByAspectRatio];
     NSSize size = [self frameSizeForMovieSize:movieSize];
     NSSize screenSize = [[self screen] visibleFrame].size;
     if (screenSize.width / screenSize.height < size.width / size.height) {

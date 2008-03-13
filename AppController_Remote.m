@@ -30,7 +30,7 @@
 #import "AppleRemote/GlobalKeyboardDevice.h"
 #import "AppleRemote/KeyspanFrontRowControl.h"
 
-#import <IOKit/pwr_mgt/IOPMKeys.h>
+//#import <IOKit/pwr_mgt/IOPMKeys.h>
 
 @implementation AppController (Remote)
 
@@ -121,12 +121,10 @@
     }
 }
 
-- (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier
-         pressedDown:(BOOL)pressed clickCount:(unsigned int)clickCount
+#if defined(DEBUG)
+- (void)traceRemoteButton:(RemoteControlEventIdentifier)buttonIdentifier
+              pressedDown:(BOOL)pressed clickCount:(unsigned int)clickCount
 {
-    //TRACE(@"%s pressed=%d, clickCount=%d", __PRETTY_FUNCTION__, pressed, clickCount);
-#define _TRACE_APPLE_REMOTE
-#if defined(_TRACE_APPLE_REMOTE)
     NSString* button;
     switch (buttonIdentifier) {
         case kRemoteButtonPlus          : button = @"PLUS";         break;
@@ -145,7 +143,16 @@
         default : button = [NSString stringWithFormat:@"UNMAPPED[%d]", buttonIdentifier];   break;
     }
     TRACE(@"RemoteControl %@ %@(%d)", button, pressed ? @"pressed" : @"released", clickCount);
-#endif  // _TRACE_APPLE_REMOTE
+}
+#endif
+
+- (void)remoteButton:(RemoteControlEventIdentifier)buttonIdentifier
+         pressedDown:(BOOL)pressed clickCount:(unsigned int)clickCount
+{
+    //TRACE(@"%s pressed=%d, clickCount=%d", __PRETTY_FUNCTION__, pressed, clickCount);
+#if defined(DEBUG)
+    [self traceRemoteButton:buttonIdentifier pressedDown:pressed clickCount:clickCount];
+#endif
 
     if (pressed) {
         // pressed only buttons

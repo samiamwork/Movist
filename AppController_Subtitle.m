@@ -24,6 +24,7 @@
 #import "UserDefaults.h"
 
 #import "MMovieView.h"
+#import "MMovie.h"
 
 @implementation AppController (Subtitle)
 
@@ -84,62 +85,27 @@
     [self setSubtitleFontSize:size];
 }
 
-- (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox
+- (void)setSubtitlePosition:(int)position
 {
-    [_movieView setSubtitleDisplayOnLetterBox:displayOnLetterBox];
-    [_movieView setMessage:displayOnLetterBox ?
-        NSLocalizedString(@"Display Subtitle on Letter Box", nil) :
-        NSLocalizedString(@"Display Subtitle on Movie", nil)];
-
-    [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
-    [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
-    [_letterBoxHigherButton setEnabled:displayOnLetterBox];
-    [_letterBoxLowerButton setEnabled:displayOnLetterBox];
-    [_letterBoxDefaultHeightButton setEnabled:displayOnLetterBox];
-}
-
-- (void)setLetterBoxHeight:(int)height
-{
-    if (![_movieView subtitleDisplayOnLetterBox]) {
-        return;
-    }
-    
-    if (height == LETTER_BOX_HEIGHT_DEFAULT) {
-        // nothing to do...
-    }
-    else if (height < MIN_LETTER_BOX_HEIGHT) {
-        height = MIN_LETTER_BOX_HEIGHT;
-    }
-    else if (MAX_LETTER_BOX_HEIGHT < height) {
-        height = MAX_LETTER_BOX_HEIGHT;
-    }
-    [_movieView setLetterBoxHeight:height];
-    [_movieView setMessage:[NSString stringWithFormat:
-                            NSLocalizedString(@"Letter Box Height: %@", nil),
-                            NSStringFromLetterBoxHeight(height)]];
-}
-
-- (void)changeLetterBoxHeight:(int)tag
-{
-    if (![_movieView subtitleDisplayOnLetterBox]) {
-        return;
-    }
-
-    int height;
-    switch (tag) {
-        case -1 : height = [_movieView letterBoxHeight] - 1;     break;
-        case +1 : height = [_movieView letterBoxHeight] + 1;     break;
-        default : height = [_defaults integerForKey:MSubtitleLetterBoxHeightKey];   break;
-    }
-    if (tag != 0) {
-        if (height < MIN_LETTER_BOX_HEIGHT) {
-            height = MIN_LETTER_BOX_HEIGHT;
+    if (position != SUBTITLE_POSITION_AUTO) {
+        if (SUBTITLE_POSITION_ON_LETTER_BOX_3_LINES < position) {
+            position = SUBTITLE_POSITION_ON_LETTER_BOX_3_LINES;
         }
-        else if (MAX_LETTER_BOX_HEIGHT < height) {
-            height = MAX_LETTER_BOX_HEIGHT;
+        else if (position < SUBTITLE_POSITION_ON_MOVIE) {
+            position = SUBTITLE_POSITION_ON_MOVIE;
         }
     }
-    [self setLetterBoxHeight:height];
+    [_movieView setSubtitlePosition:position];
+    [_movieView setMessage:NSStringFromSubtitlePosition(position)];
+    [self updateSubtitlePositionMenuItems];
+}
+
+- (void)changeSubtitlePosition:(int)tag
+{
+    [self setSubtitlePosition:
+        (tag < 0) ? [_movieView subtitlePosition] - 1 :
+        (0 < tag) ? [_movieView subtitlePosition] + 1 :
+                    [_defaults integerForKey:MSubtitlePositionKey]];
 }
 
 - (void)setSubtitleHMargin:(float)hMargin
@@ -333,7 +299,7 @@
         }
     }
 
-    if ([_subtitles count] == 0) {
+    if (!_subtitles || [_subtitles count] == 0) {
         item = [_subtitleMenu
                     insertItemWithTitle:NSLocalizedString(@"No Subtitle", nil)
                                  action:@selector(subtitleLanguageAction:)
@@ -370,6 +336,21 @@
     [_subtitleMenu update];
 }
 
+- (void)updateSubtitlePositionMenuItems
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+#define SUBTITLE_POSITION_MENUITEM_SET_STATE(item)    \
+    [item setState:([item tag] == position) ? NSOnState : NSOffState]
+
+    int position = (_movie) ? [_movieView subtitlePosition] : -10;
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(_subtitlePositionOnMovieMenuItem);
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(_subtitlePositionOnLetterBoxMenuItem);
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(_subtitlePositionOnLetterBox1LineMenuItem);
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(_subtitlePositionOnLetterBox2LinesMenuItem);
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(_subtitlePositionOnLetterBox3LinesMenuItem);
+    [_subtitlePositionPopUpButton selectItemWithTag:position];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark IB actions
@@ -398,28 +379,28 @@
     [self changeSubtitleVMargin:[sender tag]];
 }
 
-- (IBAction)subtitleDisplayOnLetterBoxAction:(id)sender
+- (IBAction)subtitlePositionAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL display;
+    int position;
     if (sender == _preferenceController) {
-        display = [_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey];
+        position = [_defaults integerForKey:MSubtitlePositionKey];
     }
-    else {
-        display = ![_movieView subtitleDisplayOnLetterBox];
+    else if (sender == _subtitlePositionPopUpButton) {
+        position = [[_subtitlePositionPopUpButton selectedItem] tag];
     }
-    [self setSubtitleDisplayOnLetterBox:display];
-}
-
-- (IBAction)letterBoxHeightAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (sender == _preferenceController) {
-        [self setLetterBoxHeight:[_defaults integerForKey:MSubtitleLetterBoxHeightKey]];
+    else if (sender == _subtitlePositionDefaultButton) {
+        position = [_defaults integerForKey:MSubtitlePositionKey];
     }
-    else {
-        [self changeLetterBoxHeight:[sender tag]];
+    else {  // for menu-items
+        if ([sender tag] == 10) {
+            position = [_defaults integerForKey:MSubtitlePositionKey];
+        }
+        else {
+            position = [sender tag];
+        }
     }
+    [self setSubtitlePosition:position];
 }
 
 - (IBAction)subtitleSyncAction:(id)sender

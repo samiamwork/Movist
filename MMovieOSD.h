@@ -75,14 +75,13 @@ enum {  // for _updateMask
 - (float)autoSize:(float)defaultSize;
 
 #pragma mark -
-- (BOOL)displayOnLetterBox;
 - (unsigned int)hAlign;
 - (unsigned int)vAlign;
 - (float)hMargin;
 - (float)vMargin;
-- (void)setDisplayOnLetterBox:(BOOL)displayOnLetterBox;
 - (void)setHAlign:(unsigned int)hAlign;
 - (void)setVAlign:(unsigned int)vAlign;
+- (void)updateVAlign:(BOOL)displayOnLetterBox;
 - (void)setHMargin:(float)hMargin;
 - (void)setVMargin:(float)vMargin;
 

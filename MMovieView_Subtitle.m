@@ -29,6 +29,8 @@
 #import "MImageOSD.h"
 #import "SubtitleRenderer.h"
 
+#import "AppController.h"   // for NSApp's delegate
+
 @implementation MMovieView (Subtitle)
 
 - (NSArray*)subtitles { return _subtitles; }
@@ -43,6 +45,7 @@
         [subtitle clearCache];
     }
     [_subtitleRenderer setSubtitles:_subtitles];
+    [self updateSubtitlePosition];
     [self updateSubtitle];
 }
 
@@ -161,25 +164,61 @@
 #pragma mark -
 #pragma mark subtitle attributes
 
-- (BOOL)subtitleDisplayOnLetterBox { return [_subtitleImageOSD displayOnLetterBox]; }
-- (int)letterBoxHeight { return _letterBoxHeight; }
+- (int)subtitlePosition { return _subtitlePosition; }
 - (float)subtitleHMargin { return [_subtitleImageOSD hMargin]; }
 - (float)subtitleVMargin { return [_subtitleImageOSD vMargin]; }
 - (float)subtitleSync { return _subtitleSync; }
 
-- (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox
+- (void)updateSubtitlePosition
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    // need not update _subtitleRenderer.
-    [_subtitleImageOSD setDisplayOnLetterBox:displayOnLetterBox];
-    [_messageOSD setDisplayOnLetterBox:displayOnLetterBox];
-    [self updateMovieRect:TRUE];
+    int prevPosition = _subtitlePosition;
+
+    if (!_movie || !_subtitles || [_subtitles count] == 0) {
+        _subtitlePosition = SUBTITLE_POSITION_ON_MOVIE;
+    }
+    else {
+        _subtitlePosition = _subtitlePositionByUser;
+        if (_subtitlePosition == SUBTITLE_POSITION_AUTO) {
+            NSRect rect = [[[self window] screen] frame];
+            if (0 < _fullScreenUnderScan) {
+                float underScan = _fullScreenUnderScan / 100.0;
+                rect = NSInsetRect(rect, rect.size.width  * underScan / 2,
+                                         rect.size.height * underScan / 2);
+            }
+            NSSize bs = rect.size;
+            NSSize ms = [_movie adjustedSizeByAspectRatio];
+            if (bs.width / bs.height < ms.width / ms.height) {
+                float lineHeight = [self subtitleLineHeightForMovieWidth:bs.width];
+                float letterBoxHeight = bs.height - (bs.width * ms.height / ms.width);
+                int lines = (int)letterBoxHeight / (int)lineHeight;
+                lines = MIN(2, lines);  // adjust to max. 2 lines
+                _subtitlePosition = (lines == 0) ? SUBTITLE_POSITION_ON_MOVIE :
+                                    (lines == 1) ? SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE :
+                                    (lines == 2) ? SUBTITLE_POSITION_ON_LETTER_BOX_2_LINES:
+                                                   SUBTITLE_POSITION_ON_LETTER_BOX_3_LINES;
+            }
+            else {
+                _subtitlePosition = SUBTITLE_POSITION_ON_MOVIE;
+            }
+            TRACE(@"aspectRatio=%.2f ==> %@", ms.width / ms.height,
+                  NSStringFromSubtitlePosition(_subtitlePosition));
+        }
+    }
+
+    if (prevPosition != _subtitlePosition) {
+        // need not update _subtitleRenderer.
+        BOOL onLetterBox = (_subtitlePosition != SUBTITLE_POSITION_ON_MOVIE);
+        [_subtitleImageOSD updateVAlign:onLetterBox];
+        [_messageOSD updateVAlign:onLetterBox];
+    }
 }
 
-- (void)setLetterBoxHeight:(int)height
+- (void)setSubtitlePosition:(int)position
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    _letterBoxHeight =  height;
+    _subtitlePositionByUser = position;
+
+    [self updateSubtitlePosition];
     [self updateMovieRect:TRUE];
 }
 

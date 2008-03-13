@@ -2,7 +2,7 @@
 "Cancel" = "Cancel";
 "Decoder" = "Decoder";
 "iTunes Movies" = "iTunes Movies";
-"Video Podcast" = "Video Podcast";
+"iTunes Video Podcast" = "iTunes Video Podcast";
 "No movie file" = "No movie file";
 
 /* Check for Updates */
@@ -67,13 +67,16 @@
 "Saturation %.1f" = "Saturation %.1f";
 "Contrast %.1f" = "Contrast %.1f";
 "Hue %.1f" = "Hue %.1f";
+"Video Track %@ enabled" = "Video Track %@ enabled";
+"Video Track %@ disabled" = "Video Track %@ disabled";
 
 /* Message: Subtitle */
-"Display Subtitle on Letter Box" = "Display Subtitle on Letter Box";
-"Display Subtitle on Movie" = "Display Subtitle on Movie";
-"Letter Box Height: %@" = "Letter Box Height: %@";
-"Align Image to Center" = "Align Image to Center";
-"%d Line(s) Height" = "%d Line(s) Height";
+"No Subtitle: Reopen with other encodings" = "No Subtitle: Reopen with other encodings";
+"Auto Subtitle Position" = "Auto Subtitle Position";
+"Subtitle on Movie" = "Subtitle on Movie";
+"Subtitle on Letter Box" = "Subtitle on Letter Box";
+"Subtitle on Letter Box (1 Line)" = "Subtitle on Letter Box (1 Line)";
+"Subtitle on Letter Box (%d Lines)" = "Subtitle on Letter Box (%d Lines)";
 "Subtitle Size %.1f" = "Subtitle Size %.1f";
 "Subtitle HMargin %.1f %%" = "Subtitle HMargin %.1f %%";
 "Subtitle VMargin %.1f %%" = "Subtitle VMargin %.1f %%";
@@ -93,12 +96,19 @@
 
 /* Preferences: advanced details */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
-"Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
-"Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";
-"Capture Screenshot Including Letter Box" = "Capture Screenshot Including Letter Box";
-"Auto-detect Digital Audio-Out" = "Auto-detect Digital Audio-Out";
-"Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
 "Add Similar Files to Playlist for Opening File" = "Add Similar Files to Playlist for Opening File";
+"Auto-detect Digital Audio-Out" = "Auto-detect Digital Audio-Out";
+"Auto-Play On Full Screen" = "Auto-Play On Full Screen";
+"Capture Screenshot Including Letter Box" = "Capture Screenshot Including Letter Box";
+"Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
+"Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
+"Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
+"Full Navigation" = "Full Navigation";
+"Default Navigation Path" = "Default Navigation Path";
+"Show iTunes Movies" = "Show iTunes Movies";
+"Show iTunes TV Shows" = "Show iTunes TV Shows";
+"Show iTunes Video Podcast" = "Show iTunes Video Podcast";
+"Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";
 
 /* Playlist */
 "%d items" = "%d items";

@@ -24,6 +24,7 @@
 
 @interface MSubtitle : NSObject
 {
+    NSURL* _url;
     NSString* _type;
     NSString* _name;
     BOOL _enabled;
@@ -35,10 +36,10 @@
 }
 
 + (NSArray*)subtitleTypes;
-+ (Class)subtitleParserClassForType:(NSString*)type;
 
 #pragma mark -
-- (id)initWithType:(NSString*)type;
+- (id)initWithURL:(NSURL*)url type:(NSString*)type;
+- (NSURL*)url;
 - (NSString*)type;
 - (NSString*)name;
 - (BOOL)isEmpty;
@@ -55,39 +56,5 @@
 - (void)clearCache;
 - (float)prevSubtitleTime:(float)time;
 - (float)nextSubtitleTime:(float)time;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@protocol MSubtitleParser
-
-- (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
-                  error:(NSError**)error;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSString (MSubtitleParser)
-
-- (NSRange)rangeOfString:(NSString*)s range:(NSRange)range;
-- (NSRange)rangeOfString:(NSString*)s rangePtr:(NSRange*)range;
-- (NSRange)tokenRangeForDelimiterSet:(NSCharacterSet*)delimiterSet rangePtr:(NSRange*)range;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSMutableString (MSubtitleParser)
-
-- (void)removeLeftWhitespaces;
-- (void)removeRightWhitespaces;
-- (void)removeNewLineCharacters;
-- (unsigned int)replaceOccurrencesOfString:(NSString*)target
-                                withString:(NSString*)replacement;
 
 @end

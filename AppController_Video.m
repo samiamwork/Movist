@@ -31,11 +31,27 @@
 
 @implementation AppController (Video)
 
+- (void)setVideoTrackAtIndex:(unsigned int)index enabled:(BOOL)enabled
+{
+    MTrack* track = (MTrack*)[[_movie videoTracks] objectAtIndex:index];
+    [track setEnabled:enabled];
+
+    if (enabled) {
+        [_movieView setMessage:[NSString stringWithFormat:
+                                NSLocalizedString(@"Video Track %@ enabled", nil), [track name]]];
+    }
+    else {
+        [_movieView setMessage:[NSString stringWithFormat:
+                                NSLocalizedString(@"Video Track %@ disabled", nil), [track name]]];
+    }
+    //[self updateVideoTrackMenuItems];
+}
+
 - (void)resizeWithMagnification:(float)magnification
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, magnification);
     if (_movie && ![self isFullScreen]) {
-        NSSize size = [_movie adjustedSize];
+        NSSize size = [_movie adjustedSizeByAspectRatio];
         if (magnification != 1.0) {
             size.width  *= magnification;
             size.height *= magnification;
@@ -157,7 +173,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         NSSize ss = [[_mainWindow screen] frame].size;
-        NSSize ms = [_movie adjustedSize];
+        NSSize ms = [_movie adjustedSizeByAspectRatio];
         if (ss.width / ss.height < ms.width / ms.height) {
             if (forWideMovie) {
                 [self setFullScreenFill:fill];
@@ -245,10 +261,12 @@
             }
         }
         [_movie setAspectRatio:aspectRatio];
+        [_movieView updateSubtitlePosition];
         [_movieView updateMovieRect:TRUE];
         [_movieView setMessage:[NSString stringWithFormat:
                             @"%@: %@", [_aspectRatioMenu title], [item title]]];
         [self updateAspectRatioMenu];
+        [self updateSubtitlePositionMenuItems];
     }
 }
 
@@ -287,6 +305,9 @@
         }
         else {
             [self beginFullScreen];
+            if ([_defaults boolForKey:MAutoPlayOnFullScreenKey]) {
+                [_movie setRate:_playRate];  // auto play
+            }
         }
     }
     else {

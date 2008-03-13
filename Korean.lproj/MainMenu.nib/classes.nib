@@ -9,7 +9,6 @@
                 fullScreenAction = id;
                 fullScreenFillAction = id;
                 fullScreenUnderScanAction = id;
-                letterBoxHeightAction = id;
                 moviePropertyAction = id;
                 movieSizeAction = id;
                 muteAction = id;
@@ -39,9 +38,9 @@
                 repeatAction = id;
                 saveCurrentImage = id;
                 seekAction = id;
-                subtitleDisplayOnLetterBoxAction = id;
                 subtitleFontSizeAction = id;
                 subtitleLanguageAction = id;
+                subtitlePositionAction = id;
                 subtitleSyncAction = id;
                 subtitleVMarginAction = id;
                 subtitleVisibleAction = id;
@@ -59,9 +58,6 @@
                 "_controlPanelDecoderButton" = NSButton;
                 "_fullScreenFillMenu" = NSMenu;
                 "_lTimeTextField" = TimeTextField;
-                "_letterBoxDefaultHeightButton" = NSButton;
-                "_letterBoxHigherButton" = NSButton;
-                "_letterBoxLowerButton" = NSButton;
                 "_mainWindow" = MainWindow;
                 "_movieMenu" = NSMenu;
                 "_movieView" = MMovieView;
@@ -99,10 +95,15 @@
                 "_seekNextSubtitleMenuItem" = NSMenuItem;
                 "_seekPrevSubtitleMenuItem" = NSMenuItem;
                 "_seekSlider" = MainSeekSlider;
-                "_subtitleDisplayOnLetterBoxButton" = NSButton;
-                "_subtitleDisplayOnLetterBoxMenuItem" = NSMenuItem;
                 "_subtitleEncodingMenu" = NSMenu;
                 "_subtitleMenu" = NSMenu;
+                "_subtitlePositionDefaultButton" = NSButton;
+                "_subtitlePositionOnLetterBox1LineMenuItem" = NSMenuItem;
+                "_subtitlePositionOnLetterBox2LinesMenuItem" = NSMenuItem;
+                "_subtitlePositionOnLetterBox3LinesMenuItem" = NSMenuItem;
+                "_subtitlePositionOnLetterBoxMenuItem" = NSMenuItem;
+                "_subtitlePositionOnMovieMenuItem" = NSMenuItem;
+                "_subtitlePositionPopUpButton" = NSPopUpButton;
                 "_subtitleVisibleMenuItem" = NSMenuItem;
                 "_syncDefaultMenuItem" = NSMenuItem;
                 "_syncEarlierMenuItem" = NSMenuItem;

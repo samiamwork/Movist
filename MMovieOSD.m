@@ -164,16 +164,7 @@
     _vAlign = vAlign;
 }
 
-- (BOOL)displayOnLetterBox
-{
-    return (_vAlign == OSD_VALIGN_UPPER_FROM_MOVIE_TOP ||
-            _vAlign == OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM) ? TRUE : FALSE;
-}
-
-- (float)hMargin { return _hMargin * 100; }
-- (float)vMargin { return _vMargin * 100; }
-
-- (void)setDisplayOnLetterBox:(BOOL)displayOnLetterBox
+- (void)updateVAlign:(BOOL)displayOnLetterBox
 {
     //TRACE(@"%s %@ (%g,%g)", __PRETTY_FUNCTION__,
     //      displayOnLetterBox ? @"displayOnLetterBox" : @"displayOnMovie",
@@ -196,6 +187,9 @@
         }
     }
 }
+
+- (float)hMargin { return _hMargin * 100; }
+- (float)vMargin { return _vMargin * 100; }
 
 - (void)setHMargin:(float)hMargin
 {

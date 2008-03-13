@@ -2,36 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>IBDocumentLocation</key>
-	<string>192 142 360 314 0 0 1920 1178 </string>
-	<key>IBEditorPositions</key>
-	<dict>
-		<key>220</key>
-		<string>369 593 541 234 0 0 1280 1002 </string>
-		<key>228</key>
-		<string>369 349 541 559 0 0 1280 1002 </string>
-		<key>270</key>
-		<string>369 453 541 421 0 0 1280 1002 </string>
-		<key>276</key>
-		<string>369 588 541 241 0 0 1280 1002 </string>
-		<key>277</key>
-		<string>369 482 541 382 0 0 1280 1002 </string>
-	</dict>
 	<key>IBFramework Version</key>
-	<string>489.0</string>
-	<key>IBLockedTabItems</key>
-	<array>
-		<integer>14</integer>
-	</array>
+	<string>629</string>
+	<key>IBLastKnownRelativeProjectPath</key>
+	<string>../../Movist.xcodeproj</string>
+	<key>IBOldestOS</key>
+	<integer>5</integer>
 	<key>IBOpenObjects</key>
 	<array>
-		<integer>270</integer>
 		<integer>228</integer>
-		<integer>277</integer>
-		<integer>276</integer>
-		<integer>220</integer>
 	</array>
 	<key>IBSystem Version</key>
-	<string>9B18</string>
+	<string>9C31</string>
+	<key>targetFramework</key>
+	<string>IBCocoaFramework</string>
 </dict>
 </plist>

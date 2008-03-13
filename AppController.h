@@ -22,6 +22,7 @@
 
 #import "Movist.h"
 #import "CustomControls.h"
+#import "SeekSlider.h"
 
 #import "AppleRemote/RemoteControl.h"
 
@@ -60,14 +61,16 @@
     BOOL _perianSubtitleEnabled;
     NSTimer* _updateSystemActivityTimer;
 
-    // movie
+    // movie & subtitle
     IBOutlet NSMenu* _movieMenu;
     IBOutlet NSMenu* _aspectRatioMenu;
     IBOutlet NSMenu* _fullScreenFillMenu;
     IBOutlet NSTableView* _propertiesView;
-    NSMutableIndexSet* _audioTrackIndexSet;
     MMovie* _movie;
     Playlist* _playlist;
+    NSArray* _subtitles;
+    NSMutableIndexSet* _audioTrackIndexSet;
+    NSMutableSet* _subtitleNameSet;
     float _playRate;
     float _seekInterval[3];
 
@@ -75,15 +78,6 @@
     NSURL* _lastPlayedMovieURL;
     float _lastPlayedMovieTime;
     NSRange _lastPlayedMovieRepeatRange;
-
-    // subtitle
-    IBOutlet NSMenu* _subtitleMenu;
-    IBOutlet NSMenu* _subtitleEncodingMenu;
-    IBOutlet NSMenuItem* _subtitleVisibleMenuItem;
-    IBOutlet NSMenuItem* _subtitleDisplayOnLetterBoxMenuItem;
-    IBOutlet NSButton* _subtitleDisplayOnLetterBoxButton;
-    NSMutableSet* _subtitleNameSet;
-    NSArray* _subtitles;
 
     // main-menu
     IBOutlet NSMenuItem* _reopenWithMenuItem;
@@ -105,6 +99,14 @@
     IBOutlet NSMenuItem* _rateFasterMenuItem;
     IBOutlet NSMenuItem* _rateDefaultMenuItem;
     IBOutlet NSMenuItem* _muteMenuItem;
+    IBOutlet NSMenu* _subtitleMenu;
+    IBOutlet NSMenu* _subtitleEncodingMenu;
+    IBOutlet NSMenuItem* _subtitleVisibleMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionOnMovieMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionOnLetterBoxMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionOnLetterBox1LineMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionOnLetterBox2LinesMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionOnLetterBox3LinesMenuItem;
     IBOutlet NSMenuItem* _syncLaterMenuItem;
     IBOutlet NSMenuItem* _syncEarlierMenuItem;
     IBOutlet NSMenuItem* _syncDefaultMenuItem;
@@ -126,9 +128,8 @@
 
     // control panel
     IBOutlet ControlPanel* _controlPanel;
-    IBOutlet NSButton* _letterBoxHigherButton;
-    IBOutlet NSButton* _letterBoxLowerButton;
-    IBOutlet NSButton* _letterBoxDefaultHeightButton;
+    IBOutlet NSPopUpButton* _subtitlePositionPopUpButton;
+    IBOutlet NSButton* _subtitlePositionDefaultButton;
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
     IBOutlet NSButton* _controlPanelDecoderButton;
@@ -258,6 +259,7 @@
 
 @interface AppController (Video)
 
+- (void)setVideoTrackAtIndex:(unsigned int)index enabled:(BOOL)enabled;
 - (void)resizeWithMagnification:(float)magnification;
 - (void)resizeToScreen;
 
@@ -325,9 +327,8 @@
 
 - (void)setSubtitleFontSize:(float)size;
 - (void)changeSubtitleFontSize:(int)tag;
-- (void)setSubtitleDisplayOnLetterBox:(BOOL)displayOnLetterBox;
-- (void)setLetterBoxHeight:(int)height;
-- (void)changeLetterBoxHeight:(int)tag;
+- (void)setSubtitlePosition:(int)position;
+- (void)changeSubtitlePosition:(int)tag;
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
 - (void)changeSubtitleVMargin:(int)tag;
@@ -339,13 +340,13 @@
 - (void)setSubtitleSync:(float)sync;
 - (void)changeSubtitleSync:(int)tag;
 - (void)updateSubtitleLanguageMenuItems;
+- (void)updateSubtitlePositionMenuItems;
 
 - (IBAction)subtitleVisibleAction:(id)sender;
 - (IBAction)subtitleLanguageAction:(id)sender;
 - (IBAction)subtitleFontSizeAction:(id)sender;
 - (IBAction)subtitleVMarginAction:(id)sender;
-- (IBAction)subtitleDisplayOnLetterBoxAction:(id)sender;
-- (IBAction)letterBoxHeightAction:(id)sender;
+- (IBAction)subtitlePositionAction:(id)sender;
 - (IBAction)subtitleSyncAction:(id)sender;
 
 @end

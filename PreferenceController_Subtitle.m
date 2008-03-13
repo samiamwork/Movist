@@ -63,14 +63,8 @@
     [_subtitleShadowDarknessSlider setIntValue:shadowDarkness];
     [_subtitleShadowDarknessTextField setIntValue:shadowDarkness];
 
-    BOOL displayOnLetterBox = [_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey];
-    [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
-
-    int height = [_defaults integerForKey:MSubtitleLetterBoxHeightKey];
-    [_subtitleLetterBoxHeightSlider setIntValue:height];
-    [_subtitleLetterBoxHeightSlider setEnabled:displayOnLetterBox];
-    [_subtitleLetterBoxHeightTextField setStringValue:NSStringFromLetterBoxHeight(height)];
-    [_subtitleLetterBoxHeightTextField setEnabled:displayOnLetterBox];
+    int position = [_defaults integerForKey:MSubtitlePositionKey];
+    [_subtitlePositionPopUpButton selectItemWithTag:position];
 
     float hMargin = [_defaults floatForKey:MSubtitleHMarginKey];
     [_subtitleHMarginSlider setFloatValue:hMargin];
@@ -83,8 +77,6 @@
     float lineSpacing = [_defaults floatForKey:MSubtitleLineSpacingKey];
     [_subtitleLineSpacingSlider setFloatValue:lineSpacing];
     [_subtitleLineSpacingTextField setFloatValue:lineSpacing];
-
-    [_subtitleReplaceNLWithBRButton setState:[_defaults boolForKey:MSubtitleReplaceNLWithBRKey]];
 }
 
 - (IBAction)subtitleEnbleAction:(id)sender
@@ -314,27 +306,17 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     enum {
-        SUBTITLE_DISPLAY_ON_LETTER_BOX,
-        SUBTITLE_LETTER_BOX_HEIGHT,
+        SUBTITLE_POSITION,
         SUBTITLE_H_MARGIN,
         SUBTITLE_V_MARGIN,
         SUBTITLE_LINE_SPACING,
     };
 
     switch ([sender tag]) {
-        case SUBTITLE_DISPLAY_ON_LETTER_BOX : {
-            BOOL displayOnLetterBox = [_subtitleDisplayOnLetterBoxButton state];
-            [_defaults setBool:displayOnLetterBox forKey:MSubtitleDisplayOnLetterBoxKey];
-            [_subtitleLetterBoxHeightSlider setEnabled:displayOnLetterBox];
-            [_subtitleLetterBoxHeightTextField setEnabled:displayOnLetterBox];
-            [_appController subtitleDisplayOnLetterBoxAction:self];
-            break;
-        }
-        case SUBTITLE_LETTER_BOX_HEIGHT : {
-            int height = [_subtitleLetterBoxHeightSlider intValue];
-            [_subtitleLetterBoxHeightTextField setStringValue:NSStringFromLetterBoxHeight(height)];
-            [_defaults setInteger:height forKey:MSubtitleLetterBoxHeightKey];
-            [_appController setLetterBoxHeight:height];
+        case SUBTITLE_POSITION : {
+            int position = [[_subtitlePositionPopUpButton selectedItem] tag];
+            [_defaults setInteger:position forKey:MSubtitlePositionKey];
+            [_appController setSubtitlePosition:position];
             break;
         }
         case SUBTITLE_H_MARGIN : {
@@ -362,13 +344,6 @@
             break;
         }
     }
-}
-
-- (IBAction)subtitleReplaceNLWithBRAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_defaults setBool:[_subtitleReplaceNLWithBRButton state] forKey:MSubtitleReplaceNLWithBRKey];
-    [_appController reopenSubtitle];
 }
 
 - (void)initSubtitleEncodingPopUpButton

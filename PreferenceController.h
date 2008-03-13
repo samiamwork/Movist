@@ -43,14 +43,6 @@
     IBOutlet NSStepper* _seekInterval2Stepper;
     IBOutlet NSButton* _supportAppleRemoteButton;
     IBOutlet NSButton* _fullNavUseButton;
-    /*
-    IBOutlet NSTextField* _fullNavPathLabelTextField;
-    IBOutlet NSTextField* _fullNavPathTextField;
-    IBOutlet NSButton* _fullNavPathBrowseButton;
-    IBOutlet NSButton* _fullNavShowiTunesMoviesButton;
-    IBOutlet NSButton* _fullNavShowVideoPodcastButton;
-    IBOutlet NSTextField* _fullNavHelpTextField;
-     */
 
     // video
     IBOutlet NSView* _videoPane;
@@ -88,23 +80,21 @@
     IBOutlet NSTextField*   _subtitleShadowOffsetTextField;
     IBOutlet NSSlider*      _subtitleShadowDarknessSlider;
     IBOutlet NSTextField*   _subtitleShadowDarknessTextField;
-    IBOutlet NSButton*      _subtitleDisplayOnLetterBoxButton;
-    IBOutlet NSSlider*      _subtitleLetterBoxHeightSlider;
-    IBOutlet NSTextField*   _subtitleLetterBoxHeightTextField;
+    IBOutlet NSPopUpButton* _subtitlePositionPopUpButton;
     IBOutlet NSSlider*      _subtitleHMarginSlider;
     IBOutlet NSTextField*   _subtitleHMarginTextField;
     IBOutlet NSSlider*      _subtitleVMarginSlider;
     IBOutlet NSTextField*   _subtitleVMarginTextField;
     IBOutlet NSSlider*      _subtitleLineSpacingSlider;
     IBOutlet NSTextField*   _subtitleLineSpacingTextField;
-    IBOutlet NSButton*      _subtitleReplaceNLWithBRButton;
     
     // advanced
     IBOutlet NSView* _advancedPane;
     IBOutlet NSPopUpButton* _defaultDecoderPopUpButton;
     IBOutlet NSPopUpButton* _updateCheckIntervalPopUpButton;
     IBOutlet NSTextField*   _lastUpdateCheckTimeTextField;
-    IBOutlet NSTableView* _detailsTableView;
+    IBOutlet NSOutlineView* _detailsOutlineView;
+    NSMutableArray* _detailsArray;
 
     NSUserDefaults* _defaults;
     AppController* _appController;
@@ -134,11 +124,6 @@
 - (IBAction)seekIntervalAction:(id)sender;
 - (IBAction)supportAppleRemoteAction:(id)sender;
 - (IBAction)fullNavUseAction:(id)sender;
-/*
-- (IBAction)fullNavPathBrowseAction:(id)sender;
-- (IBAction)fullNavShowiTunesMoviesAction:(id)sender;
-- (IBAction)fullNavShowVideoPodcastAction:(id)sender;
-*/
 
 @end
 
@@ -179,7 +164,6 @@
 - (IBAction)subtitleAutoFontSizeCharsAction:(id)sender;
 - (IBAction)subtitleAttributesAction:(id)sender;
 - (IBAction)subtitlePositionAction:(id)sender;
-- (IBAction)subtitleReplaceNLWithBRAction:(id)sender;
 - (void)initSubtitleEncodingPopUpButton;
 - (void)updateSubtitleFontAndSizeUI;
 
@@ -197,11 +181,12 @@
 - (IBAction)updateCheckIntervalAction:(id)sender;
 - (IBAction)checkUpdateNowAction:(id)sender;
 
-- (int)numberOfRowsInTableView:(NSTableView*)tableView;
-- (id)tableView:(NSTableView*)tableView
-    objectValueForTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
-- (void)tableView:(NSTableView*)tableView setObjectValue:(id)object
-   forTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
+- (void)initDetailsUI;
+- (int)outlineView:(NSOutlineView*)outlineView numberOfChildrenOfItem:(id)item;
+- (BOOL)outlineView:(NSOutlineView*)outlineView isItemExpandable:(id)item;
+- (id)outlineView:(NSOutlineView*)outlineView child:(int)index ofItem:(id)item;
+- (id)outlineView:(NSOutlineView*)outlineView
+    objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item;
 
 @end
 

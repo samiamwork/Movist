@@ -111,7 +111,8 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 
 - (void)initDigitalAudio
 {
-    _supportDigitalAudio = supportDigitalAudio(&_audioStreamID);
+    _supportDigitalAudio = [_defaults boolForKey:MAutodetectDigitalAudioOutKey] &&
+                           supportDigitalAudio(&_audioStreamID);
     [self updateAudioOutput:nil];   // not to set volume
     [self updateA52CodecProperties];
 
@@ -180,9 +181,12 @@ static int AudioStreamSupportsDigital( AudioStreamID i_stream_id )
     
     for (i = 0; i < i_formats; ++i) {
         //TRACE(@"supported format:", &p_format_list[i]);
-        if (p_format_list[i].mFormatID == 'IAC3' ||
-            p_format_list[i].mFormatID == kAudioFormat60958AC3)
+        if (p_format_list[i].mFormatID == kAudioFormatAC3 ||
+            p_format_list[i].mFormatID == kAudioFormat60958AC3 ||
+            p_format_list[i].mFormatID == 'IAC3') {
+            //TRACE(@"[%d]sampleRate = %lf", i, p_format_list[i].mSampleRate);
             b_return = TRUE;
+        }
     }
     
     free(p_format_list);

@@ -42,9 +42,6 @@ NSString* MSeekInterval1Key                 = @"SeekInterval1";
 NSString* MSeekInterval2Key                 = @"SeekInterval2";
 NSString* MSupportAppleRemoteKey            = @"SupportAppleRemote";
 NSString* MFullNavUseKey                    = @"FullNavUse";
-NSString* MFullNavPathKey                   = @"FullNavPath";
-NSString* MFullNavShowiTunesMoviesKey       = @"FullNavShowiTunesMovies";
-NSString* MFullNavShowVideoPodcastKey       = @"FullNavShowVideoPodcast";
 
 #pragma mark -
 #pragma mark prefs: video
@@ -72,12 +69,10 @@ NSString* MSubtitleShadowColorKey           = @"SubtitleShadowColor";
 NSString* MSubtitleShadowBlurKey            = @"SubtitleShadowBlur";
 NSString* MSubtitleShadowOffsetKey          = @"SubtitleShadowOffset";
 NSString* MSubtitleShadowDarknessKey        = @"SubtitleShadowDarkness";
-NSString* MSubtitleDisplayOnLetterBoxKey    = @"SubtitleDisplayOnLetterBox";
-NSString* MSubtitleLetterBoxHeightKey       = @"SubtitleLetterBoxHeight";
+NSString* MSubtitlePositionKey              = @"SubtitlePosition";
 NSString* MSubtitleHMarginKey               = @"SubtitleHMargin";
 NSString* MSubtitleVMarginKey               = @"SubtitleVMargin";
 NSString* MSubtitleLineSpacingKey           = @"SubtitleLineSpacing";
-NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 
 #pragma mark -
 #pragma mark prefs: advanced
@@ -87,18 +82,27 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 
 #pragma mark -
 #pragma mark prefs: advanced - details
+// General
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
-NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
-NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
-NSString* MCaptureIncludingLetterBoxKey     = @"CaptureIncludingLetterBox";
-NSString* MAutodetectDigitalAudioOutKey     = @"AutodetectDigitalAudioOut";
-NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
 NSString* MAutodetectMovieSeriesKey         = @"AutodetectMovieSeries";
+NSString* MAutodetectDigitalAudioOutKey     = @"AutodetectDigitalAudioOut";
+NSString* MAutoPlayOnFullScreenKey          = @"AutoPlayOnFullScreen";
+NSString* MCaptureIncludingLetterBoxKey     = @"CaptureIncludingLetterBox";
+// Subtitle
+NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
+NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
+NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
+// Full Navigation
+NSString* MFullNavPathKey                   = @"FullNavPath";
+NSString* MFullNavShowiTunesMoviesKey       = @"FullNavShowiTunesMovies";
+NSString* MFullNavShowiTunesTVShowsKey      = @"FullNavShowiTunesTVShows";
+NSString* MFullNavShowiTunesPodcastKey      = @"FullNavShowiTunesPodcast";
+NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@implementation NSUserDefaults (Movist)
+@implementation NSUserDefaults (MovistUserDefaults)
 
 - (void)registerMovistDefaults
 {
@@ -121,9 +125,6 @@ NSString* MAutodetectMovieSeriesKey         = @"AutodetectMovieSeries";
     [dict setObject:[NSNumber numberWithFloat:300.0] forKey:MSeekInterval2Key];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSupportAppleRemoteKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavUseKey];
-    [dict setObject:[@"~/Movies" stringByExpandingTildeInPath] forKey:MFullNavPathKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesMoviesKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowVideoPodcastKey];
 
     // prefs: video
     [dict setObject:[NSNumber numberWithInt:FS_EFFECT_ANIMATION] forKey:MFullScreenEffectKey];
@@ -151,98 +152,35 @@ NSString* MAutodetectMovieSeriesKey         = @"AutodetectMovieSeries";
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleShadowOffsetKey];
     [dict setObject:[NSNumber numberWithFloat:2.5] forKey:MSubtitleShadowBlurKey];
     [dict setObject:[NSNumber numberWithInt:5] forKey:MSubtitleShadowDarknessKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleDisplayOnLetterBoxKey];
-    [dict setObject:[NSNumber numberWithInt:LETTER_BOX_HEIGHT_DEFAULT] forKey:MSubtitleLetterBoxHeightKey];
+    [dict setObject:[NSNumber numberWithInt:SUBTITLE_POSITION_AUTO] forKey:MSubtitlePositionKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleHMarginKey];
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleVMarginKey];
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleLineSpacingKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
 
     // prefs: advanced
     [dict setObject:[NSNumber numberWithInt:DECODER_QUICKTIME] forKey:MDefaultDecoderKey];
     [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MUpdateCheckIntervalKey];
     [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastUpdateCheckTimeKey];
 
-    // prefs: advanced - details
+    // prefs: advanced - details: general
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MShowActualPathForLinkKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MCaptureIncludingLetterBoxKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
-    [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectMovieSeriesKey];
-
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoPlayOnFullScreenKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MCaptureIncludingLetterBoxKey];
+    // prefs: advanced - details: subtitle
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
+    [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
+    // prefs: advanced - details: full navigation
+    [dict setObject:@"~/Movies" forKey:MFullNavPathKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesMoviesKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesTVShowsKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesPodcastKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MShowActualPathForLinkKey];
+    
     //TRACE(@"registering defaults: %@", dict);
     [self registerDefaults:dict];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark color extension
-#pragma mark -
-
-- (void)setColor:(NSColor*)color forKey:(NSString*)key
-{
-    //TRACE(@"%s %@ for \"%@\"", __PRETTY_FUNCTION__, color, key);
-    NSData* data = [NSArchiver archivedDataWithRootObject:color];
-    [self setObject:data forKey:key];
-}
-
-- (NSColor*)colorForKey:(NSString*)key
-{
-    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, key);
-    NSData* data = [self dataForKey:key];
-    return (!data) ? nil : (NSColor*)[NSUnarchiver unarchiveObjectWithData:data];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark A52Codec
-
-NSString* A52CODEC_DEFAULTS                 = @"com.cod3r.a52codec";
-NSString* A52CODEC_ATTEMPT_PASSTHROUGH_KEY  = @"attemptPassthrough";
-
-- (void)setA52CodecAttemptPassthrough:(BOOL)enabled
-{
-    NSMutableDictionary* a52Codec =
-        [[[self persistentDomainForName:A52CODEC_DEFAULTS] mutableCopy] autorelease];
-
-    [a52Codec setObject:[NSNumber numberWithInt:enabled ? 1 : 0]
-                 forKey:A52CODEC_ATTEMPT_PASSTHROUGH_KEY];
-
-    [self removePersistentDomainForName:A52CODEC_DEFAULTS];
-    [self setPersistentDomain:a52Codec forName:A52CODEC_DEFAULTS];
-    [self synchronize];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark Perian
-
-NSString* PERIAN_DEFAULTS       = @"org.perian.Perian";
-NSString* PERIAN_SUBTITLE_KEY   = @"LoadExternalSubtitles";
-
-- (BOOL)isPerianSubtitleEnabled
-{
-    NSDictionary* perian = [self persistentDomainForName:PERIAN_DEFAULTS];
-    if (!perian) {
-        return TRUE;    // enabled by default of capri-perian
-    }
-
-    //TRACE(@"perian=%@", perian);
-    NSNumber* number = [perian objectForKey:PERIAN_SUBTITLE_KEY];
-    return (number) ? [number boolValue] : TRUE;    // enabled by default of capri-perian
-}
-
-- (void)setPerianSubtitleEnabled:(BOOL)enabled
-{
-    NSMutableDictionary* perian =
-        [[[self persistentDomainForName:PERIAN_DEFAULTS] mutableCopy] autorelease];
-
-    [perian setObject:[NSNumber numberWithBool:enabled] forKey:PERIAN_SUBTITLE_KEY];
-
-    [self removePersistentDomainForName:PERIAN_DEFAULTS];
-    [self setPersistentDomain:perian forName:PERIAN_DEFAULTS];
-    [self synchronize];
 }
 
 @end

@@ -22,6 +22,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#import "MovistExtensions.h"
+
 #pragma mark check-for-updates
 enum {
     CHECK_UPDATE_NEVER,
@@ -79,23 +81,22 @@ enum {
     ERROR_FFMPEG_AUDIO_UNIT_CREATE_FAILED,
 };
 
+#define DEFAULT_VOLUME  1.0
 #define MAX_VOLUME      4.0
 
 #define MIN_PLAY_RATE   0.5
 #define MAX_PLAY_RATE   3.0
 
-#define LETTER_BOX_HEIGHT_DEFAULT   0
-#define LETTER_BOX_HEIGHT_1_LINE    1
-#define LETTER_BOX_HEIGHT_2_LINES   2
-#define LETTER_BOX_HEIGHT_3_LINES   3
-#define LETTER_BOX_HEIGHT_4_LINES   4
-#define LETTER_BOX_HEIGHT_5_LINES   5
-#define MIN_LETTER_BOX_HEIGHT       LETTER_BOX_HEIGHT_DEFAULT
-#define MAX_LETTER_BOX_HEIGHT       LETTER_BOX_HEIGHT_5_LINES
+#define SUBTITLE_POSITION_AUTO                      100
+#define SUBTITLE_POSITION_ON_MOVIE                  -1
+#define SUBTITLE_POSITION_ON_LETTER_BOX             0
+#define SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE      1
+#define SUBTITLE_POSITION_ON_LETTER_BOX_2_LINES     2
+#define SUBTITLE_POSITION_ON_LETTER_BOX_3_LINES     3
 
 #pragma mark -
 #pragma mark notifications: movie
-extern NSString* MMovieIndexDurationNotification;
+extern NSString* MMovieIndexedDurationNotification;
 extern NSString* MMovieRateChangeNotification;
 extern NSString* MMovieCurrentTimeNotification;
 extern NSString* MMovieEndNotification;
@@ -104,87 +105,8 @@ extern NSString* MMovieEndNotification;
 #pragma mark notifications: etc
 extern NSString* MMovieRectUpdateNotification;
 
-////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark utilities
-
-@interface NSWindow (Movist)
-
-- (void)setMovieURL:(NSURL*)movieURL;
-- (void)fadeWithEffect:(NSString*)effect
-          blockingMode:(NSAnimationBlockingMode)blockingMode
-              duration:(float)duration;
-- (NSColor*)makeHUDBackgroundColor;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSTextField (Movist)
-
-- (void)setEnabled:(BOOL)enabled;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSScreen (Movist)
-
-- (void)fadeOut:(float)duration;
-- (void)fadeIn:(float)duration;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSString (Movist)
-
-- (BOOL)hasAnyExtension:(NSArray*)extensions;
-- (NSComparisonResult)caseInsensitiveNumericCompare:(NSString*)aString;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSFileManager (Movist)
-
-- (NSString*)pathContentOfLinkAtPath:(NSString*)path;
-- (NSString*)pathContentOfAliasAtPath:(NSString*)path;
-- (BOOL)isVisibleFile:(NSString*)path isDirectory:(BOOL*)isDirectory;
-- (NSArray*)sortedDirectoryContentsAtPath:(NSString*)path;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSApplication (Movist)
-
-- (NSString*)localizedAppName;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-BOOL isSystemTiger();
-BOOL isSystemLeopard();
-float normalizedVolume(float volume);
-NSString* NSStringFromMovieTime(float time);
-NSString* NSStringFromLetterBoxHeight(int height);
-void runAlertPanelForOpenError(NSError* error, NSURL* url);
-
-#define MPlaylistItemDataType  @"MPlaylistItemDataType"
-#define MOVIST_DRAG_TYPES   [NSArray arrayWithObjects:  \
-                                NSFilenamesPboardType,  \
-                                NSURLPboardType,        \
-                                MPlaylistItemDataType,  \
-                                nil]
-
+#pragma mark drag & drop
 enum {
     DRAG_ACTION_NONE,
     DRAG_ACTION_PLAY_FILES,
@@ -196,8 +118,30 @@ enum {
     DRAG_ACTION_REORDER_PLAYLIST,
 };
 
+extern NSString* MPlaylistItemDataType;
+
+#define MOVIST_DRAG_TYPES   movistDragTypes()
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark utilities
+
+BOOL isSystemTiger();
+BOOL isSystemLeopard();
+
+NSArray* movistDragTypes();
+
+float normalizedVolume(float volume);
+
+NSString* NSStringFromMovieTime(float time);
+NSString* NSStringFromSubtitlePosition(int position);
+NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding);
+
+void runAlertPanelForOpenError(NSError* error, NSURL* url);
+
 unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay);
 
+NSDictionary* subtitleTypesAndParsers();
 void initSubtitleEncodingMenu(NSMenu* menu, SEL action);
 
 ////////////////////////////////////////////////////////////////////////////////

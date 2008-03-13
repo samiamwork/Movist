@@ -21,7 +21,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#import "MMovie_FFMPEG.h"
+#import "MMovie_FFmpeg.h"
 
 @implementation PacketQueue
 
@@ -93,9 +93,9 @@
 #define WAITING_FOR_COMMAND 0
 #define DISPATCHING_COMMAND 1
 
-@implementation MMovie_FFMPEG (Playback)
+@implementation MMovie_FFmpeg (Playback)
 
-static MMovie_FFMPEG* s_currentMovie = 0;
+static MMovie_FFmpeg* s_currentMovie = 0;
 
 - (BOOL)defaultFuncCondition 
 { 
@@ -271,7 +271,7 @@ static MMovie_FFMPEG* s_currentMovie = 0;
 {
     _seekTime = _reservedSeekTime;
     TRACE(@"%s seek to %g", __PRETTY_FUNCTION__, _seekTime);
-    if (_needIndexing && _indexingTime < _seekTime) {
+    if (_needIndexing && _indexedDuration < _seekTime) {
         TRACE(@"not indexed time");
         return;
     }
@@ -530,7 +530,7 @@ static MMovie_FFMPEG* s_currentMovie = 0;
 {
     // sw-scaler should be used under GPL only!
     int ret = sws_scale(_scalerContext,
-                        _videoFrame->data, _videoFrame->linesize, 0, _videoHeight,
+                        _videoFrame->data, _videoFrame->linesize, 0, _displaySize.height,
                         _videoFrameData[_nextVideoBufId]->data, _videoFrameData[_nextVideoBufId]->linesize);
     if (ret < 0) {
         TRACE(@"%s sws_scale() failed : %d", __PRETTY_FUNCTION__, ret);
@@ -598,7 +598,7 @@ static MMovie_FFMPEG* s_currentMovie = 0;
 
 void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
 {
-    MMovie_FFMPEG* movie = (MMovie_FFMPEG*)releaseRefCon;
+    MMovie_FFmpeg* movie = (MMovie_FFmpeg*)releaseRefCon;
     if (s_currentMovie != movie) {
         return;
     }
@@ -615,7 +615,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     else {
         CV_PIXEL_FORMAT = kYUVSPixelFormat;
     }
-    int ret = CVPixelBufferCreateWithBytes(0, _videoWidth, _videoHeight, CV_PIXEL_FORMAT,
+    int ret = CVPixelBufferCreateWithBytes(0, _displaySize.width, _displaySize.height, CV_PIXEL_FORMAT,
                                            _videoFrameData[_videoDataBufId]->data[0], 
                                            _videoFrameData[_videoDataBufId]->linesize[0],
 //                                           pixelBufferReleaseCallback, self, 0, 

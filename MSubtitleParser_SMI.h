@@ -22,9 +22,9 @@
 
 #import "Movist.h"
 
-#import "MSubtitle.h"
+#import "MSubtitleParser.h"
 
-@interface MSubtitleParser_SMI : NSObject <MSubtitleParser>
+@interface MSubtitleParser_SMI : MSubtitleParser
 {
     NSString* _source;
     NSRange _sourceRange;
@@ -50,5 +50,5 @@
 @end
 
 // option keys
-extern NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR;
-extern NSArray* MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers;
+extern NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR;
+extern NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers;

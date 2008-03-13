@@ -22,17 +22,23 @@
 
 #import "Movist.h"
 
-#import "MSubtitleParser.h"
+#import "MSubtitle.h"
 
-@interface MSubtitleParser_SRT : MSubtitleParser
+@interface MSubtitleParser : NSObject
 {
-    NSString* _source;
-    NSRange _sourceRange;
-    
-    NSMutableArray* _subtitles;
+    NSURL* _subtitleURL;
 }
 
++ (Class)parserClassForSubtitleType:(NSString*)type;
+
+- (id)initWithURL:(NSURL*)subtitleURL;
+- (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error;
+
+// for text-based subtitles
+- (NSString*)stringWithEncoding:(CFStringEncoding)encoding error:(NSError**)error;
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error;
 
 @end
+
+extern NSString* MSubtitleParserOptionKey_stringEncoding;

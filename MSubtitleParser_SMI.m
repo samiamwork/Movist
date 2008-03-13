@@ -71,8 +71,8 @@ typedef struct _SMITag {
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-NSString* MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR = @"replaceNewLineWithBR";
-NSArray* MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers = @"defaultLanguageIdentifiers";
+NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWithBR";
+NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLanguageIdentifiers";
 
 @implementation MSubtitleParser_SMI
 
@@ -86,13 +86,13 @@ NSArray* MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers = @"defaultLan
     _defaultLanguageIdentifiers = nil;
     if (options) {
         NSNumber* n = (NSNumber*)[options objectForKey:
-                            MSubtitleParser_SMI_OptionKey_replaceNewLineWithBR];
+                            MSubtitleParserOptionKey_SMI_replaceNewLineWithBR];
         if (n) {
             _replaceNewLineWithBR = [n boolValue];
         }
 
         _defaultLanguageIdentifiers = (NSArray*)[options objectForKey:
-                            MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers];
+                            MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers];
     }
 
     _delimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
@@ -110,7 +110,7 @@ NSArray* MSubtitleParser_SMI_OptionKey_defaultLanguageIdentifiers = @"defaultLan
 - (MSubtitle*)addSubtitleClass:(NSString*)class
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, class);
-    MSubtitle* subtitle = [[[MSubtitle alloc] initWithType:@"SMI"] autorelease];
+    MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL type:@"SMI"] autorelease];
     [subtitle setName:class];   // name will be updated later by "Name:" field.
     [_subtitles addObject:subtitle];
     [_classes setObject:subtitle forKey:class];

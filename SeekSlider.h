@@ -21,18 +21,27 @@
 //
 
 #import "Movist.h"
+#import "CustomControls.h"
 
-#import "MSubtitleParser.h"
-
-@interface MSubtitleParser_SRT : MSubtitleParser
+@interface SeekSlider : NSSlider
 {
-    NSString* _source;
-    NSRange _sourceRange;
-    
-    NSMutableArray* _subtitles;
 }
 
-- (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
-                  error:(NSError**)error;
+- (float)indexedDuration;
+- (void)setIndexedDuration:(float)duration;
+
+- (BOOL)repeatEnabled;
+- (NSRange)repeatRange;
+- (float)repeatBeginning;
+- (float)repeatEnd;
+- (void)setRepeatRange:(NSRange)range;
+- (void)setRepeatBeginning:(float)beginning;
+- (void)setRepeatEnd:(float)end;
+- (void)clearRepeat;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@interface MainSeekSlider : SeekSlider {} @end
+@interface FSSeekSlider : SeekSlider {} @end

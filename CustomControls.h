@@ -44,28 +44,5 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-@interface SeekSlider : NSSlider
-{
-}
-
-- (float)indexDuration;
-- (void)setIndexDuration:(float)duration;
-
-- (BOOL)repeatEnabled;
-- (NSRange)repeatRange;
-- (float)repeatBeginning;
-- (float)repeatEnd;
-- (void)setRepeatRange:(NSRange)range;
-- (void)setRepeatBeginning:(float)beginning;
-- (void)setRepeatEnd:(float)end;
-- (void)clearRepeat;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-
-@interface MainSeekSlider : SeekSlider {} @end
-@interface FSSeekSlider : SeekSlider {} @end
-
 @interface MainVolumeSlider : NSSlider {} @end
 @interface FSVolumeSlider : NSSlider {} @end

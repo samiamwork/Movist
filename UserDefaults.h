@@ -42,9 +42,6 @@ extern NSString* MSeekInterval1Key;
 extern NSString* MSeekInterval2Key;
 extern NSString* MSupportAppleRemoteKey;
 extern NSString* MFullNavUseKey;
-extern NSString* MFullNavPathKey;
-extern NSString* MFullNavShowiTunesMoviesKey;
-extern NSString* MFullNavShowVideoPodcastKey;
 
 #pragma mark -
 #pragma mark prefs: video
@@ -72,12 +69,10 @@ extern NSString* MSubtitleShadowColorKey;
 extern NSString* MSubtitleShadowBlurKey;
 extern NSString* MSubtitleShadowOffsetKey;
 extern NSString* MSubtitleShadowDarknessKey;
-extern NSString* MSubtitleDisplayOnLetterBoxKey;
-extern NSString* MSubtitleLetterBoxHeightKey;
+extern NSString* MSubtitlePositionKey;
 extern NSString* MSubtitleHMarginKey;
 extern NSString* MSubtitleVMarginKey;
 extern NSString* MSubtitleLineSpacingKey;
-extern NSString* MSubtitleReplaceNLWithBRKey;
 
 #pragma mark -
 #pragma mark prefs: advanced
@@ -87,27 +82,28 @@ extern NSString* MLastUpdateCheckTimeKey;
 
 #pragma mark -
 #pragma mark prefs: advanced - details
+// General
 extern NSString* MActivateOnDraggingKey;
-extern NSString* MDisablePerianSubtitleKey;
-extern NSString* MShowActualPathForLinkKey;
-extern NSString* MCaptureIncludingLetterBoxKey;
-extern NSString* MAutodetectDigitalAudioOutKey;
-extern NSString* MDefaultLanguageIdentifiersKey;
 extern NSString* MAutodetectMovieSeriesKey;
+extern NSString* MAutodetectDigitalAudioOutKey;
+extern NSString* MAutoPlayOnFullScreenKey;
+extern NSString* MCaptureIncludingLetterBoxKey;
+// Subtitle
+extern NSString* MDisablePerianSubtitleKey;
+extern NSString* MSubtitleReplaceNLWithBRKey;
+extern NSString* MDefaultLanguageIdentifiersKey;
+// Full Navigation
+extern NSString* MFullNavPathKey;
+extern NSString* MFullNavShowiTunesMoviesKey;
+extern NSString* MFullNavShowiTunesTVShowsKey;
+extern NSString* MFullNavShowiTunesPodcastKey;
+extern NSString* MShowActualPathForLinkKey;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface NSUserDefaults (Movist)
+@interface NSUserDefaults (MovistUserDefaults)
 
 - (void)registerMovistDefaults;
-
-- (void)setColor:(NSColor*)color forKey:(NSString*)key;
-- (NSColor*)colorForKey:(NSString*)key;
-
-- (void)setA52CodecAttemptPassthrough:(BOOL)enabled;
-
-- (BOOL)isPerianSubtitleEnabled;
-- (void)setPerianSubtitleEnabled:(BOOL)enabled;
 
 @end

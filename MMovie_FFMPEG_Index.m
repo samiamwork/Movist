@@ -20,7 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#import "MMovie_FFMPEG.h"
+#import "MMovie_FFmpeg.h"
 #import <avio.h>
 #include <fcntl.h>
 
@@ -43,7 +43,7 @@ typedef struct {
 ///////////////////////////////////////////////////////////////////////////////
 
 
-@implementation MMovie_FFMPEG (Index)
+@implementation MMovie_FFmpeg (Index)
 
 
 - (BOOL)isCompleteFile
@@ -53,7 +53,7 @@ typedef struct {
 
 - (BOOL)initIndexContext
 {
-    const char* path = [_fileName UTF8String];
+    const char* path = [[_url path] UTF8String];
     if (av_open_input_file(&_indexContext, path, NULL, 0, NULL) != 0) {
         return FALSE;
     }
@@ -83,7 +83,7 @@ typedef struct {
     if (strstr(_indexContext->iformat->name, "avi")) {
         _needIndexing = ![self isCompleteFile];
     }
-    _indexingTime = 0;
+    _indexedDuration = (_needIndexing) ? 0 : _duration;
     _maxFrameSize = 0;
     _currentIndexingPosition = 0;
     return TRUE;
@@ -128,7 +128,7 @@ typedef struct {
         if (packet.stream_index == _videoStreamIndex &&
             packet.flags & PKT_FLAG_KEY) {
             TRACE(@"current %f", 1. * packet.dts * av_q2d(_videoStream->time_base)); 
-            _indexingTime = packet.dts * av_q2d(_formatContext->streams[packet.stream_index]->time_base);
+            _indexedDuration = packet.dts * av_q2d(_formatContext->streams[packet.stream_index]->time_base);
         }
         if (_maxFrameSize < packet.size) {
             _maxFrameSize = packet.size;
@@ -184,8 +184,9 @@ typedef struct {
         _playThreading--;
         TRACE(@"%s need not indexing", __PRETTY_FUNCTION__);
         return;
-    }        
-    int fd = open([_fileName UTF8String], O_RDONLY);
+    }
+    const char* path = [[_url path] UTF8String];
+    int fd = open(path, O_RDONLY);
     if (fd < 0) {
         [self cleanupIndexContext];
         [pool release];
@@ -208,7 +209,7 @@ typedef struct {
         skipCount = 0;
         [self makeIndex];
         if (!_indexingCompleted) {
-            [nc postNotificationName:MMovieIndexDurationNotification object:self];
+            [nc postNotificationName:MMovieIndexedDurationNotification object:self];
         }
         if (tmpCount < CHECK_FILE_SIZE_INTERVAL / INDEXING_INTERVAL) {
             tmpCount++;

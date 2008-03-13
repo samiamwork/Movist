@@ -123,15 +123,18 @@
 - (void)beginFullScreen
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    float rate; // for FS_EFFECT_FADE
     BOOL forNavigation = (_movieURL == nil);
+
+    float rate;         // for FS_EFFECT_FADE
+    ScreenFader* fader; // for FS_EFFECT_FADE
     float fadeDuration = (forNavigation) ? NAV_FADE_DURATION : FADE_EFFECT_DURATION;
     int effect = (forNavigation) ? FS_EFFECT_FADE : _effect;
     if (effect == FS_EFFECT_FADE) {
         [NSCursor setHiddenUntilMouseMoves:TRUE];
         rate = [[_movieView movie] rate];
         [[_movieView movie] setRate:0.0];
-        [[_mainWindow screen] fadeOut:fadeDuration];
+        fader = [ScreenFader screenFaderWithScreen:[_mainWindow screen]];
+        [fader fadeOut:fadeDuration];
     }
 
     [self hideMainMenuAndDock];
@@ -168,7 +171,7 @@
             [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
             [_fullWindow flushWindow];
             [_mainWindow flushWindow];
-            [[_mainWindow screen] fadeIn:fadeDuration];
+            [fader fadeIn:fadeDuration];
             [[_movieView movie] setRate:rate];
             break;
         case FS_EFFECT_ANIMATION :
@@ -196,14 +199,16 @@
     if (subtitleVisible) {
         [_movieView setSubtitleVisible:FALSE];
     }
-    float rate; // for FS_EFFECT_FADE
+    float rate;         // for FS_EFFECT_FADE
+    ScreenFader* fader; // for FS_EFFECT_FADE
     int effect = ([self isNavigatable]) ? FS_EFFECT_FADE : _effect;
     float fadeDuration = ([self isNavigatable]) ? NAV_FADE_DURATION : FADE_EFFECT_DURATION;
     switch (effect) {
         case FS_EFFECT_FADE :
             rate = [[_movieView movie] rate];
             [[_movieView movie] setRate:0.0];
-            [[_mainWindow screen] fadeOut:fadeDuration];
+            fader = [ScreenFader screenFaderWithScreen:[_mainWindow screen]];
+            [fader fadeOut:fadeDuration];
             [_fullWindow removeChildWindow:_mainWindow];
             break;
         case FS_EFFECT_ANIMATION :
@@ -246,7 +251,7 @@
 
     if (effect == FS_EFFECT_FADE) {
         [_mainWindow flushWindow];
-        [[_mainWindow screen] fadeIn:fadeDuration];
+        [fader fadeIn:fadeDuration];
         [[_movieView movie] setRate:rate];
     }
 }

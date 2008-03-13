@@ -21,57 +21,9 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#import "MMovie_FFMPEG.h"
+#import "MMovie_FFmpeg.h"
 
 #define _USE_AUDIO_DATA_FLOAT_BIT
-
-@implementation MTrack_FFMPEG
-
-- (id)initWithStreamId:(int)streamId movie:(MMovie_FFMPEG*)movie
-{
-    if (self = [super init]) {
-        _streamId = streamId;
-        _movie = movie;
-    }
-    return self;
-}
-
-- (void)setEnabled:(BOOL)enabled
-{ 
-    _enable = enabled;
-    if (_streamId < 0) { // video
-        return;
-    }
-    if (enabled) {
-        [_movie startAudio:_streamId];
-    }
-    else {
-        [_movie stopAudio:_streamId];
-    }
-    [_movie updateFirstAudioStreamId];
-}
-
-- (NSString*)name 
-{ 
-    return [_movie streamName:(_streamId < 0) streamId:_streamId];
-}
-
-- (NSString*)format
-{
-    return [_movie streamFormat:(_streamId < 0) streamId:_streamId];
-}
-
-- (void)dealloc { [super dealloc]; }
-- (BOOL)isEnabled { return _enable; }
-- (float)volume { return _volume; }
-- (void)setVolume:(float)volume { _volume = volume; }
-- (int)streamId { return _streamId; }
-- (MMovie_FFMPEG*)movie { return _movie; }
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
 
 @implementation AudioDataQueue
 
@@ -212,7 +164,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@implementation MMovie_FFMPEG (Audio)
+@implementation MMovie_FFmpeg (Audio)
 
 - (BOOL)createAudioUnit:(AudioUnit*)audioUnit
           audioStreamId:(int)audioStreamId
@@ -323,9 +275,9 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
         return FALSE;
     }
 	
-    [_audioTracks addObject:[[[MTrack_FFMPEG alloc] 
-                              initWithStreamId:_audioStreamCount movie:self] 
-        autorelease]];        
+    [_audioTracks addObject:
+     [MTrack_FFmpeg trackWithMovie:self formatContext:_formatContext
+                       streamIndex:audioStreamIndex streamId:_audioStreamCount]];
     
     UInt32 formatFlags, bytesPerFrame, bytesInAPacket, bitsPerChannel;
     assert(audioContext->sample_fmt == SAMPLE_FMT_S16);
@@ -410,7 +362,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
 
 - (void)decodeAudio:(AVPacket*)packet trackId:(int)trackId
 {
-    MTrack_FFMPEG* mTrack = [_audioTracks objectAtIndex:trackId];
+    MTrack_FFmpeg* mTrack = [_audioTracks objectAtIndex:trackId];
     if (![mTrack isEnabled]) {
         return;
     }
@@ -528,7 +480,7 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
     }
 }
 
-- (void)nextAudio:(MTrack_FFMPEG*)mTrack
+- (void)nextAudio:(MTrack_FFmpeg*)mTrack
         timeStamp:(const AudioTimeStamp*)timeStamp 
         busNumber:(UInt32)busNumber
       frameNumber:(UInt32)frameNumber
@@ -621,11 +573,11 @@ OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFlags,
                    UInt32 inBusNumber, UInt32 inNumberFrames,
                    AudioBufferList* ioData)
 {
-    MTrack_FFMPEG* mTrack = (MTrack_FFMPEG*)inRefCon;
-    [[mTrack movie] nextAudio:mTrack
-                    timeStamp:inTimeStamp 
-                    busNumber:inBusNumber 
-                  frameNumber:inNumberFrames
-                    audioData:ioData];
+    MTrack_FFmpeg* mTrack = (MTrack_FFmpeg*)inRefCon;
+    [(MMovie_FFmpeg*)[mTrack movie] nextAudio:mTrack
+                                    timeStamp:inTimeStamp
+                                    busNumber:inBusNumber
+                                  frameNumber:inNumberFrames
+                                    audioData:ioData];
     return noErr;
 }

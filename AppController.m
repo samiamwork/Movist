@@ -24,7 +24,7 @@
 #import "UpdateChecker.h"
 #import "UserDefaults.h"
 
-#import "MMovie_FFMPEG.h"
+#import "MMovie_FFmpeg.h"
 #import "MMovie_QuickTime.h"
 #import "Playlist.h"
 #import "PlaylistController.h"
@@ -153,7 +153,6 @@
     // ...
 
     // initial update preferences: subtitle
-    BOOL displayOnLetterBox = [_defaults boolForKey:MSubtitleDisplayOnLetterBoxKey];
     [_movieView setSubtitleFontName:[_defaults stringForKey:MSubtitleFontNameKey]
                                size:[_defaults floatForKey:MSubtitleFontSizeKey]];
     [_movieView setSubtitleTextColor:[_defaults colorForKey:MSubtitleTextColorKey]];
@@ -163,16 +162,10 @@
     [_movieView setSubtitleShadowBlur:[_defaults floatForKey:MSubtitleShadowBlurKey]];
     [_movieView setSubtitleShadowOffset:[_defaults floatForKey:MSubtitleShadowOffsetKey]];
     [_movieView setSubtitleShadowDarkness:[_defaults integerForKey:MSubtitleShadowDarknessKey]];
-    [_movieView setSubtitleDisplayOnLetterBox:displayOnLetterBox];
-    [_movieView setLetterBoxHeight:[_defaults integerForKey:MSubtitleLetterBoxHeightKey]];
+    [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
     [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
     [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
     [_movieView setSubtitleLineSpacing:[_defaults floatForKey:MSubtitleLineSpacingKey]];
-    [_subtitleDisplayOnLetterBoxMenuItem setState:displayOnLetterBox];
-    [_subtitleDisplayOnLetterBoxButton setState:displayOnLetterBox];
-    [_letterBoxHigherButton setEnabled:displayOnLetterBox];
-    [_letterBoxLowerButton setEnabled:displayOnLetterBox];
-    [_letterBoxDefaultHeightButton setEnabled:displayOnLetterBox];
 
     // initial update preferences: advanced
     // ...
@@ -289,6 +282,7 @@
     [self updateFullScreenFillMenu];
     [self updateAudioTrackMenuItems];
     [self updateSubtitleLanguageMenuItems];
+    [self updateSubtitlePositionMenuItems];
     [self updateRepeatUI];
     [self updateVolumeUI];
     [self updateTimeUI];
@@ -508,19 +502,16 @@
     if ([menuItem action] == @selector(openSubtitleFileAction:)) {
         return _movie && [_defaults boolForKey:MSubtitleEnableKey];
     }
-    if ([menuItem action] == @selector(subtitleLanguageAction:)) {
-        return (_subtitles && 0 < [_subtitles count]);
+    if ([menuItem action] == @selector(reopenSubtitleAction:)) {
+        return (_subtitles != nil);
     }
-    if ([menuItem action] == @selector(reopenSubtitleAction:) ||
+    if ([menuItem action] == @selector(subtitleLanguageAction:) ||
         [menuItem action] == @selector(subtitleVisibleAction:) ||
         [menuItem action] == @selector(subtitleFontSizeAction:) ||
         [menuItem action] == @selector(subtitleVMarginAction:) ||
-        [menuItem action] == @selector(subtitleDisplayOnLetterBoxAction:) ||
+        [menuItem action] == @selector(subtitlePositionAction:) ||
         [menuItem action] == @selector(subtitleSyncAction:)) {
-        return (_subtitles != nil);
-    }
-    if ([menuItem action] == @selector(letterBoxHeightAction:)) {
-        return (_subtitles && [_movieView subtitleDisplayOnLetterBox]);
+        return (_subtitles && 0 < [_subtitles count]);
     }
 
     return TRUE;

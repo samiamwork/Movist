@@ -238,40 +238,57 @@
 
 - (void)initListRoot
 {
-    NSMutableArray* items = [NSMutableArray arrayWithCapacity:6];
-
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSFileManager* fileManager = [NSFileManager defaultManager];
 
     // default navigation path
-    NSString* path = [defaults stringForKey:MFullNavPathKey];
+    NSString* path = [[defaults stringForKey:MFullNavPathKey] stringByExpandingTildeInPath];
     if (!path || ![fileManager fileExistsAtPath:path]) {
         path = [@"~/Movies" stringByExpandingTildeInPath];
     }
-    [items addObject:[[[FullNavDirectoryItem alloc]
-                                        initWithPath:path name:nil]autorelease]];
+    if ([defaults boolForKey:MFullNavShowiTunesMoviesKey] ||
+        [defaults boolForKey:MFullNavShowiTunesTVShowsKey] ||
+        [defaults boolForKey:MFullNavShowiTunesPodcastKey]) {
+        NSMutableArray* items = [NSMutableArray arrayWithCapacity:6];
+        [items addObject:[[[FullNavDirectoryItem alloc]
+                                            initWithPath:path name:nil] autorelease]];
 
-    // iTunes Movies folder
-    if ([defaults boolForKey:MFullNavShowiTunesMoviesKey]) {
-        path = [@"~/Music/iTunes/iTunes Music/Movies" stringByExpandingTildeInPath];
-        if ([fileManager fileExistsAtPath:path]) {
-            NSString* name = NSLocalizedString(@"iTunes Movies", nil);
-            [items addObject:[[[FullNavDirectoryItem alloc]
-                                        initWithPath:path name:name] autorelease]];
+        // iTunes Movies folder
+        if ([defaults boolForKey:MFullNavShowiTunesMoviesKey]) {
+            path = [@"~/Music/iTunes/iTunes Music/Movies" stringByExpandingTildeInPath];
+            if ([fileManager fileExistsAtPath:path]) {
+                NSString* name = NSLocalizedString(@"iTunes Movies", nil);
+                [items addObject:[[[FullNavDirectoryItem alloc]
+                                            initWithPath:path name:name] autorelease]];
+            }
         }
-    }
 
-    // iTunes Podcast folder (for video podcast)
-    if ([defaults boolForKey:MFullNavShowVideoPodcastKey]) {
-        path = [@"~/Music/iTunes/iTunes Music/Podcast" stringByExpandingTildeInPath];
-        if ([fileManager fileExistsAtPath:path]) {
-            NSString* name = NSLocalizedString(@"Video Podcast", nil);
-            [items addObject:[[[FullNavDirectoryItem alloc]
-                                        initWithPath:path name:name] autorelease]];
+        // iTunes TV shows folder
+        if ([defaults boolForKey:MFullNavShowiTunesTVShowsKey]) {
+            path = [@"~/Music/iTunes/iTunes Music/TV shows" stringByExpandingTildeInPath];
+            if ([fileManager fileExistsAtPath:path]) {
+                NSString* name = NSLocalizedString(@"iTunes TV Shows", nil);
+                [items addObject:[[[FullNavDirectoryItem alloc]
+                                   initWithPath:path name:name] autorelease]];
+            }
         }
-    }
 
-    [self addNavListWithParentItem:nil items:items];
+        // iTunes Podcast folder
+        if ([defaults boolForKey:MFullNavShowiTunesPodcastKey]) {
+            path = [@"~/Music/iTunes/iTunes Music/Podcast" stringByExpandingTildeInPath];
+            if ([fileManager fileExistsAtPath:path]) {
+                NSString* name = NSLocalizedString(@"iTunes Video Podcast", nil);
+                [items addObject:[[[FullNavDirectoryItem alloc]
+                                            initWithPath:path name:name] autorelease]];
+            }
+        }
+        [self addNavListWithParentItem:nil items:items];
+    }
+    else {
+        FullNavDirectoryItem* dirItem =
+            [[[FullNavDirectoryItem alloc] initWithPath:path name:nil] autorelease];
+        [self addNavListWithParentItem:nil items:[dirItem subContents]];
+    }
 }
 
 - (void)updateListUI
@@ -377,13 +394,13 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSWindow* window = [self window];
-    NSScreen* screen = [window screen];
-    [screen fadeOut:FADE_DURATION];
+    ScreenFader* fader = [ScreenFader screenFaderWithScreen:[window screen]];
+    [fader fadeOut:FADE_DURATION];
 
     [self addNavListWithParentItem:item items:[item subContents]];
 
     [window flushWindow];
-    [screen fadeIn:FADE_DURATION];
+    [fader fadeIn:FADE_DURATION];
 }
 
 - (void)closeSubContents
@@ -391,23 +408,23 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     // exit from sub-contents
     NSWindow* window = [self window];
-    NSScreen* screen = [window screen];
-    [screen fadeOut:FADE_DURATION];
+    ScreenFader* fader = [ScreenFader screenFaderWithScreen:[window screen]];
+    [fader fadeOut:FADE_DURATION];
 
     [self hidePreview];
     [self removeLastNavList];
 
     [window flushWindow];
-    [screen fadeIn:FADE_DURATION];
+    [fader fadeIn:FADE_DURATION];
 }
 
 - (void)openCurrentMovie:(FullNavItem*)item
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSWindow* window = [self window];
-    NSScreen* screen = [window screen];
+    ScreenFader* fader = [ScreenFader screenFaderWithScreen:[window screen]];
+    [fader fadeOut:FADE_DURATION];
 
-    [screen fadeOut:FADE_DURATION];
     [_listView resetItemNameScroll];
     MMovie* movie = [_movieView movie];
     if (movie) {
@@ -427,7 +444,7 @@
     [window makeFirstResponder:_movieView];
     [_movieView display];
     [window flushWindow];
-    [screen fadeIn:FADE_DURATION];
+    [fader fadeIn:FADE_DURATION];
 
     if (movie) {
         [movie setMuted:FALSE];
@@ -445,11 +462,12 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     // exit from full-screen movie
-    NSWindow* window = [self window];
-    NSScreen* screen = [window screen];
     [[_movieView movie] setMuted:TRUE];
     [[_movieView movie] setRate:0.0];
-    [screen fadeOut:FADE_DURATION];
+
+    NSWindow* window = [self window];
+    ScreenFader* fader = [ScreenFader screenFaderWithScreen:[window screen]];
+    [fader fadeOut:FADE_DURATION];
 
     [self setHidden:FALSE];
     [_movieView setFrame:[self previewRect]];
@@ -458,7 +476,7 @@
     [window makeFirstResponder:self];
 
     [window flushWindow];
-    [screen fadeIn:FADE_DURATION];
+    [fader fadeIn:FADE_DURATION];
     [_listView startItemNameScroll];
     [[_movieView movie] setRate:1.0];
 }

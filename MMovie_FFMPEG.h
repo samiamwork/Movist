@@ -28,24 +28,23 @@
 #import <swscale.h>
 #include <AudioUnit/AudioUnit.h>
 
-@class MMovie_FFMPEG;
+@class MMovie_FFmpeg;
 
-@interface MTrack_FFMPEG : MTrack
+@interface MTrack_FFmpeg : MTrack
 {
-    BOOL _enable;
-    float _volume;
     int _streamId;
-    MMovie_FFMPEG* _movie;
+    float _volume;
 }
 
-- (id)initWithStreamId:(int)streamId movie:(MMovie_FFMPEG*)movie;
-- (NSString*)name;
-- (BOOL)isEnabled;
-- (void)setEnabled:(BOOL)enabled;
++ (id)trackWithMovie:(MMovie*)movie formatContext:(AVFormatContext*)formatContext
+         streamIndex:(int)streamIndex streamId:(int)streamId;
+
+- (id)initWithMovie:(MMovie*)movie formatContext:(AVFormatContext*)formatContext
+        streamIndex:(int)streamIndex streamId:(int)streamId;
+
+- (int)streamId;
 - (float)volume;
 - (void)setVolume:(float)volume;
-- (int)streamId;
-- (MMovie_FFMPEG*)movie;
 
 @end
 
@@ -77,7 +76,7 @@
 
 @interface AUCallbackInfo : NSObject
 {
-    MMovie_FFMPEG* _movie;
+    MMovie_FFmpeg* _movie;
     int _streamId;
 }
 @end
@@ -106,17 +105,14 @@ enum {
     COMMAND_PAUSE,
 };
 
-@interface MMovie_FFMPEG : MMovie
+@interface MMovie_FFmpeg : MMovie
 {
-    NSString* _fileName;
     AVFormatContext* _formatContext;
 
     // video
     int _videoStreamIndex;
     #define _videoStream        _formatContext->streams[_videoStreamIndex]
     #define _videoContext       _videoStream->codec
-    #define _videoWidth         _videoContext->width
-    #define _videoHeight        _videoContext->height
 
     // audio
     int _speakerCount;
@@ -135,8 +131,7 @@ enum {
     BOOL _needIndexing;
     int _maxFrameSize;
     int64_t _currentIndexingPosition;
-    float _indexingTime;
-    
+
     // playback: control
     int _command;
     int _reservedCommand;
@@ -185,31 +180,30 @@ enum {
     double _hostTime;
     double _hostTime0point;
     double _avFineTuningTime;
-    
-    // audio
-    float _volume;
-    bool _muted;
 }
 
 + (NSString*)name;
+
+- (BOOL)initFFmpegWithMovieURL:(NSURL*)movieURL errorCode:(int*)errorCode;
+- (void)cleanupFFmpeg;
+- (BOOL)initDecoder:(AVCodecContext*)context codec:(AVCodec*)codec
+           forVideo:(BOOL)forVideo;
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+/*
+@interface MMovie_FFmpeg (Init)
 
-@interface MMovie_FFMPEG (Init)
-
-- (BOOL)initFFMPEGWithMovieURL:(NSURL*)movieURL errorCode:(int*)errorCode;
-- (void)cleanupFFMPEG;
+- (BOOL)initFFmpegWithMovieURL:(NSURL*)movieURL errorCode:(int*)errorCode;
+- (void)cleanupFFmpeg;
 - (BOOL)initDecoder:(AVCodecContext*)context codec:(AVCodec*)codec
            forVideo:(BOOL)forVideo;
-- (NSString*)streamName:(BOOL)isVideo streamId:(int)streamId;
-- (NSString*)streamFormat:(BOOL)isVideo streamId:(int)streamId;
 
 @end
-
-@interface MMovie_FFMPEG (Playback)
+*/
+@interface MMovie_FFmpeg (Playback)
 
 - (BOOL)defaultFuncCondition;
 - (BOOL)initPlayback:(int*)errorCode;
@@ -217,7 +211,7 @@ enum {
 
 @end
 
-@interface MMovie_FFMPEG (Audio)
+@interface MMovie_FFmpeg (Audio)
 
 - (BOOL)initAudio:(int)audioStreamIndex errorCode:(int*)errorCode;
 - (void)cleanupAudio;
