@@ -163,7 +163,7 @@
                 }
                 else {
                     // initially enable the first video track only
-                    [track setEnabled:FALSE];
+                    [[_videoTracks lastObject] setEnabled:FALSE];
                 }
             }
             else if ([mediaType isEqualToString:QTMediaTypeSound]/* ||

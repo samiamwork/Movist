@@ -599,14 +599,14 @@
     if ([identifier isEqualToString:@"enable"]) {
         if (videoIndex < videoCount) {
             // at least, one video track should be enabled.
-            int i;
+            int i, count = 0;
             NSArray* tracks = [_movie videoTracks];
             for (i = 0; i < videoCount; i++) {
                 if (i != videoIndex && [[tracks objectAtIndex:i] isEnabled]) {
-                    break;
+                    count++;
                 }
             }
-            [[tableColumn dataCellForRow:rowIndex] setEnabled:i < videoCount];
+            [[tableColumn dataCellForRow:rowIndex] setEnabled:0 < count];
             BOOL state = [[tracks objectAtIndex:videoIndex] isEnabled];
             return [NSNumber numberWithBool:state];
         }
@@ -637,10 +637,10 @@
     }
     else if ([identifier isEqualToString:@"format"]) {
         if (videoIndex < videoCount) {
-            return [[[_movie videoTracks] objectAtIndex:videoIndex] format];
+            return [[[_movie videoTracks] objectAtIndex:videoIndex] summary];
         }
         else if (audioIndex < audioCount) {
-            return [[[_movie audioTracks] objectAtIndex:audioIndex] format];
+            return [[[_movie audioTracks] objectAtIndex:audioIndex] summary];
         }
         else {
             MSubtitle* subtitle = [_subtitles objectAtIndex:subtitleIndex];
