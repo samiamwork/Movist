@@ -64,7 +64,7 @@
 
 @implementation MMovie
 
-+ (NSArray*)movieTypes
++ (NSArray*)movieFileExtensions
 {
     return [NSArray arrayWithObjects:
         @"avi", @"divx",                            // movie

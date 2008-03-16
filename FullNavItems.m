@@ -147,7 +147,7 @@ NSString* PATH_LINK_SYMBOL = @"@";
 
     BOOL isDirectory;
     NSString* file, *path, *linkPath, *name;
-    NSArray* movieTypes = [MMovie movieTypes];
+    NSArray* movieFileExtensions = [MMovie movieFileExtensions];
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSEnumerator* enumerator = [contents objectEnumerator];
     while (file = [enumerator nextObject]) {
@@ -172,7 +172,7 @@ NSString* PATH_LINK_SYMBOL = @"@";
                 [items addObject:[[[FullNavDirectoryItem alloc]
                                         initWithPath:path name:name] autorelease]];
             }
-            else if ([path hasAnyExtension:movieTypes]) {
+            else if ([path hasAnyExtension:movieFileExtensions]) {
                 [items addObject:[[[FullNavFileItem alloc]
                                         initWithPath:path name:name] autorelease]];
             }

@@ -143,6 +143,10 @@
     if (!qtMovie) {
         return nil;
     }
+    NSSize movieSize = [[qtMovie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
+    if (movieSize.width == 0 || movieSize.height == 0) {
+        return nil;
+    }
 
     if ((self = [super initWithURL:url error:error])) {
         _qtMovie = [qtMovie retain];
@@ -174,26 +178,32 @@
         }
 
         // init _displaySize & _encodedSize
+        _displaySize = _encodedSize = movieSize;
+        /* ... in 10.5 or later
+        if ([[_qtMovie attributeForKey:QTMovieApertureModeAttribute]
+                            isEqualToString:QTMovieApertureModeEncodedPixels]) {
+            _encodedSize = [[firstVideoTrack apertureModeDimensionsForMode:
+                             QTMovieApertureModeEncodedPixels] sizeValue];
+        }
+         */
+        /**/
         ImageDescriptionHandle idh;
         idh = (ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
         GetMediaSampleDescription([[firstVideoTrack media] quickTimeMedia], 1,
                                   (SampleDescriptionHandle)idh);
-        FixedPoint nsp, esp;
-        ICMImageDescriptionGetProperty(idh, kQTPropertyClass_ImageDescription,
-                                       kICMImageDescriptionPropertyID_CleanApertureDisplayDimensions,
-                                       sizeof(nsp), &nsp, 0);
-        ICMImageDescriptionGetProperty(idh, kQTPropertyClass_ImageDescription,
-                                       kICMImageDescriptionPropertyID_EncodedPixelsDimensions,
-                                       sizeof(esp), &esp, 0);
+        FixedPoint esp;
+        if (noErr == ICMImageDescriptionGetProperty(idh, kQTPropertyClass_ImageDescription,
+            kICMImageDescriptionPropertyID_EncodedPixelsDimensions, sizeof(esp), &esp, 0)) {
+            NSSize es = NSMakeSize(FixedToFloat(esp.x), FixedToFloat(esp.y));
+            if (es.width <= _displaySize.width && es.height <= _displaySize.height) {
+                _encodedSize = es;
+            }
+        }
         DisposeHandle((Handle)idh);
-
-        _displaySize.width  = FixedToFloat(nsp.x);
-        _displaySize.height = FixedToFloat(nsp.y);
-        _encodedSize.width  = FixedToFloat(esp.x);
-        _encodedSize.height = FixedToFloat(esp.y);
+        /**/
         [self setAspectRatio:_aspectRatio]; // for _adjustedSize
-        //TRACE(@"_displaySize=%@, _encodedSize=%@",
-        //      NSStringFromSize(_displaySize), NSStringFromSize(_encodedSize));
+        //TRACE(@"_displaySize=%@, _encodedSize=%@", NSStringFromSize(_displaySize),
+        //                                           NSStringFromSize(_encodedSize));
 
         // init _duration
         QTTime t = [_qtMovie duration];

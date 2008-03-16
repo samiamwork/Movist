@@ -530,7 +530,7 @@ static MMovie_FFmpeg* s_currentMovie = 0;
 {
     // sw-scaler should be used under GPL only!
     int ret = sws_scale(_scalerContext,
-                        _videoFrame->data, _videoFrame->linesize, 0, _displaySize.height,
+                        _videoFrame->data, _videoFrame->linesize, 0, _encodedSize.height,
                         _videoFrameData[_nextVideoBufId]->data, _videoFrameData[_nextVideoBufId]->linesize);
     if (ret < 0) {
         TRACE(@"%s sws_scale() failed : %d", __PRETTY_FUNCTION__, ret);
@@ -615,7 +615,7 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     else {
         CV_PIXEL_FORMAT = kYUVSPixelFormat;
     }
-    int ret = CVPixelBufferCreateWithBytes(0, _displaySize.width, _displaySize.height, CV_PIXEL_FORMAT,
+    int ret = CVPixelBufferCreateWithBytes(0, _encodedSize.width, _encodedSize.height, CV_PIXEL_FORMAT,
                                            _videoFrameData[_videoDataBufId]->data[0], 
                                            _videoFrameData[_videoDataBufId]->linesize[0],
 //                                           pixelBufferReleaseCallback, self, 0, 

@@ -66,7 +66,7 @@
     int _aspectRatio;   // ASPECT_RATIO_*
 }
 
-+ (NSArray*)movieTypes;
++ (NSArray*)movieFileExtensions;
 + (NSString*)name;
 
 - (id)initWithURL:(NSURL*)url error:(NSError**)error;

@@ -55,6 +55,7 @@
     SubtitleRenderer* _subtitleRenderer;
     MTextImageOSD* _subtitleImageOSD;
     BOOL _subtitleVisible;
+    int _autoSubtitlePositionMaxLines;
     int _subtitlePositionByUser;
     int _subtitlePosition;
     float _subtitleSync;
@@ -163,6 +164,7 @@
 - (float)subtitleHMargin;
 - (float)subtitleVMargin;
 - (void)updateSubtitlePosition;
+- (void)setAutoSubtitlePositionMaxLines:(int)lines;
 - (void)setSubtitlePosition:(int)position;
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;

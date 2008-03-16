@@ -41,7 +41,7 @@
 
         char buf[256];
         AVCodecContext* codec = formatContext->streams[streamIndex]->codec;
-        avcodec_string(buf, sizeof(buf), codec, 1);
+        avcodec_string(buf, sizeof(buf), codec, 0);
 
         // init name
         /*
@@ -220,7 +220,7 @@
             [s appendFormat:@"(%s)", stream->language];
         }
         
-        avcodec_string(buf, sizeof(buf), stream->codec, 1);
+        avcodec_string(buf, sizeof(buf), stream->codec, 0);
         [s appendFormat:@": %s", buf];
         
         if (stream->codec->codec_type == CODEC_TYPE_VIDEO) {
@@ -281,7 +281,12 @@
 {
     TRACE(@"%s %d", __PRETTY_FUNCTION__, videoStreamIndex);
     NSAssert(0 <= _videoStreamIndex, @"Video Stream Already Init");
-    
+
+    if (_videoContext->width == 0 || _videoContext->height == 0) {
+        *errorCode = ERROR_FFMPEG_INVALID_VIDEO_DIMENSION;
+        return FALSE;
+    }
+
     // find decoder for video-stream
     _videoStreamIndex = videoStreamIndex;
     AVCodec* codec = avcodec_find_decoder(_videoContext->codec_id);
@@ -293,10 +298,15 @@
         *errorCode = ERROR_FFMPEG_CODEC_OPEN_FAILED;
         return FALSE;
     }
-    
-    _displaySize.width = _videoContext->width;
-    _displaySize.height= _videoContext->height;
-    _encodedSize = _displaySize;    // FIXME
+
+    _encodedSize.width = _videoContext->width;
+    _encodedSize.height= _videoContext->height;
+    _displaySize = _encodedSize;
+    if (0 < _videoContext->sample_aspect_ratio.num &&
+        0 < _videoContext->sample_aspect_ratio.den) {
+        _displaySize.width *= (float)_videoContext->sample_aspect_ratio.num /
+                                     _videoContext->sample_aspect_ratio.den;
+    }
     [self setAspectRatio:_aspectRatio]; // for _adjustedSize
 
     // allocate video frame
@@ -307,8 +317,8 @@
     }
     
     // init sw-scaler context
-    _scalerContext = sws_getContext(_displaySize.width, _displaySize.height, _videoContext->pix_fmt,
-                                    _displaySize.width, _displaySize.height, RGB_PIXEL_FORMAT,
+    _scalerContext = sws_getContext(_encodedSize.width, _encodedSize.height, _videoContext->pix_fmt,
+                                    _encodedSize.width, _encodedSize.height, RGB_PIXEL_FORMAT,
                                     SWS_FAST_BILINEAR, 0, 0, 0);
     if (!_scalerContext) {
         TRACE(@"cannot initialize conversion context");
@@ -330,13 +340,13 @@
             *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
             return FALSE;
         }    
-        int bufWidth = _displaySize.width + 37;
+        int bufWidth = _encodedSize.width + 37;
         if (bufWidth < 512) {
             bufWidth = 512 + 37;
         }
-        int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , _displaySize.height);
+        int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , _encodedSize.height);
         avpicture_fill((AVPicture*)_videoFrameData[i], malloc(bufferSize),
-                       RGB_PIXEL_FORMAT, bufWidth, _displaySize.height);
+                       RGB_PIXEL_FORMAT, bufWidth, _encodedSize.height);
         
     }
     return TRUE;
@@ -379,6 +389,7 @@
         return FALSE;
     }
     if (av_find_stream_info(_formatContext) < 0) {
+        av_close_input_file(_formatContext);
         *errorCode = ERROR_FFMPEG_STREAM_INFO_NOT_FOUND;
         return FALSE;
     }

@@ -82,6 +82,20 @@
 }
 - (NSTextFieldCell*)textFieldCell { return [self textFieldCellWithEditable:FALSE]; }
 - (NSTextFieldCell*)editFieldCell { return [self textFieldCellWithEditable:TRUE]; }
+- (NSTextFieldCell*)intEditFieldCellWithFormat:(NSString*)format
+                                      minValue:(int)minValue maxValue:(int)maxValue
+{
+    NSTextFieldCell* cell = [self textFieldCellWithEditable:TRUE];
+    NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
+    [formatter setFormat:format];
+    [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    if (minValue != 0 || maxValue != 0) {
+        [formatter setMinimum:[NSNumber numberWithInt:minValue]];
+        [formatter setMaximum:[NSNumber numberWithInt:maxValue]];
+    }
+    [cell setFormatter:[formatter autorelease]];
+    return cell;
+}
 /*
 - (NSButtonCell*)pushButtonCell
 {
@@ -116,6 +130,7 @@ enum {
         DISABLE_PERIAN_SUBTITLE,
         SAMI_REPLACE_NL_WITH_BR,
         SAMI_DEFAULT_LANGUAGE,
+        AUTO_POSITION_MAX_LINES,
         CATEGORY_SUBTITLE_LAST,
         CATEGORY_SUBTITLE_COUNT = CATEGORY_SUBTITLE_LAST - CATEGORY_SUBTITLE - 1,
 
@@ -216,12 +231,14 @@ enum {
         case AUTODETECT_DIGITAL_AUDIO_OUT   : return [self checkButtonCell];
         case AUTO_PLAY_ON_FULL_SCREEN       : return [self checkButtonCell];
         case CAPTURE_INCULDING_LETTER_BOX   : return [self checkButtonCell];
-            
+
         //case CATEGORY_SUBTITLE :
         case DISABLE_PERIAN_SUBTITLE        : return [self checkButtonCell];
         case SAMI_REPLACE_NL_WITH_BR        : return [self checkButtonCell];
         case SAMI_DEFAULT_LANGUAGE          : return [self editFieldCell];
-            
+        case AUTO_POSITION_MAX_LINES        : return [self intEditFieldCellWithFormat:@"#"
+                                                                             minValue:1
+                                                                             maxValue:3];
         //case CATEGORY_FULL_NAV :
         case DEFAULT_NAV_PATH               : return [self editFieldCell];
         case SHOW_ITUNES_MOVIES             : return [self checkButtonCell];
@@ -238,8 +255,11 @@ enum {
 
 #define DETAILS_BOOL(key)           [NSNumber numberWithBool:[_defaults boolForKey:key]]
 #define DETAILS_SET_BOOL(bn, key)   [_defaults setBool:[(NSNumber*)bn boolValue] forKey:key]
+#define DETAILS_INT(key)            [NSNumber numberWithInt:[_defaults integerForKey:key]]
+#define DETAILS_SET_INT(in, key)    [_defaults setInteger:[(NSNumber*)in intValue] forKey:key]
 #define DETAILS_STRING(key)         [_defaults stringForKey:key]
 #define DETAILS_SET_STRING(s, key)  [_defaults setObject:s forKey:key];
+
 
 - (id)outlineView:(NSOutlineView*)outlineView
     objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
@@ -283,6 +303,10 @@ enum {
             return (IS_LABEL_COLUMN(tableColumn)) ?
                 (id)DETAILS_LABEL(@"Default Subtitle Language Identifiers for SAMI") :
                 (id)DETAILS_STRING(MDefaultLanguageIdentifiersKey);
+        case AUTO_POSITION_MAX_LINES :
+            return (IS_LABEL_COLUMN(tableColumn)) ?
+                (id)DETAILS_LABEL(@"Auto Subtitle Position Max Lines (1~3)") :
+                (id)DETAILS_INT(MAutoSubtitlePositionMaxLinesKey);
 
         case CATEGORY_FULL_NAV :
             return (IS_LABEL_COLUMN(tableColumn)) ? DETAILS_LABEL(@"Full Navigation") : @"";
@@ -347,6 +371,11 @@ enum {
             break;
         case SAMI_DEFAULT_LANGUAGE :
             DETAILS_SET_STRING(object, MDefaultLanguageIdentifiersKey);
+            break;
+        case AUTO_POSITION_MAX_LINES :
+            DETAILS_SET_INT(object, MAutoSubtitlePositionMaxLinesKey);
+            [_movieView setAutoSubtitlePositionMaxLines:
+                [_defaults integerForKey:MAutoSubtitlePositionMaxLinesKey]];
             break;
             
         // CATEGORY_FULL_NAV

@@ -10,6 +10,7 @@
 "No update available." = "No update available.";
 "New version %@ is available." = "New version %@ is available.";
 "Show Updates" = "Show Updates";
+"Download" = "Download";
 
 /* MainMenu: File */
 "Opening with %@..." = "Opening with %@...";
@@ -103,6 +104,7 @@
 "Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
 "Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
 "Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
+"Auto Subtitle Position Max Lines (1~3)" = "Auto Subtitle Position Max Lines (1~3)";
 "Full Navigation" = "Full Navigation";
 "Default Navigation Path" = "Default Navigation Path";
 "Show iTunes Movies" = "Show iTunes Movies";

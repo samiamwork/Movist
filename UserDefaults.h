@@ -92,6 +92,7 @@ extern NSString* MCaptureIncludingLetterBoxKey;
 extern NSString* MDisablePerianSubtitleKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultLanguageIdentifiersKey;
+extern NSString* MAutoSubtitlePositionMaxLinesKey;
 // Full Navigation
 extern NSString* MFullNavPathKey;
 extern NSString* MFullNavShowiTunesMoviesKey;

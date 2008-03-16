@@ -81,6 +81,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_colorFilter setDefaults];
     [_hueFilter setDefaults];
     _fullScreenFill = FS_FILL_NEVER;
+    _autoSubtitlePositionMaxLines = 3;
     _subtitlePosition = SUBTITLE_POSITION_AUTO; // for initial update
 
     // OSD: icon, message, subtitle

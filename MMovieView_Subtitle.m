@@ -46,6 +46,7 @@
     }
     [_subtitleRenderer setSubtitles:_subtitles];
     [self updateSubtitlePosition];
+    [self updateMovieRect:TRUE];
     [self updateSubtitle];
 }
 
@@ -191,7 +192,7 @@
                 float lineHeight = [self subtitleLineHeightForMovieWidth:bs.width];
                 float letterBoxHeight = bs.height - (bs.width * ms.height / ms.width);
                 int lines = (int)letterBoxHeight / (int)lineHeight;
-                lines = MIN(2, lines);  // adjust to max. 2 lines
+                lines = MIN(_autoSubtitlePositionMaxLines , lines);
                 _subtitlePosition = (lines == 0) ? SUBTITLE_POSITION_ON_MOVIE :
                                     (lines == 1) ? SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE :
                                     (lines == 2) ? SUBTITLE_POSITION_ON_LETTER_BOX_2_LINES:
@@ -211,6 +212,14 @@
         [_subtitleImageOSD updateVAlign:onLetterBox];
         [_messageOSD updateVAlign:onLetterBox];
     }
+}
+
+- (void)setAutoSubtitlePositionMaxLines:(int)lines
+{
+    _autoSubtitlePositionMaxLines = lines;
+
+    [self updateSubtitlePosition];
+    [self updateMovieRect:TRUE];
 }
 
 - (void)setSubtitlePosition:(int)position

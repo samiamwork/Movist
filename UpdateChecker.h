@@ -30,11 +30,13 @@
 {
     NSString* CURRENT_VERSION;
     NSString* _newVersion;
-    NSURL* _newVersionURL;
+    NSURL* _homepageURL;
+    NSURL* _downloadURL;
 }
 
 - (NSString*)newVersion;
-- (NSURL*)newVersionURL;
+- (NSURL*)homepageURL;
+- (NSURL*)downloadURL;
 
 - (int)checkUpdate:(NSError**)error;
 

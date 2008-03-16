@@ -166,6 +166,7 @@
     [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
     [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
     [_movieView setSubtitleLineSpacing:[_defaults floatForKey:MSubtitleLineSpacingKey]];
+    [_movieView setAutoSubtitlePositionMaxLines:[_defaults integerForKey:MAutoSubtitlePositionMaxLinesKey]];
 
     // initial update preferences: advanced
     // ...
@@ -363,15 +364,20 @@
     else if (ret == NEW_VERSION_AVAILABLE) {
         // new version alert always show.
         NSString* newVersion = [checker newVersion];
-        NSURL* newVersionURL = [checker newVersionURL];
+        NSURL* homepageURL = [checker homepageURL];
+        NSURL* downloadURL = [checker downloadURL];
         NSString* s = [NSString stringWithFormat:
                         NSLocalizedString(@"New version %@ is available.", nil),
                         newVersion];
         ret = NSRunAlertPanel([NSApp localizedAppName], s,
                               NSLocalizedString(@"Show Updates", nil),
+                              NSLocalizedString(@"Download", nil),
                               NSLocalizedString(@"Cancel", nil), nil);
         if (ret == NSAlertDefaultReturn) {
-            [[NSWorkspace sharedWorkspace] openURL:newVersionURL];
+            [[NSWorkspace sharedWorkspace] openURL:homepageURL];
+        }
+        else if (ret == NSAlertAlternateReturn) {
+            [[NSWorkspace sharedWorkspace] openURL:downloadURL];
         }
     }
     [checker release];

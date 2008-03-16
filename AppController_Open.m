@@ -140,27 +140,40 @@
     return subtitles;
 }
 
-- (void)updateUIForOpenedMovieAndSubtitleEncoding:(CFStringEncoding)subtitleEncoding
+- (NSString*)subtitleInfoMessageString
+{
+    NSString* s = nil;
+    if (_subtitles) {
+        MSubtitle* subtitle;
+        NSEnumerator* enumerator = [_subtitles objectEnumerator];
+        while (subtitle = [enumerator nextObject]) {
+            if ([subtitle isEnabled]) {
+                s = (!s) ? [NSString stringWithString:[subtitle name]] :
+                           [s stringByAppendingFormat:@", %@", [subtitle name]];
+            }
+        }
+        if (!s) {
+            s = NSLocalizedString(@"No Subtitle: Reopen with other encodings", nil);
+        }
+    }
+    return s;
+}
+
+- (void)updateUIForOpenedMovieAndSubtitle
 {
     NSSize ss = [[_mainWindow screen] frame].size;
     NSSize ms = [_movie adjustedSizeByAspectRatio];
     [_movieView setFullScreenFill:(ss.width / ss.height < ms.width / ms.height) ?
                         [_defaults integerForKey:MFullScreenFillForWideMovieKey] :
                         [_defaults integerForKey:MFullScreenFillForStdMovieKey]];
-    [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
-    [_movieView updateMovieRect:TRUE];
     [_movieView hideLogo];
     [_movieView setMovie:_movie];
+    [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
+    [_movieView updateMovieRect:TRUE];
 
-    if (subtitleEncoding == kCFStringEncodingInvalidId) {
-        subtitleEncoding = [_defaults integerForKey:MSubtitleEncodingKey];
-    }
-    NSString* subtitleInfo = NSStringFromSubtitleEncoding(subtitleEncoding);
-    if (_subtitles && [_subtitles count] == 0) {
-        subtitleInfo = NSLocalizedString(@"No Subtitle: Reopen with other encodings", nil);
-    }
     [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:[[_movie class] name]
-                           subtitleURL:[self subtitleURL] subtitleInfo:subtitleInfo];
+                           subtitleURL:[self subtitleURL]
+                          subtitleInfo:[self subtitleInfoMessageString]];
 
     if (![self isFullScreen]) {
         [self resizeWithMagnification:1.0];
@@ -267,7 +280,7 @@
         }
     }
 
-    [self updateUIForOpenedMovieAndSubtitleEncoding:subtitleEncoding];
+    [self updateUIForOpenedMovieAndSubtitle];
 
     [_movie setRate:_playRate];  // auto play
 
@@ -380,15 +393,9 @@
 
     [_movie gotoBeginning];
 
-    if (encoding == kCFStringEncodingInvalidId) {
-        encoding = [_defaults integerForKey:MSubtitleEncodingKey];
-    }
-    NSString* subtitleInfo = NSStringFromSubtitleEncoding(encoding);
-    if (_subtitles && [_subtitles count] == 0) {
-        subtitleInfo = NSLocalizedString(@"No Subtitle: Reopen with other encodings", nil);
-    }
     [_movieView setMessageWithMovieURL:nil movieInfo:nil
-                           subtitleURL:subtitleURL subtitleInfo:subtitleInfo];
+                           subtitleURL:subtitleURL
+                          subtitleInfo:[self subtitleInfoMessageString]];
 
     return TRUE;
 }
@@ -522,7 +529,7 @@
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:TRUE];
     [panel setAllowsMultipleSelection:FALSE];
-    if (NSOKButton == [panel runModalForTypes:[MMovie movieTypes]]) {
+    if (NSOKButton == [panel runModalForTypes:[MMovie movieFileExtensions]]) {
         [self openFile:[panel filename]];
     }
 }
