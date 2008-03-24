@@ -197,6 +197,8 @@
 
     [_statusTextField setStringValue:[NSString stringWithFormat:
         NSLocalizedString(@"%d items", nil), [_playlist count]]];
+
+    [_appController updatePrevNextMovieButtons];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

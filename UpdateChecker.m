@@ -87,7 +87,7 @@
 
     NSRange r, r1, r2, tdr;
     NSString* tds, *version;
-    NSString* newVersion = @"0.1.1";//CURRENT_VERSION;
+    NSString* newVersion = CURRENT_VERSION;
     NSString* homepageURLString = nil;
     NSString* downloadURLString = nil;
     while (TRUE) {

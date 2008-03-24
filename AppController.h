@@ -121,6 +121,8 @@
     IBOutlet TimeTextField* _lTimeTextField;
     IBOutlet TimeTextField* _rTimeTextField;
     IBOutlet HoverButton* _controlPanelButton;
+    IBOutlet HoverButton* _prevMovieButton;
+    IBOutlet HoverButton* _nextMovieButton;
     IBOutlet HoverButton* _playlistButton;
     NSButton* _decoderButton;
     float _prevMovieTime;
@@ -201,9 +203,10 @@
 - (Playlist*)playlist;
 - (void)addFiles:(NSArray*)filenames;
 - (void)addURL:(NSURL*)url;
+- (void)updatePrevNextMovieButtons;
 - (BOOL)openCurrentPlaylistItem;
-- (BOOL)openPrevPlaylistItem;
-- (BOOL)openNextPlaylistItem;
+- (void)openPrevPlaylistItem;
+- (void)openNextPlaylistItem;
 - (void)playlistEnded;
 
 - (BOOL)playlistWindowVisible;
@@ -315,6 +318,7 @@
 - (BOOL)supportDigitalAudio;
 - (void)initDigitalAudio;
 - (void)updateDigitalAudio;
+- (BOOL)updateAudioOutput:(id)sender;
 
 @end
 

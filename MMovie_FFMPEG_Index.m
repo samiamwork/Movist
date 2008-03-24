@@ -45,7 +45,6 @@ typedef struct {
 
 @implementation MMovie_FFmpeg (Index)
 
-
 - (BOOL)isCompleteFile
 {
     return _indexContext->streams[_indexStreamId]->nb_index_entries > 1;
@@ -83,7 +82,7 @@ typedef struct {
     if (strstr(_indexContext->iformat->name, "avi")) {
         _needIndexing = ![self isCompleteFile];
     }
-    _indexedDuration = (_needIndexing) ? 0 : _duration;
+    _indexedDuration = (_needIndexing) ? 0 : _info.duration;
     _maxFrameSize = 0;
     _currentIndexingPosition = 0;
     return TRUE;

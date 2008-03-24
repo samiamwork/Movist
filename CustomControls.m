@@ -70,7 +70,7 @@
 
 - (void)mouseEntered:(NSEvent*)event
 {
-    if (_hoverImage && [self isEnabled] &&
+    if (!_orgImage && _hoverImage && [self isEnabled] &&
         [[[self controlView] window] isKeyWindow]) {
         _orgImage = [[self image] retain];
         [self setImage:_hoverImage];
@@ -125,6 +125,19 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [(HoverButtonCell*)[self cell] setHoverImage:image];
+}
+
+- (void)updateHoverImage
+{
+    //NSPoint p = [NSEvent mouseLocation];
+    NSPoint p = [[self window] mouseLocationOutsideOfEventStream];
+    p = [self convertPoint:p fromView:nil];
+    if (NSPointInRect(p, [self bounds])) {
+        [[self cell] mouseEntered:nil];
+    }
+    else {
+        [[self cell] mouseExited:nil];
+    }
 }
 
 @end

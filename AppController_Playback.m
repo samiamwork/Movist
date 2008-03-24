@@ -74,9 +74,10 @@
 {
     //TRACE(@"%s %f sec", __PRETTY_FUNCTION__, time);
     if (_movie) {
-        [_movieView setMessage:[NSString stringWithFormat:
-            @"%@/%@", NSStringFromMovieTime(time),
-                      NSStringFromMovieTime([_movie duration])]];
+        float duration = [_movie duration];
+        [_movieView setMessage:[NSString stringWithFormat:@"%@/%@ (%d%%)",
+            NSStringFromMovieTime(time), NSStringFromMovieTime(duration),
+            (int)(time * 100 / duration)]];
         [_movie gotoTime:time];
     }
 }
@@ -98,11 +99,12 @@
     //TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
+        float duration = [_movie duration];
         float t = MAX(0, [_movie currentTime] - dt);
         [_movie seekByTime:-dt];
-        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@",
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@ (%d%%)",
             [NSString stringWithFormat:NSLocalizedString(@"Backward %d sec.", nil), (int)dt],
-            NSStringFromMovieTime(t), NSStringFromMovieTime([_movie duration])]];
+            NSStringFromMovieTime(t), NSStringFromMovieTime(duration), (int)(t * 100 / duration)]];
     }
 }
 
@@ -111,11 +113,12 @@
     //TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
-        float t = MIN([_movie currentTime] + dt, [_movie duration]);
+        float duration = [_movie duration];
+        float t = MIN([_movie currentTime] + dt, duration);
         [_movie seekByTime:+dt];
-        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@",
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@ (%d%%)",
             [NSString stringWithFormat:NSLocalizedString(@"Forward %d sec.", nil), (int)dt],
-            NSStringFromMovieTime(t), NSStringFromMovieTime([_movie duration])]];
+            NSStringFromMovieTime(t), NSStringFromMovieTime(duration), (int)(t * 100 / duration)]];
     }
 }
 
@@ -298,9 +301,7 @@
         [self updatePlayUI];
         [_playlistController updateUI];
 
-        if (![self openNextPlaylistItem]) {
-            [self playlistEnded];
-        }
+        [self openNextPlaylistItem];
     }
 }
 

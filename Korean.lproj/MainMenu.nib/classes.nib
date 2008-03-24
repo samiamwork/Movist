@@ -63,6 +63,7 @@
                 "_movieView" = MMovieView;
                 "_muteButton" = NSButton;
                 "_muteMenuItem" = NSMenuItem;
+                "_nextMovieButton" = HoverButton;
                 "_panelDecoderButton" = NSButton;
                 "_panelLTimeTextField" = TimeTextField;
                 "_panelMuteButton" = NSButton;
@@ -75,6 +76,7 @@
                 "_playMenuItem" = NSMenuItem;
                 "_playPanel" = PlayPanel;
                 "_playlistButton" = HoverButton;
+                "_prevMovieButton" = HoverButton;
                 "_propertiesView" = NSTableView;
                 "_rTimeTextField" = TimeTextField;
                 "_rateDefaultMenuItem" = NSMenuItem;

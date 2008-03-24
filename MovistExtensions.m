@@ -261,6 +261,28 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@implementation NSIndexSet (Movist)
+
++ (id)indexSetWithIndexes:(int)index, ...
+{
+    NSMutableIndexSet* set = [NSMutableIndexSet indexSet];
+
+    va_list vargs;
+    va_start(vargs, index);
+    while (0 <= index) {
+        [set addIndex:(unsigned int)index];
+        index = va_arg(vargs, int);
+    }
+    va_end(vargs);
+
+    return set;
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @implementation NSFileManager (Movist)
 
 - (NSString*)pathContentOfLinkAtPath:(NSString*)path
@@ -334,13 +356,6 @@
 
 @implementation NSUserDefaults (Movist)
 
-- (void)setColor:(NSColor*)color forKey:(NSString*)key
-{
-    //TRACE(@"%s %@ for \"%@\"", __PRETTY_FUNCTION__, color, key);
-    NSData* data = [NSArchiver archivedDataWithRootObject:color];
-    [self setObject:data forKey:key];
-}
-
 - (NSColor*)colorForKey:(NSString*)key
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, key);
@@ -348,51 +363,11 @@
     return (!data) ? nil : (NSColor*)[NSUnarchiver unarchiveObjectWithData:data];
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-NSString* A52CODEC_DEFAULTS                 = @"com.cod3r.a52codec";
-NSString* A52CODEC_ATTEMPT_PASSTHROUGH_KEY  = @"attemptPassthrough";
-
-- (void)setA52CodecAttemptPassthrough:(BOOL)enabled
+- (void)setColor:(NSColor*)color forKey:(NSString*)key
 {
-    NSMutableDictionary* a52Codec =
-    [[[self persistentDomainForName:A52CODEC_DEFAULTS] mutableCopy] autorelease];
-    
-    [a52Codec setObject:[NSNumber numberWithInt:enabled ? 1 : 0]
-                 forKey:A52CODEC_ATTEMPT_PASSTHROUGH_KEY];
-    
-    [self removePersistentDomainForName:A52CODEC_DEFAULTS];
-    [self setPersistentDomain:a52Codec forName:A52CODEC_DEFAULTS];
-    [self synchronize];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-NSString* PERIAN_DEFAULTS       = @"org.perian.Perian";
-NSString* PERIAN_SUBTITLE_KEY   = @"LoadExternalSubtitles";
-
-- (BOOL)isPerianSubtitleEnabled
-{
-    NSDictionary* perian = [self persistentDomainForName:PERIAN_DEFAULTS];
-    if (!perian) {
-        return TRUE;    // enabled by default of capri-perian
-    }
-    
-    //TRACE(@"perian=%@", perian);
-    NSNumber* number = [perian objectForKey:PERIAN_SUBTITLE_KEY];
-    return (number) ? [number boolValue] : TRUE;    // enabled by default of capri-perian
-}
-
-- (void)setPerianSubtitleEnabled:(BOOL)enabled
-{
-    NSMutableDictionary* perian =
-    [[[self persistentDomainForName:PERIAN_DEFAULTS] mutableCopy] autorelease];
-    
-    [perian setObject:[NSNumber numberWithBool:enabled] forKey:PERIAN_SUBTITLE_KEY];
-    
-    [self removePersistentDomainForName:PERIAN_DEFAULTS];
-    [self setPersistentDomain:perian forName:PERIAN_DEFAULTS];
-    [self synchronize];
+    //TRACE(@"%s %@ for \"%@\"", __PRETTY_FUNCTION__, color, key);
+    NSData* data = [NSArchiver archivedDataWithRootObject:color];
+    [self setObject:data forKey:key];
 }
 
 @end

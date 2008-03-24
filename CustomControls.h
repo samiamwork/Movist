@@ -27,6 +27,7 @@
 }
 
 - (void)setHoverImage:(NSImage*)image;
+- (void)updateHoverImage;
 
 @end
 

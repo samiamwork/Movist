@@ -392,7 +392,7 @@
 
 - (void)setNextItem_RepeatOff:(BOOL)forward
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, forward ? @"forward" : @"backward");
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, forward ? @"forward" : @"backward");
     assert(0 < [_array count]);
     if (!_currentItem) {
         _currentItem = (forward) ? [_array objectAtIndex:0] :
@@ -412,7 +412,7 @@
 
 - (void)setNextItem_RepeatAll:(BOOL)forward
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, forward ? @"forward" : @"backward");
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, forward ? @"forward" : @"backward");
     assert(0 < [_array count]);
     if (!_currentItem) {
         _currentItem = (forward) ? [_array objectAtIndex:0] :
@@ -432,7 +432,7 @@
 
 - (void)setNextItem_RepeatOne
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     assert(0 < [_array count]);
     if (!_currentItem) {
         _currentItem = [_array objectAtIndex:0];
@@ -441,7 +441,7 @@
 
 - (void)setPrevItem
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (0 < [_array count]) {
         switch (_repeatMode) {
             case REPEAT_OFF : [self setNextItem_RepeatOff:FALSE];   break;
@@ -453,7 +453,7 @@
 
 - (void)setNextItem
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (0 < [_array count]) {
         switch (_repeatMode) {
             case REPEAT_OFF : [self setNextItem_RepeatOff:TRUE];    break;
@@ -471,7 +471,7 @@
 
 - (void)setRepeatMode:(unsigned int)mode
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, mode);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, mode);
     _repeatMode = mode;
 }
 

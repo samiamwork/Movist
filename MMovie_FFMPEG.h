@@ -184,8 +184,8 @@ enum {
 
 + (NSString*)name;
 
-- (BOOL)initFFmpegWithMovieURL:(NSURL*)movieURL errorCode:(int*)errorCode;
-- (void)cleanupFFmpeg;
+- (BOOL)initAVCodec:(int*)errorCode;
+- (void)cleanupAVCodec;
 - (BOOL)initDecoder:(AVCodecContext*)context codec:(AVCodec*)codec
            forVideo:(BOOL)forVideo;
 
@@ -193,16 +193,7 @@ enum {
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-/*
-@interface MMovie_FFmpeg (Init)
 
-- (BOOL)initFFmpegWithMovieURL:(NSURL*)movieURL errorCode:(int*)errorCode;
-- (void)cleanupFFmpeg;
-- (BOOL)initDecoder:(AVCodecContext*)context codec:(AVCodec*)codec
-           forVideo:(BOOL)forVideo;
-
-@end
-*/
 @interface MMovie_FFmpeg (Playback)
 
 - (BOOL)defaultFuncCondition;

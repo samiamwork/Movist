@@ -80,7 +80,9 @@ NSString* PANE_ID[] = {
 - (void)dealloc
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_detailsArray release];
+    [_detailsCategories release];
+    [_codecIds release];
+    [_fileExtensions release];
     [_appController release];
     [_mainWindow release];
     [_defaults synchronize];

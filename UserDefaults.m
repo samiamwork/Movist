@@ -76,7 +76,7 @@ NSString* MSubtitleLineSpacingKey           = @"SubtitleLineSpacing";
 
 #pragma mark -
 #pragma mark prefs: advanced
-NSString* MDefaultDecoderKey                = @"DefaultDecoder";
+NSString* MDefaultCodecBindingKey           = @"DefaultCodecBinding";
 NSString* MUpdateCheckIntervalKey           = @"UpdateCheckInterval";
 NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 
@@ -103,7 +103,73 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@implementation NSUserDefaults (MovistUserDefaults)
+@implementation NSUserDefaults (MovistUtils)
+
+#define DECODER_VALUE(object)           [object intValue]
+#define CODEC_VALUE(ojbect)             [object intValue]
+
+#define DECODER_OBJECT(decoder)         [NSNumber numberWithInt:decoder]
+#define CODEC_KEY(codecId)              [NSString stringWithFormat:@"%d", codecId]
+//#define CODEC_KEY(codecId)              [NSNumber numberWithInt:codecId]
+// I don't know why [NSUserDefaults registerDefaults:] crashes for key of NSNumber.
+
+#define CODEC_BINDING(decoder, codecId) DECODER_OBJECT(decoder), CODEC_KEY(codecId)
+
+- (NSDictionary*)defaultCodecBinding
+{
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_ETC_),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MPEG1),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MPEG2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MPEG4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV1),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV5),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV6),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIVX),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DX50),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_XVID),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MP4V),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MPG4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP42),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP43),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP4S),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_M4S2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_AP41),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RMP4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_SEDG),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_FMP4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_BLZ0),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_H263),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_H264),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_AVC1),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_X264),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VC1),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV1),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WVC1),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_SVQ1),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_SVQ3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP5),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP6),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP6F),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV10),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV20),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV30),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV40),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_FLV),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_THEORA),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_HUFFYUV),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_CINEPAK),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_INDEO2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_INDEO3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MJPEG),
+            nil];
+}
 
 - (void)registerMovistDefaults
 {
@@ -158,31 +224,129 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleVMarginKey];
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleLineSpacingKey];
 
-    // prefs: advanced
-    [dict setObject:[NSNumber numberWithInt:DECODER_QUICKTIME] forKey:MDefaultDecoderKey];
+    // prefs: advanced - general
     [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MUpdateCheckIntervalKey];
     [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastUpdateCheckTimeKey];
-
-    // prefs: advanced - details: general
+    // prefs: advanced - codec binding
+    [dict setObject:[self defaultCodecBinding] forKey:MDefaultCodecBindingKey];
+    // prefs: advanced - details
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectMovieSeriesKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoPlayOnFullScreenKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MCaptureIncludingLetterBoxKey];
-    // prefs: advanced - details: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
     [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
     [dict setObject:[NSNumber numberWithInt:3] forKey:MAutoSubtitlePositionMaxLinesKey];
-    // prefs: advanced - details: full navigation
     [dict setObject:@"~/Movies" forKey:MFullNavPathKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesMoviesKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesTVShowsKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesPodcastKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MShowActualPathForLinkKey];
-    
+
     //TRACE(@"registering defaults: %@", dict);
     [self registerDefaults:dict];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark utils.
+
+- (int)defaultDecoderForCodecId:(int)codecId
+{
+    NSDictionary* dict = [self dictionaryForKey:MDefaultCodecBindingKey];
+    id object = [dict objectForKey:CODEC_KEY(codecId)];
+    if (!object) { // if not exist, use decoder for "etc."
+        object = [dict objectForKey:CODEC_KEY(MCODEC_ETC_)];
+    }
+    return DECODER_VALUE(object);
+}
+
+- (void)setDefaultDecoder:(int)decoder forCodecId:(int)codecId
+{
+    NSMutableDictionary* dict =
+    [[self dictionaryForKey:MDefaultCodecBindingKey] mutableCopy];
+
+    id object = DECODER_OBJECT(decoder);
+    if (codecId < 0) {  // for all codecs
+        TRACE(@"codecId=%d ==> default-decoder=%d", codecId, decoder);
+        id key;
+        NSEnumerator* enumerator = [[dict allKeys] objectEnumerator];
+        while (key = [enumerator nextObject]) {
+            [dict setObject:object forKey:key];
+        }
+    }
+    else {
+        TRACE(@"codecId=%d ==> default-decoder=%d", codecId, decoder);
+        [dict setObject:object forKey:CODEC_KEY(codecId)];
+    }
+
+    [self setObject:dict forKey:MDefaultCodecBindingKey];
+}
+
+- (void)setDefaultDecoder:(int)decoder forCodecIdSet:(NSIndexSet*)codecIdSet
+{
+    NSMutableDictionary* dict =
+    [[self dictionaryForKey:MDefaultCodecBindingKey] mutableCopy];
+    
+    id object = DECODER_OBJECT(decoder);
+    int i, count = [codecIdSet count];
+    unsigned int* ids = (unsigned int*)malloc(sizeof(int) * count);
+    [codecIdSet getIndexes:ids maxCount:count inIndexRange:nil];
+    for (i = 0; i < count; i++) {
+        TRACE(@"codecId=%d ==> default-decoder=%d", ids[i], decoder);
+        [dict setObject:object forKey:CODEC_KEY(ids[i])];
+    }
+    free(ids);
+
+    [self setObject:dict forKey:MDefaultCodecBindingKey];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+NSString* A52CODEC_DEFAULTS                 = @"com.cod3r.a52codec";
+NSString* A52CODEC_ATTEMPT_PASSTHROUGH_KEY  = @"attemptPassthrough";
+
+- (void)setA52CodecAttemptPassthrough:(BOOL)enabled
+{
+    NSMutableDictionary* a52Codec =
+    [[[self persistentDomainForName:A52CODEC_DEFAULTS] mutableCopy] autorelease];
+    
+    [a52Codec setObject:[NSNumber numberWithInt:enabled ? 1 : 0]
+                 forKey:A52CODEC_ATTEMPT_PASSTHROUGH_KEY];
+    
+    [self removePersistentDomainForName:A52CODEC_DEFAULTS];
+    [self setPersistentDomain:a52Codec forName:A52CODEC_DEFAULTS];
+    [self synchronize];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+NSString* PERIAN_DEFAULTS       = @"org.perian.Perian";
+NSString* PERIAN_SUBTITLE_KEY   = @"LoadExternalSubtitles";
+
+- (BOOL)isPerianSubtitleEnabled
+{
+    NSDictionary* perian = [self persistentDomainForName:PERIAN_DEFAULTS];
+    if (!perian) {
+        return TRUE;    // enabled by default of capri-perian
+    }
+    
+    //TRACE(@"perian=%@", perian);
+    NSNumber* number = [perian objectForKey:PERIAN_SUBTITLE_KEY];
+    return (number) ? [number boolValue] : TRUE;    // enabled by default of capri-perian
+}
+
+- (void)setPerianSubtitleEnabled:(BOOL)enabled
+{
+    NSMutableDictionary* perian =
+    [[[self persistentDomainForName:PERIAN_DEFAULTS] mutableCopy] autorelease];
+    
+    [perian setObject:[NSNumber numberWithBool:enabled] forKey:PERIAN_SUBTITLE_KEY];
+    
+    [self removePersistentDomainForName:PERIAN_DEFAULTS];
+    [self setPersistentDomain:perian forName:PERIAN_DEFAULTS];
+    [self synchronize];
 }
 
 @end

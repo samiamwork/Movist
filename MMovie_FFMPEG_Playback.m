@@ -353,7 +353,7 @@ static MMovie_FFmpeg* s_currentMovie = 0;
 #pragma mark -
 #pragma mark public interface
 
-- (float)currentTime { return _currentTime; }
+- (float)currentTime { return _currentTime - _info.startTime; }
 - (float)rate { return (_command == COMMAND_PLAY) ? _rate : 0.0; }
 
 - (void)setRate:(float)rate
@@ -530,8 +530,10 @@ static MMovie_FFmpeg* s_currentMovie = 0;
 {
     // sw-scaler should be used under GPL only!
     int ret = sws_scale(_scalerContext,
-                        _videoFrame->data, _videoFrame->linesize, 0, _encodedSize.height,
-                        _videoFrameData[_nextVideoBufId]->data, _videoFrameData[_nextVideoBufId]->linesize);
+                        _videoFrame->data, _videoFrame->linesize,
+                        0, _info.encodedSize.height,
+                        _videoFrameData[_nextVideoBufId]->data,
+                        _videoFrameData[_nextVideoBufId]->linesize);
     if (ret < 0) {
         TRACE(@"%s sws_scale() failed : %d", __PRETTY_FUNCTION__, ret);
         return FALSE;
@@ -615,11 +617,11 @@ void pixelBufferReleaseCallback(void *releaseRefCon, const void *baseAddress)
     else {
         CV_PIXEL_FORMAT = kYUVSPixelFormat;
     }
-    int ret = CVPixelBufferCreateWithBytes(0, _encodedSize.width, _encodedSize.height, CV_PIXEL_FORMAT,
+    int ret = CVPixelBufferCreateWithBytes(0, _info.encodedSize.width, _info.encodedSize.height,
+                                           CV_PIXEL_FORMAT,
                                            _videoFrameData[_videoDataBufId]->data[0], 
                                            _videoFrameData[_videoDataBufId]->linesize[0],
-//                                           pixelBufferReleaseCallback, self, 0, 
-                                           0, 0, 0, 
+                                           0, 0, 0, // pixelBufferReleaseCallback, self, 0,
                                            bufferRef);
     if (ret != kCVReturnSuccess) {
         TRACE(@"%s CVPixelBufferCreateWithBytes() failed : %d", __PRETTY_FUNCTION__, ret);

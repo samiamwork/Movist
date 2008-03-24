@@ -76,7 +76,7 @@ extern NSString* MSubtitleLineSpacingKey;
 
 #pragma mark -
 #pragma mark prefs: advanced
-extern NSString* MDefaultDecoderKey;
+extern NSString* MDefaultCodecBindingKey;
 extern NSString* MUpdateCheckIntervalKey;
 extern NSString* MLastUpdateCheckTimeKey;
 
@@ -103,8 +103,19 @@ extern NSString* MShowActualPathForLinkKey;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface NSUserDefaults (MovistUserDefaults)
+@interface NSUserDefaults (MovistUtils)
 
 - (void)registerMovistDefaults;
+
+////////////////////////////////////////////////////////////////////////////////
+
+- (int)defaultDecoderForCodecId:(int)codecId;
+- (void)setDefaultDecoder:(int)decoder forCodecId:(int)codecId;
+- (void)setDefaultDecoder:(int)decoder forCodecIdSet:(NSIndexSet*)codecIdSet;
+
+- (void)setA52CodecAttemptPassthrough:(BOOL)enabled;
+
+- (BOOL)isPerianSubtitleEnabled;
+- (void)setPerianSubtitleEnabled:(BOOL)enabled;
 
 @end

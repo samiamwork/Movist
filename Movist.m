@@ -83,6 +83,100 @@ NSString* NSStringFromMovieTime(float time)
             totalMinutes / 60, totalMinutes % 60, totalSeconds % 60];
 }
 
+NSString* videoCodecName(int codecId)
+{
+    if (codecId == MCODEC_ETC_) {
+        return NSLocalizedString(@"etc.", nil);
+    }
+
+#define CASE_CODEC_STRING(codec)    \
+        case MCODEC_##codec : return @""#codec
+
+    switch (codecId) {
+        CASE_CODEC_STRING(MPEG1);
+        CASE_CODEC_STRING(MPEG2);
+        CASE_CODEC_STRING(MPEG4);
+        CASE_CODEC_STRING(DIV1);
+        CASE_CODEC_STRING(DIV2);
+        CASE_CODEC_STRING(DIV3);
+        CASE_CODEC_STRING(DIV4);
+        CASE_CODEC_STRING(DIV5);
+        CASE_CODEC_STRING(DIV6);
+        CASE_CODEC_STRING(DIVX);
+        CASE_CODEC_STRING(DX50);
+        CASE_CODEC_STRING(XVID);
+        CASE_CODEC_STRING(MP4V);
+        CASE_CODEC_STRING(MPG4);
+        CASE_CODEC_STRING(MP42);
+        CASE_CODEC_STRING(MP43);
+        CASE_CODEC_STRING(MP4S);
+        CASE_CODEC_STRING(M4S2);
+        CASE_CODEC_STRING(AP41);
+        CASE_CODEC_STRING(RMP4);
+        CASE_CODEC_STRING(SEDG);
+        CASE_CODEC_STRING(FMP4);
+        CASE_CODEC_STRING(BLZ0);
+        CASE_CODEC_STRING(H263);
+        CASE_CODEC_STRING(H264);
+        CASE_CODEC_STRING(AVC1);
+        CASE_CODEC_STRING(X264);
+        CASE_CODEC_STRING(VC1);
+        CASE_CODEC_STRING(WMV1);
+        CASE_CODEC_STRING(WMV2);
+        CASE_CODEC_STRING(WMV3);
+        CASE_CODEC_STRING(WVC1);
+        CASE_CODEC_STRING(SVQ1);
+        CASE_CODEC_STRING(SVQ3);
+        CASE_CODEC_STRING(VP3);
+        CASE_CODEC_STRING(VP5);
+        CASE_CODEC_STRING(VP6);
+        CASE_CODEC_STRING(VP6F);
+        CASE_CODEC_STRING(RV10);
+        CASE_CODEC_STRING(RV20);
+        CASE_CODEC_STRING(RV30);
+        CASE_CODEC_STRING(RV40);
+        CASE_CODEC_STRING(FLV);
+        CASE_CODEC_STRING(THEORA);
+        CASE_CODEC_STRING(HUFFYUV);
+        CASE_CODEC_STRING(CINEPAK);
+        CASE_CODEC_STRING(INDEO2);
+        CASE_CODEC_STRING(INDEO3);
+        CASE_CODEC_STRING(MJPEG);
+    }
+    return @"";
+}
+
+NSString* audioCodecName(int codecId)
+{
+    return @""; // FIXME
+}
+
+NSString* videoCodecDescription(int codecId)
+{
+    if (codecId == MCODEC_ETC_) {
+        return NSLocalizedString(@"etc. DESC.", nil);
+    }
+    NSString* s = videoCodecName(codecId);
+    if (0 < [s length]) {
+        s = [NSString stringWithFormat:@"%@ DESC.", s];
+        return NSLocalizedString(s, nil);
+    }
+    return NSLocalizedString(@"Unnamed", nil);
+}
+
+NSString* audioCodecDescription(int codecId)
+{
+    if (codecId == MCODEC_ETC_) {
+        return NSLocalizedString(@"etc. DESC.", nil);
+    }
+    NSString* s = audioCodecName(codecId);
+    if (0 < [s length]) {
+        s = [NSString stringWithFormat:@"%@ DESC.", s];
+        return NSLocalizedString(s, nil);
+    }
+    return NSLocalizedString(@"Unnamed", nil);
+}
+
 NSString* NSStringFromSubtitlePosition(int position)
 {
     if (position == SUBTITLE_POSITION_AUTO) {

@@ -41,6 +41,10 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist addFiles:filenames];
     [_playlistController updateUI];
+
+    BOOL enabled = (0 < [_playlist count]);
+    [_prevMovieButton setEnabled:enabled];
+    [_nextMovieButton setEnabled:enabled];
 }
 
 - (void)addURL:(NSURL*)url
@@ -48,6 +52,13 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist addURL:url];
     [_playlistController updateUI];
+}
+
+- (void)updatePrevNextMovieButtons
+{
+    BOOL enabled = (0 < [_playlist count]);
+    [_prevMovieButton setEnabled:enabled];
+    [_nextMovieButton setEnabled:enabled];
 }
 
 - (BOOL)openCurrentPlaylistItem
@@ -58,18 +69,22 @@
                   subtitle:[item subtitleURL] subtitleEncoding:kCFStringEncodingInvalidId];
 }
 
-- (BOOL)openPrevPlaylistItem
+- (void)openPrevPlaylistItem
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist setPrevItem];
-    return [self openCurrentPlaylistItem];
+    if (![self openCurrentPlaylistItem]) {
+        [self playlistEnded];
+    }
 }
 
-- (BOOL)openNextPlaylistItem
+- (void)openNextPlaylistItem
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist setNextItem];
-    return [self openCurrentPlaylistItem];
+    if (![self openCurrentPlaylistItem]) {
+        [self playlistEnded];
+    }
 }
 
 - (void)playlistEnded
@@ -216,10 +231,11 @@
 - (IBAction)prevNextMovieAction:(id)sender
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
-    BOOL ret = ([sender tag] < 0) ? [self openPrevPlaylistItem] :
-                                    [self openNextPlaylistItem];
-    if (!ret) {
-        [self playlistEnded];
+    if ([sender tag] < 0) {
+        [self openPrevPlaylistItem];
+    }
+    else {
+        [self openNextPlaylistItem];
     }
 }
 

@@ -90,11 +90,14 @@
     
     // advanced
     IBOutlet NSView* _advancedPane;
-    IBOutlet NSPopUpButton* _defaultDecoderPopUpButton;
     IBOutlet NSPopUpButton* _updateCheckIntervalPopUpButton;
     IBOutlet NSTextField*   _lastUpdateCheckTimeTextField;
+    IBOutlet NSTableView* _fileBindingTableView;
+    IBOutlet NSTableView* _codecBindingTableView;
     IBOutlet NSOutlineView* _detailsOutlineView;
-    NSMutableArray* _detailsArray;
+    NSArray* _fileExtensions;
+    NSArray* _codecIds;
+    NSArray* _detailsCategories;
 
     NSUserDefaults* _defaults;
     AppController* _appController;
@@ -177,22 +180,64 @@
 
 - (void)initAdvancedPane;
 - (void)updateLastUpdateCheckTimeTextField;
-- (IBAction)defaultDecoderAction:(id)sender;
 - (IBAction)updateCheckIntervalAction:(id)sender;
 - (IBAction)checkUpdateNowAction:(id)sender;
-
-- (void)initDetailsUI;
-- (int)outlineView:(NSOutlineView*)outlineView numberOfChildrenOfItem:(id)item;
-- (BOOL)outlineView:(NSOutlineView*)outlineView isItemExpandable:(id)item;
-- (id)outlineView:(NSOutlineView*)outlineView child:(int)index ofItem:(id)item;
-- (id)outlineView:(NSOutlineView*)outlineView
-    objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item;
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark advanced-details table-column
+#pragma mark advanced - file binding
+
+@interface PreferenceController (Advanced_FileBinding)
+
+- (void)initFileBinding;
+
+- (int)numberOfRowsInFileBindingTableView;
+- (id)objectValueForFileBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
+- (void)setObjectValue:(id)object
+forFileBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
+
+- (IBAction)fileBindingAction:(id)sender;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark advanced - codec binding
+
+@interface PreferenceController (Advanced_CodecBinding)
+
+- (void)initCodecBinding;
+
+- (int)numberOfRowsInCodecBindingTableView;
+- (id)objectValueForCodecBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
+- (void)setObjectValue:(id)object
+forCodecBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
+
+- (IBAction)codecBindingAction:(id)sender;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark advanced - details
+
+@interface PreferenceController (Advanced_Details)
+
+- (void)initDetails;
+/*
+ - (int)outlineView:(NSOutlineView*)outlineView numberOfChildrenOfItem:(id)item;
+ - (BOOL)outlineView:(NSOutlineView*)outlineView isItemExpandable:(id)item;
+ - (id)outlineView:(NSOutlineView*)outlineView child:(int)index ofItem:(id)item;
+ - (id)outlineView:(NSOutlineView*)outlineView
+ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item;
+ */
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark advanced - details table-column
 
 @interface AdvancedDetailsTableColumn : NSTableColumn
 {

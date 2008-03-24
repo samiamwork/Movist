@@ -41,6 +41,15 @@
 {
     //TRACE(@"%s \"%@\" with \"%@\"", __PRETTY_FUNCTION__,
     //      [movieURL absoluteString], movieClass);
+    MMovieInfo movieInfo;
+    if (![MMovie getMovieInfo:&movieInfo forMovieURL:movieURL error:error]) {
+        if (movieClass && movieClass == [MMovie_FFmpeg class]) {
+            return nil;
+        }
+        // continue by using QuickTime
+        movieClass = [MMovie_QuickTime class];
+    }
+
     NSArray* classes;
     if (movieClass) {
         // if movieClass is specified, then try it only
@@ -48,7 +57,7 @@
     }
     else {
         // try all movie-classes with starting default-movie-class
-        int decoder = [_defaults integerForKey:MDefaultDecoderKey];
+        int decoder = [_defaults defaultDecoderForCodecId:movieInfo.videoCodecId];
         if (decoder == DECODER_QUICKTIME) {
             classes = [NSArray arrayWithObjects:
                 [MMovie_QuickTime class], [MMovie_FFmpeg class], nil];
@@ -75,7 +84,7 @@
                 [_defaults setPerianSubtitleEnabled:FALSE];
             }
         }        
-        movie = [[movieClass alloc] initWithURL:movieURL error:error];
+        movie = [[movieClass alloc] initWithURL:movieURL movieInfo:&movieInfo error:error];
         if (movie) {
             return [movie autorelease];
         }
@@ -191,6 +200,10 @@
     [_panelSeekSlider setMinValue:0];
     [_panelSeekSlider setMaxValue:[_movie duration]];
     [_panelSeekSlider setIndexedDuration:0];
+    [_controlPanelButton updateHoverImage];
+    [_prevMovieButton updateHoverImage];
+    [_nextMovieButton updateHoverImage];
+    [_playlistButton updateHoverImage];
     [self setRangeRepeatRange:_lastPlayedMovieRepeatRange];
     
     [_reopenWithMenuItem setTitle:
@@ -255,6 +268,7 @@
                name:MMovieEndNotification object:_movie];
 
     // update movie
+    [self updateAudioOutput:self];
     [self autoenableAudioTracks];
     [_movie setVolume:[self preferredVolume:[_defaults floatForKey:MVolumeKey]]];
     [_movie setMuted:([_muteButton state] == NSOnState)];
@@ -478,32 +492,28 @@
 
 - (void)updateDecoderUI
 {
-    NSString* decoder;
-    BOOL enable;
+    NSImage* image[3] = { nil, nil, nil };
     if ([_movieView movie]) {
-        decoder = [[[_movieView movie] class] name];
-        enable = TRUE;
-    }
-    else {
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        decoder = ([defaults integerForKey:MDefaultDecoderKey] == DECODER_QUICKTIME) ?
-                                        [MMovie_QuickTime name] : [MMovie_FFmpeg name];
-        enable = FALSE;
+        NSString* decoder = [[[_movieView movie] class] name];
+        if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
+            image[0] = [NSImage imageNamed:@"MainQuickTime"];
+            image[1] = [NSImage imageNamed:@"FSQuickTime"];
+            image[2] = [NSImage imageNamed:@"QuickTime16"];
+        }
+        else {  // [decoder isEqualToString:[MMovie_FFmpeg name]]
+            image[0] = [NSImage imageNamed:@"MainFFMPEG"];
+            image[1] = [NSImage imageNamed:@"FSFFMPEG"];
+            image[2] = [NSImage imageNamed:@"FFMPEG16"];
+        }
     }
 
-    if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
-        [_decoderButton setImage:[NSImage imageNamed:@"MainQuickTime"]];
-        [_panelDecoderButton setImage:[NSImage imageNamed:@"FSQuickTime"]];
-        [_controlPanelDecoderButton setImage:(enable) ? [NSImage imageNamed:@"QuickTime16"] : nil];
-    }
-    else {  // [decoder isEqualToString:[MMovie_FFmpeg name]]
-        [_decoderButton setImage:[NSImage imageNamed:@"MainFFMPEG"]];
-        [_panelDecoderButton setImage:[NSImage imageNamed:@"FSFFMPEG"]];
-        [_controlPanelDecoderButton setImage:(enable) ? [NSImage imageNamed:@"FFMPEG16"] : nil];
-    }
-    [_decoderButton setEnabled:enable];
-    [_panelDecoderButton setEnabled:enable];
-    [_controlPanelDecoderButton setEnabled:enable];
+    [_decoderButton setImage:image[0]];
+    [_panelDecoderButton setImage:image[1]];
+    [_controlPanelDecoderButton setImage:image[2]];
+
+    [_decoderButton setEnabled:(image[0] != nil)];
+    [_panelDecoderButton setEnabled:(image[1] != nil)];
+    [_controlPanelDecoderButton setEnabled:(image[2] != nil)];
 }
 
 - (void)updateSystemActivity:(NSTimer*)timer

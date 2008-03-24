@@ -130,7 +130,7 @@
 
 + (NSString*)name { return @"QuickTime"; }
 
-- (id)initWithURL:(NSURL*)url error:(NSError**)error
+- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo error:(NSError**)error
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     QTMovie* qtMovie;
@@ -145,10 +145,13 @@
     }
     NSSize movieSize = [[qtMovie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
     if (movieSize.width == 0 || movieSize.height == 0) {
+        *error = [NSError errorWithDomain:[MMovie_QuickTime name]
+                                     code:ERROR_INVALID_VIDEO_DIMENSION
+                                 userInfo:nil];
         return nil;
     }
 
-    if ((self = [super initWithURL:url error:error])) {
+    if ((self = [super initWithURL:url movieInfo:movieInfo error:error])) {
         _qtMovie = [qtMovie retain];
         
         // init video/audio tracks
@@ -177,8 +180,8 @@
             }
         }
 
-        // init _displaySize & _encodedSize
-        _displaySize = _encodedSize = movieSize;
+        // override _info.displaySize & _info.encodedSize by QuickTime
+        _info.displaySize = _info.encodedSize = movieSize;
         /* ... in 10.5 or later
         if ([[_qtMovie attributeForKey:QTMovieApertureModeAttribute]
                             isEqualToString:QTMovieApertureModeEncodedPixels]) {
@@ -195,22 +198,24 @@
         if (noErr == ICMImageDescriptionGetProperty(idh, kQTPropertyClass_ImageDescription,
             kICMImageDescriptionPropertyID_EncodedPixelsDimensions, sizeof(esp), &esp, 0)) {
             NSSize es = NSMakeSize(FixedToFloat(esp.x), FixedToFloat(esp.y));
-            if (es.width <= _displaySize.width && es.height <= _displaySize.height) {
-                _encodedSize = es;
+            if (es.width <= _info.displaySize.width && es.height <= _info.displaySize.height) {
+                _info.encodedSize = es;
             }
         }
         DisposeHandle((Handle)idh);
         /**/
         [self setAspectRatio:_aspectRatio]; // for _adjustedSize
-        //TRACE(@"_displaySize=%@, _encodedSize=%@", NSStringFromSize(_displaySize),
-        //                                           NSStringFromSize(_encodedSize));
+        //TRACE(@"_info.displaySize=%@, _info.encodedSize=%@",
+        //      NSStringFromSize(_info.displaySize), NSStringFromSize(_info.encodedSize));
 
-        // init _duration
+        // override _info.duration by QuickTime
         QTTime t = [_qtMovie duration];
-        _duration = (float)t.timeValue / t.timeScale;
+        _info.duration = (float)t.timeValue / t.timeScale;
+
+        // override _info.preferredVolume by QuickTime
+        _info.preferredVolume = [[_qtMovie attributeForKey:QTMoviePreferredVolumeAttribute] floatValue];
 
         // init volumes
-        _preferredVolume = [[_qtMovie attributeForKey:QTMoviePreferredVolumeAttribute] floatValue];
         _volume = [_qtMovie volume];
         _muted = [_qtMovie muted];
 

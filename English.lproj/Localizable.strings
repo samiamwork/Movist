@@ -87,6 +87,12 @@
 "Subtitle %@ enabled" = "Subtitle %@ enabled";
 "Subtitle %@ disabled" = "Subtitle %@ disabled";
 
+/* Control Panel */
+"Video Track" = "Video Track";
+"Sound Track" = "Sound Track";
+"Mono" = "Mono";
+"Stereo" = "Stereo";
+
 /* Preferences */
 "General" = "General";
 "Video" = "Video";
@@ -95,7 +101,14 @@
 "Advanced" = "Advanced";
 "SubtitleTestChar" = "*";
 
-/* Preferences: advanced details */
+/* Preferences: advanced - codec binding */
+"Set all to QuickTime" = "Set all to QuickTime";
+"Set all to FFmpeg" = "Set all to FFmpeg";
+"Set all MPEG-4 to QuickTime" = "Set all MPEG-4 to QuickTime";
+"Set all MPEG-4 to FFmpeg" = "Set all MPEG-4 to FFmpeg";
+"Set to Movist default" = "Set to Movist default";
+
+/* Preferences: advanced - details */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
 "Add Similar Files to Playlist for Opening File" = "Add Similar Files to Playlist for Opening File";
 "Auto-detect Digital Audio-Out" = "Auto-detect Digital Audio-Out";
@@ -105,7 +118,7 @@
 "Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
 "Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
 "Auto Subtitle Position Max Lines (1~3)" = "Auto Subtitle Position Max Lines (1~3)";
-"Full Navigation" = "Full Navigation";
+"Full Screen Navigation" = "Full Screen Navigation";
 "Default Navigation Path" = "Default Navigation Path";
 "Show iTunes Movies" = "Show iTunes Movies";
 "Show iTunes TV Shows" = "Show iTunes TV Shows";
@@ -117,3 +130,56 @@
 
 /* Properties */
 "External Subtitle %d" = "External Subtitle %d";
+
+/* Video Codec Desc. */
+"MPEG1 DESC." = "MPEG-1";
+"MPEG2 DESC." = "MPEG-2";
+"MPEG4 DESC." = "MPEG-4";
+"DIV1 DESC." = "DivX MPEG-4 V3.x";
+"DIV2 DESC." = "DivX MPEG-4 V3.x";
+"DIV3 DESC." = "DivX MPEG-4 V3.x";
+"DIV4 DESC." = "DivX MPEG-4 V3.x";
+"DIV5 DESC." = "DivX MPEG-4 V3.x";
+"DIV6 DESC." = "DivX MPEG-4 V3.x";
+"DIVX DESC." = "DivX MPEG-4 V4.x";
+"DX50 DESC." = "DivX MPEG-4 V5.x";
+"XVID DESC." = "Xvid MPEG-4";
+"MP4V DESC." = "Apple MPEG-4";
+"MPG4 DESC." = "Microsoft MPEG-4 V1";
+"MP42 DESC." = "Microsoft MPEG-4 V2";
+"MP43 DESC." = "Microsoft MPEG-4 V3";
+"MP4S DESC." = "Microsoft ISO MPEG-4 V1";
+"M4S2 DESC." = "Microsoft ISO MPEG-4 V1.1";
+"AP41 DESC." = "AngelPotion Definitive";
+"RMP4 DESC." = "REALmagic MPEG-4";
+"SEDG DESC." = "Samsung MPEG-4";
+"FMP4 DESC." = "FFmpeg MPEG-4";
+"BLZ0 DESC." = "DivX for Blizzard";
+"H263 DESC." = "H.263, H.263+";
+"H264 DESC." = "H.264/MPEG-4 AVC";
+"AVC1 DESC." = "Apple H.264";
+"X264 DESC." = "Open Source H.264";
+"VC1 DESC." = "VC-1 (SMPTE 421M)";
+"WMV1 DESC." = "Windows Media Video 7";
+"WMV2 DESC." = "Windows Media Video 8";
+"WMV3 DESC." = "Windows Media Video 9";
+"WVC1 DESC." = "Windows Media Video 9 Advanced Profile";
+"SVQ1 DESC." = "Sorenson Video 1";
+"SVQ3 DESC." = "Sorenson Video 3";
+"VP3 DESC." = "On2 VP3";
+"VP5 DESC." = "On2 VP5";
+"VP6 DESC." = "On2 VP6";
+"VP6F DESC." = "On2 VP6 Flash";
+"RV10 DESC." = "RealVideo";
+"RV20 DESC." = "RealVideo G2";
+"RV30 DESC." = "RealVideo 8";
+"RV40 DESC." = "RealVideo 9, 10";
+"FLV DESC." = "Flash Video";
+"THEORA DESC." = "Theora";
+"HUFFYUV DESC." = "Huffyuv";
+"CINEPAK DESC." = "Cinepak";
+"INDEO2 DESC." = "Indeo Video 2";
+"INDEO3 DESC." = "Indeo Video 3";
+"MJPEG DESC." = "Motion-JPEG";
+"etc. DESC." = "Etc.";
+"etc." = "Etc.";

@@ -71,6 +71,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@interface NSIndexSet (Movist)
+
++ (id)indexSetWithIndexes:(int)firstIndex, ...;     // -1 must be append for ending
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @interface NSFileManager (Movist)
 
 - (NSString*)pathContentOfLinkAtPath:(NSString*)path;
@@ -85,13 +94,8 @@
 
 @interface NSUserDefaults (Movist)
 
-- (void)setColor:(NSColor*)color forKey:(NSString*)key;
 - (NSColor*)colorForKey:(NSString*)key;
-
-- (void)setA52CodecAttemptPassthrough:(BOOL)enabled;
-
-- (BOOL)isPerianSubtitleEnabled;
-- (void)setPerianSubtitleEnabled:(BOOL)enabled;
+- (void)setColor:(NSColor*)color forKey:(NSString*)key;
 
 @end
 

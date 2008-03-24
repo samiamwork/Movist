@@ -40,9 +40,12 @@
 
 @implementation AppController
 
+NSString* videoCodecName(int codecId);
+
 + (void)initialize
 {
     detectOperatingSystem();
+    av_register_all();
     [[NSUserDefaults standardUserDefaults] registerMovistDefaults];
 }
 
@@ -137,6 +140,8 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     // hover-images should be set after -awakeFromNib.
     [_controlPanelButton setHoverImage:[NSImage imageNamed:@"MainControlPanelHover"]];
+    [_prevMovieButton setHoverImage:[NSImage imageNamed:@"MainPrevMovieHover"]];
+    [_nextMovieButton setHoverImage:[NSImage imageNamed:@"MainNextMovieHover"]];
     [_playlistButton setHoverImage:[NSImage imageNamed:@"MainPlaylistHover"]];
 
     // initial update preferences: general
@@ -234,9 +239,32 @@
     [_defaults synchronize];
 }
 
+- (void)checkProcessArguments
+{
+    /*
+    NSArray* arguments = [[NSProcessInfo processInfo] arguments];
+
+    NSArray* options = [NSArray arrayWithObjects:@"--decoder=", nil];
+     "--fullNavMode"
+
+    NSString* arg, *opt;
+    NSEnumerator* optEnumerator;
+    NSEnumerator* argEnumerator = [arguments objectEnumerator];
+    while (arg = [enumerator nextObject]) {
+        optEnumerator = [options objectEnumerator];
+        while (opt = [optEnumerator nextObject]) {
+            if (NSOrderedSame == [arg compare:opt options:0 range:NSMakeRange(0, [opt length])]) {
+            }
+        }
+    }
+    NSRunAlertPanel([NSApp localizedAppName], msg, NSLocalizedString(@"OK", nil), nil, nil);
+     */
+}
+
 - (BOOL)application:(NSApplication*)theApplication openFile:(NSString*)filename
 {
     //TRACE(@"%s:\"%@\"", __PRETTY_FUNCTION__, filename);
+    [self checkProcessArguments];
     if ([self isFullScreen] && [_fullScreener isNavigating]) {
         return FALSE;
     }
@@ -246,6 +274,7 @@
 - (void)application:(NSApplication*)theApplication openFiles:(NSArray*)filenames
 {
     //TRACE(@"%s:{%@}", __PRETTY_FUNCTION__, filenames);
+    [self checkProcessArguments];
     if ([self isFullScreen] && [_fullScreener isNavigating]) {
         return;
     }
@@ -279,6 +308,7 @@
     [_fullScreener setMovieURL:movieURL];
     [_controlPanel setMovieURL:movieURL];
     [_propertiesView reloadData];
+    [self updatePrevNextMovieButtons];
     [self updateAspectRatioMenu];
     [self updateFullScreenFillMenu];
     [self updateAudioTrackMenuItems];

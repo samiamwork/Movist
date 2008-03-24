@@ -69,12 +69,12 @@ enum {
     ERROR_SUBTITLE_NOT_FOUND,
     ERROR_UNSUPPORTED_SUBTITLE_TYPE,
 
+    ERROR_INVALID_VIDEO_DIMENSION,
     ERROR_VISUAL_CONTEXT_CREATE_FAILED,
 
     ERROR_FFMPEG_FILE_OPEN_FAILED,
     ERROR_FFMPEG_STREAM_INFO_NOT_FOUND,
     ERROR_FFMPEG_VIDEO_STREAM_NOT_FOUND,
-    ERROR_FFMPEG_INVALID_VIDEO_DIMENSION,
     ERROR_FFMPEG_DECODER_NOT_FOUND,
     ERROR_FFMPEG_CODEC_OPEN_FAILED,
     ERROR_FFMPEG_FRAME_ALLOCATE_FAILED,
@@ -82,6 +82,69 @@ enum {
     ERROR_FFMPEG_AUDIO_UNIT_CREATE_FAILED,
 };
 
+#pragma mark -
+#pragma mark coded-id
+enum {
+    MCODEC_ETC_     = 0,    // for all other codecs
+
+    MCODEC_MPEG1    = 1,    // MPEG-1
+    MCODEC_MPEG2    = 10,   // MPEG-2
+    MCODEC_MPEG4    = 100,  // MPEG-4
+        MCODEC_DIV1,        // DivX MPEG-4 V3.x
+        MCODEC_DIV2,        // DivX MPEG-4 V3.x
+        MCODEC_DIV3,        // DivX MPEG-4 V3.x (Low Motion)
+        MCODEC_DIV4,        // DivX MPEG-4 V3.x (Fast Motion)
+        MCODEC_DIV5,        // DivX MPEG-4 V3.x
+        MCODEC_DIV6,        // DivX MPEG-4 V3.x
+        MCODEC_DIVX,        // DivX MPEG-4 V4.x
+        MCODEC_DX50,        // DivX MPEG-4 V5.x
+        MCODEC_XVID = 120,  // Xvid MPEG-4
+        MCODEC_MP4V = 130,  // Apple MPEG-4
+        MCODEC_MPG4 = 140,  // Microsoft MPEG-4 V1
+        MCODEC_MP42,        // Microsoft MPEG-4 V2
+        MCODEC_MP43,        // Microsoft MPEG-4 V3
+        MCODEC_MP4S,        // Microsoft ISO MPEG-4 V1
+        MCODEC_M4S2,        // Microsoft ISO MPEG-4 V1.1
+        MCODEC_AP41 = 150,  // AngelPotion Definitive
+        MCODEC_RMP4 = 160,  // REALmagic MPEG-4
+        MCODEC_SEDG = 170,  // Samsung MPEG-4
+        MCODEC_FMP4 = 180,  // FFmpeg MPEG-4
+        MCODEC_BLZ0,        // DivX for Blizzard
+
+    MCODEC_H263     = 200,  // H.263, H.263+
+    MCODEC_H264     = 300,  // H.264/MPEG4 AVC
+        MCODEC_AVC1,        // Apple H.264
+        MCODEC_X264,        // Open Source H.264
+    MCODEC_VC1      = 400,  // VC-1 (SMPTE 421M)
+
+    MCODEC_WMV1     = 500,  // Windows Media Video 7
+    MCODEC_WMV2     = 510,  // Windows Media Video 8
+    MCODEC_WMV3     = 520,  // Windows Media Video 9
+    MCODEC_WVC1     = 530,  // Windows Media Video 9 Advanced Profile
+
+    MCODEC_SVQ1     = 600,  // Sorenson Video 1
+    MCODEC_SVQ3     = 610,  // Sorenson Video 3
+
+    MCODEC_VP3      = 700,  // On2 VP3
+    MCODEC_VP5      = 710,  // On2 VP5
+    MCODEC_VP6      = 720,  // On2 VP6
+    MCODEC_VP6F     = 730,  // On2 VP6 Flash
+
+    MCODEC_RV10     = 800,  // RealVideo
+    MCODEC_RV20     = 810,  // RealVideo G2
+    MCODEC_RV30     = 820,  // RealVideo 8
+    MCODEC_RV40     = 830,  // RealVideo 9, 10
+
+    MCODEC_FLV      = 9000, // Flash Video
+    MCODEC_THEORA   = 9010, // Theora
+    MCODEC_HUFFYUV  = 9020, // Huffyuv
+    MCODEC_CINEPAK  = 9030, // Cinepak
+    MCODEC_INDEO2   = 9040, // Indeo Video 2
+    MCODEC_INDEO3   = 9050, // Indeo Video 3
+    MCODEC_MJPEG    = 9060, // Motion-JPEG
+};
+
+#pragma mark -
 #define DEFAULT_VOLUME  1.0
 #define MAX_VOLUME      4.0
 
@@ -137,6 +200,11 @@ float normalizedVolume(float volume);
 NSString* NSStringFromMovieTime(float time);
 NSString* NSStringFromSubtitlePosition(int position);
 NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding);
+
+NSString* videoCodecName(int codecId);
+NSString* audioCodecName(int codecId);
+NSString* videoCodecDescription(int codecId);
+NSString* audioCodecDescription(int codecId);
 
 void runAlertPanelForOpenError(NSError* error, NSURL* url);
 

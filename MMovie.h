@@ -23,6 +23,8 @@
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import <avformat.h>    // for AVFormatContext
+
 #import "Movist.h"
 
 @class MMovie;
@@ -48,28 +50,41 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+typedef struct {
+    int videoCodecId;
+    NSSize encodedSize;
+    NSSize displaySize;
+    float startTime;
+    float duration;
+
+    int audioCodecId;
+    int audioChannels;
+    float audioSampleRate;
+    float preferredVolume;
+} MMovieInfo;
+
 @interface MMovie : NSObject
 {
     NSURL* _url;
+    MMovieInfo _info;
     NSMutableArray* _videoTracks;
     NSMutableArray* _audioTracks;
-    NSSize _displaySize;
-    NSSize _encodedSize;
-    NSSize _adjustedSize;   // by _aspectRatio
-    float _duration;
 
     float _indexedDuration;
-    float _preferredVolume;
     float _volume;
     BOOL _muted;
 
-    int _aspectRatio;   // ASPECT_RATIO_*
+    int _aspectRatio;       // ASPECT_RATIO_*
+    NSSize _adjustedSize;   // by _aspectRatio
 }
 
 + (NSArray*)movieFileExtensions;
++ (BOOL)checkMovieURL:(NSURL*)url error:(NSError**)error;
++ (AVFormatContext*)formatContextForMovieURL:(NSURL*)url error:(NSError**)error;
++ (BOOL)getMovieInfo:(MMovieInfo*)info forMovieURL:(NSURL*)url error:(NSError**)error;
 + (NSString*)name;
 
-- (id)initWithURL:(NSURL*)url error:(NSError**)error;
+- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo error:(NSError**)error;
 - (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
              pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
                    error:(NSError**)error;
@@ -81,20 +96,28 @@
 - (NSArray*)audioTracks;
 - (NSSize)displaySize;
 - (NSSize)encodedSize;
-- (NSSize)adjustedSizeByAspectRatio;
+- (float)startTime;
 - (float)duration;
-- (void)trackEnabled:(MTrack*)track;
-- (void)trackDisabled:(MTrack*)track;
+- (float)preferredVolume;
 
 - (float)indexedDuration;
-- (float)preferredVolume;
 - (float)volume;
 - (BOOL)muted;
 - (void)setVolume:(float)volume;
 - (void)setMuted:(BOOL)muted;
 
 - (int)aspectRatio;
+- (NSSize)adjustedSizeByAspectRatio;
 - (void)setAspectRatio:(int)aspectRatio;
+
+- (void)trackEnabled:(MTrack*)track;
+- (void)trackDisabled:(MTrack*)track;
+
+// FIXME
+- (int)videoCodecId;
+- (int)audioCodecId;
+- (int)audioChannels;
+- (float)audioSampleRate;
 
 #pragma mark -
 #pragma mark playback

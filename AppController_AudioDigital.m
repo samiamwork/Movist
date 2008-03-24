@@ -26,6 +26,7 @@
 
 #import "AppController.h"
 #import "UserDefaults.h"
+#import "MMovie.h"
 
 #import <CoreAudio/CoreAudio.h>
 
@@ -54,46 +55,6 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
 @implementation AppController (AudioDigital)
 
 - (BOOL)supportDigitalAudio { return _supportDigitalAudio; }
-
-- (BOOL)updateAudioOutput:(id)sender
-{
-    if (!_supportDigitalAudio) {
-        if (sender) {
-            [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
-        }
-        return TRUE;
-    }
-
-    OSStatus err;
-
-    // get current format
-    UInt32 paramSize = sizeof(AudioStreamBasicDescription);
-    AudioStreamBasicDescription format;
-    err = AudioStreamGetProperty(_audioStreamID, 0,
-                                 kAudioStreamPropertyPhysicalFormat,
-                                 &paramSize, &format);
-    if (err != noErr) {
-        TRACE(@"could not get the stream format: [%4.4s]\n", (char*)&err);
-        return FALSE;
-    }
-
-    // change to 48 kHz
-    format.mSampleRate = 48000.000000;
-
-    // set as current format
-    err = AudioStreamSetProperty(_audioStreamID, 0, 0,
-                                 kAudioStreamPropertyPhysicalFormat,
-                                 sizeof(AudioStreamBasicDescription),
-                                 &format);
-    if (err != noErr) {
-        TRACE(@"could not set the stream format: [%4.4s]\n", (char *)&err);
-        return FALSE;
-    }
-    if (sender) {
-        [self setVolume:1.0];   // always 1.0
-    }
-    return TRUE;
-}
 
 - (BOOL)updateA52CodecProperties
 {
@@ -140,6 +101,47 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
         [self performSelectorOnMainThread:@selector(reopenMovieWithMovieClass:)
                                withObject:[_movie class] waitUntilDone:FALSE];
     }
+}
+
+- (BOOL)updateAudioOutput:(id)sender
+{
+    if (!_supportDigitalAudio) {
+        if (sender) {
+            [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
+        }
+        return TRUE;
+    }
+    
+    OSStatus err;
+    
+    // get current format
+    UInt32 paramSize = sizeof(AudioStreamBasicDescription);
+    AudioStreamBasicDescription format;
+    err = AudioStreamGetProperty(_audioStreamID, 0,
+                                 kAudioStreamPropertyPhysicalFormat,
+                                 &paramSize, &format);
+    if (err != noErr) {
+        TRACE(@"could not get the stream format: [%4.4s]\n", (char*)&err);
+        return FALSE;
+    }
+    
+    float sampleRate = (_movie) ? [_movie audioSampleRate] : 48000.000000;
+    if (sampleRate && sampleRate != format.mSampleRate) {
+        format.mSampleRate = sampleRate;
+    }
+    // set as current format
+    err = AudioStreamSetProperty(_audioStreamID, 0, 0,
+                                 kAudioStreamPropertyPhysicalFormat,
+                                 sizeof(AudioStreamBasicDescription),
+                                 &format);
+    if (err != noErr) {
+        TRACE(@"could not set the stream format: [%4.4s]\n", (char *)&err);
+        return FALSE;
+    }
+    if (sender) {
+        [self setVolume:1.0];   // always 1.0
+    }
+    return TRUE;
 }
 
 @end

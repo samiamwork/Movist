@@ -39,19 +39,51 @@
     if (self = [super initWithMovie:movie]) {
         _streamId = streamId;
 
+        if (streamId < 0) { // video
+            _name = NSLocalizedString(@"Video Track", nil);
+            NSSize ds = [movie displaySize], es = [movie encodedSize];
+            if (NSEqualSizes(ds, es)) {
+                _summary = [NSString stringWithFormat:@"%@, %d x %d",
+                            videoCodecDescription([movie videoCodecId]),
+                            (int)ds.width, (int)ds.height];
+            }
+            else {
+                _summary = [NSString stringWithFormat:@"%@, %d x %d (%d x %d)",
+                            videoCodecDescription([movie videoCodecId]),
+                            (int)ds.width, (int)ds.height, (int)es.width, (int)es.height];
+            }
+        }
+        else {              // audio
+            _name = NSLocalizedString(@"Sound Track", nil);
+            if ([movie audioChannels] == 0) {
+                _summary = @"";
+            }
+            else {
+                int chs = [movie audioChannels];
+                _summary = [NSString stringWithFormat:@"%@, %.0f Hz, %@",
+                            audioCodecDescription([movie audioCodecId]),
+                            [movie audioSampleRate],
+                            (chs == 1) ? NSLocalizedString(@"Mono", nil) :
+                            (chs == 2) ? NSLocalizedString(@"Stereo", nil) :
+                            (chs == 6) ? NSLocalizedString(@"5.1", nil) :
+                            [NSString stringWithFormat:@"%d", chs]];
+            }
+        }
+        [_name retain];
+        [_summary retain];
+        /*
         char buf[256];
         AVCodecContext* codec = formatContext->streams[streamIndex]->codec;
-        avcodec_string(buf, sizeof(buf), codec, 0);
+        avcodec_string(buf, sizeof(buf), codec, 1);
+        TRACE(@"avcodec_string=\"%s\"", buf);
 
         // init name
-        /*
-        NSStringEncoding encoding = [NSString defaultCStringEncoding]; 
-        NSMutableString* string = [NSMutableString stringWithCString:buf encoding:encoding];
-        NSRange range = [string rangeOfString:@":"];
-        range.length = range.location;
-        range.location = 0;
-        _name = [[string substringWithRange:range] retain];
-        */
+        //NSStringEncoding encoding = [NSString defaultCStringEncoding]; 
+        //NSMutableString* string = [NSMutableString stringWithCString:buf encoding:encoding];
+        //NSRange range = [string rangeOfString:@":"];
+        //range.length = range.location;
+        //range.location = 0;
+        //_name = [[string substringWithRange:range] retain];
         _name = (_streamId < 0) ? @"Video" : @"Audio";
 
         // init summary
@@ -82,6 +114,7 @@
         }
         ss[pos] = '\0';
         _summary = [[NSString alloc] initWithCString:ss];
+         */
     }
     return self;
 }
@@ -95,20 +128,91 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@implementation MMovie_FFmpeg
-
-+ (void)initialize
+#if defined(DEBUG)
+void traceAVFormatContext(AVFormatContext* formatContext)
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    av_register_all();
+    NSMutableString* s = [NSMutableString stringWithCapacity:256];
+    
+    [s setString:@"  - format: "];
+    [s appendFormat:@"%s", formatContext->iformat->name];
+    TRACE(s);
+    
+    [s setString:@"  - duration: "];
+    if (formatContext->duration == AV_NOPTS_VALUE) {
+        [s appendString:@"N/A"];
+    }
+    else {
+        int seconds = formatContext->duration / AV_TIME_BASE;
+        int us      = formatContext->duration % AV_TIME_BASE;
+        int minutes = seconds / 60;
+        [s appendFormat:@"%02d:%02d:%02d.%01d",
+         minutes / 60, minutes % 60, seconds % 60, (10 * us) / AV_TIME_BASE];
+    }
+    TRACE(s);
+    
+    [s setString:@"  - start: "];
+    if (formatContext->start_time != AV_NOPTS_VALUE) {
+        int seconds = formatContext->start_time / AV_TIME_BASE;
+        int us      = formatContext->start_time % AV_TIME_BASE;
+        [s appendFormat:@"%d.%06d",
+         seconds, (int)av_rescale(us, 1000000, AV_TIME_BASE)];
+        TRACE(s);
+    }
+    
+    [s setString:@"  - bit-rate: "];
+    if (formatContext->bit_rate == 0) {
+        [s appendString:@"N/A"];
+    }
+    else {
+        [s appendFormat:@"%d kb/s", formatContext->bit_rate / 1000];
+    }
+    TRACE(s);
+    
+    int i;
+    char buf[256];
+    AVStream* stream;
+    for (i = 0; i < formatContext->nb_streams; i++) {
+        stream = formatContext->streams[i];
+        [s setString:@""];
+        [s appendFormat:@"  - stream #%d", i];
+        
+        if (formatContext->iformat->flags & AVFMT_SHOW_IDS) {
+            [s appendFormat:@"[0x%x]", stream->id];
+        }
+        if (stream->language[0] != '\0') {
+            [s appendFormat:@"(%s)", stream->language];
+        }
+        
+        avcodec_string(buf, sizeof(buf), stream->codec, 1);
+        [s appendFormat:@": %s", buf];
+        
+        if (stream->codec->codec_type == CODEC_TYPE_VIDEO) {
+            if (stream->r_frame_rate.den && stream->r_frame_rate.num) {
+                [s appendFormat:@", %5.2f fps(r)", av_q2d(stream->r_frame_rate)];
+            }
+            else {
+                [s appendFormat:@", %5.2f fps(c)", 1 / av_q2d(stream->codec->time_base)];
+            }
+        }
+        TRACE(s);
+    }
 }
+#else
+#define traceAVFormatContext(fc)
+#endif  // DEBUG
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation MMovie_FFmpeg
 
 + (NSString*)name { return @"FFmpeg"; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (id)initWithURL:(NSURL*)url error:(NSError**)error
+- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo error:(NSError**)error
 {
     TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     if (![url isFileURL]) {
@@ -118,9 +222,15 @@
         return nil;
     }
 
-    if (self = [super initWithURL:url error:error]) {
+    if (self = [super initWithURL:url movieInfo:movieInfo error:error]) {
+        _formatContext = [MMovie formatContextForMovieURL:url error:error];
+        if (!_formatContext) {
+            return nil;
+        }
+        traceAVFormatContext(_formatContext);
+
         int errorCode;
-        if (![self initFFmpegWithMovieURL:url errorCode:&errorCode] ||
+        if (![self initAVCodec:&errorCode] ||
             ![self initPlayback:&errorCode] ||
             ![self initAudioPlayback:&errorCode]) {
             *error = [NSError errorWithDomain:[MMovie_FFmpeg name]
@@ -138,7 +248,11 @@
     _quitRequested = TRUE;
     [self cleanupPlayback];
     [self cleanupAudioPlayback];
-    [self cleanupFFmpeg];
+    [self cleanupAVCodec];
+
+    av_close_input_file(_formatContext);
+    _formatContext = 0;
+
     [super cleanup];
 }
 
@@ -163,78 +277,6 @@
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-#if defined(DEBUG)
-- (void)traceMovieInfo
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSMutableString* s = [NSMutableString stringWithCapacity:256];
-    
-    [s setString:@"- format: "];
-    [s appendFormat:@"%s", _formatContext->iformat->name];
-    TRACE(s);
-    
-    [s setString:@"- duration: "];
-    if (_formatContext->duration == AV_NOPTS_VALUE) {
-        [s appendString:@"N/A"];
-    }
-    else {
-        int seconds = _formatContext->duration / AV_TIME_BASE;
-        int us      = _formatContext->duration % AV_TIME_BASE;
-        int minutes = seconds / 60;
-        [s appendFormat:@"%02d:%02d:%02d.%01d",
-         minutes / 60, minutes % 60, seconds % 60, (10 * us) / AV_TIME_BASE];
-    }
-    TRACE(s);
-    
-    [s setString:@"- start: "];
-    if (_formatContext->start_time != AV_NOPTS_VALUE) {
-        int seconds = _formatContext->start_time / AV_TIME_BASE;
-        int us      = _formatContext->start_time % AV_TIME_BASE;
-        [s appendFormat:@"%d.%06d",
-         seconds, (int)av_rescale(us, 1000000, AV_TIME_BASE)];
-        TRACE(s);
-    }
-    
-    [s setString:@"- bit-rate: "];
-    if (_formatContext->bit_rate == 0) {
-        [s appendString:@"N/A"];
-    }
-    else {
-        [s appendFormat:@"%d kb/s", _formatContext->bit_rate / 1000];
-    }
-    TRACE(s);
-    
-    int i;
-    char buf[256];
-    AVStream* stream;
-    for (i = 0; i < _formatContext->nb_streams; i++) {
-        stream = _formatContext->streams[i];
-        [s setString:@""];
-        [s appendFormat:@"- stream #%d", i];
-        
-        if (_formatContext->iformat->flags & AVFMT_SHOW_IDS) {
-            [s appendFormat:@"[0x%x]", stream->id];
-        }
-        if (stream->language[0] != '\0') {
-            [s appendFormat:@"(%s)", stream->language];
-        }
-        
-        avcodec_string(buf, sizeof(buf), stream->codec, 0);
-        [s appendFormat:@": %s", buf];
-        
-        if (stream->codec->codec_type == CODEC_TYPE_VIDEO) {
-            if (stream->r_frame_rate.den && stream->r_frame_rate.num) {
-                [s appendFormat:@", %5.2f fps(r)", av_q2d(stream->r_frame_rate)];
-            }
-            else {
-                [s appendFormat:@", %5.2f fps(c)", 1 / av_q2d(stream->codec->time_base)];
-            }
-        }
-        TRACE(s);
-    }
-}
-#endif  // DEBUG
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark common utils.
@@ -282,13 +324,16 @@
     TRACE(@"%s %d", __PRETTY_FUNCTION__, videoStreamIndex);
     NSAssert(0 <= _videoStreamIndex, @"Video Stream Already Init");
 
-    if (_videoContext->width == 0 || _videoContext->height == 0) {
-        *errorCode = ERROR_FFMPEG_INVALID_VIDEO_DIMENSION;
+    // find decoder for video-stream
+    _videoStreamIndex = videoStreamIndex;
+    if (_info.encodedSize.width == 0 || _info.encodedSize.height == 0) {
+        *errorCode = ERROR_INVALID_VIDEO_DIMENSION;
         return FALSE;
     }
 
-    // find decoder for video-stream
-    _videoStreamIndex = videoStreamIndex;
+    // update _adjustedSize by _info.displaySize
+    [self setAspectRatio:_aspectRatio];
+
     AVCodec* codec = avcodec_find_decoder(_videoContext->codec_id);
     if (!codec) {
         *errorCode = ERROR_FFMPEG_DECODER_NOT_FOUND;
@@ -299,16 +344,6 @@
         return FALSE;
     }
 
-    _encodedSize.width = _videoContext->width;
-    _encodedSize.height= _videoContext->height;
-    _displaySize = _encodedSize;
-    if (0 < _videoContext->sample_aspect_ratio.num &&
-        0 < _videoContext->sample_aspect_ratio.den) {
-        _displaySize.width *= (float)_videoContext->sample_aspect_ratio.num /
-                                     _videoContext->sample_aspect_ratio.den;
-    }
-    [self setAspectRatio:_aspectRatio]; // for _adjustedSize
-
     // allocate video frame
     _videoFrame = avcodec_alloc_frame();
     if (_videoFrame == 0) {
@@ -317,36 +352,37 @@
     }
     
     // init sw-scaler context
-    _scalerContext = sws_getContext(_encodedSize.width, _encodedSize.height, _videoContext->pix_fmt,
-                                    _encodedSize.width, _encodedSize.height, RGB_PIXEL_FORMAT,
-                                    SWS_FAST_BILINEAR, 0, 0, 0);
+    _scalerContext =
+        sws_getContext(_info.encodedSize.width, _info.encodedSize.height, _videoContext->pix_fmt,
+                       _info.encodedSize.width, _info.encodedSize.height, RGB_PIXEL_FORMAT,
+                       SWS_FAST_BILINEAR, 0, 0, 0);
     if (!_scalerContext) {
         TRACE(@"cannot initialize conversion context");
         *errorCode = ERROR_FFMPEG_SW_SCALER_INIT_FAILED;
         return FALSE;
     }
-    
+
     [_videoTracks addObject:
      [MTrack_FFmpeg trackWithMovie:self formatContext:_formatContext
                        streamIndex:videoStreamIndex streamId:-1]];
-    
+
     MTrack_FFmpeg* track = [_videoTracks objectAtIndex:0];
     [track setEnabled:TRUE];
-    
-    int i;
+
+    int i, bufWidth, bufSize;
     for (i = 0; i < MAX_VIDEO_DATA_BUF_SIZE; i++) {
         _videoFrameData[i] = avcodec_alloc_frame();
         if (_videoFrameData[i] == 0) {
             *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
             return FALSE;
         }    
-        int bufWidth = _encodedSize.width + 37;
+        bufWidth = _info.encodedSize.width + 37;
         if (bufWidth < 512) {
             bufWidth = 512 + 37;
         }
-        int bufferSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , _encodedSize.height);
-        avpicture_fill((AVPicture*)_videoFrameData[i], malloc(bufferSize),
-                       RGB_PIXEL_FORMAT, bufWidth, _encodedSize.height);
+        bufSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , _info.encodedSize.height);
+        avpicture_fill((AVPicture*)_videoFrameData[i], malloc(bufSize),
+                       RGB_PIXEL_FORMAT, bufWidth, _info.encodedSize.height);
         
     }
     return TRUE;
@@ -381,25 +417,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (BOOL)initFFmpegWithMovieURL:(NSURL*)movieURL errorCode:(int*)errorCode
+- (BOOL)initAVCodec:(int*)errorCode
 {
-    const char* path = [[movieURL path] UTF8String];
-    if (av_open_input_file(&_formatContext, path, NULL, 0, NULL) != 0) {
-        *errorCode = ERROR_FFMPEG_FILE_OPEN_FAILED;
-        return FALSE;
-    }
-    if (av_find_stream_info(_formatContext) < 0) {
-        av_close_input_file(_formatContext);
-        *errorCode = ERROR_FFMPEG_STREAM_INFO_NOT_FOUND;
-        return FALSE;
-    }
-    _duration = (_formatContext->duration == AV_NOPTS_VALUE) ? 0 : // N/A
-                                (_formatContext->duration / AV_TIME_BASE);
-
-#if defined(DEBUG)
-    [self traceMovieInfo];
-#endif
-
     int i;
     for (i = 0; i < _formatContext->nb_streams; i++) {
         switch (_formatContext->streams[i]->codec->codec_type) {
@@ -408,7 +427,7 @@
                     return FALSE;
                 }
                 break;
-                case CODEC_TYPE_AUDIO :
+            case CODEC_TYPE_AUDIO :
                 if (_audioStreamCount < MAX_AUDIO_STREAM_COUNT) {
                     [self initAudio:i errorCode:errorCode];
                     // continue even if init audio failed
@@ -427,12 +446,10 @@
     return TRUE;
 }
 
-- (void)cleanupFFmpeg
+- (void)cleanupAVCodec
 {
     [self cleanupVideo];
     [self cleanupAudio];
-    av_close_input_file(_formatContext);
-    _formatContext = 0;
 }
 
 @end
