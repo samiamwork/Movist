@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -61,6 +61,19 @@ enum {
     ASPECT_RATIO_2_35,          // 2.35 : 1 (Screen)
 };
 
+enum {
+    ACTION_ON_DRAGGING_MOVIE_AREA_NONE,
+    ACTION_ON_DRAGGING_MOVIE_AREA_MOVE_WINDOW,
+    ACTION_ON_DRAGGING_MOVIE_AREA_CAPTURE_MOVIE,
+};
+
+#pragma mark subtitle-info display
+enum {
+    SUBTITLE_INFO_DISPLAY_NONE,
+    SUBTITLE_INFO_DISPLAY_SIMPLE,
+    SUBTITLE_INFO_DISPLAY_FULL,
+};
+
 #pragma mark error-codes
 enum {
     ERROR_FILE_NOT_EXIST = 1,
@@ -83,65 +96,93 @@ enum {
 };
 
 #pragma mark -
-#pragma mark coded-id
+#pragma mark codec-id
 enum {
-    MCODEC_ETC_     = 0,    // for all other codecs
+    MCODEC_ETC_         = 0,    // for all other codecs
 
-    MCODEC_MPEG1    = 1,    // MPEG-1
-    MCODEC_MPEG2    = 10,   // MPEG-2
-    MCODEC_MPEG4    = 100,  // MPEG-4
-        MCODEC_DIV1,        // DivX MPEG-4 V3.x
-        MCODEC_DIV2,        // DivX MPEG-4 V3.x
-        MCODEC_DIV3,        // DivX MPEG-4 V3.x (Low Motion)
-        MCODEC_DIV4,        // DivX MPEG-4 V3.x (Fast Motion)
-        MCODEC_DIV5,        // DivX MPEG-4 V3.x
-        MCODEC_DIV6,        // DivX MPEG-4 V3.x
-        MCODEC_DIVX,        // DivX MPEG-4 V4.x
-        MCODEC_DX50,        // DivX MPEG-4 V5.x
-        MCODEC_XVID = 120,  // Xvid MPEG-4
-        MCODEC_MP4V = 130,  // Apple MPEG-4
-        MCODEC_MPG4 = 140,  // Microsoft MPEG-4 V1
-        MCODEC_MP42,        // Microsoft MPEG-4 V2
-        MCODEC_MP43,        // Microsoft MPEG-4 V3
-        MCODEC_MP4S,        // Microsoft ISO MPEG-4 V1
-        MCODEC_M4S2,        // Microsoft ISO MPEG-4 V1.1
-        MCODEC_AP41 = 150,  // AngelPotion Definitive
-        MCODEC_RMP4 = 160,  // REALmagic MPEG-4
-        MCODEC_SEDG = 170,  // Samsung MPEG-4
-        MCODEC_FMP4 = 180,  // FFmpeg MPEG-4
-        MCODEC_BLZ0,        // DivX for Blizzard
+    // video codec //////////////////////////////////////
 
-    MCODEC_H263     = 200,  // H.263, H.263+
-    MCODEC_H264     = 300,  // H.264/MPEG4 AVC
-        MCODEC_AVC1,        // Apple H.264
-        MCODEC_X264,        // Open Source H.264
-    MCODEC_VC1      = 400,  // VC-1 (SMPTE 421M)
+    MCODEC_MPEG1        = 1,    // MPEG-1
+    MCODEC_MPEG2        = 10,   // MPEG-2
+    MCODEC_MPEG4        = 100,  // MPEG-4
+        MCODEC_DIV1,            // DivX MPEG-4 V3.x
+        MCODEC_DIV2,            // DivX MPEG-4 V3.x
+        MCODEC_DIV3,            // DivX MPEG-4 V3.x (Low Motion)
+        MCODEC_DIV4,            // DivX MPEG-4 V3.x (Fast Motion)
+        MCODEC_DIV5,            // DivX MPEG-4 V3.x
+        MCODEC_DIV6,            // DivX MPEG-4 V3.x
+        MCODEC_DIVX,            // DivX MPEG-4 V4.x
+        MCODEC_DX50,            // DivX MPEG-4 V5.x
+        MCODEC_XVID     = 120,  // Xvid MPEG-4
+        MCODEC_MP4V     = 130,  // Apple MPEG-4
+        MCODEC_MPG4     = 140,  // Microsoft MPEG-4 V1
+        MCODEC_MP42,            // Microsoft MPEG-4 V2
+        MCODEC_MP43,            // Microsoft MPEG-4 V3
+        MCODEC_MP4S,            // Microsoft ISO MPEG-4 V1
+        MCODEC_M4S2,            // Microsoft ISO MPEG-4 V1.1
+        MCODEC_AP41     = 150,  // AngelPotion Definitive
+        MCODEC_RMP4     = 160,  // REALmagic MPEG-4
+        MCODEC_SEDG     = 170,  // Samsung MPEG-4
+        MCODEC_FMP4     = 180,  // FFmpeg MPEG-4
+        MCODEC_BLZ0,            // DivX for Blizzard
 
-    MCODEC_WMV1     = 500,  // Windows Media Video 7
-    MCODEC_WMV2     = 510,  // Windows Media Video 8
-    MCODEC_WMV3     = 520,  // Windows Media Video 9
-    MCODEC_WVC1     = 530,  // Windows Media Video 9 Advanced Profile
+    MCODEC_H263         = 200,  // H.263, H.263+
+    MCODEC_H264         = 300,  // H.264/MPEG4 AVC
+        MCODEC_AVC1,            // Apple H.264
+        MCODEC_X264,            // Open Source H.264
+    MCODEC_VC1          = 400,  // VC-1 (SMPTE 421M)
 
-    MCODEC_SVQ1     = 600,  // Sorenson Video 1
-    MCODEC_SVQ3     = 610,  // Sorenson Video 3
+    MCODEC_WMV1         = 500,  // Windows Media Video 7
+    MCODEC_WMV2         = 510,  // Windows Media Video 8
+    MCODEC_WMV3         = 520,  // Windows Media Video 9
+    MCODEC_WVC1         = 530,  // Windows Media Video 9 Advanced Profile
 
-    MCODEC_VP3      = 700,  // On2 VP3
-    MCODEC_VP5      = 710,  // On2 VP5
-    MCODEC_VP6      = 720,  // On2 VP6
-    MCODEC_VP6F     = 730,  // On2 VP6 Flash
+    MCODEC_SVQ1         = 600,  // Sorenson Video 1
+    MCODEC_SVQ3         = 610,  // Sorenson Video 3
 
-    MCODEC_RV10     = 800,  // RealVideo
-    MCODEC_RV20     = 810,  // RealVideo G2
-    MCODEC_RV30     = 820,  // RealVideo 8
-    MCODEC_RV40     = 830,  // RealVideo 9, 10
+    MCODEC_VP3          = 700,  // On2 VP3
+    MCODEC_VP5          = 710,  // On2 VP5
+    MCODEC_VP6          = 720,  // TrueMotion VP6
+    MCODEC_VP6F         = 730,  // TrueMotion VP6 Flash
 
-    MCODEC_FLV      = 9000, // Flash Video
-    MCODEC_THEORA   = 9010, // Theora
-    MCODEC_HUFFYUV  = 9020, // Huffyuv
-    MCODEC_CINEPAK  = 9030, // Cinepak
-    MCODEC_INDEO2   = 9040, // Indeo Video 2
-    MCODEC_INDEO3   = 9050, // Indeo Video 3
-    MCODEC_MJPEG    = 9060, // Motion-JPEG
+    MCODEC_RV10         = 800,  // RealVideo
+    MCODEC_RV20         = 810,  // RealVideo G2
+    MCODEC_RV30         = 820,  // RealVideo 8
+    MCODEC_RV40         = 830,  // RealVideo 9, 10
+
+    MCODEC_FLV          = 9000, // Flash Video
+    MCODEC_THEORA       = 9010, // Theora
+    MCODEC_HUFFYUV      = 9020, // Huffyuv
+    MCODEC_CINEPAK      = 9030, // Cinepak
+    MCODEC_INDEO2       = 9040, // Indeo Video 2
+    MCODEC_INDEO3       = 9050, // Indeo Video 3
+    MCODEC_MJPEG        = 9060, // Motion-JPEG
+
+    // audio codec //////////////////////////////////////
+
+    MCODEC_PCM          = 50000,// PCM
+    MCODEC_DPCM         = 50100,// DPCM
+    MCODEC_ADPCM        = 50200,// ADPCM
+
+    MCODEC_MP2          = 50300,// MP2 (MPEG-1 Audio Layer II)
+    MCODEC_MP3          = 50400,// MP3 (MPEG-1 Audio Layer 3)
+    MCODEC_AAC          = 50500,// AAC (Advanced Audio Coding)
+
+    MCODEC_AC3          = 50600,// AC3 (Dolby Digital)
+    MCODEC_DTS          = 50700,// DTS (Digital Theater Systems)
+    MCODEC_VORBIS       = 50800,// Vorbis
+    MCODEC_DVAUDIO      = 50900,// DV Audio
+    MCODEC_WMAV1        = 51000,// Windows Media Audio V1
+    MCODEC_WMAV2,               // Windows Media Audio V2
+    MCODEC_RA           = 51100,// RealAudio
+    MCODEC_AMR          = 51200,// AMR (Adaptive Multi-Rate)
+    MCODEC_ALAC         = 51300,// ALAC
+    MCODEC_FLAC         = 51400,// FLAC
+    MCODEC_QDM2         = 51500,// QDM2 (QDesign Music Codec)
+    MCODEC_MACE         = 51600,// MACE (Macintosh Audio Compression and Expansion)
+    MCODEC_SPEEX        = 51700,// Speex
+    MCODEC_TTA          = 51800,// TTA (True Audio)
+    MCODEC_WAVPACK      = 51900,// WavPack
 };
 
 #pragma mark -
@@ -167,7 +208,7 @@ extern NSString* MMovieEndNotification;
 
 #pragma mark -
 #pragma mark notifications: etc
-extern NSString* MMovieRectUpdateNotification;
+extern NSString* MPlaylistUpdatedNotification;
 
 #pragma mark -
 #pragma mark drag & drop
@@ -201,16 +242,13 @@ NSString* NSStringFromMovieTime(float time);
 NSString* NSStringFromSubtitlePosition(int position);
 NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding);
 
-NSString* videoCodecName(int codecId);
-NSString* audioCodecName(int codecId);
-NSString* videoCodecDescription(int codecId);
-NSString* audioCodecDescription(int codecId);
+NSString* codecName(int codecId);
+NSString* codecDescription(int codecId);
 
 void runAlertPanelForOpenError(NSError* error, NSURL* url);
 
 unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay);
 
-NSDictionary* subtitleTypesAndParsers();
 void initSubtitleEncodingMenu(NSMenu* menu, SEL action);
 
 ////////////////////////////////////////////////////////////////////////////////

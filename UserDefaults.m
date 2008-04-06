@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -32,16 +32,21 @@ NSString* MLastPlayedMovieRepeatRangeKey    = @"LastPlayedMovieRepeatRange";
 
 #pragma mark -
 #pragma mark prefs: general
+NSString* MAutodetectMovieSeriesKey         = @"AutodetectMovieSeries";
 NSString* MAutoFullScreenKey                = @"AutoFullScreen";
+NSString* MAutoPlayOnFullScreenKey          = @"AutoPlayOnFullScreen";
 NSString* MAlwaysOnTopKey                   = @"AlwaysOnTop";
+NSString* MDeactivateScreenSaverKey         = @"DeactivateScreenSaver";
 NSString* MQuitWhenWindowCloseKey           = @"QuitWhenWindowClose";
 NSString* MRememberLastPlayKey              = @"RememberLastPlay";
-NSString* MDeactivateScreenSaverKey         = @"DeactivateScreenSaver";
+NSString* MSupportAppleRemoteKey            = @"SupportAppleRemote";
+NSString* MFullNavUseKey                    = @"FullNavUse";
+NSString* MFullNavShowiTunesMoviesKey       = @"FullNavShowiTunesMovies";
+NSString* MFullNavShowiTunesPodcastsKey     = @"FullNavShowiTunesPodcasts";
+NSString* MFullNavShowiTunesTVShowsKey      = @"FullNavShowiTunesTVShows";
 NSString* MSeekInterval0Key                 = @"SeekInterval0";
 NSString* MSeekInterval1Key                 = @"SeekInterval1";
 NSString* MSeekInterval2Key                 = @"SeekInterval2";
-NSString* MSupportAppleRemoteKey            = @"SupportAppleRemote";
-NSString* MFullNavUseKey                    = @"FullNavUse";
 
 #pragma mark -
 #pragma mark prefs: video
@@ -53,6 +58,7 @@ NSString* MFullScreenUnderScanKey           = @"FullScreenUnderScan";
 #pragma mark -
 #pragma mark prefs: audio
 NSString* MVolumeKey                        = @"Volume";
+NSString* MAutodetectDigitalAudioOutKey     = @"AutodetectDigitalAudioOut";
 
 #pragma mark -
 #pragma mark prefs: subtitle
@@ -84,20 +90,16 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 #pragma mark prefs: advanced - details
 // General
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
-NSString* MAutodetectMovieSeriesKey         = @"AutodetectMovieSeries";
-NSString* MAutodetectDigitalAudioOutKey     = @"AutodetectDigitalAudioOut";
-NSString* MAutoPlayOnFullScreenKey          = @"AutoPlayOnFullScreen";
-NSString* MCaptureIncludingLetterBoxKey     = @"CaptureIncludingLetterBox";
+NSString* MIncludeLetterBoxOnCaptureKey     = @"IncludeLetterBoxOnCapture";
+NSString* MActionOnDraggingMovieAreaKey     = @"ActionOnDraggingMovieArea";
 // Subtitle
 NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
 NSString* MAutoSubtitlePositionMaxLinesKey  = @"AutoSubtitlePositionMaxLines";
+NSString* MSubtitleInfoDisplayOnOpeningKey  = @"SubtitleInfoDisplayOnOpening";
 // Full Navigation
 NSString* MFullNavPathKey                   = @"FullNavPath";
-NSString* MFullNavShowiTunesMoviesKey       = @"FullNavShowiTunesMovies";
-NSString* MFullNavShowiTunesTVShowsKey      = @"FullNavShowiTunesTVShows";
-NSString* MFullNavShowiTunesPodcastKey      = @"FullNavShowiTunesPodcast";
 NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -182,17 +184,22 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MViewDurationKey];
 
     // prefs: general
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectMovieSeriesKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAutoFullScreenKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoPlayOnFullScreenKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAlwaysOnTopKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MDeactivateScreenSaverKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MQuitWhenWindowCloseKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MRememberLastPlayKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MDeactivateScreenSaverKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSupportAppleRemoteKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavUseKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesMoviesKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesPodcastsKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesTVShowsKey];
     [dict setObject:[NSNumber numberWithFloat: 10.0] forKey:MSeekInterval0Key];
     [dict setObject:[NSNumber numberWithFloat: 60.0] forKey:MSeekInterval1Key];
     [dict setObject:[NSNumber numberWithFloat:300.0] forKey:MSeekInterval2Key];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSupportAppleRemoteKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavUseKey];
-
+    
     // prefs: video
     [dict setObject:[NSNumber numberWithInt:FS_EFFECT_ANIMATION] forKey:MFullScreenEffectKey];
     [dict setObject:[NSNumber numberWithInt:FS_FILL_NEVER] forKey:MFullScreenFillForWideMovieKey];
@@ -201,6 +208,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 
     // prefs: audio
     [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MVolumeKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
 
     // prefs: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleEnableKey];
@@ -231,18 +239,14 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[self defaultCodecBinding] forKey:MDefaultCodecBindingKey];
     // prefs: advanced - details
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectMovieSeriesKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoPlayOnFullScreenKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MCaptureIncludingLetterBoxKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MIncludeLetterBoxOnCaptureKey];
+    [dict setObject:[NSNumber numberWithInt:ACTION_ON_DRAGGING_MOVIE_AREA_NONE] forKey:MActionOnDraggingMovieAreaKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
     [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
     [dict setObject:[NSNumber numberWithInt:3] forKey:MAutoSubtitlePositionMaxLinesKey];
+    [dict setObject:[NSNumber numberWithInt:SUBTITLE_INFO_DISPLAY_FULL] forKey:MSubtitleInfoDisplayOnOpeningKey];
     [dict setObject:@"~/Movies" forKey:MFullNavPathKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesMoviesKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesTVShowsKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MFullNavShowiTunesPodcastKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MShowActualPathForLinkKey];
 
     //TRACE(@"registering defaults: %@", dict);
@@ -307,6 +311,16 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 NSString* A52CODEC_DEFAULTS                 = @"com.cod3r.a52codec";
 NSString* A52CODEC_ATTEMPT_PASSTHROUGH_KEY  = @"attemptPassthrough";
 
+- (BOOL)a52CodecAttemptPassthrough
+{
+    NSNumber* number = nil;
+    NSDictionary* a52Codec = [self persistentDomainForName:A52CODEC_DEFAULTS];
+    if (a52Codec) {
+        number = [a52Codec objectForKey:A52CODEC_ATTEMPT_PASSTHROUGH_KEY];
+    }
+    return (number) ? [number boolValue] : FALSE;   // disabled by default
+}
+
 - (void)setA52CodecAttemptPassthrough:(BOOL)enabled
 {
     NSMutableDictionary* a52Codec =
@@ -327,13 +341,11 @@ NSString* PERIAN_SUBTITLE_KEY   = @"LoadExternalSubtitles";
 
 - (BOOL)isPerianSubtitleEnabled
 {
+    NSNumber* number = nil;
     NSDictionary* perian = [self persistentDomainForName:PERIAN_DEFAULTS];
-    if (!perian) {
-        return TRUE;    // enabled by default of capri-perian
+    if (perian) {
+        number = [perian objectForKey:PERIAN_SUBTITLE_KEY];
     }
-    
-    //TRACE(@"perian=%@", perian);
-    NSNumber* number = [perian objectForKey:PERIAN_SUBTITLE_KEY];
     return (number) ? [number boolValue] : TRUE;    // enabled by default of capri-perian
 }
 

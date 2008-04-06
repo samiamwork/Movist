@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -31,19 +31,52 @@
 
 @interface MTrack : NSObject
 {
+    id _impl;       // QTTrack or FFTrack
     MMovie* _movie;
+
+    int _codecId;
     NSString* _name;
     NSString* _summary;
-    BOOL _enabled;
+
+    NSSize _encodedSize;
+    NSSize _displaySize;
+    float _fps;
+
+    int _audioChannels;
+    float _audioSampleRate;
 }
 
-- (id)initWithMovie:(MMovie*)movie;
++ (id)trackWithImpl:(id)impl;
+- (id)initWithImpl:(id)impl;
 
-- (MMovie*)movie;
+- (id)impl;
+- (int)codecId;
 - (NSString*)name;
 - (NSString*)summary;
+- (BOOL)isVideoTrack;
+- (void)setImpl:(id)impl;
+- (void)setMovie:(MMovie*)movie;
+- (void)setCodecId:(int)codecId;
+- (void)setName:(NSString*)name;
+- (void)setSummary:(NSString*)summary;
+
+- (NSSize)encodedSize;
+- (NSSize)displaySize;
+- (float)fps;
+- (void)setEncodedSize:(NSSize)encodedSize;
+- (void)setDisplaySize:(NSSize)displaySize;
+- (void)setFps:(float)fps;
+
+- (int)audioChannels;
+- (float)audioSampleRate;
+- (void)setAudioChannels:(int)channels;
+- (void)setAudioSampleRate:(float)rate;
+
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
+
+- (float)volume;
+- (void)setVolume:(float)volume;
 
 @end
 
@@ -51,26 +84,32 @@
 #pragma mark -
 
 typedef struct {
-    int videoCodecId;
-    NSSize encodedSize;
-    NSSize displaySize;
+    AVFormatContext* formatContext;
+    NSArray* videoTracks;
+    NSArray* audioTracks;
+    BOOL hasDigitalAudio;
     float startTime;
     float duration;
-
-    int audioCodecId;
-    int audioChannels;
-    float audioSampleRate;
-    float preferredVolume;
+    int64_t fileSize;
+    int bitRate;
+    float fps;
 } MMovieInfo;
 
 @interface MMovie : NSObject
 {
     NSURL* _url;
-    MMovieInfo _info;
     NSMutableArray* _videoTracks;
     NSMutableArray* _audioTracks;
+    BOOL _hasDigitalAudio;
+    float _startTime;
+    float _duration;
+    int64_t _fileSize;
+    int _bitRate;
+    float _fps;
 
     float _indexedDuration;
+
+    float _preferredVolume;
     float _volume;
     BOOL _muted;
 
@@ -78,29 +117,38 @@ typedef struct {
     NSSize _adjustedSize;   // by _aspectRatio
 }
 
-+ (NSArray*)movieFileExtensions;
++ (NSArray*)fileExtensions;
 + (BOOL)checkMovieURL:(NSURL*)url error:(NSError**)error;
-+ (AVFormatContext*)formatContextForMovieURL:(NSURL*)url error:(NSError**)error;
 + (BOOL)getMovieInfo:(MMovieInfo*)info forMovieURL:(NSURL*)url error:(NSError**)error;
 + (NSString*)name;
 
-- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo error:(NSError**)error;
+- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo
+  digitalAudioOut:(BOOL)digitalAudioOut error:(NSError**)error;
 - (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
              pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
                    error:(NSError**)error;
-- (void)cleanup;
 
 #pragma mark -
 - (NSURL*)url;
+- (int64_t)fileSize;
+- (int)bitRate;
 - (NSArray*)videoTracks;
 - (NSArray*)audioTracks;
 - (NSSize)displaySize;
 - (NSSize)encodedSize;
 - (float)startTime;
 - (float)duration;
-- (float)preferredVolume;
+- (float)fps;
+
+- (void)trackEnabled:(MTrack*)track;
+- (void)trackDisabled:(MTrack*)track;
 
 - (float)indexedDuration;
+- (void)indexedDurationUpdated:(float)indexedDuration;
+- (void)indexingFinished;
+
+- (BOOL)hasDigitalAudio;
+- (float)preferredVolume;
 - (float)volume;
 - (BOOL)muted;
 - (void)setVolume:(float)volume;
@@ -109,15 +157,6 @@ typedef struct {
 - (int)aspectRatio;
 - (NSSize)adjustedSizeByAspectRatio;
 - (void)setAspectRatio:(int)aspectRatio;
-
-- (void)trackEnabled:(MTrack*)track;
-- (void)trackDisabled:(MTrack*)track;
-
-// FIXME
-- (int)videoCodecId;
-- (int)audioCodecId;
-- (int)audioChannels;
-- (float)audioSampleRate;
 
 #pragma mark -
 #pragma mark playback
@@ -134,3 +173,13 @@ typedef struct {
 - (void)idleTask;
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@interface MMovie (Codec)
+
++ (int)videoCodecIdFromFFmpegCodecId:(int)ffmpegCodecId fourCC:(NSString*)fourCC;
++ (int)audioCodecIdFromFFmpegCodecId:(int)ffmpegCodecId;
+
+@end
+

@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -46,10 +46,17 @@
     CGRect _imageRect;
     int _fullScreenFill;
     float _fullScreenUnderScan;
-    BOOL _captureIncludingLetterBox;
+    int _actionOnDragging;
+    BOOL _includeLetterBoxOnCapture;
 
     MMovie* _movie;
     NSArray* _subtitles;
+
+    // fps calc.
+    float _currentFps;
+    double _lastFpsCheckTime;
+    double _fpsElapsedTime;
+    int _fpsFrameCount;
 
     // subtitle
     SubtitleRenderer* _subtitleRenderer;
@@ -79,6 +86,7 @@
 
 - (MMovie*)movie;
 - (NSRect)movieRect;
+- (float)currentFps;
 - (void)setMovie:(MMovie*)movie;
 - (void)showLogo;
 - (void)hideLogo;
@@ -92,16 +100,11 @@
 
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
 
-- (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox;
+- (void)setActionOnDragging:(int)actionOnDragging;
+- (void)setIncludeLetterBoxOnCapture:(BOOL)includeLetterBox;
+- (void)copyCurrentImage:(BOOL)alternative;
 - (void)saveCurrentImage:(BOOL)alternative;
 - (IBAction)copy:(id)sender;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface MMovieView (Video)
 
 - (int)fullScreenFill;
 - (float)fullScreenUnderScan;

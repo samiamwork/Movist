@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -56,9 +56,6 @@
     PlaylistController* _playlistController;
     NSUserDefaults* _defaults;
     BOOL _quitWhenWindowClose;
-    BOOL _supportDigitalAudio;
-    BOOL _disablePerianSubtitle;
-    BOOL _perianSubtitleEnabled;
     NSTimer* _updateSystemActivityTimer;
 
     // movie & subtitle
@@ -78,6 +75,15 @@
     NSURL* _lastPlayedMovieURL;
     float _lastPlayedMovieTime;
     NSRange _lastPlayedMovieRepeatRange;
+
+    // digital-audio-out
+    BOOL _a52CodecInstalled;
+    BOOL _a52CodecAttemptPassthrough;
+    BOOL _audioDeviceSupportsDigital;
+
+    // perian subtitle
+    BOOL _perianInstalled;
+    BOOL _perianSubtitleEnabled;
 
     // main-menu
     IBOutlet NSMenuItem* _reopenWithMenuItem;
@@ -135,6 +141,8 @@
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
     IBOutlet NSButton* _controlPanelDecoderButton;
+    IBOutlet NSTextField* _dataSizeBpsTextField;
+    IBOutlet NSTextField* _fpsTextField;
 
     // full-screen & navigation
     NSLock* _fullScreenLock;
@@ -158,7 +166,7 @@
 
 - (void)updateUI;
 - (void)setQuitWhenWindowClose:(BOOL)quitWhenClose;
-- (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox;
+- (void)setIncludeLetterBoxOnCapture:(BOOL)includeLetterBox;
 - (void)checkForUpdatesOnStartup;
 - (void)checkForUpdates:(BOOL)manual;
 
@@ -185,6 +193,7 @@
 - (void)closeMovie;
 
 - (void)updateDecoderUI;
+- (void)updateDataSizeBpsUI;
 
 - (IBAction)openFileAction:(id)sender;
 - (IBAction)openURLAction:(id)sender;
@@ -315,10 +324,9 @@
 
 @interface AppController (AudioDigital)
 
-- (BOOL)supportDigitalAudio;
-- (void)initDigitalAudio;
-- (void)updateDigitalAudio;
-- (BOOL)updateAudioOutput:(id)sender;
+- (BOOL)digitalAudioOut;
+- (void)initDigitalAudioOut;
+- (BOOL)updateDigitalAudioOut:(id)sender;
 
 @end
 

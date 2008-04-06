@@ -92,6 +92,7 @@
 "Sound Track" = "Sound Track";
 "Mono" = "Mono";
 "Stereo" = "Stereo";
+"5.1 Ch." = "5.1 Ch.";
 
 /* Preferences */
 "General" = "General";
@@ -110,19 +111,20 @@
 
 /* Preferences: advanced - details */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
-"Add Similar Files to Playlist for Opening File" = "Add Similar Files to Playlist for Opening File";
-"Auto-detect Digital Audio-Out" = "Auto-detect Digital Audio-Out";
-"Auto-Play On Full Screen" = "Auto-Play On Full Screen";
-"Capture Screenshot Including Letter Box" = "Capture Screenshot Including Letter Box";
+"Include Letter Box on Capture" = "Include Letter Box on Capture";
+"Action on Dragging Movie Area" = "Action on Dragging Movie Area";
+"None" = "None";
+"Move Window" = "Move Window";
+"Capture Movie" = "Capture Movie";
 "Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
 "Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
 "Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
 "Auto Subtitle Position Max Lines (1~3)" = "Auto Subtitle Position Max Lines (1~3)";
+"Subtitle Info Display on Opening Movie" = "Subtitle Info Display on Opening Movie";
+"Simple" = "Simple";
+"Full" = "Full";
 "Full Screen Navigation" = "Full Screen Navigation";
 "Default Navigation Path" = "Default Navigation Path";
-"Show iTunes Movies" = "Show iTunes Movies";
-"Show iTunes TV Shows" = "Show iTunes TV Shows";
-"Show iTunes Video Podcast" = "Show iTunes Video Podcast";
 "Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";
 
 /* Playlist */
@@ -131,7 +133,9 @@
 /* Properties */
 "External Subtitle %d" = "External Subtitle %d";
 
-/* Video Codec Desc. */
+/* Codec Desc. */
+"etc." = "Etc.";
+"etc. DESC." = "Etc.";
 "MPEG1 DESC." = "MPEG-1";
 "MPEG2 DESC." = "MPEG-2";
 "MPEG4 DESC." = "MPEG-4";
@@ -168,8 +172,8 @@
 "SVQ3 DESC." = "Sorenson Video 3";
 "VP3 DESC." = "On2 VP3";
 "VP5 DESC." = "On2 VP5";
-"VP6 DESC." = "On2 VP6";
-"VP6F DESC." = "On2 VP6 Flash";
+"VP6 DESC." = "TrueMotion VP6";
+"VP6F DESC." = "TrueMotion VP6 Flash";
 "RV10 DESC." = "RealVideo";
 "RV20 DESC." = "RealVideo G2";
 "RV30 DESC." = "RealVideo 8";
@@ -181,5 +185,24 @@
 "INDEO2 DESC." = "Indeo Video 2";
 "INDEO3 DESC." = "Indeo Video 3";
 "MJPEG DESC." = "Motion-JPEG";
-"etc. DESC." = "Etc.";
-"etc." = "Etc.";
+"PCM DESC." = "PCM";
+"DPCM DESC." = "DPCM";
+"ADPCM DESC." = "ADPCM";
+"MP2 DESC." = "MP2";
+"MP3 DESC." = "MP3";
+"AAC DESC." = "AAC";
+"AC3 DESC." = "AC3";
+"DTS DESC." = "DTS";
+"VORBIS DESC." = "Vorbis";
+"DVAUDIO DESC." = "DV Audio";
+"WMAV1 DESC." = "Windows Media Audio V1";
+"WMAV2 DESC." = "Windows Media Audio V2";
+"RA DESC." = "RealAudio";
+"AMR DESC." = "AMR";
+"ALAC DESC." = "ALAC";
+"FLAC DESC." = "FLAC";
+"QDM2 DESC." = "QDM2";
+"MACE DESC." = "MACE";
+"SPEEX DESC." = "Speex";
+"TTA DESC." = "TTA";
+"WAVPACK DESC." = "WavPack";

@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -143,11 +143,11 @@ NSString* PATH_LINK_SYMBOL = @"@";
     NSFileManager* fm = [NSFileManager defaultManager];
     NSArray* contents = [fm sortedDirectoryContentsAtPath:_path];
 
-    NSMutableArray* items = [[NSMutableArray alloc] initWithCapacity:[contents count]];
+    NSMutableArray* items = [NSMutableArray arrayWithCapacity:[contents count]];
 
     BOOL isDirectory;
     NSString* file, *path, *linkPath, *name;
-    NSArray* movieFileExtensions = [MMovie movieFileExtensions];
+    NSArray* fileExtensions = [MMovie fileExtensions];
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSEnumerator* enumerator = [contents objectEnumerator];
     while (file = [enumerator nextObject]) {
@@ -172,13 +172,13 @@ NSString* PATH_LINK_SYMBOL = @"@";
                 [items addObject:[[[FullNavDirectoryItem alloc]
                                         initWithPath:path name:name] autorelease]];
             }
-            else if ([path hasAnyExtension:movieFileExtensions]) {
+            else if ([path hasAnyExtension:fileExtensions]) {
                 [items addObject:[[[FullNavFileItem alloc]
                                         initWithPath:path name:name] autorelease]];
             }
         }
     }
-    return [items autorelease];
+    return items;
 }
 
 @end

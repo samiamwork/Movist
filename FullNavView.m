@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -25,6 +25,7 @@
 #import "AppController.h"
 #import "UserDefaults.h"
 #import "Playlist.h"
+#import "MMovie.h"
 #import "MMovieView.h"
 #import "FullNavItems.h"
 #import "FullNavListView.h"
@@ -49,8 +50,7 @@
     [paragraphStyle setLineBreakMode:NSLineBreakByTruncatingTail];
 
     NSRect br = [self bounds];
-    NSMutableDictionary* attrs;
-    attrs = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary* attrs = [NSMutableDictionary dictionaryWithCapacity:3];
     [attrs setObject:[NSColor colorWithDeviceWhite:0.95 alpha:1.0]
               forKey:NSForegroundColorAttributeName];
     [attrs setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
@@ -248,7 +248,7 @@
     }
     if ([defaults boolForKey:MFullNavShowiTunesMoviesKey] ||
         [defaults boolForKey:MFullNavShowiTunesTVShowsKey] ||
-        [defaults boolForKey:MFullNavShowiTunesPodcastKey]) {
+        [defaults boolForKey:MFullNavShowiTunesPodcastsKey]) {
         NSMutableArray* items = [NSMutableArray arrayWithCapacity:6];
         [items addObject:[[[FullNavDirectoryItem alloc]
                                             initWithPath:path name:nil] autorelease]];
@@ -274,7 +274,7 @@
         }
 
         // iTunes Podcast folder
-        if ([defaults boolForKey:MFullNavShowiTunesPodcastKey]) {
+        if ([defaults boolForKey:MFullNavShowiTunesPodcastsKey]) {
             path = [@"~/Music/iTunes/iTunes Music/Podcast" stringByExpandingTildeInPath];
             if ([fileManager fileExistsAtPath:path]) {
                 NSString* name = NSLocalizedString(@"iTunes Video Podcast", nil);
@@ -589,7 +589,7 @@
     MMovie* movie = [(AppController*)[NSApp delegate] movie];
     if (movie) {
         [movie setMuted:TRUE]; // always muted in preview
-        movieSize = [movie size];
+        movieSize = [movie displaySize];
     }
     else {
         movieSize = NSMakeSize(640, 360);

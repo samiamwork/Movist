@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -266,7 +266,7 @@
 
     MSubtitle* subtitle;
     int i, subtitleCount = [_subtitles count];
-    NSMutableString* names = [[NSMutableString alloc] initWithCapacity:64];
+    NSMutableString* names = [NSMutableString stringWithCapacity:64];
     for (i = 0; i < subtitleCount; i++) {
         subtitle = [_subtitles objectAtIndex:i];
         if ([subtitle isEnabled]) {

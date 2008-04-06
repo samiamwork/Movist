@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -231,9 +231,9 @@
 - (NSCell*)dataCell
 {
     NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
-    [formatter setFormat:@"#"];
+    [formatter setFormat:@"0"];
     [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-    if (_minValue != 0 || _maxValue != 0) {
+    if (_minValue <= _maxValue) {
         [formatter setMinimum:[NSNumber numberWithInt:_minValue]];
         [formatter setMaximum:[NSNumber numberWithInt:_maxValue]];
     }
@@ -290,6 +290,65 @@
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
+
+@interface SelectNode : ValueNode
+{
+    NSArray* _titles;
+}
+
++ (id)selectNodeWithName:(NSString*)name key:(NSString*)key titles:(NSArray*)titles;
+- (id)initWithName:(NSString*)name key:(NSString*)key titles:(NSArray*)titles;
+- (NSNumber*)value;
+- (void)setValue:(NSNumber*)index;
+- (NSCell*)dataCell;
+
+@end
+
+@implementation SelectNode
+
++ (id)selectNodeWithName:(NSString*)name key:(NSString*)key titles:(NSArray*)titles
+{
+    return [[[SelectNode alloc] initWithName:name key:key titles:titles] autorelease];
+}
+
+- (id)initWithName:(NSString*)name key:(NSString*)key titles:(NSArray*)titles
+{
+    if (self = [super initWithName:name key:key]) {
+        _titles = [titles retain];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [_titles release];
+    [super dealloc];
+}
+
+- (NSNumber*)value
+{
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    return [NSNumber numberWithInt:[defaults integerForKey:_key]];
+}
+
+- (void)setValue:(NSNumber*)intNumber
+{
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:[intNumber intValue] forKey:_key];
+}
+
+- (NSCell*)dataCell
+{
+    NSPopUpButtonCell* cell = [[NSPopUpButtonCell alloc] initTextCell:@""];
+    [cell addItemsWithTitles:_titles];
+    [cell setControlSize:NSSmallControlSize];
+    [cell setBordered:FALSE];
+    return [cell autorelease];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
 #define LABEL(s)    NSLocalizedString(s, nil)
@@ -307,14 +366,15 @@
       [NSArray arrayWithObjects:
        [BoolNode boolNodeWithName:LABEL(@"Activate on Dragging over Main Window")
                               key:MActivateOnDraggingKey],
-       [BoolNode boolNodeWithName:LABEL(@"Add Similar Files to Playlist for Opening File")
-                              key:MAutodetectMovieSeriesKey],
-       [BoolNode boolNodeWithName:LABEL_R(@"Auto-detect Digital Audio-Out")
-                              key:MAutodetectDigitalAudioOutKey],
-       [BoolNode boolNodeWithName:LABEL(@"Auto-Play On Full Screen")
-                              key:MAutoPlayOnFullScreenKey],
-       [BoolNode boolNodeWithName:LABEL(@"Capture Screenshot Including Letter Box")
-                              key:MCaptureIncludingLetterBoxKey],
+       [BoolNode boolNodeWithName:LABEL(@"Include Letter Box on Capture")
+                              key:MIncludeLetterBoxOnCaptureKey],
+       [SelectNode selectNodeWithName:LABEL(@"Action on Dragging Movie Area")
+                                  key:MActionOnDraggingMovieAreaKey
+                               titles:[NSArray arrayWithObjects:
+                                       NSLocalizedString(@"None", nil),
+                                       NSLocalizedString(@"Move Window", nil),
+                                       NSLocalizedString(@"Capture Movie", nil),
+                                       nil]],
        nil]]];
 
     // "Subtitle" category
@@ -329,6 +389,13 @@
                                   key:MDefaultLanguageIdentifiersKey],
        [IntNode intNodeWithName:LABEL(@"Auto Subtitle Position Max Lines (1~3)")
                             key:MAutoSubtitlePositionMaxLinesKey minValue:1 maxValue:3],
+       [SelectNode selectNodeWithName:LABEL(@"Subtitle Info Display on Opening Movie")
+                                  key:MSubtitleInfoDisplayOnOpeningKey
+                               titles:[NSArray arrayWithObjects:
+                                       NSLocalizedString(@"Never", nil),
+                                       NSLocalizedString(@"Simple", nil),
+                                       NSLocalizedString(@"Full", nil),
+                                       nil]],
        nil]]];
     
     // "Full Screen Navigation" category
@@ -337,12 +404,6 @@
       [NSArray arrayWithObjects:
        [StringNode stringNodeWithName:LABEL(@"Default Navigation Path")
                                   key:MFullNavPathKey],
-       [BoolNode boolNodeWithName:LABEL(@"Show iTunes Movies")
-                              key:MFullNavShowiTunesMoviesKey],
-       [BoolNode boolNodeWithName:LABEL(@"Show iTunes TV Shows")
-                              key:MFullNavShowiTunesTVShowsKey],
-       [BoolNode boolNodeWithName:LABEL(@"Show iTunes Video Podcast")
-                              key:MFullNavShowiTunesPodcastKey],
        [BoolNode boolNodeWithName:LABEL(@"Show Actual Path for Alias or Symbolic-Link")
                               key:MShowActualPathForLinkKey],
        nil]]];
@@ -400,12 +461,13 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
     if ([key isEqualToString:MActivateOnDraggingKey]) {
         [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
     }
-    else if ([key isEqualToString:MAutodetectDigitalAudioOutKey]) {
-        [[NSApp delegate] updateDigitalAudio];
+    else if ([key isEqualToString:MIncludeLetterBoxOnCaptureKey]) {
+        [[NSApp delegate] setIncludeLetterBoxOnCapture:
+         [_defaults boolForKey:MIncludeLetterBoxOnCaptureKey]];
     }
-    else if ([key isEqualToString:MCaptureIncludingLetterBoxKey]) {
-        [[NSApp delegate] setCaptureIncludingLetterBox:
-         [_defaults boolForKey:MCaptureIncludingLetterBoxKey]];
+    else if ([key isEqualToString:MActionOnDraggingMovieAreaKey]) {
+        [_movieView setActionOnDragging:
+         [_defaults integerForKey:MActionOnDraggingMovieAreaKey]];
     }
     else if ([key isEqualToString:MSubtitleReplaceNLWithBRKey]) {
         [_appController reopenSubtitle];

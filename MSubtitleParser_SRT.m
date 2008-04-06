@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -50,18 +50,6 @@ typedef struct _SRTTag {
 #pragma mark -
 
 @implementation MSubtitleParser_SRT
-
-- (void)readyWithString:(NSString*)string options:(NSDictionary*)options
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    _source = [string retain];
-    _sourceRange = NSMakeRange(0, [_source length]);
-    if (options) {
-    }
-
-    _subtitles = [[[NSMutableArray alloc] initWithCapacity:1] autorelease];
-    [_subtitles addObject:[[[MSubtitle alloc] initWithURL:_subtitleURL type:@"SRT"] autorelease]];
-}
 
 - (BOOL)isIndexString:(NSString*)s
 {
@@ -196,7 +184,14 @@ extern NSString* MFontBoldAttributeName;
                   error:(NSError**)error
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self readyWithString:string options:options];
+    _source = [[string retain] autorelease];
+    _sourceRange = NSMakeRange(0, [_source length]);
+    _subtitles = [NSMutableArray arrayWithCapacity:1];
+    if (options) {
+    }
+
+    [_subtitles addObject:
+     [[[MSubtitle alloc] initWithURL:_subtitleURL type:@"SRT"] autorelease]];
 
     NSCharacterSet* set = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
 
@@ -235,8 +230,6 @@ extern NSString* MFontBoldAttributeName;
     if (0 <= beginTime && ms) {
         [self parseSubtitleString:ms beginTime:beginTime endTime:endTime];
     }
-
-    [_source release];
 
     // remove empty subtitle if exist and
     // make complete not-ended-string if exist.

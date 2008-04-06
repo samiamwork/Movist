@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -57,7 +57,8 @@
     }
     else {
         // try all movie-classes with starting default-movie-class
-        int decoder = [_defaults defaultDecoderForCodecId:movieInfo.videoCodecId];
+        int codecId = [[movieInfo.videoTracks objectAtIndex:0] codecId];
+        int decoder = [_defaults defaultDecoderForCodecId:codecId];
         if (decoder == DECODER_QUICKTIME) {
             classes = [NSArray arrayWithObjects:
                 [MMovie_QuickTime class], [MMovie_FFmpeg class], nil];
@@ -67,7 +68,7 @@
                 [MMovie_FFmpeg class], [MMovie_QuickTime class], nil];
         }
     }
-    
+
     MMovie* movie;
     NSString* info;
     NSEnumerator* enumerator = [classes objectEnumerator];
@@ -78,13 +79,25 @@
                                subtitleURL:nil subtitleInfo:nil];
         [_movieView display];   // force display
 
-        if (_disablePerianSubtitle) {
-            // disable perian-subtitle before using quick-time.
-            if ([MMovie_QuickTime class] == movieClass && _perianSubtitleEnabled) {
-                [_defaults setPerianSubtitleEnabled:FALSE];
+        BOOL digitalAudioOut = [self digitalAudioOut] && movieInfo.hasDigitalAudio;
+        if (movieClass == [MMovie_QuickTime class]) {
+            // remember original settings & update new settings
+            if (_a52CodecInstalled) {
+                _a52CodecAttemptPassthrough = [_defaults a52CodecAttemptPassthrough];
+                if (digitalAudioOut) {
+                    [_defaults setA52CodecAttemptPassthrough:TRUE];
+                }
             }
-        }        
-        movie = [[movieClass alloc] initWithURL:movieURL movieInfo:&movieInfo error:error];
+            if (_perianInstalled) {
+                _perianSubtitleEnabled = [_defaults isPerianSubtitleEnabled];
+                if ([_defaults boolForKey:MDisablePerianSubtitleKey]) {
+                    [_defaults setPerianSubtitleEnabled:FALSE];
+                }
+            }
+        }
+
+        movie = [[movieClass alloc] initWithURL:movieURL movieInfo:&movieInfo
+                                digitalAudioOut:digitalAudioOut error:error];
         if (movie) {
             return [movie autorelease];
         }
@@ -108,7 +121,12 @@
 
     // find parser for subtitle's path extension
     NSString* path = [subtitleURL path];
-    Class parserClass = [MSubtitleParser parserClassForSubtitleType:[path pathExtension]];
+    NSString* ext = [path pathExtension];
+    Class parserClass = ([ext isEqualToString:@"smi"]) ? [MSubtitleParser_SMI class] :
+                        ([ext isEqualToString:@"srt"]) ? [MSubtitleParser_SRT class] :
+                        //([ext isEqualToString:@"idx"] ||
+                        // [ext isEqualToString:@"sub"]) ? [MSubtitleParser_SUB class] :
+                                                         Nil;
     if (!parserClass) {
         *error = [NSError errorWithDomain:[NSApp localizedAppName] code:1 userInfo:0];
         return nil;
@@ -180,9 +198,22 @@
     [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
     [_movieView updateMovieRect:TRUE];
 
-    [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:[[_movie class] name]
-                           subtitleURL:[self subtitleURL]
-                          subtitleInfo:[self subtitleInfoMessageString]];
+    int mode = [_defaults integerForKey:MSubtitleInfoDisplayOnOpeningKey];
+    if (mode == SUBTITLE_INFO_DISPLAY_NONE || ![self subtitleURL]) {
+        [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:[[_movie class] name]
+                               subtitleURL:nil subtitleInfo:nil];
+    }
+    else if (mode == SUBTITLE_INFO_DISPLAY_SIMPLE) {
+        NSString* info = [NSString stringWithFormat:@"%@, %@",
+                          [[_movie class] name], [self subtitleInfoMessageString]];
+        [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:info
+                               subtitleURL:nil subtitleInfo:nil];
+    }
+    else if (mode == SUBTITLE_INFO_DISPLAY_FULL) {
+        [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:[[_movie class] name]
+                               subtitleURL:[self subtitleURL]
+                              subtitleInfo:[self subtitleInfoMessageString]];
+    }
 
     if (![self isFullScreen]) {
         [self resizeWithMagnification:1.0];
@@ -204,12 +235,11 @@
     [_prevMovieButton updateHoverImage];
     [_nextMovieButton updateHoverImage];
     [_playlistButton updateHoverImage];
+    [self updateDataSizeBpsUI];
     [self setRangeRepeatRange:_lastPlayedMovieRepeatRange];
     
-    [_reopenWithMenuItem setTitle:
-        [NSString stringWithFormat:NSLocalizedString(@"Reopen With %@", nil),
-        ([_movie class] == [MMovie_QuickTime class]) ? [MMovie_FFmpeg name] :
-                                                       [MMovie_QuickTime name]]];
+    [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
+            NSLocalizedString(@"Reopen With %@", nil), [[_movie class] name]]];
     _prevMovieTime = 0.0;
     [self updateUI];
 
@@ -266,9 +296,11 @@
                name:MMovieCurrentTimeNotification object:_movie];
     [nc addObserver:self selector:@selector(movieEnded:)
                name:MMovieEndNotification object:_movie];
+    [nc addObserver:self selector:@selector(playlistUpdated:)
+               name:MPlaylistUpdatedNotification object:_playlist];
 
     // update movie
-    [self updateAudioOutput:self];
+    [self updateDigitalAudioOut:self];
     [self autoenableAudioTracks];
     [_movie setVolume:[self preferredVolume:[_defaults floatForKey:MVolumeKey]]];
     [_movie setMuted:([_muteButton state] == NSOnState)];
@@ -326,22 +358,6 @@
     NSRunAlertPanel([NSApp localizedAppName], s,
                     NSLocalizedString(@"OK", nil), nil, nil);
     return FALSE;
-    /*
-    if ([[url absoluteString] hasAnyExtension:[MSubtitle subtitleTypes]]) {
-        if (_movie) {   // reopen subtitle
-            [[_playlist currentItem] setSubtitleURL:url];
-            [_playlistController updateUI];
-            [self reopenSubtitle];
-        }
-        return TRUE;
-    }
-    else {
-        [_playlist removeAllItems];
-        [_playlist addURL:url];
-        [_playlistController updateUI];
-        return (0 < [_playlist count]) ? [self openCurrentPlaylistItem] : FALSE;
-    }
-     */
 }
 
 - (BOOL)openFile:(NSString*)filename option:(int)option
@@ -358,7 +374,7 @@
     }
 
     if ([filenames count] == 1 &&
-        [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle subtitleTypes]]) {
+        [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle fileExtensions]]) {
         if (_movie) {   // reopen subtitle
             NSURL* subtitleURL = [NSURL fileURLWithPath:[filenames objectAtIndex:0]];
             [[_playlist currentItem] setSubtitleURL:subtitleURL];
@@ -375,7 +391,6 @@
         else {
             [_playlist addFiles:filenames];
         }
-        [_playlistController updateUI];
         return (0 < [_playlist count]) ? [self openCurrentPlaylistItem] : FALSE;
     }
 }
@@ -443,12 +458,16 @@
     if (_movie) {
         [_updateSystemActivityTimer invalidate];
 
-        if (_disablePerianSubtitle) {
-            // re-enable perian-subtitle after using quick-time if needed.
-            if ([MMovie_QuickTime class] == [_movie class] && _perianSubtitleEnabled) {
-                [_defaults setPerianSubtitleEnabled:TRUE];
+        if ([_movie isMemberOfClass:[MMovie_QuickTime class]]) {
+            // restore original settings
+            if (_a52CodecInstalled) {
+                [_defaults setA52CodecAttemptPassthrough:_a52CodecAttemptPassthrough];
+            }
+            if (_perianInstalled) {
+                [_defaults setPerianSubtitleEnabled:_perianSubtitleEnabled];
             }
         }
+
         _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?
                                 [_movie currentTime] : 0.0;
         _lastPlayedMovieRepeatRange = [_seekSlider repeatRange];
@@ -475,13 +494,15 @@
 
         [_playlistController updateUI];
 
-        [[NSNotificationCenter defaultCenter]
-            removeObserver:self name:nil object:_movie];
+        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+        [nc removeObserver:self name:nil object:_movie];
+        [nc removeObserver:self name:nil object:_playlist];
 
         [_movieView setMovie:nil];
         [_movieView setSubtitles:nil];
         [_movieView setMessage:@""];
-        [_movie cleanup], _movie = nil;
+        [_movie release];
+        _movie = nil;
 
         [_subtitles release], _subtitles = nil;
         [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
@@ -492,28 +513,48 @@
 
 - (void)updateDecoderUI
 {
-    NSImage* image[3] = { nil, nil, nil };
+    NSImage* mainImage = nil;
+    NSImage* panelImage = nil;
+    NSImage* ctrlImage = nil;
     if ([_movieView movie]) {
         NSString* decoder = [[[_movieView movie] class] name];
         if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
-            image[0] = [NSImage imageNamed:@"MainQuickTime"];
-            image[1] = [NSImage imageNamed:@"FSQuickTime"];
-            image[2] = [NSImage imageNamed:@"QuickTime16"];
+            mainImage  = [NSImage imageNamed:@"MainQuickTime"];
+            panelImage = [NSImage imageNamed:@"FSQuickTime"];
+            ctrlImage  = [NSImage imageNamed:@"QuickTime16"];
         }
         else {  // [decoder isEqualToString:[MMovie_FFmpeg name]]
-            image[0] = [NSImage imageNamed:@"MainFFMPEG"];
-            image[1] = [NSImage imageNamed:@"FSFFMPEG"];
-            image[2] = [NSImage imageNamed:@"FFMPEG16"];
+            mainImage  = [NSImage imageNamed:@"MainFFMPEG"];
+            panelImage = [NSImage imageNamed:@"FSFFMPEG"];
+            ctrlImage  = [NSImage imageNamed:@"FFMPEG16"];
         }
     }
 
-    [_decoderButton setImage:image[0]];
-    [_panelDecoderButton setImage:image[1]];
-    [_controlPanelDecoderButton setImage:image[2]];
+    [_decoderButton setImage:mainImage];
+    [_panelDecoderButton setImage:panelImage];
+    [_controlPanelDecoderButton setImage:ctrlImage];
 
-    [_decoderButton setEnabled:(image[0] != nil)];
-    [_panelDecoderButton setEnabled:(image[1] != nil)];
-    [_controlPanelDecoderButton setEnabled:(image[2] != nil)];
+    [_decoderButton setEnabled:(mainImage != nil)];
+    [_panelDecoderButton setEnabled:(panelImage != nil)];
+    [_controlPanelDecoderButton setEnabled:(ctrlImage != nil)];
+}
+
+- (void)updateDataSizeBpsUI
+{
+    NSString* s = @"";
+    if (_movie) {
+        float megaBytes = [_movie fileSize] / 1024. / 1024.;
+        if (megaBytes < 1024) {
+            s = [NSString stringWithFormat:@"%.2f MB", megaBytes];
+        }
+        else {
+            s = [NSString stringWithFormat:@"%.2f GB", megaBytes / 1024.];
+        }
+        if (0 < [_movie bitRate]) {
+            s = [s stringByAppendingFormat:@", %d kbps", [_movie bitRate] / 1000];
+        }
+    }
+    [_dataSizeBpsTextField setStringValue:s];
 }
 
 - (void)updateSystemActivity:(NSTimer*)timer
@@ -539,7 +580,7 @@
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:TRUE];
     [panel setAllowsMultipleSelection:FALSE];
-    if (NSOKButton == [panel runModalForTypes:[MMovie movieFileExtensions]]) {
+    if (NSOKButton == [panel runModalForTypes:[MMovie fileExtensions]]) {
         [self openFile:[panel filename]];
     }
 }
@@ -558,7 +599,7 @@
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:FALSE];
     [panel setAllowsMultipleSelection:FALSE];
-    if (NSOKButton == [panel runModalForTypes:[MSubtitle subtitleTypes]]) {
+    if (NSOKButton == [panel runModalForTypes:[MSubtitle fileExtensions]]) {
         [self openSubtitle:[NSURL fileURLWithPath:[panel filename]]
                   encoding:kCFStringEncodingInvalidId];
     }
@@ -568,12 +609,9 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
-        if ([_movie isMemberOfClass:[MMovie_FFmpeg class]]) {
-            [self reopenMovieWithMovieClass:[MMovie_QuickTime class]];
-        }
-        else {
-            [self reopenMovieWithMovieClass:[MMovie_FFmpeg class]];
-        }
+        Class newClass = ([_movie isMemberOfClass:[MMovie_QuickTime class]]) ?
+                                [MMovie_FFmpeg class] : [MMovie_QuickTime class];
+        [self reopenMovieWithMovieClass:newClass];
     }
 }
 
@@ -606,62 +644,71 @@
     objectValueForTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
 {
     //TRACE(@"%s %@:%d", __PRETTY_FUNCTION__, [tableColumn identifier], rowIndex);
-    int videoCount = [[_movie videoTracks] count];
-    int audioCount = [[_movie audioTracks] count];
-    int videoIndex = rowIndex;
-    int audioIndex = videoIndex - videoCount;
-    int subtitleIndex = audioIndex - audioCount;
+    int vCount = [[_movie videoTracks] count];
+    int aCount = [[_movie audioTracks] count];
+    int vIndex = rowIndex;
+    int aIndex = vIndex - vCount;
+    int sIndex = aIndex - aCount;
 
     NSString* identifier = [tableColumn identifier];
     if ([identifier isEqualToString:@"enable"]) {
-        if (videoIndex < videoCount) {
+        if (vIndex < vCount) {
             // at least, one video track should be enabled.
             int i, count = 0;
             NSArray* tracks = [_movie videoTracks];
-            for (i = 0; i < videoCount; i++) {
-                if (i != videoIndex && [[tracks objectAtIndex:i] isEnabled]) {
+            for (i = 0; i < vCount; i++) {
+                if (i != vIndex && [[tracks objectAtIndex:i] isEnabled]) {
                     count++;
                 }
             }
             [[tableColumn dataCellForRow:rowIndex] setEnabled:0 < count];
-            BOOL state = [[tracks objectAtIndex:videoIndex] isEnabled];
+            BOOL state = [[tracks objectAtIndex:vIndex] isEnabled];
             return [NSNumber numberWithBool:state];
         }
         else {
             [[tableColumn dataCellForRow:rowIndex] setEnabled:TRUE];
-            if (audioIndex < audioCount) {
-                BOOL state = [[[_movie audioTracks] objectAtIndex:audioIndex] isEnabled];
+            if (aIndex < aCount) {
+                BOOL state = [[[_movie audioTracks] objectAtIndex:aIndex] isEnabled];
                 return [NSNumber numberWithBool:state];
             }
             else {
-                BOOL state = [[_subtitles objectAtIndex:subtitleIndex] isEnabled];
+                BOOL state = [[_subtitles objectAtIndex:sIndex] isEnabled];
                 return [NSNumber numberWithBool:state];
             }
         }
     }
     else if ([identifier isEqualToString:@"name"]) {
-        if (videoIndex < videoCount) {
-            return [[[_movie videoTracks] objectAtIndex:videoIndex] name];
+        if (vIndex < vCount) {
+            return [[[_movie videoTracks] objectAtIndex:vIndex] name];
         }
-        else if (audioIndex < audioCount) {
-            return [[[_movie audioTracks] objectAtIndex:audioIndex] name];
+        else if (aIndex < aCount) {
+            return [[[_movie audioTracks] objectAtIndex:aIndex] name];
         }
         else {
             return [NSString stringWithFormat:
-                        NSLocalizedString(@"External Subtitle %d", nil),
-                        subtitleIndex + 1];
+                    NSLocalizedString(@"External Subtitle %d", nil), sIndex + 1];
+        }
+    }
+    else if ([identifier isEqualToString:@"codec"]) {
+        if (vIndex < vCount) {
+            return codecName([[[_movie videoTracks] objectAtIndex:vIndex] codecId]);
+        }
+        else if (aIndex < aCount) {
+            return codecName([[[_movie audioTracks] objectAtIndex:aIndex] codecId]);
+        }
+        else {
+            return [[_subtitles objectAtIndex:sIndex] type];
         }
     }
     else if ([identifier isEqualToString:@"format"]) {
-        if (videoIndex < videoCount) {
-            return [[[_movie videoTracks] objectAtIndex:videoIndex] summary];
+        if (vIndex < vCount) {
+            return [[[_movie videoTracks] objectAtIndex:vIndex] summary];
         }
-        else if (audioIndex < audioCount) {
-            return [[[_movie audioTracks] objectAtIndex:audioIndex] summary];
+        else if (aIndex < aCount) {
+            return [[[_movie audioTracks] objectAtIndex:aIndex] summary];
         }
         else {
-            MSubtitle* subtitle = [_subtitles objectAtIndex:subtitleIndex];
-            return [NSString stringWithFormat:@"%@, %@", [subtitle type], [subtitle name]];
+            return [[_subtitles objectAtIndex:sIndex] name];
         }
     }
     return nil;
@@ -677,30 +724,29 @@
     }
 }
 */
-
 - (void)tableView:(NSTableView*)tableView setObjectValue:(id)object
    forTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
 {
     //TRACE(@"%s %@ %@ %d", __PRETTY_FUNCTION__, object, [tableColumn identifier], rowIndex);
     NSString* identifier = [tableColumn identifier];
     if ([identifier isEqualToString:@"enable"]) {
-        int videoCount = [[_movie videoTracks] count];
-        int audioCount = [[_movie audioTracks] count];
-        int videoIndex = rowIndex;
-        int audioIndex = videoIndex - videoCount;
-        int subtitleIndex = audioIndex - audioCount;
+        int vCount = [[_movie videoTracks] count];
+        int aCount = [[_movie audioTracks] count];
+        int vIndex = rowIndex;
+        int aIndex = vIndex - vCount;
+        int sIndex = aIndex - aCount;
         
-        if (videoIndex < videoCount) {
+        if (vIndex < vCount) {
             BOOL enabled = [(NSNumber*)object boolValue];
-            [self setVideoTrackAtIndex:videoIndex enabled:enabled];
+            [self setVideoTrackAtIndex:vIndex enabled:enabled];
             [tableView reloadData];  // to update other video tracks availablity
         }
-        else if (audioIndex < audioCount) {
+        else if (aIndex < aCount) {
             BOOL enabled = [(NSNumber*)object boolValue];
-            [self setAudioTrackAtIndex:audioIndex enabled:enabled];
+            [self setAudioTrackAtIndex:aIndex enabled:enabled];
         }
         else {
-            MSubtitle* subtitle = [_subtitles objectAtIndex:subtitleIndex];
+            MSubtitle* subtitle = [_subtitles objectAtIndex:sIndex];
             BOOL enabled = [(NSNumber*)object boolValue];
             [self setSubtitle:subtitle enabled:enabled];
         }

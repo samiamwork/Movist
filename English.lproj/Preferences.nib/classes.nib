@@ -33,8 +33,13 @@
             ACTIONS =             {
                 alwaysOnTopAction = id;
                 autoFullScreenAction = id;
+                autoPlayOnFullScreenAction = id;
+                autodetectDigitalAudioOutAction = id;
+                autodetectMovieSeriesAction = id;
                 checkUpdateNowAction = id;
+                codecBindingAction = id;
                 deactivateScreenSaverAction = id;
+                fileBindingAction = id;
                 fullNavUseAction = id;
                 fullScreenEffectAction = id;
                 fullScreenFillAction = id;
@@ -42,6 +47,7 @@
                 quitWhenWindowCloseAction = id;
                 rememberLastPlayAction = id;
                 seekIntervalAction = id;
+                showFullNavItemsAction = id;
                 subtitleAttributesAction = id;
                 subtitleAutoFontSizeAction = id;
                 subtitleAutoFontSizeCharsAction = id;
@@ -59,8 +65,13 @@
                 "_alwaysOnTopButton" = NSButton;
                 "_audioPane" = NSView;
                 "_autoFullScreenButton" = NSButton;
+                "_autoPlayOnFullScreenButton" = NSButton;
+                "_autodetectDigitalAudioOutButton" = NSButton;
+                "_autodetectMovieSeriesButton" = NSButton;
+                "_codecBindingTableView" = NSTableView;
                 "_deactivateScreenSaverButton" = NSButton;
                 "_detailsOutlineView" = NSOutlineView;
+                "_fileBindingTableView" = NSTableView;
                 "_fullNavUseButton" = NSButton;
                 "_fullScreenEffectPopUpButton" = NSPopUpButton;
                 "_fullScreenFillForStdMoviePopUpButton" = NSPopUpButton;
@@ -76,6 +87,9 @@
                 "_seekInterval1TextField" = NSTextField;
                 "_seekInterval2Stepper" = NSStepper;
                 "_seekInterval2TextField" = NSTextField;
+                "_showiTunesMoviesButton" = NSButton;
+                "_showiTunesPodcastsButton" = NSButton;
+                "_showiTunesTVShowsButton" = NSButton;
                 "_subtitleAutoFontSizeButton" = NSButton;
                 "_subtitleAutoFontSizeLabelTextField" = NSTextField;
                 "_subtitleAutoFontSizeStepper" = NSStepper;

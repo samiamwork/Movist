@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -82,6 +82,8 @@ NSString* PANE_ID[] = {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_detailsCategories release];
     [_codecIds release];
+    [_bindingApps release];
+    [_fileExtensionDescriptions release];
     [_fileExtensions release];
     [_appController release];
     [_mainWindow release];

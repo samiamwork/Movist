@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -75,37 +75,6 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
 NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLanguageIdentifiers";
 
 @implementation MSubtitleParser_SMI
-
-- (void)readyWithString:(NSString*)string options:(NSDictionary*)options
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    _source = [string retain];
-    _sourceRange = NSMakeRange(0, [_source length]);
-    _removeLastBR = TRUE;   // always true
-    _replaceNewLineWithBR = TRUE;
-    _defaultLanguageIdentifiers = nil;
-    if (options) {
-        NSNumber* n = (NSNumber*)[options objectForKey:
-                            MSubtitleParserOptionKey_SMI_replaceNewLineWithBR];
-        if (n) {
-            _replaceNewLineWithBR = [n boolValue];
-        }
-
-        _defaultLanguageIdentifiers = (NSArray*)[options objectForKey:
-                            MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers];
-    }
-
-    _delimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-    NSMutableCharacterSet* mset = [_delimSet mutableCopy];
-    [mset addCharactersInString:@"{}:;"];
-    _styleDelimSet = mset;
-    mset = [_delimSet mutableCopy];
-    [mset addCharactersInString:@"='\""];
-    _syncDelimSet = _pDelimSet = _fontDelimSet = mset;
-
-    _subtitles = [[[NSMutableArray alloc] initWithCapacity:2] autorelease];
-    _classes = [[[NSMutableDictionary alloc] initWithCapacity:2] autorelease];
-}
 
 - (MSubtitle*)addSubtitleClass:(NSString*)class
 {
@@ -348,11 +317,44 @@ extern NSString* MFontBoldAttributeName;
     [subtitle addString:mas time:time];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)readyWithOptions:(NSDictionary*)options
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    _removeLastBR = TRUE;   // always true
+    _replaceNewLineWithBR = TRUE;
+    _defaultLanguageIdentifiers = nil;
+    if (options) {
+        NSNumber* n = (NSNumber*)[options objectForKey:
+                                  MSubtitleParserOptionKey_SMI_replaceNewLineWithBR];
+        if (n) {
+            _replaceNewLineWithBR = [n boolValue];
+        }
+        
+        _defaultLanguageIdentifiers = (NSArray*)[options objectForKey:
+                                                 MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers];
+    }
+
+    _delimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSMutableCharacterSet* mset = [_delimSet mutableCopy];
+    [mset addCharactersInString:@"{}:;"];
+    _styleDelimSet = mset;
+    mset = [_delimSet mutableCopy];
+    [mset addCharactersInString:@"='\""];
+    _syncDelimSet = _pDelimSet = _fontDelimSet = mset;
+    
+    _classes = [NSMutableDictionary dictionaryWithCapacity:2];
+}
+
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self readyWithString:string options:options];
+    _source = [[string retain] autorelease];
+    _sourceRange = NSMakeRange(0, [_source length]);
+    _subtitles = [NSMutableArray arrayWithCapacity:2];
+    [self readyWithOptions:options];
 
     float time = -1.0;
     NSString* class = nil;
@@ -403,8 +405,6 @@ extern NSString* MFontBoldAttributeName;
         [self parseSubtitleString:[_source substringWithRange:range]
                              time:time class:class];
     }
-
-    [_source release];
 
     // remove empty subtitle if exist and
     // make complete not-ended-string if exist.

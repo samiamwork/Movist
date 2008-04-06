@@ -1,8 +1,9 @@
 //
 //  Movist
 //
-//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim, Cheol Ju. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
+//      Cheol Ju      <moosoy@gmail.com>
 //
 //  This file is part of Movist.
 //
@@ -20,24 +21,28 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#import "Movist.h"
+#import "FFTrack.h"     // for FFContext
 
-#define UPDATE_CHECK_FAILED    0
-#define NO_UPDATE_AVAILABLE    1
-#define NEW_VERSION_AVAILABLE  2
+@class MMovie_FFmpeg;
 
-@interface UpdateChecker : NSObject
+@interface FFIndexer : FFContext
 {
-    NSString* CURRENT_VERSION;
-    NSString* _newVersion;
-    NSURL* _homepageURL;
-    NSURL* _downloadURL;
+    MMovie_FFmpeg* _movie;
+    AVFormatContext* _formatContext;
+    AVFormatContext* _indexContext;
+    NSLock* _frameReadMutex;
+    int _maxFrameSize;
+    float _indexingTime;
+    int64_t _indexingPosition;
+    BOOL _running;
+    BOOL _finished;
 }
 
-- (NSString*)newVersion;
-- (NSURL*)homepageURL;
-- (NSURL*)downloadURL;
+- (id)initWithMovie:(MMovie_FFmpeg*)movie
+      formatContext:(AVFormatContext*)formatContext
+        streamIndex:(int)streamIndex
+     frameReadMutex:(NSLock*)frameReadMutex;
 
-- (int)checkUpdate:(NSError**)error;
+- (void)waitForFinish;
 
 @end

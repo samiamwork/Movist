@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim, Cheol Ju. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim, Cheol Ju. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //      Cheol Ju      <moosoy@gmail.com>
 //
@@ -25,76 +25,6 @@
 
 #import <avcodec.h>
 #import <avformat.h>
-#import <swscale.h>
-#include <AudioUnit/AudioUnit.h>
-
-@class MMovie_FFmpeg;
-
-@interface MTrack_FFmpeg : MTrack
-{
-    int _streamId;
-    float _volume;
-}
-
-+ (id)trackWithMovie:(MMovie*)movie formatContext:(AVFormatContext*)formatContext
-         streamIndex:(int)streamIndex streamId:(int)streamId;
-
-- (id)initWithMovie:(MMovie*)movie formatContext:(AVFormatContext*)formatContext
-        streamIndex:(int)streamIndex streamId:(int)streamId;
-
-- (int)streamId;
-- (float)volume;
-- (void)setVolume:(float)volume;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface PacketQueue : NSObject
-{
-    AVPacket* _packet;
-    unsigned int _capacity;
-    unsigned int _front;
-    unsigned int _rear;
-    NSLock* _mutex;
-}
-
-- (id)initWithCapacity:(unsigned int)capacity;
-
-#pragma mark -
-- (void)clear;
-- (BOOL)isEmpty;
-- (BOOL)isFull;
-- (BOOL)putPacket:(const AVPacket*)packet;
-- (BOOL)getPacket:(AVPacket*)packet;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface AUCallbackInfo : NSObject
-{
-    MMovie_FFmpeg* _movie;
-    int _streamId;
-}
-@end
-
-@interface AudioDataQueue : NSObject
-{
-    int _bitRate;
-    UInt8* _data;
-    NSRecursiveLock* _mutex;
-    double _time;
-    unsigned int _capacity;
-    unsigned int _front;
-    unsigned int _rear;
-}
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
 
 enum {
     COMMAND_NONE,
@@ -105,43 +35,29 @@ enum {
     COMMAND_PAUSE,
 };
 
+@class FFTrack;
+@class FFVideoTrack;
+@class FFAudioTrack;
+@class FFIndexer;
+
 @interface MMovie_FFmpeg : MMovie
 {
     AVFormatContext* _formatContext;
 
-    // video
-    int _videoStreamIndex;
-    #define _videoStream        _formatContext->streams[_videoStreamIndex]
-    #define _videoContext       _videoStream->codec
-
-    // audio
-    int _speakerCount;
-    #define MAX_AUDIO_STREAM_COUNT  8
-    int _audioStreamCount;
-    int _audioStreamIndex[MAX_AUDIO_STREAM_COUNT];
-    int _firstAudioStreamId;
-    #define _audioStream(i)     _formatContext->streams[_audioStreamIndex[i]]
-    #define _audioContext(i)    _audioStream(i)->codec
-
-    // rebuild index
-    int _indexStreamId;
-    AVFormatContext* _indexContext;
-    AVCodecContext* _indexCodec;
-    BOOL _indexingCompleted;
-    BOOL _needIndexing;
-    int _maxFrameSize;
-    int64_t _currentIndexingPosition;
+    FFVideoTrack* _mainVideoTrack;
+    FFAudioTrack* _mainAudioTrack;
+    FFIndexer* _indexer;
 
     // playback: control
     int _command;
     int _reservedCommand;
     NSConditionLock* _commandLock;
-    NSLock* _avSyncMutex;
+    //NSLock* _avSyncMutex;
     NSLock* _frameReadMutex;
+    BOOL _running;
     BOOL _quitRequested;
     BOOL _dispatchPacket;
     BOOL _seekComplete;
-    BOOL _playThreading;
     BOOL _fileEnded;
 
     // playback: play
@@ -156,26 +72,8 @@ enum {
     double _lastDecodedTime;
     BOOL _needKeyFrame;
     BOOL _seekKeyFrame;
-    
-    // playback: decoding
-    #define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
-    //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
-    #define MAX_VIDEO_DATA_BUF_SIZE 8
-    PacketQueue* _videoQueue;
-    AudioUnit _audioUnit[MAX_AUDIO_STREAM_COUNT];
-    AVFrame* _videoFrame;    // for decoding
-    AVFrame* _videoFrameData[MAX_VIDEO_DATA_BUF_SIZE]; // for display
-    NSMutableArray* _audioDataQueue;
-    struct SwsContext* _scalerContext;
-    AVPacket _flushPacket;
-    int _decodedImageCount;
-    int _decodedImageBufCount;
+
     double _currentTime;
-    double _prevImageTime;
-    double _decodedImageTime[MAX_VIDEO_DATA_BUF_SIZE];
-    int _videoDataBufId;
-    int _nextVideoBufId;
-    double _nextDecodedAudioTime[MAX_AUDIO_STREAM_COUNT];
     double _hostTimeFreq;
     double _hostTime;
     double _hostTime0point;
@@ -186,8 +84,6 @@ enum {
 
 - (BOOL)initAVCodec:(int*)errorCode;
 - (void)cleanupAVCodec;
-- (BOOL)initDecoder:(AVCodecContext*)context codec:(AVCodec*)codec
-           forVideo:(BOOL)forVideo;
 
 @end
 
@@ -196,21 +92,19 @@ enum {
 
 @interface MMovie_FFmpeg (Playback)
 
-- (BOOL)defaultFuncCondition;
 - (BOOL)initPlayback:(int*)errorCode;
 - (void)cleanupPlayback;
 
-@end
+- (int)command;
+- (int)reservedCommand;
+- (BOOL)isRunning;
+- (BOOL)quitRequested;
 
-@interface MMovie_FFmpeg (Audio)
+- (double)hostTimeFreq;
+- (double)hostTime0point;
+- (BOOL)canDecodeVideo;
 
-- (BOOL)initAudio:(int)audioStreamIndex errorCode:(int*)errorCode;
-- (void)cleanupAudio;
-- (BOOL)initAudioPlayback:(int*)errorCode;
-- (void)cleanupAudioPlayback;
-- (void)decodeAudio:(AVPacket*)packet trackId:(int)trackId;
-- (void)updateFirstAudioStreamId;
-- (void)startAudio:(int)streamId;
-- (void)stopAudio:(int)streamId;
+- (void)videoTrack:(FFVideoTrack*)videoTrack decodedTime:(double)time;
+- (void)audioTrack:(FFAudioTrack*)audioTrack avFineTuningTime:(double)time;
 
 @end

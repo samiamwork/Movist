@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -85,52 +85,72 @@
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
-
-@implementation MTrack_QuickTime
-
-+ (id)trackWithMovie:(MMovie*)movie qtTrack:(QTTrack*)qtTrack
-{
-    MTrack_QuickTime* track = [MTrack_QuickTime alloc];
-    return [[track initWithMovie:movie qtTrack:qtTrack] autorelease];
-}
-
-- (id)initWithMovie:(MMovie*)movie qtTrack:(QTTrack*)qtTrack
-{
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, qtTrack);
-    if (self = [super initWithMovie:movie]) {
-        _qtTrack = [qtTrack retain];
-        _name = [[_qtTrack attributeForKey:QTTrackDisplayNameAttribute] retain];
-        _summary = [[_qtTrack summary] retain];
-        _enabled = [_qtTrack isEnabled];
-    }
-    return self;
-}
-
-- (void)dealloc
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_qtTrack release];
-    [super dealloc];
-}
-
-- (QTTrack*)qtTrack { return _qtTrack; }
-
-- (void)setEnabled:(BOOL)enabled
-{
-    [_qtTrack setEnabled:enabled];
-    [super setEnabled:enabled];
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
 @implementation MMovie_QuickTime
 
 + (NSString*)name { return @"QuickTime"; }
 
-- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo error:(NSError**)error
+- (MTrack*)videoTrackWithIndex:(int)index qtTrack:(QTTrack*)qtTrack
+{
+    NSSize displaySize = [[qtTrack attributeForKey:QTTrackDimensionsAttribute] sizeValue];
+    /* ... in 10.5 or later
+    NSSize encodedSize;
+    if ([[_qtMovie attributeForKey:QTMovieApertureModeAttribute]
+        isEqualToString:QTMovieApertureModeEncodedPixels]) {
+        encodedSize = [[qtTrack apertureModeDimensionsForMode:
+                                QTMovieApertureModeEncodedPixels] sizeValue];
+    }
+     */
+    /**/
+    NSSize encodedSize = displaySize;
+    ImageDescriptionHandle idh;
+    idh = (ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
+    GetMediaSampleDescription([[qtTrack media] quickTimeMedia], 1,
+                              (SampleDescriptionHandle)idh);
+    FixedPoint esp;
+    if (noErr == ICMImageDescriptionGetProperty(idh, kQTPropertyClass_ImageDescription,
+                                                kICMImageDescriptionPropertyID_EncodedPixelsDimensions,
+                                                sizeof(esp), &esp, 0)) {
+        NSSize es = NSMakeSize(FixedToFloat(esp.x), FixedToFloat(esp.y));
+        if (es.width <= displaySize.width && es.height <= displaySize.height) {
+            encodedSize = es;
+        }
+    }
+    DisposeHandle((Handle)idh);
+    /**/
+    //TRACE(@"displaySize=%@, encodedSize=%@",
+    //      NSStringFromSize(displaySize), NSStringFromSize(encodedSize));
+
+    MTrack* old = (index < [_videoTracks count]) ? [_videoTracks objectAtIndex:index] : nil;
+    MTrack* track = [MTrack trackWithImpl:qtTrack];
+    [track setCodecId:[old codecId]];
+    [track setName:[qtTrack attributeForKey:QTTrackDisplayNameAttribute]];
+    [track setSummary:[qtTrack summary]];
+    [track setEncodedSize:encodedSize];
+    [track setDisplaySize:displaySize];
+    [track setFps:[old fps]];
+    [track setEnabled:index == 0];  // enable first track only
+    [track setMovie:self];
+    return track;
+}
+
+- (MTrack*)audioTrackWithIndex:(int)index qtTrack:(QTTrack*)qtTrack
+{
+    MTrack* old = (index < [_audioTracks count]) ? [_audioTracks objectAtIndex:index] : nil;
+    MTrack* track = [MTrack trackWithImpl:qtTrack];
+    [track setCodecId:[old codecId]];
+    [track setName:[qtTrack attributeForKey:QTTrackDisplayNameAttribute]];
+    [track setSummary:[qtTrack summary]];
+    [track setAudioChannels:[old audioChannels]];
+    [track setAudioSampleRate:[old audioSampleRate]];
+    [track setEnabled:index == 0];  // enable first track only
+    [track setMovie:self];
+    return track;
+}
+
+- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo
+  digitalAudioOut:(BOOL)digitalAudioOut error:(NSError**)error
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     QTMovie* qtMovie;
@@ -151,84 +171,71 @@
         return nil;
     }
 
-    if ((self = [super initWithURL:url movieInfo:movieInfo error:error])) {
+    if ((self = [super initWithURL:url movieInfo:movieInfo
+                   digitalAudioOut:digitalAudioOut error:error])) {
+        av_close_input_file(movieInfo->formatContext);
         _qtMovie = [qtMovie retain];
-        
-        // init video/audio tracks
+
+        // override video/audio tracks
+        NSMutableArray* vTracks = [NSMutableArray arrayWithCapacity:1];
+        NSMutableArray* aTracks = [NSMutableArray arrayWithCapacity:1];
         NSString* mediaType;
-        QTTrack* track, *firstVideoTrack = 0;
+        QTTrack* qtTrack;
+        int vi = 0, ai = 0;
         NSEnumerator* enumerator = [[_qtMovie tracks] objectEnumerator];
-        while (track = [enumerator nextObject]) {
-            mediaType = [track attributeForKey:QTTrackMediaTypeAttribute];
+        while (qtTrack = [enumerator nextObject]) {
+            mediaType = [qtTrack attributeForKey:QTTrackMediaTypeAttribute];
             if ([mediaType isEqualToString:QTMediaTypeVideo] ||
                 [mediaType isEqualToString:QTMediaTypeMPEG]/* ||
                 [mediaType isEqualToString:QTMediaTypeMovie]*/) {
-                [_videoTracks addObject:
-                 [MTrack_QuickTime trackWithMovie:self qtTrack:track]];
-                if (firstVideoTrack == nil) {
-                    firstVideoTrack = track;
-                }
-                else {
-                    // initially enable the first video track only
-                    [[_videoTracks lastObject] setEnabled:FALSE];
-                }
+                [vTracks addObject:[self videoTrackWithIndex:vi++ qtTrack:qtTrack]];
             }
             else if ([mediaType isEqualToString:QTMediaTypeSound]/* ||
                      [mediaType isEqualToString:QTMediaTypeMusic]*/) {
-                [_audioTracks addObject:
-                 [MTrack_QuickTime trackWithMovie:self qtTrack:track]];
+                [aTracks addObject:[self audioTrackWithIndex:ai++ qtTrack:qtTrack]];
             }
         }
-
-        // override _info.displaySize & _info.encodedSize by QuickTime
-        _info.displaySize = _info.encodedSize = movieSize;
-        /* ... in 10.5 or later
-        if ([[_qtMovie attributeForKey:QTMovieApertureModeAttribute]
-                            isEqualToString:QTMovieApertureModeEncodedPixels]) {
-            _encodedSize = [[firstVideoTrack apertureModeDimensionsForMode:
-                             QTMovieApertureModeEncodedPixels] sizeValue];
-        }
-         */
-        /**/
-        ImageDescriptionHandle idh;
-        idh = (ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
-        GetMediaSampleDescription([[firstVideoTrack media] quickTimeMedia], 1,
-                                  (SampleDescriptionHandle)idh);
-        FixedPoint esp;
-        if (noErr == ICMImageDescriptionGetProperty(idh, kQTPropertyClass_ImageDescription,
-            kICMImageDescriptionPropertyID_EncodedPixelsDimensions, sizeof(esp), &esp, 0)) {
-            NSSize es = NSMakeSize(FixedToFloat(esp.x), FixedToFloat(esp.y));
-            if (es.width <= _info.displaySize.width && es.height <= _info.displaySize.height) {
-                _info.encodedSize = es;
-            }
-        }
-        DisposeHandle((Handle)idh);
-        /**/
+        [_videoTracks setArray:vTracks];
+        [_audioTracks setArray:aTracks];
         [self setAspectRatio:_aspectRatio]; // for _adjustedSize
-        //TRACE(@"_info.displaySize=%@, _info.encodedSize=%@",
-        //      NSStringFromSize(_info.displaySize), NSStringFromSize(_info.encodedSize));
 
-        // override _info.duration by QuickTime
+        // override _duration & _startTime by QuickTime
         QTTime t = [_qtMovie duration];
-        _info.duration = (float)t.timeValue / t.timeScale;
+        _duration = (float)t.timeValue / t.timeScale;
+        _startTime = 0;
 
-        // override _info.preferredVolume by QuickTime
-        _info.preferredVolume = [[_qtMovie attributeForKey:QTMoviePreferredVolumeAttribute] floatValue];
-
-        // init volumes
+        // override _preferredVolume, _volume & _muted by QuickTime
+        _preferredVolume = [[_qtMovie attributeForKey:QTMoviePreferredVolumeAttribute] floatValue];
         _volume = [_qtMovie volume];
         _muted = [_qtMovie muted];
 
         // loading-state cannot be get by QTMovieLoadStateDidChangeNotification.
         // I think that it may be already posted before _qtMovie is returned.
-        _indexingUpdateTimer =
-            [NSTimer scheduledTimerWithTimeInterval:1.0
-                                             target:self
-                                           selector:@selector(updateIndexedDuration:)
-                                           userInfo:nil
-                                            repeats:TRUE];
+        _indexingUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+                                target:self selector:@selector(updateIndexedDuration:)
+                                userInfo:nil repeats:TRUE];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_indexingUpdateTimer isValid]) {
+        [_indexingUpdateTimer invalidate];
+        _indexingUpdateTimer = nil;
+    }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    SetMovieVisualContext([_qtMovie quickTimeMovie], 0);
+    if (_visualContext) {
+        CFRelease(_visualContext);
+    }
+    [_qtMovie release];
+    _qtMovie = nil;
+
+    [super dealloc];
 }
 
 - (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
@@ -264,23 +271,6 @@
     return TRUE;
 }
 
-- (void)cleanup
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-    SetMovieVisualContext([_qtMovie quickTimeMovie], 0);
-    if (_visualContext) {
-        CFRelease(_visualContext);
-    }
-    [_qtMovie release], _qtMovie = nil;
-    if ([_indexingUpdateTimer isValid]) {
-        [_indexingUpdateTimer invalidate];
-        _indexingUpdateTimer = nil;
-    }
-    [super cleanup];
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
@@ -299,13 +289,7 @@
             duration = tv / 1000.0;
         }
     }
-    if (_indexedDuration != duration) {
-        _indexedDuration = duration;
-        //TRACE(@"%s _indexDuration=%.1f %@", __PRETTY_FUNCTION__, _indexDuration,
-        //      (ret == kMovieLoadStateComplete) ? @"(complete)" : @"");
-        [[NSNotificationCenter defaultCenter]
-         postNotificationName:MMovieIndexedDurationNotification object:self];
-    }
+    [self indexedDurationUpdated:duration];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

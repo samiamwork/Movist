@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -60,9 +60,18 @@ NSString* videoCodecName(int codecId);
 
         _defaults = [NSUserDefaults standardUserDefaults];
 
-        // check if kor-/capri- perian supports external subtitles.
-        _disablePerianSubtitle = [_defaults boolForKey:MDisablePerianSubtitleKey];
-        _perianSubtitleEnabled = [_defaults isPerianSubtitleEnabled];
+        NSString* root, *home;
+        NSFileManager* fm = [NSFileManager defaultManager];
+        root = @"/Library/Audio/Plug-Ins/Components/A52Codec.component";
+        home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
+        _a52CodecInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
+
+        root = @"/Library/QuickTime/Perian.component";
+        home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
+        _perianInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
+
+        [self initDigitalAudioOut];
+        [self initRemoteControl];
     }
     return self;
 }
@@ -91,6 +100,7 @@ NSString* videoCodecName(int codecId);
 
     _decoderButton = [_mainWindow createDecoderButton];
     [self updateDecoderUI];
+    [self updateDataSizeBpsUI];
 
     initSubtitleEncodingMenu(_subtitleEncodingMenu, @selector(reopenSubtitleAction:));
 
@@ -178,10 +188,9 @@ NSString* videoCodecName(int codecId);
 
     // initial update preferences: advanced details
     [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
-    [self setCaptureIncludingLetterBox:[_defaults boolForKey:MCaptureIncludingLetterBoxKey]];
+    [_movieView setActionOnDragging:[_defaults integerForKey:MActionOnDraggingMovieAreaKey]];
+    [self setIncludeLetterBoxOnCapture:[_defaults boolForKey:MIncludeLetterBoxOnCaptureKey]];
 
-    [self initDigitalAudio];
-    [self initRemoteControl];
     [self updateUI];
 
     [self checkForUpdatesOnStartup];
@@ -307,6 +316,7 @@ NSString* videoCodecName(int codecId);
     [_mainWindow setMovieURL:movieURL];
     [_fullScreener setMovieURL:movieURL];
     [_controlPanel setMovieURL:movieURL];
+    [_controlPanel setSubtitleURL:[self subtitleURL]];
     [_propertiesView reloadData];
     [self updatePrevNextMovieButtons];
     [self updateAspectRatioMenu];
@@ -319,6 +329,7 @@ NSString* videoCodecName(int codecId);
     [self updateTimeUI];
     [self updatePlayUI];
     [self updateDecoderUI];
+    [self updateDataSizeBpsUI];
     [_playlistController updateUI];
 }
 
@@ -328,14 +339,14 @@ NSString* videoCodecName(int codecId);
     _quitWhenWindowClose = quitWhenWindowClose;
 }
 
-- (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox
+- (void)setIncludeLetterBoxOnCapture:(BOOL)includeLetterBox
 {
-    [_movieView setCaptureIncludingLetterBox:includingLetterBox];
+    [_movieView setIncludeLetterBoxOnCapture:includeLetterBox];
 
-    [_altCopyImageMenuItem setTitle:(includingLetterBox) ?
+    [_altCopyImageMenuItem setTitle:(includeLetterBox) ?
                         NSLocalizedString(@"Copy (Excluding Letter Box)", nil) :
                         NSLocalizedString(@"Copy (Including Letter Box)", nil)];
-    [_altSaveImageMenuItem setTitle:(includingLetterBox) ?
+    [_altSaveImageMenuItem setTitle:(includeLetterBox) ?
                         NSLocalizedString(@"Save Current Image (Excluding Letter Box)", nil) :
                         NSLocalizedString(@"Save Current Image (Including Letter Box)", nil)];
 }

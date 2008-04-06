@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -47,7 +47,8 @@
     IBOutlet NSSlider* _playbackRateSlider;
 
     // Properties
-    IBOutlet NSTextField* _filenameTextField;
+    IBOutlet NSTextField* _movieFilenameTextField;
+    IBOutlet NSTextField* _subtitleFilenameTextField;
 }
 
 - (void)showPanel;
@@ -72,7 +73,13 @@
 #pragma mark -
 #pragma mark playback
 
-- (void)setPlayRate:(float)rate;
+- (void)updatePlaybackRateSlider:(float)rate;
 - (IBAction)playbackRateAction:(id)sender;
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark properites
+- (void)setMovieURL:(NSURL*)url;
+- (void)setSubtitleURL:(NSURL*)url;
 
 @end

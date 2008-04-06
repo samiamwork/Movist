@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -30,7 +30,7 @@ NSString* MMovieCurrentTimeNotification     = @"MMovieCurrentTimeNotification";
 NSString* MMovieEndNotification             = @"MMovieEndNotification";
 
 #pragma mark notifications: etc
-NSString* MMovieRectUpdateNotification      = @"MMovieRectUpdateNotification";
+NSString* MPlaylistUpdatedNotification      = @"MPlaylistUpdatedNotification";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -83,7 +83,7 @@ NSString* NSStringFromMovieTime(float time)
             totalMinutes / 60, totalMinutes % 60, totalSeconds % 60];
 }
 
-NSString* videoCodecName(int codecId)
+NSString* codecName(int codecId)
 {
     if (codecId == MCODEC_ETC_) {
         return NSLocalizedString(@"etc.", nil);
@@ -142,34 +142,38 @@ NSString* videoCodecName(int codecId)
         CASE_CODEC_STRING(INDEO2);
         CASE_CODEC_STRING(INDEO3);
         CASE_CODEC_STRING(MJPEG);
+
+        CASE_CODEC_STRING(PCM);
+        CASE_CODEC_STRING(DPCM);
+        CASE_CODEC_STRING(ADPCM);
+        CASE_CODEC_STRING(MP2);
+        CASE_CODEC_STRING(MP3);
+        CASE_CODEC_STRING(AAC);
+        CASE_CODEC_STRING(AC3);
+        CASE_CODEC_STRING(DTS);
+        CASE_CODEC_STRING(VORBIS);
+        CASE_CODEC_STRING(DVAUDIO);
+        CASE_CODEC_STRING(WMAV1);
+        CASE_CODEC_STRING(WMAV2);
+        CASE_CODEC_STRING(RA);
+        CASE_CODEC_STRING(AMR);
+        CASE_CODEC_STRING(ALAC);
+        CASE_CODEC_STRING(FLAC);
+        CASE_CODEC_STRING(QDM2);
+        CASE_CODEC_STRING(MACE);
+        CASE_CODEC_STRING(SPEEX);
+        CASE_CODEC_STRING(TTA);
+        CASE_CODEC_STRING(WAVPACK);
     }
     return @"";
 }
 
-NSString* audioCodecName(int codecId)
-{
-    return @""; // FIXME
-}
-
-NSString* videoCodecDescription(int codecId)
+NSString* codecDescription(int codecId)
 {
     if (codecId == MCODEC_ETC_) {
         return NSLocalizedString(@"etc. DESC.", nil);
     }
-    NSString* s = videoCodecName(codecId);
-    if (0 < [s length]) {
-        s = [NSString stringWithFormat:@"%@ DESC.", s];
-        return NSLocalizedString(s, nil);
-    }
-    return NSLocalizedString(@"Unnamed", nil);
-}
-
-NSString* audioCodecDescription(int codecId)
-{
-    if (codecId == MCODEC_ETC_) {
-        return NSLocalizedString(@"etc. DESC.", nil);
-    }
-    NSString* s = audioCodecName(codecId);
+    NSString* s = codecName(codecId);
     if (0 < [s length]) {
         s = [NSString stringWithFormat:@"%@ DESC.", s];
         return NSLocalizedString(s, nil);
@@ -223,7 +227,7 @@ unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)
     else if ([type isEqualToString:NSFilenamesPboardType]) {
         NSArray* filenames = [pboard propertyListForType:NSFilenamesPboardType];
         if ([filenames count] == 1 &&
-            [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle subtitleTypes]]) {
+            [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle fileExtensions]]) {
             return DRAG_ACTION_REPLACE_SUBTITLE_FILE;
         }
         else {
@@ -232,7 +236,7 @@ unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)
     }
     else if ([type isEqualToString:NSURLPboardType]) {
         NSString* s = [[NSURL URLFromPasteboard:pboard] absoluteString];
-        if ([s hasAnyExtension:[MSubtitle subtitleTypes]]) {
+        if ([s hasAnyExtension:[MSubtitle fileExtensions]]) {
             return DRAG_ACTION_REPLACE_SUBTITLE_URL;
         }
         else {
@@ -243,15 +247,6 @@ unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)
         return DRAG_ACTION_REORDER_PLAYLIST;
     }
     return DRAG_ACTION_NONE;
-}
-
-NSDictionary* subtitleTypesAndParsers()
-{
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-            @"MSubtitleParser_SMI", @"smi",
-            @"MSubtitleParser_SRT", @"srt",
-            //@"MSubtitleParser_SUB", @"sub",
-            nil];
 }
 
 void initSubtitleEncodingMenu(NSMenu* menu, SEL action)

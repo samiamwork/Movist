@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -26,6 +26,7 @@
 #import "Playlist.h"
 
 #import "MMovieView.h"
+#import "ControlPanel.h"
 #import "CustomControls.h"  // for SeekSlider
 #import "FullScreener.h"
 
@@ -168,7 +169,7 @@
     _playRate = rate;
     [_movieView setMessage:[NSString stringWithFormat:
         NSLocalizedString(@"Play Rate %.1fx", nil), _playRate]];
-    [_controlPanel setPlayRate:_playRate];
+    [_controlPanel updatePlaybackRateSlider:_playRate];
 
     if ([_movie rate] != 0.0) {
         [_movie setRate:0.0];
@@ -267,7 +268,6 @@
     else {
         //TRACE(@"%s", __PRETTY_FUNCTION__);
         [self updatePlayUI];
-        [_playlistController updateUI];
     }
 }
 
@@ -343,6 +343,14 @@
             [_rTimeTextField setStringValue:s];
             [_panelRTimeTextField setStringValue:s];
         }
+        if ([_movie rate] == 0) {   // paused
+            [_fpsTextField setStringValue:
+             [NSString stringWithFormat:@"--.-- / %.2f", [_movie fps]]];
+        }
+        else {
+            [_fpsTextField setStringValue:
+             [NSString stringWithFormat:@"%.2f / %.2f", [_movieView currentFps], [_movie fps]]];
+        }
     }
     else {
         [_seekSlider setEnabled:FALSE];
@@ -356,6 +364,8 @@
         [_rTimeTextField setStringValue:@"--:--:--"];
         [_panelLTimeTextField setStringValue:@"--:--:--"];
         [_panelRTimeTextField setStringValue:@"--:--:--"];
+
+        [_fpsTextField setStringValue:@""];
     }
 }
 

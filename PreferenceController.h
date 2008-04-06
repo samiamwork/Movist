@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -30,20 +30,25 @@
 {
     // general
     IBOutlet NSView* _generalPane;
+    IBOutlet NSButton* _autodetectMovieSeriesButton;
     IBOutlet NSButton* _autoFullScreenButton;
+    IBOutlet NSButton* _autoPlayOnFullScreenButton;
     IBOutlet NSButton* _alwaysOnTopButton;
+    IBOutlet NSButton* _deactivateScreenSaverButton;
     IBOutlet NSButton* _quitWhenWindowCloseButton;
     IBOutlet NSButton* _rememberLastPlayButton;
-    IBOutlet NSButton* _deactivateScreenSaverButton;
+    IBOutlet NSButton* _supportAppleRemoteButton;
+    IBOutlet NSButton* _fullNavUseButton;
+    IBOutlet NSButton* _showiTunesMoviesButton;
+    IBOutlet NSButton* _showiTunesPodcastsButton;
+    IBOutlet NSButton* _showiTunesTVShowsButton;
     IBOutlet NSTextField* _seekInterval0TextField;
     IBOutlet NSTextField* _seekInterval1TextField;
     IBOutlet NSTextField* _seekInterval2TextField;
     IBOutlet NSStepper* _seekInterval0Stepper;
     IBOutlet NSStepper* _seekInterval1Stepper;
     IBOutlet NSStepper* _seekInterval2Stepper;
-    IBOutlet NSButton* _supportAppleRemoteButton;
-    IBOutlet NSButton* _fullNavUseButton;
-
+    
     // video
     IBOutlet NSView* _videoPane;
     IBOutlet NSPopUpButton* _fullScreenEffectPopUpButton;
@@ -53,6 +58,7 @@
 
     // audio
     IBOutlet NSView* _audioPane;
+    IBOutlet NSButton* _autodetectDigitalAudioOutButton;
 
     // subtitle
     IBOutlet NSView* _subtitlePane;
@@ -96,6 +102,8 @@
     IBOutlet NSTableView* _codecBindingTableView;
     IBOutlet NSOutlineView* _detailsOutlineView;
     NSArray* _fileExtensions;
+    NSArray* _fileExtensionDescriptions;
+    NSArray* _bindingApps;
     NSArray* _codecIds;
     NSArray* _detailsCategories;
 
@@ -119,14 +127,17 @@
 @interface PreferenceController (General)
 
 - (void)initGeneralPane;
+- (IBAction)autodetectMovieSeriesAction:(id)sender;
 - (IBAction)autoFullScreenAction:(id)sender;
+- (IBAction)autoPlayOnFullScreenAction:(id)sender;
 - (IBAction)alwaysOnTopAction:(id)sender;
+- (IBAction)deactivateScreenSaverAction:(id)sender;
 - (IBAction)quitWhenWindowCloseAction:(id)sender;
 - (IBAction)rememberLastPlayAction:(id)sender;
-- (IBAction)deactivateScreenSaverAction:(id)sender;
-- (IBAction)seekIntervalAction:(id)sender;
 - (IBAction)supportAppleRemoteAction:(id)sender;
 - (IBAction)fullNavUseAction:(id)sender;
+- (IBAction)showFullNavItemsAction:(id)sender;
+- (IBAction)seekIntervalAction:(id)sender;
 
 @end
 
@@ -150,6 +161,7 @@
 @interface PreferenceController (Audio)
 
 - (void)initAudioPane;
+- (IBAction)autodetectDigitalAudioOutAction:(id)sender;
 
 @end
 
@@ -197,6 +209,8 @@
 - (id)objectValueForFileBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
 - (void)setObjectValue:(id)object
 forFileBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
+- (void)willDisplayCell:(id)cell
+forFileBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
 
 - (IBAction)fileBindingAction:(id)sender;
 
@@ -226,13 +240,7 @@ forCodecBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex;
 @interface PreferenceController (Advanced_Details)
 
 - (void)initDetails;
-/*
- - (int)outlineView:(NSOutlineView*)outlineView numberOfChildrenOfItem:(id)item;
- - (BOOL)outlineView:(NSOutlineView*)outlineView isItemExpandable:(id)item;
- - (id)outlineView:(NSOutlineView*)outlineView child:(int)index ofItem:(id)item;
- - (id)outlineView:(NSOutlineView*)outlineView
- objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item;
- */
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

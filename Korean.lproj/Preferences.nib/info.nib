@@ -7,11 +7,13 @@
 	<key>IBEditorPositions</key>
 	<dict>
 		<key>220</key>
-		<string>689 727 541 242 0 0 1920 1178 </string>
+		<string>136 403 541 347 0 0 1920 1178 </string>
 		<key>228</key>
 		<string>689 534 541 500 0 0 1920 1178 </string>
 		<key>270</key>
-		<string>689 589 541 427 0 0 1920 1178 </string>
+		<string>334 595 541 427 0 0 1920 1178 </string>
+		<key>277</key>
+		<string>312 401 541 382 0 0 1920 1178 </string>
 	</dict>
 	<key>IBFramework Version</key>
 	<string>489.0</string>
@@ -21,7 +23,9 @@
 	<integer>5</integer>
 	<key>IBOpenObjects</key>
 	<array>
+		<integer>220</integer>
 		<integer>270</integer>
+		<integer>277</integer>
 	</array>
 	<key>IBSystem Version</key>
 	<string>9C7010</string>

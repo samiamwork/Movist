@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -124,6 +124,9 @@
         _currentItem = (0 <= index && index < [_array count]) ?
                                 [_array objectAtIndex:index] : nil;
         _repeatMode = [coder decodeInt32ForKey:@"RepeatMode"];
+
+        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+        [nc postNotificationName:MPlaylistUpdatedNotification object:self];
     }
     return self;
 }
@@ -166,7 +169,7 @@
     NSFileManager* fileManager = [NSFileManager defaultManager];
     NSString* path, *ext;
     NSString* pathWithoutExt = [moviePath stringByDeletingPathExtension];
-    NSArray* extensions = [MSubtitle subtitleTypes];
+    NSArray* extensions = [MSubtitle fileExtensions];
     NSEnumerator* enumerator = [extensions objectEnumerator];
     while (ext = [enumerator nextObject]) {
         path = [pathWithoutExt stringByAppendingPathExtension:ext];
@@ -241,18 +244,19 @@
         return 0;
     }
 
-    NSArray* movieFileExtensions = [MMovie movieFileExtensions];
+    int count = 0;
+    NSArray* fileExtensions = [MMovie fileExtensions];
     if (isDirectory) {
         NSString* directory = filename;
         NSArray* contents = [fileManager sortedDirectoryContentsAtPath:directory];
         NSEnumerator* enumerator = [contents objectEnumerator];
         while (filename = [enumerator nextObject]) {
             filename = [directory stringByAppendingPathComponent:filename];
-            if ([filename hasAnyExtension:movieFileExtensions]) {
+            if ([filename hasAnyExtension:fileExtensions]) {
                 [self insertURL:[NSURL fileURLWithPath:filename] atIndex:index++];
             }
         }
-        return [contents count];
+        count = [contents count];
     }
     else if (option != OPTION_ONLY) {
         NSString* directory = [filename stringByDeletingLastPathComponent];
@@ -261,7 +265,7 @@
         NSArray* contents = [fileManager sortedDirectoryContentsAtPath:directory];
         NSEnumerator* enumerator = [contents objectEnumerator];
         while (filename = [enumerator nextObject]) {
-            if ([filename hasAnyExtension:movieFileExtensions] &&
+            if ([filename hasAnyExtension:fileExtensions] &&
                 (option == OPTION_ALL || (option == OPTION_SERIES &&
                   [self checkMovieSeriesFile:filename forMovieFile:movieFilename]))) {
                 [self insertURL:[NSURL fileURLWithPath:
@@ -273,13 +277,17 @@
                 }
             }
         }
-        return [contents count];
+        count = [contents count];
     }
-    else if ([filename hasAnyExtension:movieFileExtensions]) {
+    else if ([filename hasAnyExtension:fileExtensions]) {
         [self insertURL:[NSURL fileURLWithPath:filename] atIndex:index];
-        return 1;
+        count = 1;
     }
-    return 0;
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:MPlaylistUpdatedNotification object:self];
+
+    return count;
 }
 
 - (void)insertFiles:(NSArray*)filenames atIndex:(unsigned int)index
@@ -310,10 +318,13 @@
     PlaylistItem* item = [[PlaylistItem alloc] initWithMovieURL:movieURL];
     [item setSubtitleURL:subtitleURL];
     [_array insertObject:item atIndex:MIN(index, [_array count])];
-    
+
     if (_currentItem == nil) {
         _currentItem = item;    // auto-select
     }
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:MPlaylistUpdatedNotification object:self];
 }
 
 - (unsigned int)moveItemsAtIndexes:(NSIndexSet*)indexes toIndex:(unsigned int)index
@@ -339,6 +350,10 @@
     while (item = [enumerator nextObject]) {
         [_array insertObject:item atIndex:index++];
     }
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:MPlaylistUpdatedNotification object:self];
+
     return index - [items count];   // new first index
 }
 
@@ -356,6 +371,9 @@
         _currentItem = (0 <= index) ? [_array objectAtIndex:index] : nil;
     }
     [_array removeObjectAtIndex:index];
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:MPlaylistUpdatedNotification object:self];
 }
 
 - (void)removeItemsAtIndexes:(NSIndexSet*)indexes
@@ -366,6 +384,9 @@
     if (![_array containsObject:_currentItem]) {
         _currentItem = nil;
     }
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:MPlaylistUpdatedNotification object:self];
 }
 
 - (void)removeAllItems
@@ -373,6 +394,9 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _currentItem = nil;
     [_array removeAllObjects];
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:MPlaylistUpdatedNotification object:self];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

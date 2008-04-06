@@ -7,47 +7,11 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
-			<key>CFBundleTypeName</key>
-			<string>Folder</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>fold</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>mov</string>
-				<string>qt</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>movies.icns</string>
-			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>MooV</string>
-				<string>moov</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
-		</dict>
-		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>avi</string>
-				<string>divx</string>
 				<string>vfw</string>
+				<string>divx</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>movies.icns</string>
@@ -58,39 +22,31 @@
 				<string>video/avi</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-AVI</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
-				<string>VfW</string>
+				<string>VfW </string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>mpg</string>
-				<string>mpeg</string>
 				<string>mpe</string>
+				<string>mpeg</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>movies.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-MPEG</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>MPEG</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -100,13 +56,13 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>movies.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-MPEG1</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>BINA</string>
+			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -120,45 +76,47 @@
 				<string>video/mpeg2</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-MPEG2</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
-				<string>m2v</string>
+				<string>m2v </string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>asf</string>
-				<string>asx</string>
-				<string>wm</string>
-				<string>wmp</string>
-				<string>wmv</string>
-				<string>wmx</string>
-				<string>wvx</string>
+				<string>m2ts</string>
+				<string>ts</string>
+				<string>tp</string>
+				<string>trp</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>movies.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-MPEG2TS</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>vob</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Movie-VOB</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>mp4</string>
 				<string>mpg4</string>
+				<string>mqv</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>movies.icns</string>
@@ -167,17 +125,13 @@
 				<string>video/mp4</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-MPEG4</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>mpg4</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -191,74 +145,223 @@
 				<string>video/x-m4v</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-MPEG4</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
-				<string>M4V</string>
+				<string>M4V </string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>mqv</string>
+				<string>mov</string>
+				<string>qt</string>
+				<string>qtl</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>application/x-quicktimeplayer</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Movie-QuickTime</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>MooV</string>
+				<string>moov</string>
+				<string>qtlk</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>asf</string>
+				<string>asx</string>
+				<string>wm</string>
+				<string>wmv</string>
+				<string>wmp</string>
+				<string>wmx</string>
+				<string>wvx</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>movies.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-WindowsMedia</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>rm</string>
+				<string>rmvb</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Movie-RealMedia</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ogm</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Movie-OGM</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mkv</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Movie-MKV</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>flv</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>Movie-FLV</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>3gp</string>
+				<string>3gpp</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>video/3gpp</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Movie-3GPP</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>3gpp</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>3g2</string>
+				<string>3gp2</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>video/3gpp2</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Movie-3GPP2</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>3gp2</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>dv</string>
+				<string>dif</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>movies.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>video/x-dv</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Movie-DV</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>dvc!</string>
+				<string>DVSF</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>dat</string>
 				<string>ifo</string>
-				<string>vob</string>
-				<string>tp</string>
-				<string>ts</string>
-				<string>rm</string>
-				<string>rmvb</string>
-				<string>ogm</string>
-				<string>mkv</string>
-				<string>flv</string>
+				<string>skm</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string>movies.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>MOVIE</string>
+			<string>Movie-ETC</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>smi</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Subtitle-SMI</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>srt</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Subtitle-SRT</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>idx</string>
 				<string>sub</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>SUBTITLE</string>
+			<string>Subtitle-SUB</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<false/>
-			<key>NSPersistentStoreTypeKey</key>
-			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Folder</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>fold</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>

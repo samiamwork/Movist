@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -29,7 +29,7 @@
 
 - (float)preferredVolume:(float)volume
 {
-    return (_supportDigitalAudio) ? 1.0 :   // always 1.0 for digital-audio
+    return [self digitalAudioOut] ? 1.0 :   // always 1.0 for digital-audio
                 normalizedVolume(MIN(MAX(0.0, volume), MAX_VOLUME));
 }
 
@@ -44,7 +44,7 @@
     }
     volume = [self preferredVolume:volume];
     [_movie setVolume:volume];
-    if (_supportDigitalAudio) {
+    if ([self digitalAudioOut]) {
         [_movieView setMessage:NSLocalizedString(
                                 @"Volume cannot be changed in Digital-Out", nil)];
     }
@@ -110,14 +110,10 @@
         [_volumeSlider setFloatValue:volume];
         [_panelVolumeSlider setFloatValue:volume];
     }
-    if ([_volumeSlider isEnabled] != !muted) {
-        [_volumeSlider setEnabled:!muted];
-        [_panelVolumeSlider setEnabled:!muted];
-    }
-
-    if (_supportDigitalAudio) {
-        [_volumeSlider setEnabled:FALSE];
-        [_panelVolumeSlider setEnabled:FALSE];
+    BOOL enabled = !(muted || [self digitalAudioOut]);
+    if ([_volumeSlider isEnabled] != enabled) {
+        [_volumeSlider setEnabled:enabled];
+        [_panelVolumeSlider setEnabled:enabled];
     }
 }
 
@@ -155,7 +151,7 @@
         }
     }
     else if (0 < [_audioTrackIndexSet count]) {
-        if (_supportDigitalAudio && 1 < [_audioTrackIndexSet count]) {
+        if ([self digitalAudioOut] && 1 < [_audioTrackIndexSet count]) {
             // only one audio track should be enabled for digial audio.
             unsigned int index = [_audioTrackIndexSet firstIndex];
             [_audioTrackIndexSet removeAllIndexes];

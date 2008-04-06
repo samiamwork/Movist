@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -43,11 +43,14 @@
     _movieViewMarginSize.width = _movieViewMarginPoint.x + NSMaxX(cr) - NSMaxX(mr);
     _movieViewMarginSize.height= _movieViewMarginPoint.y + NSMaxY(cr) - NSMaxY(mr);
 
+    _initialDragPoint.x = -1;
+    _initialDragPoint.y = -1;
+
     _alwaysOnTop = FALSE;
 
     [self setDelegate:self];
     [self useOptimizedDrawing:TRUE];
-    [self setMovableByWindowBackground:TRUE];
+    //[self setMovableByWindowBackground:TRUE];
     [self setAcceptsMouseMovedEvents:TRUE];
     [self setAutorecalculatesKeyViewLoop:TRUE];
 
@@ -168,6 +171,41 @@
     }
     else {
         [[NSApp keyWindow] performClose:sender];
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark window-moving by dragging
+
+- (void)mouseDown:(NSEvent*)event
+{
+    NSRect frame = [self frame];
+    _initialDragPoint = [self convertBaseToScreen:[event locationInWindow]];
+    _initialDragPoint.x -= frame.origin.x;
+    _initialDragPoint.y -= frame.origin.y;
+}
+
+- (void)mouseUp:(NSEvent*)event
+{
+    _initialDragPoint.x = -1;
+    _initialDragPoint.y = -1;
+}
+
+- (void)mouseDragged:(NSEvent*)event
+{
+    if (0 <= _initialDragPoint.x && 0 <= _initialDragPoint.y) {
+        NSPoint p = [self convertBaseToScreen:[event locationInWindow]];
+        NSRect sr = [[self screen] frame];
+        NSRect wr = [self frame];
+
+        NSPoint origin;
+        origin.x = p.x - _initialDragPoint.x;
+        origin.y = p.y - _initialDragPoint.y;
+        if (NSMaxY(sr) < origin.y + wr.size.height) {
+            origin.y = sr.origin.y + (sr.size.height - wr.size.height);
+        }
+        [self setFrameOrigin:origin];
     }
 }
 

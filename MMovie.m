@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -21,17 +21,19 @@
 //
 
 #import "MMovie.h"
-
-#import <avcodec.h>
-#import <avformat.h>
+#import "FFTrack.h"
 
 @implementation MTrack
 
-- (id)initWithMovie:(MMovie*)movie
++ (id)trackWithImpl:(id)impl
+{
+    return [[[MTrack alloc] initWithImpl:impl] autorelease];
+}
+
+- (id)initWithImpl:(id)impl
 {
     if (self = [super init]) {
-        _movie = [movie retain];
-        _enabled = TRUE;
+        _impl = [impl retain];
     }
     return self;
 }
@@ -41,24 +43,48 @@
     [_summary release];
     [_name release];
     [_movie release];
+    [_impl release];
     [super dealloc];
 }
 
-- (MMovie*)movie { return _movie; }
+- (id)impl { return _impl; }
+- (int)codecId { return _codecId; }
 - (NSString*)name { return _name; }
 - (NSString*)summary { return _summary; }
-- (BOOL)isEnabled { return _enabled; }
+- (BOOL)isVideoTrack { return _encodedSize.width != 0; }
+- (void)setImpl:(id)impl { [impl retain], [_impl release], _impl = impl; }
+- (void)setMovie:(MMovie*)movie { [movie retain], [_movie release], _movie = movie; }
+- (void)setCodecId:(int)codecId { _codecId = codecId; }
+- (void)setName:(NSString*)name { [name retain], [_name release], _name = name; }
+- (void)setSummary:(NSString*)summary { [summary retain], [_summary release], _summary = summary; }
+
+- (NSSize)encodedSize { return _encodedSize; }
+- (NSSize)displaySize { return _displaySize; }
+- (float)fps { return _fps; }
+- (void)setEncodedSize:(NSSize)encodedSize { _encodedSize = encodedSize; }
+- (void)setDisplaySize:(NSSize)displaySize { _displaySize = displaySize; }
+- (void)setFps:(float)fps { _fps = fps; }
+
+- (int)audioChannels { return _audioChannels; }
+- (float)audioSampleRate { return _audioSampleRate; }
+- (void)setAudioChannels:(int)channels { _audioChannels = channels; }
+- (void)setAudioSampleRate:(float)rate { _audioSampleRate = rate; }
+
+- (BOOL)isEnabled { return [_impl isEnabled]; }
 - (void)setEnabled:(BOOL)enabled
 {
-    _enabled = enabled;
+    [_impl setEnabled:enabled];
 
-    if (_enabled) {
+    if (enabled) {
         [_movie trackEnabled:self];
     }
     else {
         [_movie trackDisabled:self];
     }
 }
+
+- (float)volume { return [_impl volume]; }
+- (void)setVolume:(float)volume { [_impl setVolume:volume]; }
 
 @end
 
@@ -67,24 +93,32 @@
 
 @implementation MMovie
 
-+ (NSArray*)movieFileExtensions
++ (NSArray*)fileExtensions
 {
-    return [NSArray arrayWithObjects:
-            @"avi", @"svi", @"divx",                        // general movie
-            @"wm",  @"wmp", @"wmv", @"wmx", @"wvx",         // Windows Media
-            @"asf", @"asx",                                 // Windows Media
-            @"mpe", @"mpg", @"mpeg",@"m1v", @"m2v",         // MPEG
-            @"dat", @"ifo", @"vob", @"ts",  @"tp",  @"trp", // MPEG
-            @"mp4", @"m4v",                                 // MPEG4
-            @"rm",  @"rmvb",                                // Real Media
-            @"mkv",                                         // Matroska
-            @"ogm",                                         // OGM
-            //@"swf",                                         // Flash
-            @"flv",                                         // Flash Video
-            @"mov", @"mqv", @"qt",                          // QuickTime
-            //@"dmb",                                       // DMB-TS
-            //@"3gp", @"dmskm",@"k3g", @"skm", @"lmp4",       // Mobile Phone
-            nil];
+    static NSArray* fileExtensions = nil;
+    if (!fileExtensions) {
+        NSMutableArray* exts = [[NSMutableArray alloc] initWithCapacity:32];
+
+        NSDictionary* dict = [[NSBundle mainBundle] infoDictionary];
+        NSDictionary* type;
+        NSString* bundleTypeName;
+        NSArray* types = [dict objectForKey:@"CFBundleDocumentTypes"];
+        NSEnumerator* typeEnumerator = [types objectEnumerator];
+        while (type = [typeEnumerator nextObject]) {
+            bundleTypeName = [type objectForKey:@"CFBundleTypeName"];
+            if ([bundleTypeName hasPrefix:@"Movie-"]) {
+                [exts addObjectsFromArray:[type objectForKey:@"CFBundleTypeExtensions"]];
+            }
+        }
+        fileExtensions = exts;
+    }
+    //TRACE(@"fileExtentions=%@", [fileExtensions retainCount], fileExtensions);
+    return fileExtensions;  // don't send autorelease. it should be alive forever.
+
+    // add following extensions to Info.plist in future.
+    // .swf : Flash
+    // .dmb : DMB-TS
+    // .dmskm, .k3g, .lmp4 : Mobile Phone
 }
 
 + (BOOL)checkMovieURL:(NSURL*)url error:(NSError**)error
@@ -110,199 +144,96 @@
     return TRUE;
 }
 
-+ (AVFormatContext*)formatContextForMovieURL:(NSURL*)url error:(NSError**)error
++ (MTrack*)videoTrackWithAVStream:(AVStream*)stream streamIndex:(int)streamIndex
 {
-    AVFormatContext* formatContext = 0;
-    const char* path = [[url path] UTF8String];
-    if (av_open_input_file(&formatContext, path, NULL, 0, NULL) != 0) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"Movist"
-                                         code:ERROR_FFMPEG_FILE_OPEN_FAILED
-                                     userInfo:nil];
+    AVCodecContext* codecContext = stream->codec;
+
+    NSString* fourCC = nil;
+    if (codecContext->codec_tag != 0) {
+        unsigned int tag = codecContext->codec_tag;
+        if (isprint((tag      ) & 0xFF) && isprint((tag >>  8) & 0xFF) &&
+            isprint((tag >> 16) & 0xFF) && isprint((tag >> 24) & 0xFF)) {
+            fourCC = [NSString stringWithFormat:@"%c%c%c%c",
+                      (tag      ) & 0xFF, (tag >>  8) & 0xFF,
+                      (tag >> 16) & 0xFF, (tag >> 24) & 0xFF];
         }
-        return 0;
     }
-    if (av_find_stream_info(formatContext) < 0) {
-        av_close_input_file(formatContext);
-        if (error) {
-            *error = [NSError errorWithDomain:@"Movist"
-                                         code:ERROR_FFMPEG_STREAM_INFO_NOT_FOUND
-                                     userInfo:nil];
+    int codecId = [self videoCodecIdFromFFmpegCodecId:codecContext->codec_id fourCC:fourCC];
+    NSSize encodedSize = NSMakeSize(codecContext->coded_width, codecContext->coded_height);
+    NSSize displaySize = NSMakeSize(codecContext->width,       codecContext->height);
+    if (0 < codecContext->sample_aspect_ratio.num &&
+        0 < codecContext->sample_aspect_ratio.den) {
+        displaySize.width *= (float)codecContext->sample_aspect_ratio.num /
+                                    codecContext->sample_aspect_ratio.den;
+        // FIXME: ignore strange(vertically long) pixel-aspect-ratio.
+        if (displaySize.width < displaySize.height) {
+            displaySize.width = encodedSize.width;
         }
-        return 0;
     }
-    return formatContext;
+    float fps;
+    if (stream->r_frame_rate.den && stream->r_frame_rate.num) {
+        fps = av_q2d(stream->r_frame_rate);
+    }
+    else {
+        fps = 1 / av_q2d(codecContext->time_base);
+    }
+
+    NSString* summary;
+    NSString* name = NSLocalizedString(@"Video Track ##", nil);
+    if (NSEqualSizes(displaySize, encodedSize)) {
+        summary = [NSString stringWithFormat:@"%@, %d x %d",
+                   codecDescription(codecId),
+                   (int)displaySize.width, (int)displaySize.height];
+    }
+    else {
+        summary = [NSString stringWithFormat:@"%@, %d x %d (%d x %d)",
+                   codecDescription(codecId),
+                   (int)encodedSize.width, (int)encodedSize.height,
+                   (int)displaySize.width, (int)displaySize.height];
+    }
+
+    MTrack* track = [MTrack trackWithImpl:
+                     [FFVideoTrack videoTrackWithAVStream:stream index:streamIndex]];
+    [track setName:name];
+    [track setSummary:summary];
+    [track setCodecId:codecId];
+    [track setEncodedSize:encodedSize];
+    [track setDisplaySize:displaySize];
+    [track setFps:fps];
+    return track;
 }
 
-+ (int)videoCodecIdFromFFmpegCodecId:(int)ffmpegCodecId fourCC:(NSString*)fourCC
++ (MTrack*)audioTrackWithAVStream:(AVStream*)stream streamIndex:(int)streamIndex
 {
-    #define CASE_FFCODEC_MCODEC(fc, mc) \
-            case CODEC_ID_##fc : \
-                codecId = MCODEC_##mc; \
-                fs = @""#fc; ms = @""#mc; \
-                break
-    #define CASE_FFCODEC_______(fc) \
-            case CODEC_ID_##fc : \
-                fs = @""#fc; \
-                break
-    #define IF_FFCODEC_MCODEC(fcs, mc) \
-            if ([fourCC isEqualToString:fcs]) \
-                codecId = MCODEC_##mc, \
-                ms = @""#mc
-    
-    // at first, init with ffmpegCodeId for codecs without fourCC
-    int codecId = MCODEC_ETC_;
-    NSString* fs = @"???", *ms = @"???";
-    switch (ffmpegCodecId) {
-        CASE_FFCODEC_MCODEC(NONE,            ETC_);
-        CASE_FFCODEC_MCODEC(MPEG1VIDEO,      MPEG1);
-        CASE_FFCODEC_MCODEC(MPEG2VIDEO,      MPEG2);
-        CASE_FFCODEC_MCODEC(MPEG2VIDEO_XVMC, MPEG2);
-        CASE_FFCODEC_______(H261);
-        CASE_FFCODEC_MCODEC(H263,            H263);
-        CASE_FFCODEC_MCODEC(RV10,            RV10);
-        CASE_FFCODEC_MCODEC(RV20,            RV20);
-        CASE_FFCODEC_MCODEC(MJPEG,           MJPEG);
-        CASE_FFCODEC_MCODEC(MJPEGB,          MJPEG);
-        CASE_FFCODEC_______(LJPEG);
-        CASE_FFCODEC_______(SP5X);
-        CASE_FFCODEC_______(JPEGLS);
-        CASE_FFCODEC_MCODEC(MPEG4,           MPEG4);
-        CASE_FFCODEC_______(RAWVIDEO);
-        CASE_FFCODEC_MCODEC(MSMPEG4V1,       MPG4);
-        CASE_FFCODEC_MCODEC(MSMPEG4V2,       MP42);
-        CASE_FFCODEC_MCODEC(MSMPEG4V3,       MP43);
-        CASE_FFCODEC_MCODEC(WMV1,            WMV1);
-        CASE_FFCODEC_MCODEC(WMV2,            WMV2);
-        CASE_FFCODEC_MCODEC(H263P,           H263);
-        CASE_FFCODEC_MCODEC(H263I,           H263);
-        CASE_FFCODEC_MCODEC(FLV1,            FLV);
-        CASE_FFCODEC_MCODEC(SVQ1,            SVQ1);
-        CASE_FFCODEC_MCODEC(SVQ3,            SVQ3);
-        CASE_FFCODEC_______(DVVIDEO);
-        CASE_FFCODEC_MCODEC(HUFFYUV,         HUFFYUV);
-        CASE_FFCODEC_______(CYUV);
-        CASE_FFCODEC_MCODEC(H264,            H264);
-        CASE_FFCODEC_MCODEC(INDEO3,          INDEO3);
-        CASE_FFCODEC_MCODEC(VP3,             VP3);
-        CASE_FFCODEC_MCODEC(THEORA,          THEORA);
-        CASE_FFCODEC_______(ASV1);
-        CASE_FFCODEC_______(ASV2);
-        CASE_FFCODEC_______(FFV1);
-        CASE_FFCODEC_______(4XM);
-        CASE_FFCODEC_______(VCR1);
-        CASE_FFCODEC_______(CLJR);
-        CASE_FFCODEC_______(MDEC);
-        CASE_FFCODEC_______(ROQ);
-        CASE_FFCODEC_______(INTERPLAY_VIDEO);
-        CASE_FFCODEC_______(XAN_WC3);
-        CASE_FFCODEC_______(XAN_WC4);
-        CASE_FFCODEC_______(RPZA);
-        CASE_FFCODEC_MCODEC(CINEPAK,         CINEPAK);
-        CASE_FFCODEC_______(WS_VQA);
-        CASE_FFCODEC_______(MSRLE);
-        CASE_FFCODEC_______(MSVIDEO1);
-        CASE_FFCODEC_______(IDCIN);
-        CASE_FFCODEC_______(8BPS);
-        CASE_FFCODEC_______(SMC);
-        CASE_FFCODEC_______(FLIC);
-        CASE_FFCODEC_______(TRUEMOTION1);
-        CASE_FFCODEC_______(VMDVIDEO);
-        CASE_FFCODEC_______(MSZH);
-        CASE_FFCODEC_______(ZLIB);
-        CASE_FFCODEC_______(QTRLE);
-        CASE_FFCODEC_______(SNOW);
-        CASE_FFCODEC_______(TSCC);
-        CASE_FFCODEC_______(ULTI);
-        CASE_FFCODEC_______(QDRAW);
-        CASE_FFCODEC_______(VIXL);
-        CASE_FFCODEC_______(QPEG);
-        CASE_FFCODEC_MCODEC(XVID,            XVID);
-        CASE_FFCODEC_______(PNG);
-        CASE_FFCODEC_______(PPM);
-        CASE_FFCODEC_______(PBM);
-        CASE_FFCODEC_______(PGM);
-        CASE_FFCODEC_______(PGMYUV);
-        CASE_FFCODEC_______(PAM);
-        CASE_FFCODEC_______(FFVHUFF);
-        CASE_FFCODEC_MCODEC(RV30,            RV30);
-        CASE_FFCODEC_MCODEC(RV40,            RV40);
-        CASE_FFCODEC_MCODEC(VC1,             VC1);
-        CASE_FFCODEC_MCODEC(WMV3,            WMV3);
-        CASE_FFCODEC_______(LOCO);
-        CASE_FFCODEC_______(WNV1);
-        CASE_FFCODEC_______(AASC);
-        CASE_FFCODEC_MCODEC(INDEO2,          INDEO2);
-        CASE_FFCODEC_______(FRAPS);
-        CASE_FFCODEC_______(TRUEMOTION2);
-        CASE_FFCODEC_______(BMP);
-        CASE_FFCODEC_______(CSCD);
-        CASE_FFCODEC_______(MMVIDEO);
-        CASE_FFCODEC_______(ZMBV);
-        CASE_FFCODEC_______(AVS);
-        CASE_FFCODEC_______(SMACKVIDEO);
-        CASE_FFCODEC_______(NUV);
-        CASE_FFCODEC_______(KMVC);
-        CASE_FFCODEC_______(FLASHSV);
-        CASE_FFCODEC_______(CAVS);
-        CASE_FFCODEC_______(JPEG2000);
-        CASE_FFCODEC_______(VMNC);
-        CASE_FFCODEC_MCODEC(VP5,             VP5);
-        CASE_FFCODEC_MCODEC(VP6,             VP6);
-        CASE_FFCODEC_MCODEC(VP6F,            VP6F);
-        CASE_FFCODEC_______(TARGA);
-        CASE_FFCODEC_______(DSICINVIDEO);
-        CASE_FFCODEC_______(TIERTEXSEQVIDEO);
-        CASE_FFCODEC_______(TIFF);
-        CASE_FFCODEC_______(GIF);
-        CASE_FFCODEC_______(FFH264);
-        CASE_FFCODEC_______(DXA);
-        CASE_FFCODEC_______(DNXHD);
-        CASE_FFCODEC_______(THP);
-        CASE_FFCODEC_______(SGI);
-        CASE_FFCODEC_______(C93);
-        CASE_FFCODEC_______(BETHSOFTVID);
-        CASE_FFCODEC_______(PTX);
-        CASE_FFCODEC_______(TXD);
-        CASE_FFCODEC_______(VP6A);
-        CASE_FFCODEC_______(AMV);
-        CASE_FFCODEC_______(VB);
-        CASE_FFCODEC_______(PCX);
-        CASE_FFCODEC_______(SUNRAST);
-        CASE_FFCODEC_MCODEC(MPEG2TS,         MPEG2);
+    AVCodecContext* codecContext = stream->codec;
+
+    int codecId = [self audioCodecIdFromFFmpegCodecId:codecContext->codec_id];
+    int channels = codecContext->channels;
+    float sampleRate = codecContext->sample_rate;
+
+    NSString* summary;
+    NSString* name = NSLocalizedString(@"Sound Track ##", nil);
+    if (channels == 0) {
+        summary = @"";
     }
-    
-    // update detailed-codec-info by fourCC
-    if (fourCC) {
-             IF_FFCODEC_MCODEC(@"DIV1", DIV1);
-        else IF_FFCODEC_MCODEC(@"DIV2", DIV2);
-        else IF_FFCODEC_MCODEC(@"DIV3", DIV3);
-        else IF_FFCODEC_MCODEC(@"DIV4", DIV4);
-        else IF_FFCODEC_MCODEC(@"DIV5", DIV5);
-        else IF_FFCODEC_MCODEC(@"DIV6", DIV6);
-        else IF_FFCODEC_MCODEC(@"DIVX", DIVX);
-        else IF_FFCODEC_MCODEC(@"DX50", DX50);
-        else IF_FFCODEC_MCODEC(@"XVID", XVID);
-        else IF_FFCODEC_MCODEC(@"mp4v", MP4V);
-        else IF_FFCODEC_MCODEC(@"MPG4", MPG4);
-        else IF_FFCODEC_MCODEC(@"MP42", MP42);
-        else IF_FFCODEC_MCODEC(@"MP43", MP43);
-        else IF_FFCODEC_MCODEC(@"MP4S", MP4S);
-        else IF_FFCODEC_MCODEC(@"M4S2", M4S2);
-        else IF_FFCODEC_MCODEC(@"AP41", AP41);
-        else IF_FFCODEC_MCODEC(@"RMP4", RMP4);
-        else IF_FFCODEC_MCODEC(@"SEDG", SEDG);
-        else IF_FFCODEC_MCODEC(@"FMP4", FMP4);
-        else IF_FFCODEC_MCODEC(@"BLZ0", BLZ0);
-        else IF_FFCODEC_MCODEC(@"avc1", AVC1);
-        else IF_FFCODEC_MCODEC(@"X264", X264);
-        else IF_FFCODEC_MCODEC(@"x264", X264);
-        else IF_FFCODEC_MCODEC(@"vc-1", VC1);
-        else IF_FFCODEC_MCODEC(@"WVC1", WVC1);
-        // [3IV2],[IV31],[IV32]
+    else {
+        summary = [NSString stringWithFormat:@"%@, %@, %.03f kHz",
+                   codecDescription(codecId),
+                   (channels == 1) ? NSLocalizedString(@"Mono", nil) :
+                   (channels == 2) ? NSLocalizedString(@"Stereo", nil) :
+                   (channels == 6) ? NSLocalizedString(@"5.1 Ch.", nil) :
+                                     [NSString stringWithFormat:@"%d", channels],
+                   sampleRate / 1000];
     }
-    TRACE(@"detected codec: [%d]:\"%@\" ==> [%d]:\"%@\"", ffmpegCodecId, fs, codecId, ms);
-    return codecId;
+
+    MTrack* track = [MTrack trackWithImpl:
+                     [FFAudioTrack audioTrackWithAVStream:stream index:streamIndex]];
+    [track setName:name];
+    [track setSummary:summary];
+    [track setCodecId:codecId];
+    [track setAudioChannels:channels];
+    [track setAudioSampleRate:sampleRate];
+    return track;
 }
 
 + (BOOL)getMovieInfo:(MMovieInfo*)info forMovieURL:(NSURL*)url error:(NSError**)error
@@ -311,74 +242,72 @@
         return FALSE;
     }
 
-    AVFormatContext* formatContext;
-    formatContext = [self formatContextForMovieURL:url error:error];
-    if (!formatContext) {
+    AVFormatContext* formatContext = 0;
+    const char* path = [[url path] UTF8String];
+    if (av_open_input_file(&formatContext, path, NULL, 0, NULL) != 0) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"Movist"
+                                         code:ERROR_FFMPEG_FILE_OPEN_FAILED
+                                     userInfo:nil];
+        }
+        return FALSE;
+    }
+    if (av_find_stream_info(formatContext) < 0) {
+        av_close_input_file(formatContext);
+        if (error) {
+            *error = [NSError errorWithDomain:@"Movist"
+                                         code:ERROR_FFMPEG_STREAM_INFO_NOT_FOUND
+                                     userInfo:nil];
+        }
         return FALSE;
     }
 
-    info->videoCodecId = -1;
-    info->encodedSize.width = 0;
-    info->encodedSize.height= 0;
-    info->displaySize.width = 0;
-    info->displaySize.height= 0;
-    info->startTime = 0;
-    info->duration = 0;
-    info->audioCodecId = -1;
-    info->audioChannels = 0;
-    info->audioSampleRate = 0;
-    info->preferredVolume = DEFAULT_VOLUME;
-
-    if (formatContext->duration != AV_NOPTS_VALUE) {
-        info->duration = formatContext->duration / AV_TIME_BASE;
-    }
-    if (formatContext->start_time != AV_NOPTS_VALUE) {
-        info->startTime = formatContext->start_time / AV_TIME_BASE;
-    }
-
-    AVCodecContext* enc;
-    NSString* fourCC = nil;
     int i;
+    float fps = 0;
+    MTrack* track;
+    AVStream* stream;
+    BOOL hasDigitalAudio = FALSE;
+    NSMutableArray* videoTracks = [NSMutableArray arrayWithCapacity:1];
+    NSMutableArray* audioTracks = [NSMutableArray arrayWithCapacity:1];
     for (i = 0; i < formatContext->nb_streams; i++) {
-        enc = formatContext->streams[i]->codec;
-
-        if (enc->codec_tag != 0) {
-            unsigned int tag = enc->codec_tag;
-            if (isprint((tag      ) & 0xFF) && isprint((tag >>  8) & 0xFF) &&
-                isprint((tag >> 16) & 0xFF) && isprint((tag >> 24) & 0xFF)) {
-                fourCC = [NSString stringWithFormat:@"%c%c%c%c",
-                          (tag      ) & 0xFF, (tag >>  8) & 0xFF,
-                          (tag >> 16) & 0xFF, (tag >> 24) & 0xFF];
+        stream = formatContext->streams[i];
+        if (stream->codec->codec_type == CODEC_TYPE_VIDEO) {
+            track = [self videoTrackWithAVStream:stream streamIndex:i];
+            [videoTracks addObject:track];
+            if (!fps && 0 < [track fps]) {
+                fps = [track fps];
             }
         }
-
-        if (enc->codec_type == CODEC_TYPE_VIDEO) {
-            if (info->videoCodecId < 0) {
-                info->videoCodecId =
-                    [self videoCodecIdFromFFmpegCodecId:enc->codec_id fourCC:fourCC];
-                TRACE(@"coded={%3d,%3d}, size={%3d,%3d}",
-                      enc->coded_width, enc->coded_height, enc->width, enc->height);
-                info->encodedSize.width = enc->coded_width;
-                info->encodedSize.height= enc->coded_height;
-                info->displaySize.width = enc->width;
-                info->displaySize.height= enc->height;
-                if (0 < enc->sample_aspect_ratio.num && 0 < enc->sample_aspect_ratio.den) {
-                    info->displaySize.width *= (float)enc->sample_aspect_ratio.num /
-                                                      enc->sample_aspect_ratio.den;
-                    // FIXME: ignore strange pixel-aspect-ratio (vertically long).
-                    if (info->displaySize.width < info->displaySize.height) {
-                        info->displaySize.width = info->encodedSize.width;
-                    }
-                }
+        else if (stream->codec->codec_type == CODEC_TYPE_AUDIO) {
+            track = [self audioTrackWithAVStream:stream streamIndex:i];
+            [audioTracks addObject:track];
+            if (!hasDigitalAudio &&
+                ([track codecId] == MCODEC_AC3 ||
+                 [track codecId] == MCODEC_DTS)) {
+                hasDigitalAudio = TRUE;
             }
-        }
-        else if (enc->codec_type == CODEC_TYPE_AUDIO) {
-            info->audioChannels = enc->channels;
-            info->audioSampleRate = enc->sample_rate;
         }
     }
-    av_close_input_file(formatContext);
-
+    if ([videoTracks count] == 0) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"Movist"
+                                         code:ERROR_FFMPEG_VIDEO_STREAM_NOT_FOUND
+                                     userInfo:nil];
+        }
+        return FALSE;
+    }
+    
+    info->formatContext = formatContext;
+    info->videoTracks = videoTracks;
+    info->audioTracks = audioTracks;
+    info->hasDigitalAudio = hasDigitalAudio;
+    info->startTime = (formatContext->start_time == AV_NOPTS_VALUE) ? 0 :
+                                formatContext->start_time / AV_TIME_BASE;
+    info->duration = (formatContext->duration == AV_NOPTS_VALUE) ? 0 :
+                                formatContext->duration / AV_TIME_BASE;
+    info->fileSize = formatContext->file_size;
+    info->bitRate = formatContext->bit_rate;
+    info->fps = fps;
     return TRUE;
 }
 
@@ -387,7 +316,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo error:(NSError**)error
+- (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo
+  digitalAudioOut:(BOOL)digitalAudioOut error:(NSError**)error
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [url absoluteString]);
     if (![MMovie checkMovieURL:url error:error]) {
@@ -395,10 +325,17 @@
     }
     if (self = [super init]) {
         _url = [url retain];
-        memcpy(&_info, movieInfo, sizeof(MMovieInfo));
-        _videoTracks = [[NSMutableArray alloc] initWithCapacity:1];
-        _audioTracks = [[NSMutableArray alloc] initWithCapacity:5];
+        _videoTracks = [movieInfo->videoTracks retain];
+        _audioTracks = [movieInfo->audioTracks retain];
+        _hasDigitalAudio = movieInfo->hasDigitalAudio;
+        _startTime = movieInfo->startTime;
+        _duration = movieInfo->duration;
+        _fileSize = movieInfo->fileSize;
+        _bitRate = movieInfo->bitRate;
+        _fps = movieInfo->fps;
+        _indexedDuration = 0;
 
+        _preferredVolume = DEFAULT_VOLUME;
         _volume = DEFAULT_VOLUME;
         _muted = FALSE;
 
@@ -415,34 +352,47 @@
     return TRUE;
 }
 
-- (void)cleanup
+- (void)dealloc
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_audioTracks release];
     [_videoTracks release];
     [_url release];
-    [self release];
-}
-/*
-- (void)dealloc
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
+
     [super dealloc];
 }
-*/
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
 - (NSURL*)url { return _url; }
+- (int64_t)fileSize { return _fileSize; }
+- (int)bitRate { return _bitRate; }
 - (NSArray*)videoTracks { return _videoTracks; }
 - (NSArray*)audioTracks { return _audioTracks; }
-- (NSSize)displaySize { return _info.displaySize; }
-- (NSSize)encodedSize { return _info.encodedSize; }
-- (float)startTime { return _info.startTime; }
-- (float)duration { return _info.duration; }
-- (float)preferredVolume { return _info.preferredVolume; }
+- (NSSize)displaySize { return [[_videoTracks objectAtIndex:0] displaySize]; }
+- (NSSize)encodedSize { return [[_videoTracks objectAtIndex:0] encodedSize]; }
+- (float)startTime { return _startTime; }
+- (float)duration { return _duration; }
+- (float)fps { return _fps; }
+
+- (void)trackEnabled:(MTrack*)track {}
+- (void)trackDisabled:(MTrack*)track {}
 
 - (float)indexedDuration { return _indexedDuration; }
+- (void)indexedDurationUpdated:(float)indexedDuration
+{
+    if (_indexedDuration != indexedDuration) {
+        _indexedDuration = indexedDuration;
+        //TRACE(@"_indexedDuration=%.1f %@", _indexedDuration);
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:MMovieIndexedDurationNotification object:self];
+    }
+}
+- (void)indexingFinished {}
+
+- (BOOL)hasDigitalAudio { return _hasDigitalAudio; }
+- (float)preferredVolume { return _preferredVolume; }
 - (float)volume { return _volume; }
 - (BOOL)muted { return _muted; }
 - (void)setVolume:(float)volume { _volume = volume; }
@@ -455,7 +405,7 @@
     _aspectRatio = aspectRatio;
 
     if (_aspectRatio == ASPECT_RATIO_DEFAULT) {
-        _adjustedSize = _info.displaySize;
+        _adjustedSize = [[_videoTracks objectAtIndex:0] displaySize];
     }
     else {
         float ratio[] = {
@@ -464,19 +414,11 @@
             1.85 / 1.0,     // ASPECT_RATIO_1_85
             2.35 / 1.0,     // ASPECT_RATIO_2_35
         };
-        _adjustedSize.width  = _info.displaySize.width;
-        _adjustedSize.height = _info.displaySize.width / ratio[_aspectRatio - 1];
+        NSSize displaySize = [[_videoTracks objectAtIndex:0] displaySize];
+        _adjustedSize.width  = displaySize.width;
+        _adjustedSize.height = displaySize.width / ratio[_aspectRatio - 1];
     }
 }
-
-- (void)trackEnabled:(MTrack*)track {}
-- (void)trackDisabled:(MTrack*)track {}
-
-// FIXME
-- (int)videoCodecId { return _info.videoCodecId; }
-- (int)audioCodecId { return _info.audioCodecId; }
-- (int)audioChannels { return _info.audioChannels; }
-- (float)audioSampleRate { return _info.audioSampleRate; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

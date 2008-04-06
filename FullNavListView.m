@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -252,8 +252,7 @@
     NSMutableParagraphStyle* paragraphStyle;
     paragraphStyle = [[[NSMutableParagraphStyle alloc] init] autorelease];
 
-    NSMutableDictionary* attrs;
-    attrs = [[[NSMutableDictionary alloc] init] autorelease];
+    NSMutableDictionary* attrs = [NSMutableDictionary dictionaryWithCapacity:3];
     [attrs setObject:[NSColor colorWithDeviceWhite:0.95 alpha:1.0]
               forKey:NSForegroundColorAttributeName];
     [attrs setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];

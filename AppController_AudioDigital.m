@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Cheol Ju      <moosoy@gmail.com>
 //
 //  This file is part of Movist.
@@ -26,86 +26,38 @@
 
 #import "AppController.h"
 #import "UserDefaults.h"
-#import "MMovie.h"
+#import "MMovie_QuickTime.h"
 
 #import <CoreAudio/CoreAudio.h>
 
-static BOOL supportDigitalAudio(AudioStreamID* streamID);
-static void registerAudioDeviceListener(AudioDevicePropertyListenerProc func, void* data);
-
+static BOOL audioDeviceSupportsDigital(AudioStreamID* streamID);
+static void registerAudioDeviceListener(AudioDevicePropertyListenerProc proc, void* data);
+static OSStatus audioDeviceListener(AudioDeviceID device, UInt32 channel, Boolean isInput,
+                                    AudioDevicePropertyID inPropertyID, void* clientData);
 static AudioStreamID _audioStreamID;
-
-static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
-                               AudioDevicePropertyID inPropertyID, void* inClientData)
-{
-    switch (inPropertyID) {
-        case kAudioDevicePropertyDeviceHasChanged: {
-            //TRACE(@"got notify kAudioDevicePropertyDeviceHasChanged.\n");
-            NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-            [(AppController*)inClientData updateDigitalAudio];
-            [pool release];
-            break;
-        }
-        default:
-            break;
-    }
-    return noErr;
-}
 
 @implementation AppController (AudioDigital)
 
-- (BOOL)supportDigitalAudio { return _supportDigitalAudio; }
-
-- (BOOL)updateA52CodecProperties
+- (BOOL)digitalAudioOut
 {
-    // update A52Codec.component's preference if exist.
-    NSString* rootPath = @"/Library/Audio/Plug-Ins/Components/A52Codec.component";
-    NSString* homePath = [[@"~" stringByExpandingTildeInPath]
-                                                stringByAppendingString:rootPath];
-    if ([[NSFileManager defaultManager] fileExistsAtPath:rootPath] ||
-        [[NSFileManager defaultManager] fileExistsAtPath:homePath]) {
-        [_defaults setA52CodecAttemptPassthrough:_supportDigitalAudio];
-        return TRUE;
+    if (_audioDeviceSupportsDigital &&
+        [_defaults boolForKey:MAutodetectDigitalAudioOutKey]) {
+        return (_movie) ? [_movie hasDigitalAudio] : TRUE;
     }
     return FALSE;
 }
 
-- (void)initDigitalAudio
+- (void)initDigitalAudioOut
 {
-    _supportDigitalAudio = [_defaults boolForKey:MAutodetectDigitalAudioOutKey] &&
-                           supportDigitalAudio(&_audioStreamID);
-    [self updateAudioOutput:nil];   // not to set volume
-    [self updateA52CodecProperties];
+    _audioDeviceSupportsDigital = audioDeviceSupportsDigital(&_audioStreamID);
+    [self updateDigitalAudioOut:nil];   // nil: not to set volume
 
-    registerAudioDeviceListener(DeviceListener, self);
+    registerAudioDeviceListener(audioDeviceListener, self);
 }
 
-- (void)updateDigitalAudio
+- (BOOL)updateDigitalAudioOut:(id)sender
 {
-    if (![_defaults boolForKey:MAutodetectDigitalAudioOutKey]) {
-        return;
-    }
-
-    BOOL support = supportDigitalAudio(&_audioStreamID);
-    if (support == _supportDigitalAudio) {
-        return;
-    }
-
-    _supportDigitalAudio = support;
-
-    [self performSelectorOnMainThread:@selector(updateAudioOutput:)
-                           withObject:self waitUntilDone:FALSE];
-    BOOL a52Updated = [self updateA52CodecProperties];
-    if (a52Updated && _movie) {
-        // reopen current movie to use new audio device
-        [self performSelectorOnMainThread:@selector(reopenMovieWithMovieClass:)
-                               withObject:[_movie class] waitUntilDone:FALSE];
-    }
-}
-
-- (BOOL)updateAudioOutput:(id)sender
-{
-    if (!_supportDigitalAudio) {
+    if (![self digitalAudioOut]) {
         if (sender) {
             [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
         }
@@ -124,11 +76,23 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
         TRACE(@"could not get the stream format: [%4.4s]\n", (char*)&err);
         return FALSE;
     }
-    
-    float sampleRate = (_movie) ? [_movie audioSampleRate] : 48000.000000;
+
+    // change sample-rate
+    float sampleRate = 48000.000000;    // 48.000 kHz by default
+    if (_movie) {
+        MTrack* track;
+        NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
+        while (track = [enumerator nextObject]) {
+            if ([track isEnabled]) {    // first enabled audio track
+                sampleRate = [track audioSampleRate];
+                break;
+            }
+        }
+    }
     if (sampleRate && sampleRate != format.mSampleRate) {
         format.mSampleRate = sampleRate;
     }
+
     // set as current format
     err = AudioStreamSetProperty(_audioStreamID, 0, 0,
                                  kAudioStreamPropertyPhysicalFormat,
@@ -144,12 +108,108 @@ static OSStatus DeviceListener(AudioDeviceID inDevice, UInt32 inChannel, Boolean
     return TRUE;
 }
 
+- (void)audioDeviceChanged
+{
+    _audioDeviceSupportsDigital = audioDeviceSupportsDigital(&_audioStreamID);
+    [self performSelectorOnMainThread:@selector(updateAudioOut:)
+                           withObject:self waitUntilDone:FALSE];
+
+    if (_movie) {   // reopen current movie to use new audio device
+        [self performSelectorOnMainThread:@selector(reopenMovieWithMovieClass:)
+                               withObject:[_movie class] waitUntilDone:FALSE];
+    }
+}
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-static int AudioStreamSupportsDigital( AudioStreamID i_stream_id )
+static int AudioDeviceSupportsDigital(AudioDeviceID i_dev_id, AudioStreamID* streamID);
+
+static BOOL audioDeviceSupportsDigital(AudioStreamID* streamID)
+{
+    /* Find the ID of the default Device. */
+    UInt32 paramSize = sizeof(AudioDeviceID);
+    AudioDeviceID audioDev = 0;
+    OSStatus err;
+    err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+                                   &paramSize, &audioDev);
+    if (err != noErr) {
+        TRACE(@"could not get default audio device: [%4.4s]\n", (char *)&err);
+        return FALSE;
+    }
+    
+    /* Retrieve the length of the device name. */
+    paramSize = 0;
+    err = AudioDeviceGetPropertyInfo(audioDev, 0, 0,
+                                     kAudioDevicePropertyDeviceName,
+                                     &paramSize, NULL);
+    if (err != noErr) {
+        TRACE(@"could not get default audio device name length: [%4.4s]\n", (char *)&err);
+        return FALSE;
+    }
+    
+    /* Retrieve the name of the device. */
+    char* psz_name = (char *)malloc(paramSize);
+    err = AudioDeviceGetProperty(audioDev, 0, 0,
+                                 kAudioDevicePropertyDeviceName,
+                                 &paramSize, psz_name);
+    if (err != noErr) {
+        TRACE(@"could not get default audio device name: [%4.4s]\n", (char *)&err);
+        return FALSE;
+    }
+    
+    //TRACE(@"got default audio output device ID: %#lx Name: %s\n", audioDev, psz_name);
+    
+    BOOL isDigital = AudioDeviceSupportsDigital(audioDev, streamID);
+    //TRACE(@"support digital s/pdif output:%d\n", isDigital);
+    
+    free( psz_name);
+    return isDigital;
+}
+
+static void registerAudioDeviceListener(AudioDevicePropertyListenerProc proc, void* data)
+{
+    /* Find the ID of the default Device. */
+    UInt32 paramSize = sizeof(AudioDeviceID);
+    AudioDeviceID audioDev = 0;
+    OSStatus err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+                                            &paramSize, &audioDev);
+    if (err != noErr) {
+        TRACE(@"could not get default audio device: [%4.4s]\n", (char *)&err);
+        return;
+    }
+    /* add callback func */
+    err = AudioDeviceAddPropertyListener(audioDev, kAudioPropertyWildcardChannel,
+                                         0, kAudioDevicePropertyDeviceHasChanged,
+                                         proc, data);
+    if (err != noErr) {
+        TRACE(@"AudioDeviceAddPropertyListener failed: [%4.4s]\n", (char *)&err);
+    }
+}
+
+static OSStatus audioDeviceListener(AudioDeviceID device, UInt32 channel, Boolean isInput,
+                                    AudioDevicePropertyID inPropertyID, void* clientData)
+{
+    switch (inPropertyID) {
+        case kAudioDevicePropertyDeviceHasChanged: {
+            //TRACE(@"got notify kAudioDevicePropertyDeviceHasChanged.\n");
+            NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+            [(AppController*)clientData audioDeviceChanged];
+            [pool release];
+            break;
+        }
+        default:
+            break;
+    }
+    return noErr;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+static int AudioStreamSupportsDigital(AudioStreamID i_stream_id)
 {
     OSStatus err = noErr;
     UInt32 paramSize;
@@ -195,19 +255,19 @@ static int AudioStreamSupportsDigital( AudioStreamID i_stream_id )
     return b_return;
 }
 
-static int AudioDeviceSupportsDigital( AudioDeviceID i_dev_id, AudioStreamID* streamID )
+static int AudioDeviceSupportsDigital(AudioDeviceID i_dev_id, AudioStreamID* streamID)
 {
-    OSStatus                    err = noErr;
-    UInt32                      paramSize = 0;
-    AudioStreamID               *p_streams = NULL;
-    int                         i = 0, i_streams = 0;
-    
+    OSStatus err = noErr;
+    UInt32 paramSize = 0;
+    AudioStreamID* p_streams = NULL;
+    int i = 0, i_streams = 0;
+
     /* Retrieve all the output streams. */
     err = AudioDeviceGetPropertyInfo(i_dev_id, 0, FALSE,
                                      kAudioDevicePropertyStreams,
                                      &paramSize, NULL);
     if (err != noErr) {
-        TRACE(@"could not get number of streams: [%4.4s]\n", (char *)&err);
+        TRACE(@"could not get number of streams: [%4.4s]\n", (char*)&err);
         return FALSE;
     }
     
@@ -217,17 +277,16 @@ static int AudioDeviceSupportsDigital( AudioDeviceID i_dev_id, AudioStreamID* st
         TRACE(@"out of memory\n");
         return FALSE;
     }
-    
+
     err = AudioDeviceGetProperty(i_dev_id, 0, FALSE,
                                  kAudioDevicePropertyStreams,
                                  &paramSize, p_streams);
-    
     if (err != noErr) {
-        TRACE(@"could not get number of streams: [%4.4s]\n", (char *)&err);
+        TRACE(@"could not get number of streams: [%4.4s]\n", (char*)&err);
         free(p_streams);
         return FALSE;
     }
-    
+
     for (i = 0; i < i_streams; ++i) {
         if (AudioStreamSupportsDigital(p_streams[i])) {
             *streamID = p_streams[i];
@@ -246,74 +305,6 @@ static int AudioDeviceSupportsDigital( AudioDeviceID i_dev_id, AudioStreamID* st
     }    
     free(p_streams);
     return i < i_streams;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-static BOOL supportDigitalAudio(AudioStreamID* streamID)
-{
-    /* Find the ID of the default Device. */
-    UInt32 paramSize = sizeof(AudioDeviceID);
-    AudioDeviceID audioDev = 0;
-    OSStatus err;
-    err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-                                   &paramSize, &audioDev);
-    if (err != noErr) {
-        TRACE(@"could not get default audio device: [%4.4s]\n", (char *)&err);
-        return FALSE;
-    }
-
-    /* Retrieve the length of the device name. */
-    paramSize = 0;
-    err = AudioDeviceGetPropertyInfo(audioDev, 0, 0,
-                                     kAudioDevicePropertyDeviceName,
-                                     &paramSize, NULL);
-    if (err != noErr) {
-        TRACE(@"could not get default audio device name length: [%4.4s]\n", (char *)&err);
-        return FALSE;
-    }
-
-    /* Retrieve the name of the device. */
-    char* psz_name = (char *)malloc(paramSize);
-    err = AudioDeviceGetProperty(audioDev, 0, 0,
-                                 kAudioDevicePropertyDeviceName,
-                                 &paramSize, psz_name);
-    if (err != noErr) {
-        TRACE(@"could not get default audio device name: [%4.4s]\n", (char *)&err);
-        return FALSE;
-    }
-    
-    //TRACE(@"got default audio output device ID: %#lx Name: %s\n", audioDev, psz_name);
-    
-    BOOL isDigital = AudioDeviceSupportsDigital(audioDev, streamID);
-    //TRACE(@"support digital s/pdif output:%d\n", isDigital);
-
-    free( psz_name);
-    return isDigital;
-}
-
-static void registerAudioDeviceListener(AudioDevicePropertyListenerProc func, void* data)
-{
-    /* Find the ID of the default Device. */
-    UInt32 paramSize = sizeof(AudioDeviceID);
-    AudioDeviceID audioDev = 0;
-    OSStatus err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-                                            &paramSize, &audioDev);
-    if (err != noErr) {
-        TRACE(@"could not get default audio device: [%4.4s]\n", (char *)&err);
-        return;
-    }
-    /* add callback func */
-    err = AudioDeviceAddPropertyListener(audioDev,
-                                         kAudioPropertyWildcardChannel,
-                                         0,
-                                         kAudioDevicePropertyDeviceHasChanged,
-                                         func,
-                                         data);
-    if (err != noErr) {
-        TRACE(@"AudioDeviceAddPropertyListener failed: [%4.4s]\n", (char *)&err);
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

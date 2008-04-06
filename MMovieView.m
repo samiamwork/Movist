@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -333,6 +333,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (MMovie*)movie { return _movie; }
 - (NSRect)movieRect { return *(NSRect*)&_movieRect; }
+- (float)currentFps { return _currentFps; }
 
 - (void)setMovie:(MMovie*)movie
 {
@@ -360,6 +361,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [self updateSubtitlePosition];
     [_drawLock unlock];
     [self updateMovieRect:TRUE];
+
+    _lastFpsCheckTime = 0.0;
+    _fpsElapsedTime = 0.0;
+    _fpsFrameCount = 0;
 }
 
 - (void)showLogo
@@ -428,9 +433,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     if (display) {
         [self redisplay];
     }
-
-    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-    [nc postNotificationName:MMovieRectUpdateNotification object:self];
 }
 
 - (float)subtitleLineHeightForMovieWidth:(float)movieWidth
@@ -538,6 +540,16 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             if ([self canDraw]) {
                 [self drawRect:NSZeroRect];
             }
+            _fpsFrameCount++;
+        }
+        // calc. fps
+        double ct = (double)timeStamp->videoTime / timeStamp->videoTimeScale;
+        _fpsElapsedTime += ABS(ct - _lastFpsCheckTime);
+        _lastFpsCheckTime = ct;
+        if (1.0 <= _fpsElapsedTime) {
+            _currentFps = (float)(_fpsFrameCount / _fpsElapsedTime);
+            _fpsElapsedTime = 0.0;
+            _fpsFrameCount = 0;
         }
     }
     [_drawLock unlock];
@@ -549,6 +561,16 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+
+- (void)setActionOnDragging:(int)actionOnDragging
+{
+    _actionOnDragging = actionOnDragging;
+}
+
+- (void)setIncludeLetterBoxOnCapture:(BOOL)includeLetterBox
+{
+    _includeLetterBoxOnCapture = includeLetterBox;
+}
 
 - (NSImage*)captureRect:(NSRect)rect
 {
@@ -584,12 +606,24 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (NSRect)rectForCapture:(BOOL)alternative
 {
-    if (_captureIncludingLetterBox) {
+    if (_includeLetterBoxOnCapture) {
         return (alternative) ? *(NSRect*)&_movieRect : [self bounds];
     }
     else {
         return (alternative) ? [self bounds] : *(NSRect*)&_movieRect;
     }
+}
+
+- (void)copyImage:(NSImage*)image toPasteboard:(NSPasteboard*)pboard
+{
+    [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
+    [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+}
+
+- (void)copyCurrentImage:(BOOL)alternative
+{
+    [self copyImage:[self captureRect:[self rectForCapture:alternative]]
+       toPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (void)saveCurrentImage:(BOOL)alternative
@@ -612,19 +646,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [data writeToFile:path atomically:TRUE];
 }
 
-- (void)setCaptureIncludingLetterBox:(BOOL)includingLetterBox
-{
-    _captureIncludingLetterBox = includingLetterBox;
-}
-
 - (IBAction)copy:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSImage* image = [self captureRect:[self rectForCapture:[sender tag] != 0]];
-
-    NSPasteboard* pboard = [NSPasteboard generalPasteboard];
-    [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
-    [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+    [self copyCurrentImage:[sender tag] != 0];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -749,8 +774,40 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)mouseDown:(NSEvent*)event
 {
     //TRACE(@"%s clickCount=%d", __PRETTY_FUNCTION__, [event clickCount]);
-    if ([event clickCount] == 2) {
+    if (2 <= [event clickCount]) {
         [[NSApp delegate] fullScreenAction:self];
+    }
+    else if (_actionOnDragging == ACTION_ON_DRAGGING_MOVIE_AREA_MOVE_WINDOW &&
+             ![[NSApp delegate] isFullScreen]) {
+        [[self window] mouseDown:event];
+    }
+}
+
+- (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)flags
+{
+    return NSDragOperationCopy;
+}
+
+- (void)mouseDragged:(NSEvent*)event
+{
+    if (_actionOnDragging == ACTION_ON_DRAGGING_MOVIE_AREA_CAPTURE_MOVIE) {
+        BOOL alt = ([event modifierFlags] & NSAlternateKeyMask) ? TRUE : FALSE;
+        NSImage* image = [self captureRect:[self rectForCapture:alt]];
+
+        NSPasteboard* pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+        [self copyImage:image toPasteboard:pboard];
+
+        NSImage* img = [[[NSImage alloc] initWithSize:[image size]] autorelease];
+        [img lockFocus];
+        [image drawAtPoint:NSMakePoint(0, 0) fromRect:NSZeroRect
+                 operation:NSCompositeSourceOver fraction:0.5];
+        [img unlockFocus];
+        [self dragImage:img at:NSMakePoint(0, 0) offset:NSMakeSize(0, 0)
+                  event:event pasteboard:pboard source:self slideBack:TRUE];
+    }
+    else if (_actionOnDragging == ACTION_ON_DRAGGING_MOVIE_AREA_MOVE_WINDOW &&
+             ![[NSApp delegate] isFullScreen]) {
+        [[self window] mouseDragged:event];
     }
 }
 

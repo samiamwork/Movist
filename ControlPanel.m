@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -58,14 +58,15 @@
     [_videoHueSlider setMaxValue:+3.14];
     [_videoHueSlider setFloatValue:0.0];
 
-    const float dv = (3.0 - 0.5) / 6;
     [_playbackRateSlider setMinValue:0.5];
     [_playbackRateSlider setMaxValue:3.0];
-    [_playbackRateSlider setFloatValue:0.5 + dv * 2];
+    [self updatePlaybackRateSlider:1.0];
 
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSString* identifier = (NSString*)[defaults objectForKey:MControlTabKey];
-    if ([identifier isEqualToString:@""]) {
+    if ([identifier isEqualToString:@""] ||             // initial state
+        (![identifier isEqualToString:@"avcontrol"] &&  // for compatibility
+         ![identifier isEqualToString:@"properties"])) {
         [_tabView selectFirstTabViewItem:self];
     }
     else {
@@ -90,16 +91,29 @@
 - (void)showPanel { [self orderFront:self]; }
 - (void)hidePanel { [self orderOut:self]; }
 
-- (void)setMovieURL:(NSURL*)movieURL
+- (void)setMovieURL:(NSURL*)url
 {
-    if (!movieURL) {
-        [_filenameTextField setStringValue:@""];
+    if (!url) {
+        [_movieFilenameTextField setStringValue:@""];
     }
-    else if ([movieURL isFileURL]) {
-        [_filenameTextField setStringValue:[[movieURL path] lastPathComponent]];
+    else if ([url isFileURL]) {
+        [_movieFilenameTextField setStringValue:[[url path] lastPathComponent]];
     }
     else {
-        [_filenameTextField setStringValue:[[movieURL absoluteString] lastPathComponent]];
+        [_movieFilenameTextField setStringValue:[[url absoluteString] lastPathComponent]];
+    }
+}
+
+- (void)setSubtitleURL:(NSURL*)url
+{
+    if (!url) {
+        [_subtitleFilenameTextField setStringValue:@""];
+    }
+    else if ([url isFileURL]) {
+        [_subtitleFilenameTextField setStringValue:[[url path] lastPathComponent]];
+    }
+    else {
+        [_subtitleFilenameTextField setStringValue:[[url absoluteString] lastPathComponent]];
     }
 }
 
@@ -167,7 +181,7 @@
 #pragma mark -
 #pragma mark playback
 
-- (void)setPlayRate:(float)rate
+- (void)updatePlaybackRateSlider:(float)rate
 {
     float value;
     const float dv = (3.0 - 0.5) / 6;
@@ -175,10 +189,10 @@
         value = (0.5 + dv * 0) + (2 * dv * (rate - 0.5)) / (1.0 - 0.5);
     }
     else if (rate <= 2.0) {
-        value = (0.5 + dv * 2) + (3 * dv * (rate - 1.0)) / (2.0 - 1.0);
+        value = (0.5 + dv * 2) + (2 * dv * (rate - 1.0)) / (2.0 - 1.0);
     }
     else {  // rate <= 3.0
-        value = (0.5 + dv * 5) + (1 * dv * (rate - 2.0)) / (3.0 - 2.0);
+        value = (0.5 + dv * 4) + (2 * dv * (rate - 2.0)) / (3.0 - 2.0);
     }
     [_playbackRateSlider setFloatValue:value];
 }
@@ -193,10 +207,10 @@
             rate = 0.5 + (value - (0.5 + dv * 0)) * ((1.0 - 0.5) / 2) / dv;
         }
         else if (value <= 0.5 + dv * 5) {   // 1.0 ~ 2.0 (3: 1.0, 1.3, 1.6, 2.0)
-            rate = 1.0 + (value - (0.5 + dv * 2)) * ((2.0 - 1.0) / 3) / dv;
+            rate = 1.0 + (value - (0.5 + dv * 2)) * ((2.0 - 1.0) / 2) / dv;
         }
         else {                              // 2.0 ~ 3.0 (1: 2.0, 3.0)
-            rate = 2.0 + (value - (0.5 + dv * 5)) * ((3.0 - 2.0) / 1) / dv;
+            rate = 2.0 + (value - (0.5 + dv * 4)) * ((3.0 - 2.0) / 2) / dv;
         }
         [_appController setPlayRate:rate];
     }

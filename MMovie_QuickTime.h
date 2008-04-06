@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -23,22 +23,6 @@
 #import "MMovie.h"
 
 #import <QTKit/QTKit.h>
-
-@interface MTrack_QuickTime : MTrack
-{
-    QTTrack* _qtTrack;
-}
-
-+ (id)trackWithMovie:(MMovie*)movie qtTrack:(QTTrack*)qtTrack;
-
-- (id)initWithMovie:(MMovie*)movie qtTrack:(QTTrack*)qtTrack;
-
-- (QTTrack*)qtTrack;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
 
 @interface MMovie_QuickTime : MMovie
 {

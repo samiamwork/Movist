@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -98,9 +98,27 @@
 
 @implementation MSubtitle
 
-+ (NSArray*)subtitleTypes
++ (NSArray*)fileExtensions
 {
-    return [subtitleTypesAndParsers() allKeys];
+    static NSArray* fileExtensions = nil;
+    if (!fileExtensions) {
+        NSMutableArray* exts = [[NSMutableArray alloc] initWithCapacity:3];
+
+        NSDictionary* dict = [[NSBundle mainBundle] infoDictionary];
+        NSDictionary* type;
+        NSString* bundleTypeName;
+        NSArray* types = [dict objectForKey:@"CFBundleDocumentTypes"];
+        NSEnumerator* typeEnumerator = [types objectEnumerator];
+        while (type = [typeEnumerator nextObject]) {
+            bundleTypeName = [type objectForKey:@"CFBundleTypeName"];
+            if ([bundleTypeName hasPrefix:@"Subtitle-"]) {
+                [exts addObjectsFromArray:[type objectForKey:@"CFBundleTypeExtensions"]];
+            }
+        }
+        fileExtensions = exts;
+    }
+    //TRACE(@"fileExtentions=%@", [fileExtensions retainCount], fileExtensions);
+    return fileExtensions;  // don't send autorelease. it should be alive forever.
 }
 
 ////////////////////////////////////////////////////////////////////////////////

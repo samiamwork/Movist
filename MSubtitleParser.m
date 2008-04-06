@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -23,12 +23,6 @@
 #import "MSubtitleParser.h"
 
 @implementation MSubtitleParser
-
-+ (Class)parserClassForSubtitleType:(NSString*)type
-{
-    return NSClassFromString([subtitleTypesAndParsers()
-                              objectForKey:[type lowercaseString]]);
-}
 
 - (id)initWithURL:(NSURL*)subtitleURL
 {
@@ -88,7 +82,7 @@ NSString* MSubtitleParserOptionKey_stringEncoding = @"stringEncoding";
         if (bytes[i] & 0x80) {
             bytes[i + 1] = *p++;
             bytes[i + 2] = '\0';
-            if ([[[NSString alloc] initWithBytesNoCopy:&bytes[i] length:i + 2
+            if ([[[NSString alloc] initWithBytesNoCopy:&bytes[i] length:2
                         encoding:nsEncoding freeWhenDone:FALSE] autorelease]) {
                 i += 2;
             }

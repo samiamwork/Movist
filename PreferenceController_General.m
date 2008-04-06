@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -29,14 +29,30 @@
 
 @implementation PreferenceController (General)
 
+- (void)setFullNavShowItemsEnabled:(BOOL)enabled
+{
+    [_showiTunesMoviesButton setEnabled:enabled];
+    [_showiTunesPodcastsButton setEnabled:enabled];
+    [_showiTunesTVShowsButton setEnabled:enabled];
+}
+
 - (void)initGeneralPane
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_autodetectMovieSeriesButton setState:[_defaults boolForKey:MAutodetectMovieSeriesKey]];
     [_autoFullScreenButton setState:[_defaults boolForKey:MAutoFullScreenKey]];
+    [_autoPlayOnFullScreenButton setState:[_defaults boolForKey:MAutoPlayOnFullScreenKey]];
     [_alwaysOnTopButton setState:[_defaults boolForKey:MAlwaysOnTopKey]];
+    [_deactivateScreenSaverButton setState:[_defaults boolForKey:MDeactivateScreenSaverKey]];
     [_quitWhenWindowCloseButton setState:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
     [_rememberLastPlayButton setState:[_defaults boolForKey:MRememberLastPlayKey]];
-    [_deactivateScreenSaverButton setState:[_defaults boolForKey:MDeactivateScreenSaverKey]];
+
+    [_supportAppleRemoteButton setState:[_defaults boolForKey:MSupportAppleRemoteKey]];
+    [_fullNavUseButton setState:[_defaults boolForKey:MFullNavUseKey]];
+    [_showiTunesMoviesButton setState:[_defaults boolForKey:MFullNavShowiTunesMoviesKey]];
+    [_showiTunesPodcastsButton setState:[_defaults boolForKey:MFullNavShowiTunesPodcastsKey]];
+    [_showiTunesTVShowsButton setState:[_defaults boolForKey:MFullNavShowiTunesTVShowsKey]];
+    [self setFullNavShowItemsEnabled:[_defaults boolForKey:MFullNavUseKey]];
 
     [_seekInterval0TextField setFloatValue:[_defaults floatForKey:MSeekInterval0Key]];
     [_seekInterval1TextField setFloatValue:[_defaults floatForKey:MSeekInterval1Key]];
@@ -44,15 +60,26 @@
     [_seekInterval0Stepper setFloatValue:[_defaults floatForKey:MSeekInterval0Key]];
     [_seekInterval1Stepper setFloatValue:[_defaults floatForKey:MSeekInterval1Key]];
     [_seekInterval2Stepper setFloatValue:[_defaults floatForKey:MSeekInterval2Key]];
+}
 
-    [_supportAppleRemoteButton setState:[_defaults boolForKey:MSupportAppleRemoteKey]];
-    [_fullNavUseButton setState:[_defaults boolForKey:MFullNavUseKey]];
+- (IBAction)autodetectMovieSeriesAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL autodetect = [_autodetectMovieSeriesButton state];
+    [_defaults setBool:autodetect forKey:MAutodetectMovieSeriesKey];
 }
 
 - (IBAction)autoFullScreenAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaults setBool:[_autoFullScreenButton state] forKey:MAutoFullScreenKey];
+}
+
+- (IBAction)autoPlayOnFullScreenAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL autoPlay = [_autoPlayOnFullScreenButton state];
+    [_defaults setBool:autoPlay forKey:MAutoPlayOnFullScreenKey];
 }
 
 - (IBAction)alwaysOnTopAction:(id)sender
@@ -62,6 +89,13 @@
     [_defaults setBool:alwaysOnTop forKey:MAlwaysOnTopKey];
 
     [_mainWindow setAlwaysOnTop:alwaysOnTop];
+}
+
+- (IBAction)deactivateScreenSaverAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL deactivateScreenSaver = [_deactivateScreenSaverButton state];
+    [_defaults setBool:deactivateScreenSaver forKey:MDeactivateScreenSaverKey];
 }
 
 - (IBAction)quitWhenWindowCloseAction:(id)sender
@@ -78,34 +112,6 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL rememberLastPlay = [_rememberLastPlayButton state];
     [_defaults setBool:rememberLastPlay forKey:MRememberLastPlayKey];
-}
-
-- (IBAction)deactivateScreenSaverAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL deactivateScreenSaver = [_deactivateScreenSaverButton state];
-    [_defaults setBool:deactivateScreenSaver forKey:MDeactivateScreenSaverKey];
-}
-
-- (IBAction)seekIntervalAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSTextField* textField[3] = {
-        _seekInterval0TextField, _seekInterval1TextField, _seekInterval2TextField,
-    };
-    NSStepper* stepper[3] = {
-        _seekInterval0Stepper, _seekInterval1Stepper, _seekInterval2Stepper,
-    };
-    NSString* key[3] = {
-        MSeekInterval0Key, MSeekInterval1Key, MSeekInterval2Key
-    };
-
-    int index = [sender tag];
-    float interval = [sender floatValue];
-    [textField[index] setFloatValue:interval];
-    [stepper[index] setFloatValue:interval];
-    [_defaults setFloat:interval forKey:key[index]];
-    [_appController setSeekInterval:interval atIndex:index];
 }
 
 - (IBAction)supportAppleRemoteAction:(id)sender
@@ -127,7 +133,38 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL useFullNav = [_fullNavUseButton state];
     [_defaults setBool:useFullNav forKey:MFullNavUseKey];
-    //[self setFullNavControlesEnabled:useFullNav];
+    [self setFullNavShowItemsEnabled:useFullNav];
+}
+
+- (IBAction)showFullNavItemsAction:(id)sender
+{
+    NSString* key[] = {
+        MFullNavShowiTunesMoviesKey,
+        MFullNavShowiTunesPodcastsKey,
+        MFullNavShowiTunesTVShowsKey,
+    };
+    [_defaults setBool:[sender state] forKey:key[[sender tag]]];
+}
+
+- (IBAction)seekIntervalAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    struct {
+        NSTextField* textField;
+        NSStepper* stepper;
+        NSString* key;
+    } seek[] = {
+        { _seekInterval0TextField, _seekInterval0Stepper, MSeekInterval0Key },
+        { _seekInterval1TextField, _seekInterval1Stepper, MSeekInterval1Key },
+        { _seekInterval2TextField, _seekInterval2Stepper, MSeekInterval2Key }
+    };
+    
+    int index = [sender tag];
+    float interval = [sender floatValue];
+    [seek[index].textField setFloatValue:interval];
+    [seek[index].stepper setFloatValue:interval];
+    [_defaults setFloat:interval forKey:seek[index].key];
+    [_appController setSeekInterval:interval atIndex:index];
 }
 
 @end

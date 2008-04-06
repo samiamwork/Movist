@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -65,10 +65,10 @@
 - (id)objectValueForCodecBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
 {
     if ([[tableColumn identifier] isEqualToString:@"codec"]) {
-        return videoCodecName([[_codecIds objectAtIndex:rowIndex] intValue]);
+        return codecName([[_codecIds objectAtIndex:rowIndex] intValue]);
     }
     else if ([[tableColumn identifier] isEqualToString:@"desc"]) {
-        return videoCodecDescription([[_codecIds objectAtIndex:rowIndex] intValue]);
+        return codecDescription([[_codecIds objectAtIndex:rowIndex] intValue]);
     }
     else {  // @"decoder"
         int codecId = [[_codecIds objectAtIndex:rowIndex] intValue];

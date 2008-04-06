@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -32,16 +32,21 @@ extern NSString* MLastPlayedMovieRepeatRangeKey;
 
 #pragma mark -
 #pragma mark prefs: general
+extern NSString* MAutodetectMovieSeriesKey;
 extern NSString* MAutoFullScreenKey;
+extern NSString* MAutoPlayOnFullScreenKey;
 extern NSString* MAlwaysOnTopKey;
+extern NSString* MDeactivateScreenSaverKey;
 extern NSString* MQuitWhenWindowCloseKey;
 extern NSString* MRememberLastPlayKey;
-extern NSString* MDeactivateScreenSaverKey;
+extern NSString* MSupportAppleRemoteKey;
+extern NSString* MFullNavUseKey;
+extern NSString* MFullNavShowiTunesMoviesKey;
+extern NSString* MFullNavShowiTunesPodcastsKey;
+extern NSString* MFullNavShowiTunesTVShowsKey;
 extern NSString* MSeekInterval0Key;
 extern NSString* MSeekInterval1Key;
 extern NSString* MSeekInterval2Key;
-extern NSString* MSupportAppleRemoteKey;
-extern NSString* MFullNavUseKey;
 
 #pragma mark -
 #pragma mark prefs: video
@@ -53,6 +58,7 @@ extern NSString* MFullScreenUnderScanKey;
 #pragma mark -
 #pragma mark prefs: audio
 extern NSString* MVolumeKey;
+extern NSString* MAutodetectDigitalAudioOutKey;
 
 #pragma mark -
 #pragma mark prefs: subtitle
@@ -84,20 +90,16 @@ extern NSString* MLastUpdateCheckTimeKey;
 #pragma mark prefs: advanced - details
 // General
 extern NSString* MActivateOnDraggingKey;
-extern NSString* MAutodetectMovieSeriesKey;
-extern NSString* MAutodetectDigitalAudioOutKey;
-extern NSString* MAutoPlayOnFullScreenKey;
-extern NSString* MCaptureIncludingLetterBoxKey;
+extern NSString* MIncludeLetterBoxOnCaptureKey;
+extern NSString* MActionOnDraggingMovieAreaKey;
 // Subtitle
 extern NSString* MDisablePerianSubtitleKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultLanguageIdentifiersKey;
 extern NSString* MAutoSubtitlePositionMaxLinesKey;
+extern NSString* MSubtitleInfoDisplayOnOpeningKey;
 // Full Navigation
 extern NSString* MFullNavPathKey;
-extern NSString* MFullNavShowiTunesMoviesKey;
-extern NSString* MFullNavShowiTunesTVShowsKey;
-extern NSString* MFullNavShowiTunesPodcastKey;
 extern NSString* MShowActualPathForLinkKey;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,6 +115,7 @@ extern NSString* MShowActualPathForLinkKey;
 - (void)setDefaultDecoder:(int)decoder forCodecId:(int)codecId;
 - (void)setDefaultDecoder:(int)decoder forCodecIdSet:(NSIndexSet*)codecIdSet;
 
+- (BOOL)a52CodecAttemptPassthrough;
 - (void)setA52CodecAttemptPassthrough:(BOOL)enabled;
 
 - (BOOL)isPerianSubtitleEnabled;

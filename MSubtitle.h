@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -35,7 +35,7 @@
     NSMutableAttributedString* _emptyString;
 }
 
-+ (NSArray*)subtitleTypes;
++ (NSArray*)fileExtensions;
 
 #pragma mark -
 - (id)initWithURL:(NSURL*)url type:(NSString*)type;

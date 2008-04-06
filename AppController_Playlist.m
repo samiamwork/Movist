@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -40,23 +40,17 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist addFiles:filenames];
-    [_playlistController updateUI];
-
-    BOOL enabled = (0 < [_playlist count]);
-    [_prevMovieButton setEnabled:enabled];
-    [_nextMovieButton setEnabled:enabled];
 }
 
 - (void)addURL:(NSURL*)url
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist addURL:url];
-    [_playlistController updateUI];
 }
 
 - (void)updatePrevNextMovieButtons
 {
-    BOOL enabled = (0 < [_playlist count]);
+    BOOL enabled = (1 < [_playlist count]);
     [_prevMovieButton setEnabled:enabled];
     [_nextMovieButton setEnabled:enabled];
 }
@@ -142,7 +136,6 @@
             _lastPlayedMovieTime = [_defaults floatForKey:MLastPlayedMovieTimeKey];
             _lastPlayedMovieRepeatRange = NSRangeFromString(
                 [_defaults objectForKey:MLastPlayedMovieRepeatRangeKey]);
-            [_playlistController updateUI];
         }
     }
 }
@@ -192,7 +185,6 @@
                                 initWithAppController:self playlist:_playlist];
     }
     if (![self playlistWindowVisible]) {
-        [_playlistController updateUI];
         if ([self isFullScreen]) {
             [_playlistController showWindow:self];
             [[_playlistController window] setDelegate:self];
@@ -211,6 +203,12 @@
     if ([self playlistWindowVisible]) {
         [_playlistController closeAction:self];
     }
+}
+
+- (void)playlistUpdated:(NSNotification*)notification
+{
+    [_playlistController updateUI];
+    [self updatePrevNextMovieButtons];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

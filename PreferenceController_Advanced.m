@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -39,7 +39,13 @@
     [_lastUpdateCheckTimeTextField setFormatter:formatter];
     [self updateLastUpdateCheckTimeTextField];
 
+//#define _SUPPORT_FILE_BINDING
+#if defined(_SUPPORT_FILE_BINDING)
     [self initFileBinding];
+#else
+    NSTabView* tabView = (NSTabView*)[[[[_fileBindingTableView superview] superview] superview] superview];
+    [tabView removeTabViewItem:[tabView tabViewItemAtIndex:1]];
+#endif
     [self initCodecBinding];
     [self initDetails];
 }
@@ -94,6 +100,14 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
     }
     else {
         [self setObjectValue:object forCodecBindingTableColumn:tableColumn row:rowIndex];
+    }
+}
+
+- (void)tableView:(NSTableView*)tableView willDisplayCell:(id)cell
+   forTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
+{
+    if (tableView == _fileBindingTableView) {
+        [self willDisplayCell:cell forFileBindingTableColumn:tableColumn row:rowIndex];
     }
 }
 

@@ -1,7 +1,7 @@
 //
 //  Movist
 //
-//  Copyright 2006, 2007 Yong-Hoe Kim. All rights reserved.
+//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
 //      Yong-Hoe Kim  <cocoable@gmail.com>
 //
 //  This file is part of Movist.
@@ -21,12 +21,21 @@
 //
 
 #import "PreferenceController.h"
+#import "UserDefaults.h"
 
 @implementation PreferenceController (Audio)
 
 - (void)initAudioPane
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_autodetectDigitalAudioOutButton setState:[_defaults boolForKey:MAutodetectDigitalAudioOutKey]];
+}
+
+- (IBAction)autodetectDigitalAudioOutAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL autodetect = [_autodetectDigitalAudioOutButton state];
+    [_defaults setBool:autodetect forKey:MAutodetectDigitalAudioOutKey];
 }
 
 @end
