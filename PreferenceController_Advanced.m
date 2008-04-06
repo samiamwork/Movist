@@ -43,7 +43,7 @@
 #if defined(_SUPPORT_FILE_BINDING)
     [self initFileBinding];
 #else
-    NSTabView* tabView = (NSTabView*)[[[[_fileBindingTableView superview] superview] superview] superview];
+    NSTabView* tabView = (NSTabView*)[[_advancedPane subviews] objectAtIndex:0];
     [tabView removeTabViewItem:[tabView tabViewItemAtIndex:1]];
 #endif
     [self initCodecBinding];
