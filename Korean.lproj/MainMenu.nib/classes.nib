@@ -73,7 +73,7 @@
                 "_panelPlaylistButton" = NSButton;
                 "_panelRTimeTextField" = TimeTextField;
                 "_panelSeekSlider" = FSSeekSlider;
-                "_panelVolumeSlider" = FSVolumeSlider;
+                "_panelVolumeSlider" = NSSlider;
                 "_playButton" = NSButton;
                 "_playMenuItem" = NSMenuItem;
                 "_playPanel" = PlayPanel;
@@ -112,7 +112,7 @@
                 "_syncDefaultMenuItem" = NSMenuItem;
                 "_syncEarlierMenuItem" = NSMenuItem;
                 "_syncLaterMenuItem" = NSMenuItem;
-                "_volumeSlider" = MainVolumeSlider;
+                "_volumeSlider" = NSSlider;
             };
             SUPERCLASS = NSObject;
         },
@@ -139,6 +139,11 @@
             SUPERCLASS = NSPanel;
         },
                 {
+            CLASS = CustomSliderCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSliderCell;
+        },
+                {
             CLASS = FSSeekSlider;
             LANGUAGE = ObjC;
             SUPERCLASS = SeekSlider;
@@ -155,6 +160,16 @@
             CLASS = FirstResponder;
             LANGUAGE = ObjC;
             SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = HUDSliderCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSliderCell;
+        },
+                {
+            CLASS = HUDTabView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTabView;
         },
                 {
             CLASS = HoverButton;
@@ -190,6 +205,10 @@
             SUPERCLASS = NSWindow;
         },
                 {
+            ACTIONS =             {
+                orderFrontWithFadeIn = id;
+                orderOutWithFadeOut = id;
+            };
             CLASS = PlayPanel;
             LANGUAGE = ObjC;
             OUTLETS =             {
@@ -222,11 +241,6 @@
         },
                 {
             CLASS = TimeTextField;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTextField;
-        },
-                {
-            CLASS = WindowMoveTextField;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTextField;
         }

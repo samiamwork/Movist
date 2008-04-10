@@ -102,6 +102,7 @@ AVPacket s_flushPacket;
 
 - (void)dealloc
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_movie release];
     [super dealloc];
 }

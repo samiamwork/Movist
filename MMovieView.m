@@ -80,9 +80,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     _cropFilter = [[CIFilter filterWithName:@"CICrop"] retain];
     [_colorFilter setDefaults];
     [_hueFilter setDefaults];
-    _fullScreenFill = FS_FILL_NEVER;
-    _autoSubtitlePositionMaxLines = 3;
-    _subtitlePosition = SUBTITLE_POSITION_AUTO; // for initial update
 
     // OSD: icon, message, subtitle
     NSRect rect = [self bounds];
@@ -92,6 +89,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_subtitleImageOSD setHAlign:OSD_HALIGN_CENTER];
     [_subtitleImageOSD setVAlign:OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM];
     _subtitleVisible = TRUE;
+    _autoSubtitlePositionMaxLines = 3;
+    _subtitlePosition = SUBTITLE_POSITION_AUTO; // for initial update
 
     _messageOSD = [[MTextOSD alloc] init];
     [_messageOSD setMovieRect:rect];
@@ -110,7 +109,15 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
     [_iconOSD setHAlign:OSD_HALIGN_CENTER];
     [_iconOSD setVAlign:OSD_VALIGN_CENTER];
-    
+
+    // etc. options
+    _fullScreenFill = FS_FILL_NEVER;
+    _fullScreenUnderScan = 0.0;
+    _draggingAction = DRAGGING_ACTION_NONE;
+    _captureFormat = CAPTURE_FORMAT_PNG;
+    _includeLetterBoxOnCapture = TRUE;
+    _removeGreenBox = FALSE;
+
     // drag-and-drop
     [self registerForDraggedTypes:MOVIST_DRAG_TYPES];
 
@@ -287,10 +294,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
         if (_image) {
             CIImage* img = [CIImage imageWithCVImageBuffer:_image];
-            // always crop!!!
-            [_cropFilter setValue:img forKey:@"inputImage"];
-            img = [_cropFilter valueForKey:@"outputImage"];
-
+            if (_removeGreenBox) {
+                [_cropFilter setValue:img forKey:@"inputImage"];
+                img = [_cropFilter valueForKey:@"outputImage"];
+            }
             if ([self brightness] != 0.0 ||
                 [self saturation] != 1.0 ||
                 [self contrast] != 1.0) {
@@ -562,14 +569,22 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (void)setActionOnDragging:(int)actionOnDragging
-{
-    _actionOnDragging = actionOnDragging;
-}
+- (void)setDraggingAction:(int)action { _draggingAction = action; }
+- (void)setCaptureFormat:(int)format { _captureFormat = format; }
+- (void)setIncludeLetterBoxOnCapture:(BOOL)include { _includeLetterBoxOnCapture = include; }
+- (void)setRemoveGreenBox:(BOOL)remove { _removeGreenBox = remove; }
 
-- (void)setIncludeLetterBoxOnCapture:(BOOL)includeLetterBox
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (NSRect)rectForCapture:(BOOL)alternative
 {
-    _includeLetterBoxOnCapture = includeLetterBox;
+    if (_includeLetterBoxOnCapture) {
+        return (alternative) ? *(NSRect*)&_movieRect : [self bounds];
+    }
+    else {
+        return (alternative) ? [self bounds] : *(NSRect*)&_movieRect;
+    }
 }
 
 - (NSImage*)captureRect:(NSRect)rect
@@ -604,26 +619,42 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     return [imageFlipped autorelease];
 }
 
-- (NSRect)rectForCapture:(BOOL)alternative
+- (NSData*)dataWithImage:(NSImage*)image
 {
-    if (_includeLetterBoxOnCapture) {
-        return (alternative) ? *(NSRect*)&_movieRect : [self bounds];
+    NSBitmapImageFileType fileType = NSTIFFFileType;
+    NSDictionary* properties = nil;
+    if (_captureFormat == CAPTURE_FORMAT_TIFF) {
+        fileType = NSTIFFFileType;
+        properties = nil;
     }
-    else {
-        return (alternative) ? [self bounds] : *(NSRect*)&_movieRect;
+    else if (_captureFormat == CAPTURE_FORMAT_JPEG) {
+        fileType = NSJPEGFileType;
+        properties = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:0.9]
+                                                 forKey:NSImageCompressionFactor];
     }
-}
+    else if (_captureFormat == CAPTURE_FORMAT_PNG) {
+        fileType = NSPNGFileType;
+        properties = nil;
+    }
+    else if (_captureFormat == CAPTURE_FORMAT_BMP) {
+        fileType = NSBMPFileType;
+        properties = nil;
+    }
+    else if (_captureFormat == CAPTURE_FORMAT_GIF) {
+        fileType = NSGIFFileType;
+        properties = nil;
+    }
 
-- (void)copyImage:(NSImage*)image toPasteboard:(NSPasteboard*)pboard
-{
-    [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
-    [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+    return [[NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]]
+            representationUsingType:fileType properties:properties];
 }
 
 - (void)copyCurrentImage:(BOOL)alternative
 {
-    [self copyImage:[self captureRect:[self rectForCapture:alternative]]
-       toPasteboard:[NSPasteboard generalPasteboard]];
+    NSImage* image = [self captureRect:[self rectForCapture:alternative]];
+    NSPasteboard* pboard = [NSPasteboard generalPasteboard];
+    [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
+    [pboard setData:[self dataWithImage:image] forType:NSTIFFPboardType];
 }
 
 - (void)saveCurrentImage:(BOOL)alternative
@@ -631,19 +662,23 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     NSImage* image = [self captureRect:[self rectForCapture:alternative]];
 
     NSString* name = [[[[NSApp delegate] movieURL] path] lastPathComponent];
+    NSString* ext = (_captureFormat == CAPTURE_FORMAT_JPEG) ? @"jpeg" :
+                    (_captureFormat == CAPTURE_FORMAT_PNG)  ? @"png" :
+                    (_captureFormat == CAPTURE_FORMAT_BMP)  ? @"bmp" :
+                    (_captureFormat == CAPTURE_FORMAT_GIF)  ? @"gif" :
+                                    /* CAPTURE_FORMAT_TIFF */ @"tiff";
     NSString* directory = [[@"~/Desktop" stringByExpandingTildeInPath]
         stringByAppendingPathComponent:[name stringByDeletingPathExtension]];
     int i = 1;
     NSString* path;
     NSFileManager* fileManager = [NSFileManager defaultManager];
     while (TRUE) {
-        path = [directory stringByAppendingFormat:@" %d.tiff", i++];
+        path = [directory stringByAppendingFormat:@" %d.%@", i++, ext];
         if (![fileManager fileExistsAtPath:path]) {
             break;
         }
     }
-    NSData* data = [image TIFFRepresentation];
-    [data writeToFile:path atomically:TRUE];
+    [[self dataWithImage:image] writeToFile:path atomically:TRUE];
 }
 
 - (IBAction)copy:(id)sender
@@ -771,50 +806,122 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
 }
 
+- (int)draggingActionWithModifierFlags:(unsigned int)flags
+{
+    return (flags & NSControlKeyMask)   ? DRAGGING_ACTION_MOVE_WINDOW :
+           (flags & NSAlternateKeyMask) ? DRAGGING_ACTION_CAPTURE_MOVIE :
+                                          _draggingAction;
+}
+
 - (void)mouseDown:(NSEvent*)event
 {
     //TRACE(@"%s clickCount=%d", __PRETTY_FUNCTION__, [event clickCount]);
     if (2 <= [event clickCount]) {
         [[NSApp delegate] fullScreenAction:self];
     }
-    else if (_actionOnDragging == ACTION_ON_DRAGGING_MOVIE_AREA_MOVE_WINDOW &&
-             ![[NSApp delegate] isFullScreen]) {
-        [[self window] mouseDown:event];
+    else {
+        int action = [self draggingActionWithModifierFlags:[event modifierFlags]];
+        if (action == DRAGGING_ACTION_MOVE_WINDOW) {
+            if (![[NSApp delegate] isFullScreen]) {
+                [[self window] mouseDown:event];
+            }
+        }
     }
 }
 
-- (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)flags
+- (NSSize)thumbnailSizeForImageSize:(NSSize)imageSize
 {
-    return NSDragOperationCopy;
+    const float MAX_SIZE = 192;
+    return (imageSize.width < imageSize.height) ?
+        NSMakeSize(MAX_SIZE * imageSize.width / imageSize.height, MAX_SIZE) :
+        NSMakeSize(MAX_SIZE, MAX_SIZE * imageSize.height / imageSize.width);
 }
 
 - (void)mouseDragged:(NSEvent*)event
 {
-    if (_actionOnDragging == ACTION_ON_DRAGGING_MOVIE_AREA_CAPTURE_MOVIE) {
-        BOOL alt = ([event modifierFlags] & NSAlternateKeyMask) ? TRUE : FALSE;
+    int action = [self draggingActionWithModifierFlags:[event modifierFlags]];
+    if (action == DRAGGING_ACTION_MOVE_WINDOW) {
+        if (![[NSApp delegate] isFullScreen]) {
+            [[self window] mouseDragged:event];
+        }
+    }
+    else if (action == DRAGGING_ACTION_CAPTURE_MOVIE) {
+        BOOL alt = ([event modifierFlags] & NSShiftKeyMask) ? TRUE : FALSE;
         NSImage* image = [self captureRect:[self rectForCapture:alt]];
 
         NSPasteboard* pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-        [self copyImage:image toPasteboard:pboard];
+        [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
+        // lazy copy... copy will be performed in -[pasteboard:provideDataForType:].
+        _captureImage = [image retain];
 
-        NSImage* img = [[[NSImage alloc] initWithSize:[image size]] autorelease];
-        [img lockFocus];
-        [image drawAtPoint:NSMakePoint(0, 0) fromRect:NSZeroRect
-                 operation:NSCompositeSourceOver fraction:0.5];
-        [img unlockFocus];
-        [self dragImage:img at:NSMakePoint(0, 0) offset:NSMakeSize(0, 0)
+//#define _REAL_SIZE_DRAGGING
+#if defined(_REAL_SIZE_DRAGGING)
+        _draggingPoint = [event locationInWindow];
+        _draggingPoint.x -= [self frame].origin.x;
+        _draggingPoint.y -= [self frame].origin.y;
+        NSSize size = [image size];
+        NSPoint p = NSMakePoint(0, 0);
+#else
+        NSSize size = [self thumbnailSizeForImageSize:[image size]];
+        NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
+        p.x -= size.width / 2;
+        p.y -= size.height / 2;
+#endif
+        NSImage* dragImage = [[[NSImage alloc] initWithSize:size] autorelease];
+        [dragImage lockFocus];
+        [dragImage setBackgroundColor:[NSColor clearColor]];
+        [_captureImage drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:NSZeroRect
+                        operation:NSCompositeSourceOver fraction:0.5];
+        [dragImage unlockFocus];
+        [self dragImage:dragImage at:p offset:NSMakeSize(0, 0)
                   event:event pasteboard:pboard source:self slideBack:TRUE];
     }
-    else if (_actionOnDragging == ACTION_ON_DRAGGING_MOVIE_AREA_MOVE_WINDOW &&
-             ![[NSApp delegate] isFullScreen]) {
-        [[self window] mouseDragged:event];
+}
+
+- (void)pasteboard:(NSPasteboard*)pboard provideDataForType:(NSString*)type
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([type isEqualToString:NSTIFFPboardType]) {
+        [pboard setData:[self dataWithImage:_captureImage] forType:type];
     }
+}
+
+- (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)forLocal
+{
+    return (forLocal) ? NSDragOperationNone : NSDragOperationGeneric;//NSDragOperationCopy;
+}
+
+#if defined(_REAL_SIZE_DRAGGING)
+- (void)draggedImage:(NSImage*)image movedTo:(NSPoint)screenPoint
+{
+    screenPoint.x += _draggingPoint.x;
+    screenPoint.y += _draggingPoint.y;
+    NSSize size;
+    if (NSPointInRect(screenPoint, [[self window] frame])) {
+        size = [_captureImage size];
+    }
+    else {
+        size = [self thumbnailSizeForImageSize:[_captureImage size]];
+    }
+    if (!NSEqualSizes([image size], size)) {
+        // FIXME: how to change image size???
+        TRACE(@"change to %@", NSEqualSizes([_captureImage size], size) ?
+                                        @"real size" : @"thumbnail size");
+    }
+}
+#endif
+
+- (void)draggedImage:(NSImage*)image
+             endedAt:(NSPoint)point operation:(NSDragOperation)operation
+{
+    [_captureImage release];
+    _captureImage = nil;
 }
 
 - (void)scrollWheel:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSApp mainWindow] scrollWheel:event];
+    [[self window] scrollWheel:event];
 }
 
 @end

@@ -33,6 +33,14 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+@interface MainLCDView : NSView
+{
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
 @interface TimeTextField : NSTextField
 {
     BOOL _clickable;
@@ -45,5 +53,27 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-@interface MainVolumeSlider : NSSlider {} @end
-@interface FSVolumeSlider : NSSlider {} @end
+@interface CustomSliderCell : NSSliderCell
+{
+    NSImage* _trackImage;
+    NSImage* _trackImageDisabled;
+    NSImage* _knobImage;
+    NSImage* _knobImagePressed;
+    NSImage* _knobImageDisabled;
+    NSColor* _backColor;
+    float _trackOffset;
+    float _knobOffset;
+}
+
+- (void)setImageName:(NSString*)imageName backColor:(NSColor*)backColor
+         trackOffset:(float)trackOffset knobOffset:(float)knobOffset;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@interface HUDTabView : NSTabView
+{
+}
+
+@end

@@ -84,9 +84,7 @@
             // remember original settings & update new settings
             if (_a52CodecInstalled) {
                 _a52CodecAttemptPassthrough = [_defaults a52CodecAttemptPassthrough];
-                if (digitalAudioOut) {
-                    [_defaults setA52CodecAttemptPassthrough:TRUE];
-                }
+                [_defaults setA52CodecAttemptPassthrough:digitalAudioOut];
             }
             if (_perianInstalled) {
                 _perianSubtitleEnabled = [_defaults isPerianSubtitleEnabled];
@@ -501,8 +499,7 @@
         [_movieView setMovie:nil];
         [_movieView setSubtitles:nil];
         [_movieView setMessage:@""];
-        [_movie release];
-        _movie = nil;
+        [_movie cleanup], _movie = nil;
 
         [_subtitles release], _subtitles = nil;
         [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
@@ -515,28 +512,25 @@
 {
     NSImage* mainImage = nil;
     NSImage* panelImage = nil;
-    NSImage* ctrlImage = nil;
     if ([_movieView movie]) {
         NSString* decoder = [[[_movieView movie] class] name];
         if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
             mainImage  = [NSImage imageNamed:@"MainQuickTime"];
             panelImage = [NSImage imageNamed:@"FSQuickTime"];
-            ctrlImage  = [NSImage imageNamed:@"QuickTime16"];
         }
         else {  // [decoder isEqualToString:[MMovie_FFmpeg name]]
             mainImage  = [NSImage imageNamed:@"MainFFMPEG"];
             panelImage = [NSImage imageNamed:@"FSFFMPEG"];
-            ctrlImage  = [NSImage imageNamed:@"FFMPEG16"];
         }
     }
 
     [_decoderButton setImage:mainImage];
     [_panelDecoderButton setImage:panelImage];
-    [_controlPanelDecoderButton setImage:ctrlImage];
+    [_controlPanelDecoderButton setImage:panelImage];
 
     [_decoderButton setEnabled:(mainImage != nil)];
     [_panelDecoderButton setEnabled:(panelImage != nil)];
-    [_controlPanelDecoderButton setEnabled:(ctrlImage != nil)];
+    [_controlPanelDecoderButton setEnabled:(panelImage != nil)];
 }
 
 - (void)updateDataSizeBpsUI
@@ -551,7 +545,7 @@
             s = [NSString stringWithFormat:@"%.2f GB", megaBytes / 1024.];
         }
         if (0 < [_movie bitRate]) {
-            s = [s stringByAppendingFormat:@", %d kbps", [_movie bitRate] / 1000];
+            s = [s stringByAppendingFormat:@",  %d kbps", [_movie bitRate] / 1000];
         }
     }
     [_dataSizeBpsTextField setStringValue:s];

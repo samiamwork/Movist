@@ -22,6 +22,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+@interface NSCell (Movist)
+
+- (void)copyAttributesFromCell:(NSCell*)cell;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @interface NSTextField (Movist)
 
 - (void)setEnabled:(BOOL)enabled;
@@ -31,15 +40,41 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@interface NSButton (Movist)
+
+- (void)replaceCell:(Class)cellClass;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface NSSlider (Movist)
+
+- (void)replaceCell:(Class)cellClass;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @interface NSWindow (Movist)
+
+- (void)initHUDWindow;
+- (void)initHUDSubview:(NSView*)subview;
+- (void)updateHUDBackground;
 
 - (void)setMovieURL:(NSURL*)movieURL;
 - (void)fadeWithEffect:(NSString*)effect
           blockingMode:(NSAnimationBlockingMode)blockingMode
               duration:(float)duration;
-- (NSColor*)makeHUDBackgroundColor;
 
 @end
+
+#define HUDTitleBackColor   [NSColor colorWithCalibratedWhite:0.1 alpha:0.85]
+#define HUDBackgroundColor  [NSColor colorWithCalibratedWhite:0.1 alpha:0.80]
+#define HUDBorderColor      [NSColor colorWithCalibratedWhite:0.4 alpha:0.75]
+#define HUDTextColor        [NSColor colorWithCalibratedWhite:0.8 alpha:0.75]
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

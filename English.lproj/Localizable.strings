@@ -109,13 +109,19 @@
 "Set all MPEG-4 to FFmpeg" = "Set all MPEG-4 to FFmpeg";
 "Set to Movist default" = "Set to Movist default";
 
-/* Preferences: advanced - details */
+/* Preferences: advanced - details: general */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
-"Include Letter Box on Capture" = "Include Letter Box on Capture";
-"Action on Dragging Movie Area" = "Action on Dragging Movie Area";
+"Dragging Action on Movie Area" = "Dragging Action on Movie Area";
 "None" = "None";
 "Move Window" = "Move Window";
 "Capture Movie" = "Capture Movie";
+
+/* Preferences: advanced - details: video */
+"Capture Format" = "Capture Format";
+"Include Letter Box on Capture" = "Include Letter Box on Capture";
+"Remove Green Box" = "Remove Green Box";
+
+/* Preferences: advanced - details: subtitle */
 "Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
 "Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
 "Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
@@ -123,6 +129,8 @@
 "Subtitle Info Display on Opening Movie" = "Subtitle Info Display on Opening Movie";
 "Simple" = "Simple";
 "Full" = "Full";
+
+/* Preferences: advanced - details: full-nav */
 "Full Screen Navigation" = "Full Screen Navigation";
 "Default Navigation Path" = "Default Navigation Path";
 "Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";

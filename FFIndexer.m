@@ -50,7 +50,7 @@ typedef struct {
         streamIndex:(int)streamIndex
      frameReadMutex:(NSLock*)frameReadMutex
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     const char* path = [[[movie url] path] UTF8String];
     if (av_open_input_file(&_indexContext, path, NULL, 0, NULL) != 0) {
         return 0;
@@ -78,7 +78,7 @@ typedef struct {
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_frameReadMutex release];
     [_movie release];
     [super dealloc];

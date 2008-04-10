@@ -28,20 +28,30 @@
 #import "MMovie_QuickTime.h"
 #import "MMovie_FFmpeg.h"
 
-@implementation WindowMoveTextField
-
-- (BOOL)mouseDownCanMoveWindow { return TRUE; }
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
 @implementation ControlPanel
+
+- (id)initWithContentRect:(NSRect)contentRect
+                styleMask:(unsigned int)styleMask
+                  backing:(NSBackingStoreType)bufferingType
+                    defer:(BOOL)deferCreation
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (self = [super initWithContentRect:contentRect
+                                styleMask:NSBorderlessWindowMask
+                                  backing:bufferingType
+                                    defer:deferCreation]) {
+        [self initHUDWindow];
+        [self setFloatingPanel:TRUE];
+    }
+    return self;
+}
 
 - (void)awakeFromNib
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self updateHUDBackground];
+    [self initHUDSubview:[self contentView]];
+
     [_videoBrightnessSlider setMinValue:-1.0];
     [_videoBrightnessSlider setMaxValue:+1.0];
     [_videoBrightnessSlider setFloatValue:0.0];
@@ -64,9 +74,7 @@
 
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSString* identifier = (NSString*)[defaults objectForKey:MControlTabKey];
-    if ([identifier isEqualToString:@""] ||             // initial state
-        (![identifier isEqualToString:@"avcontrol"] &&  // for compatibility
-         ![identifier isEqualToString:@"properties"])) {
+    if (NSNotFound == [_tabView indexOfTabViewItemWithIdentifier:identifier]) {
         [_tabView selectFirstTabViewItem:self];
     }
     else {

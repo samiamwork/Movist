@@ -34,10 +34,10 @@
     float _repeatEnd;
 }
 
-- (void)draw:(NSRect)cellFrame inView:(NSView*)controlView;
 - (void)setBgImage:(NSImage*)bgImage
             lImage:(NSImage*)lImage cImage:(NSImage*)cImage rImage:(NSImage*)rImage;
 - (void)setKnobColor:(NSColor*)knobColor;
+- (void)setKnobSize:(float)knobSize;
 - (float)locationOfValue:(float)value;
 
 - (float)indexedDuration;
@@ -86,16 +86,8 @@
     _rImage = [rImage retain];
 }
 
-- (void)setKnobColor:(NSColor*)knobColor
-{
-    _knobColor = [knobColor retain];
-}
-
-- (void)setKnobThickness:(float)thickness
-{
-    _knobSize = thickness;
-    [super setKnobThickness:thickness];
-}
+- (void)setKnobColor:(NSColor*)knobColor { _knobColor = [knobColor retain]; }
+- (void)setKnobSize:(float)knobSize { _knobSize = knobSize; }
 
 - (float)locationOfValue:(float)value
 {
@@ -103,21 +95,25 @@
     return width * value / ([self maxValue] - [self minValue]) + _knobSize / 2 + 1;
 }
 
-- (void)draw:(NSRect)cellFrame inView:(NSView*)controlView
+- (void)drawBarInside:(NSRect)rect flipped:(BOOL)flipped
 {
-    NSRect knobRect = [self knobRectFlipped:[controlView isFlipped]];
-
     if (_bgImage) {
-        [_bgImage setFlipped:TRUE];
-        [_bgImage drawInRect:cellFrame fromRect:NSZeroRect
-                  operation:NSCompositeSourceOver fraction:1.0];
+        [_bgImage setFlipped:flipped];
+        [_bgImage drawInRect:rect fromRect:NSZeroRect
+                   operation:NSCompositeSourceOver fraction:1.0];
+    }
+    else {
+        // hide original drawing...
+        //[HUDBackgroundColor set];
+        [[NSColor yellowColor] set];
+        NSRectFill(rect);
     }
 
     NSRect trackRect;
-    trackRect.size.width = cellFrame.size.width - _knobSize;
+    trackRect.size.width = rect.size.width - _knobSize;
     trackRect.size.height= [_lImage size].height;
-    trackRect.origin.x = cellFrame.origin.x + _knobSize / 2;
-    trackRect.origin.y = cellFrame.origin.y + (cellFrame.size.height - trackRect.size.height) / 2;
+    trackRect.origin.x = rect.origin.x + _knobSize / 2;
+    trackRect.origin.y = rect.origin.y + (rect.size.height - trackRect.size.height) / 2;
 
     // track
     NSRect rc;
@@ -167,17 +163,12 @@
         [path closePath];
         [path fill];
     }
+}
 
-    // knob
-    if ([(NSControl*)controlView isEnabled]) {
-        /*
-         NSPoint p = NSMakePoint(knobRect.origin.x + (knobRect.size.width  - 8) / 2,
-                                 knobRect.origin.y + (knobRect.size.height - 8) / 2);
-         NSImage* kImage = [NSImage imageNamed:@"MainSeekSliderKnob"];
-         [kImage setFlipped:TRUE];
-         [kImage drawAtPoint:p fromRect:NSZeroRect
-                   operation:NSCompositeSourceOver fraction:1.0];
-         */
+- (void)drawKnob:(NSRect)knobRect
+{
+    if ([(NSControl*)[self controlView] isEnabled]) {
+        NSRect rc;
         rc.size.width  = _knobSize;
         rc.size.height = _knobSize;
         rc.origin.x = knobRect.origin.x + (knobRect.size.width  - rc.size.width)  / 2;
@@ -299,7 +290,7 @@
 @interface MainSeekSliderCell : SeekSliderCell {} @end
 
 @implementation MainSeekSliderCell
-
+/*
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
     // to calc knob rect... I don't know how to draw without super's.
@@ -307,27 +298,21 @@
 
     [self draw:cellFrame inView:controlView];
 }
-
+*/
 @end
 
 @implementation MainSeekSlider
 
-+ (void)initialize
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self setCellClass:[MainSeekSliderCell class]];
-}
-
 - (void)awakeFromNib
 {
-    replaceSliderCell(self, [MainSeekSliderCell class]);
+    [self replaceCell:[MainSeekSliderCell class]];
     SeekSliderCell* cell = [self cell];
     [cell setBgImage:[NSImage imageNamed:@"MainLCD"]
               lImage:[NSImage imageNamed:@"MainSeekSliderLeft"]
               cImage:[NSImage imageNamed:@"MainSeekSliderCenter"]
               rImage:[NSImage imageNamed:@"MainSeekSliderRight"]];
     [cell setKnobColor:[NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.25 alpha:1.0]];
-    [self setKnobThickness:8.0];
+    [cell setKnobSize:8.0];
 }
 /*
 - (void)mouseMoved:(NSEvent*)theEvent
@@ -343,37 +328,33 @@
 @interface FSSeekSliderCell : SeekSliderCell {} @end
 
 @implementation FSSeekSliderCell
-
+/*
 - (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
     // to calc knob rect... I don't know how to draw without super's.
     [super drawWithFrame:cellFrame inView:controlView];
-    [[NSColor colorWithCalibratedWhite:0.1 alpha:0.75] set];
+
+    // hide super's original drawing...
+    [[NSColor colorWithCalibratedWhite:0.1 alpha:0.85] set];
     NSRectFill(cellFrame);
 
     [self draw:cellFrame inView:controlView];
 }
-
+*/
 @end
 
 @implementation FSSeekSlider
 
-+ (void)initialize
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self setCellClass:[FSSeekSliderCell class]];
-}
-
 - (void)awakeFromNib
 {
-    replaceSliderCell(self, [FSSeekSliderCell class]);
+    [self replaceCell:[FSSeekSliderCell class]];
     SeekSliderCell* cell = [self cell];
     [cell setBgImage:nil
               lImage:[NSImage imageNamed:@"FSSeekSliderLeft"]
               cImage:[NSImage imageNamed:@"FSSeekSliderCenter"]
               rImage:[NSImage imageNamed:@"FSSeekSliderRight"]];
     [cell setKnobColor:[NSColor colorWithCalibratedRed:0.75 green:0.75 blue:0.75 alpha:1.0]];
-    [self setKnobThickness:12.0];
+    [cell setKnobSize:12.0];
 }
 
 @end

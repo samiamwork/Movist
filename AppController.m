@@ -85,8 +85,19 @@ NSString* videoCodecName(int codecId);
     [_playPanel setControlPanel:_controlPanel];
     [self updatePlayUI];
 
-    [_volumeSlider      setMinValue:0.0];   [_volumeSlider      setMaxValue:MAX_VOLUME];
-    [_panelVolumeSlider setMinValue:0.0];   [_panelVolumeSlider setMaxValue:MAX_VOLUME];
+    [_volumeSlider      setMinValue:0.0];
+    [_volumeSlider      setMaxValue:MAX_VOLUME];
+    [_volumeSlider replaceCell:[CustomSliderCell class]];
+    CustomSliderCell* cell = [_volumeSlider cell];
+    [cell setImageName:@"MainVolume" backColor:nil
+           trackOffset:5.0 knobOffset:2.0];
+
+    [_panelVolumeSlider setMinValue:0.0];
+    [_panelVolumeSlider setMaxValue:MAX_VOLUME];
+    [_panelVolumeSlider replaceCell:[CustomSliderCell class]];
+    cell = [_panelVolumeSlider cell];
+    [cell setImageName:@"FSVolume" backColor:HUDBackgroundColor
+           trackOffset:0.0 knobOffset:2.0];
     [self updateVolumeUI];
 
     _playRate = 1.0;
@@ -181,15 +192,24 @@ NSString* videoCodecName(int codecId);
     [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
     [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
     [_movieView setSubtitleLineSpacing:[_defaults floatForKey:MSubtitleLineSpacingKey]];
-    [_movieView setAutoSubtitlePositionMaxLines:[_defaults integerForKey:MAutoSubtitlePositionMaxLinesKey]];
 
     // initial update preferences: advanced
     // ...
 
-    // initial update preferences: advanced details
+    // initial update preferences: advanced - details : general
     [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
-    [_movieView setActionOnDragging:[_defaults integerForKey:MActionOnDraggingMovieAreaKey]];
+    [_movieView setDraggingAction:[_defaults integerForKey:MDraggingActionKey]];
+
+    // initial update preferences: advanced - details : video
+    [_movieView setCaptureFormat:[_defaults integerForKey:MCaptureFormatKey]];
     [self setIncludeLetterBoxOnCapture:[_defaults boolForKey:MIncludeLetterBoxOnCaptureKey]];
+    [_movieView setRemoveGreenBox:[_defaults boolForKey:MRemoveGreenBoxKey]];
+
+    // initial update preferences: advanced - details : subtitle
+    [_movieView setAutoSubtitlePositionMaxLines:[_defaults integerForKey:MAutoSubtitlePositionMaxLinesKey]];
+
+    // initial update preferences: advanced - details : full-nav
+    // ...
 
     [self updateUI];
 

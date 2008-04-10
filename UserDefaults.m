@@ -90,8 +90,12 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 #pragma mark prefs: advanced - details
 // General
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
+NSString* MDraggingActionKey                = @"DraggingAction";
+// Video
+NSString* MCaptureFormatKey                 = @"CaptureFormat";
 NSString* MIncludeLetterBoxOnCaptureKey     = @"IncludeLetterBoxOnCapture";
-NSString* MActionOnDraggingMovieAreaKey     = @"ActionOnDraggingMovieArea";
+NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
+// Audio
 // Subtitle
 NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
@@ -106,72 +110,6 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 #pragma mark -
 
 @implementation NSUserDefaults (MovistUtils)
-
-#define DECODER_VALUE(object)           [object intValue]
-#define CODEC_VALUE(ojbect)             [object intValue]
-
-#define DECODER_OBJECT(decoder)         [NSNumber numberWithInt:decoder]
-#define CODEC_KEY(codecId)              [NSString stringWithFormat:@"%d", codecId]
-//#define CODEC_KEY(codecId)              [NSNumber numberWithInt:codecId]
-// I don't know why [NSUserDefaults registerDefaults:] crashes for key of NSNumber.
-
-#define CODEC_BINDING(decoder, codecId) DECODER_OBJECT(decoder), CODEC_KEY(codecId)
-
-- (NSDictionary*)defaultCodecBinding
-{
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_ETC_),
-            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MPEG1),
-            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MPEG2),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MPEG4),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV1),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV2),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV3),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV4),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV5),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV6),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIVX),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DX50),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_XVID),
-            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MP4V),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MPG4),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP42),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP43),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP4S),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_M4S2),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_AP41),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RMP4),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_SEDG),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_FMP4),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_BLZ0),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_H263),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_H264),
-            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_AVC1),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_X264),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VC1),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV1),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV2),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV3),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WVC1),
-            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_SVQ1),
-            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_SVQ3),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP3),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP5),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP6),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP6F),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV10),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV20),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV30),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV40),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_FLV),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_THEORA),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_HUFFYUV),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_CINEPAK),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_INDEO2),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_INDEO3),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MJPEG),
-            nil];
-}
 
 - (void)registerMovistDefaults
 {
@@ -237,20 +175,94 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastUpdateCheckTimeKey];
     // prefs: advanced - codec binding
     [dict setObject:[self defaultCodecBinding] forKey:MDefaultCodecBindingKey];
-    // prefs: advanced - details
+    // prefs: advanced - details: general
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
+    [dict setObject:[NSNumber numberWithInt:DRAGGING_ACTION_NONE] forKey:MDraggingActionKey];
+    // prefs: advanced - details: video
+    [dict setObject:[NSNumber numberWithInt:CAPTURE_FORMAT_PNG] forKey:MCaptureFormatKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MIncludeLetterBoxOnCaptureKey];
-    [dict setObject:[NSNumber numberWithInt:ACTION_ON_DRAGGING_MOVIE_AREA_NONE] forKey:MActionOnDraggingMovieAreaKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MRemoveGreenBoxKey];
+    // prefs: advanced - details: audio
+    // prefs: advanced - details: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
     [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
     [dict setObject:[NSNumber numberWithInt:3] forKey:MAutoSubtitlePositionMaxLinesKey];
     [dict setObject:[NSNumber numberWithInt:SUBTITLE_INFO_DISPLAY_FULL] forKey:MSubtitleInfoDisplayOnOpeningKey];
+    // prefs: advanced - details: full-nav
     [dict setObject:@"~/Movies" forKey:MFullNavPathKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MShowActualPathForLinkKey];
 
     //TRACE(@"registering defaults: %@", dict);
     [self registerDefaults:dict];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSDictionary*)defaultCodecBinding
+{
+    #define DECODER_VALUE(object)           [object intValue]
+    #define CODEC_VALUE(ojbect)             [object intValue]
+
+    #define DECODER_OBJECT(decoder)         [NSNumber numberWithInt:decoder]
+    #define CODEC_KEY(codecId)              [NSString stringWithFormat:@"%d", codecId]
+    //#define CODEC_KEY(codecId)              [NSNumber numberWithInt:codecId]
+    // I don't know why [NSUserDefaults registerDefaults:] crashes for key of NSNumber.
+
+    #define CODEC_BINDING(decoder, codecId) DECODER_OBJECT(decoder), CODEC_KEY(codecId)
+
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_ETC_),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MPEG1),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MPEG2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MPEG4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV1),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV5),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV6),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIVX),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DX50),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_XVID),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MP4V),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MPG4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP42),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP43),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP4S),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_M4S2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_AP41),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RMP4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_SEDG),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_FMP4),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_BLZ0),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_H263),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_H264),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_AVC1),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_X264),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VC1),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV1),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WMV3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_WVC1),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_SVQ1),
+            CODEC_BINDING(DECODER_QUICKTIME,MCODEC_SVQ3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP5),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP6),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_VP6F),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV10),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV20),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV30),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_RV40),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_FLV),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_THEORA),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_HUFFYUV),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_CINEPAK),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_INDEO2),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_INDEO3),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MJPEG),
+            nil];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

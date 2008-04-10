@@ -366,15 +366,32 @@
       [NSArray arrayWithObjects:
        [BoolNode boolNodeWithName:LABEL(@"Activate on Dragging over Main Window")
                               key:MActivateOnDraggingKey],
-       [BoolNode boolNodeWithName:LABEL(@"Include Letter Box on Capture")
-                              key:MIncludeLetterBoxOnCaptureKey],
-       [SelectNode selectNodeWithName:LABEL(@"Action on Dragging Movie Area")
-                                  key:MActionOnDraggingMovieAreaKey
+       [SelectNode selectNodeWithName:LABEL(@"Dragging Action on Movie Area")
+                                  key:MDraggingActionKey
                                titles:[NSArray arrayWithObjects:
                                        NSLocalizedString(@"None", nil),
                                        NSLocalizedString(@"Move Window", nil),
                                        NSLocalizedString(@"Capture Movie", nil),
                                        nil]],
+       nil]]];
+
+    // "Video" category
+    [categories addObject:
+     [CategoryNode categoryNodeWithName:LABEL(@"Video") children:
+      [NSArray arrayWithObjects:
+       [SelectNode selectNodeWithName:LABEL(@"Capture Format")
+                                  key:MCaptureFormatKey
+                               titles:[NSArray arrayWithObjects:
+                                       NSLocalizedString(@"tiff", nil),
+                                       NSLocalizedString(@"jpeg", nil),
+                                       NSLocalizedString(@"png", nil),
+                                       NSLocalizedString(@"bmp", nil),
+                                       NSLocalizedString(@"gif", nil),
+                                       nil]],
+       [BoolNode boolNodeWithName:LABEL(@"Include Letter Box on Capture")
+                              key:MIncludeLetterBoxOnCaptureKey],
+       [BoolNode boolNodeWithName:LABEL(@"Remove Green Box")
+                              key:MRemoveGreenBoxKey],
        nil]]];
 
     // "Subtitle" category
@@ -458,24 +475,31 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
     [item setValue:object];
 
     NSString* key = [item key];
+    // general
     if ([key isEqualToString:MActivateOnDraggingKey]) {
-        [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
+        [_movieView setActivateOnDragging:[object boolValue]];
+    }
+    else if ([key isEqualToString:MDraggingActionKey]) {
+        [_movieView setDraggingAction:[object intValue]];
+    }
+    // video
+    else if ([key isEqualToString:MCaptureFormatKey]) {
+        [_movieView setCaptureFormat:[object intValue]];
     }
     else if ([key isEqualToString:MIncludeLetterBoxOnCaptureKey]) {
-        [[NSApp delegate] setIncludeLetterBoxOnCapture:
-         [_defaults boolForKey:MIncludeLetterBoxOnCaptureKey]];
+        [[NSApp delegate] setIncludeLetterBoxOnCapture:[object boolValue]];
     }
-    else if ([key isEqualToString:MActionOnDraggingMovieAreaKey]) {
-        [_movieView setActionOnDragging:
-         [_defaults integerForKey:MActionOnDraggingMovieAreaKey]];
+    else if ([key isEqualToString:MRemoveGreenBoxKey]) {
+        [_movieView setRemoveGreenBox:[object boolValue]];
     }
+    // subtitles
     else if ([key isEqualToString:MSubtitleReplaceNLWithBRKey]) {
         [_appController reopenSubtitle];
     }
     else if ([key isEqualToString:MAutoSubtitlePositionMaxLinesKey]) {
-        [_movieView setAutoSubtitlePositionMaxLines:
-         [_defaults integerForKey:MAutoSubtitlePositionMaxLinesKey]];
+        [_movieView setAutoSubtitlePositionMaxLines:[object intValue]];
     }
+    // full-nav
 }
 
 - (void)detailsOutlineViewAction:(id)sender

@@ -112,7 +112,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 - (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo
   digitalAudioOut:(BOOL)digitalAudioOut error:(NSError**)error
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     if (![url isFileURL]) {
         *error = [NSError errorWithDomain:[MMovie_FFmpeg name]
                                      code:10000  // FIXME
@@ -162,9 +162,9 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     return self;
 }
 
-- (void)dealloc
+- (void)cleanup
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _quitRequested = TRUE;
 
     [_indexer waitForFinish];
@@ -176,7 +176,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     av_close_input_file(_formatContext);
     _formatContext = 0;
     
-    [super dealloc];
+    [super cleanup];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -226,11 +226,13 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     MTrack* track;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
+        [(FFTrack*)[track impl] cleanupTrack];
         [(FFTrack*)[track impl] waitForFinish];
     }
 
     enumerator = [_audioTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
+        [(FFTrack*)[track impl] cleanupTrack];
         [(FFTrack*)[track impl] waitForFinish];
     }
 }

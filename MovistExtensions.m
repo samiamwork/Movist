@@ -21,6 +21,31 @@
 //
 
 #import "MovistExtensions.h"
+#import "CustomControls.h"
+
+@implementation NSCell (Movist)
+
+- (void)copyAttributesFromCell:(NSCell*)cell
+{
+    [self setTarget:[cell target]];
+    [self setAction:[cell action]];
+    [self setType:[cell type]];
+    [self setEnabled:[cell isEnabled]];
+    [self setBezeled:[cell isBezeled]];
+    [self setBordered:[cell isBordered]];
+    [self setTag:[cell tag]];
+    [self setState:[cell state]];
+    [self setControlSize:[cell controlSize]];
+    [self setControlTint:[cell controlTint]];
+    [self setEditable:[cell isEditable]];
+    [self setFocusRingType:[cell focusRingType]];
+    [self setHighlighted:[cell isHighlighted]];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 
 @implementation NSTextField (Movist)
 
@@ -35,7 +60,169 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@implementation NSButton (Movist)
+
+- (void)replaceCell:(Class)cellClass
+{
+    if ([[self cell] class] != cellClass) {
+        // replace cell
+        NSButtonCell* oldCell = [self cell];
+        NSButtonCell* newCell = [[[cellClass alloc] init] autorelease];
+        [newCell copyAttributesFromCell:oldCell];
+
+        // copy button attributes
+        [newCell setImage:[oldCell image]];
+        [newCell setAlternateImage:[oldCell alternateImage]];
+        [newCell setImagePosition:[oldCell imagePosition]];
+        [newCell setBackgroundColor:[oldCell backgroundColor]];
+        [newCell setBezelStyle:[oldCell bezelStyle]];
+        [newCell setGradientType:[oldCell gradientType]];
+        [newCell setImageDimsWhenDisabled:[oldCell imageDimsWhenDisabled]];
+        [newCell setTransparent:[oldCell isTransparent]];
+        [self setCell:newCell];
+    }
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation NSSlider (Movist)
+
+- (void)replaceCell:(Class)cellClass
+{
+    if ([[self cell] class] != cellClass) {
+        // replace cell
+        NSSliderCell* oldCell = [self cell];
+        NSSliderCell* newCell = [[[cellClass alloc] init] autorelease];
+        [newCell copyAttributesFromCell:oldCell];
+
+        // copy slider attributes
+        [newCell setSliderType:[oldCell sliderType]];
+        [newCell setMaxValue:[oldCell maxValue]];
+        [newCell setMinValue:[oldCell minValue]];
+        [newCell setDoubleValue:[oldCell doubleValue]];
+        [newCell setTickMarkPosition:[oldCell tickMarkPosition]];
+        [newCell setNumberOfTickMarks:[oldCell numberOfTickMarks]];
+        [newCell setAltIncrementValue:[oldCell altIncrementValue]];
+        [newCell setAllowsTickMarkValuesOnly:[oldCell allowsTickMarkValuesOnly]];
+        [self setCell:newCell];
+    }
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @implementation NSWindow (Movist)
+
+- (void)initHUDWindow
+{
+    [self setOpaque:FALSE];
+    [self setAlphaValue:1.0];
+    [self setHasShadow:FALSE];
+    [self useOptimizedDrawing:TRUE];
+    [self setMovableByWindowBackground:TRUE];
+}
+
+- (void)initHUDSubview:(NSView*)subview
+{
+    if ([subview isKindOfClass:[NSTextField class]]) {
+        [(NSTextField*)subview setTextColor:HUDTextColor];
+    }
+    else if ([subview isMemberOfClass:[NSBox class]]) {
+        [[(NSBox*)subview titleCell] setTextColor:HUDTextColor];
+    }
+    else if ([subview isMemberOfClass:[NSSlider class]] &&
+             [[(NSSlider*)subview cell] isMemberOfClass:[NSSliderCell class]]) {
+        [(NSSlider*)subview replaceCell:[CustomSliderCell class]];
+        CustomSliderCell* cell = [(NSSlider*)subview cell];
+        [cell setImageName:@"HUD" backColor:HUDBackgroundColor
+               trackOffset:2 knobOffset:0];
+    }
+    else if ([subview isMemberOfClass:[NSTableView class]]) {
+        [(NSTableView*)subview setBackgroundColor:
+            [NSColor colorWithCalibratedWhite:0.05 alpha:0.75]];
+    }
+    
+    // do it all subviews recursively
+    if ([subview isKindOfClass:[NSTabView class]]) {
+        NSTabViewItem* tabItem;
+        NSEnumerator* enumerator = [[(NSTabView*)subview tabViewItems] objectEnumerator];
+        while (tabItem = [enumerator nextObject]) {
+            [self initHUDSubview:[tabItem view]];
+        }
+    }
+    else {
+        NSEnumerator* enumerator = [[subview subviews] objectEnumerator];
+        while (subview = [enumerator nextObject]) {
+            [self initHUDSubview:subview];
+        }
+    }
+}
+
+- (void)updateHUDBackground
+{
+    NSView* cv = [self contentView];
+    NSSize bgSize = [cv convertSize:[self frame].size fromView:nil];
+    NSImage* bgImage = [[[NSImage alloc] initWithSize:bgSize] autorelease];
+    [bgImage lockFocus];
+
+    float radius = 6.0;
+    float titlebarHeight = 19.0;
+
+    // make background
+    NSBezierPath* bgPath = [NSBezierPath bezierPath];
+    NSRect bgRect = NSMakeRect(0, 0, bgSize.width, bgSize.height - titlebarHeight);
+    bgRect = [cv convertRect:bgRect fromView:nil];
+    int minX = NSMinX(bgRect), midX = NSMidX(bgRect), maxX = NSMaxX(bgRect);
+    int minY = NSMinY(bgRect), midY = NSMidY(bgRect), maxY = NSMaxY(bgRect);
+
+    [bgPath setFlatness:0.01];
+    [bgPath moveToPoint:NSMakePoint(midX, minY)];
+    [bgPath appendBezierPathWithArcFromPoint:NSMakePoint(maxX, minY) 
+                                     toPoint:NSMakePoint(maxX, midY) 
+                                      radius:radius];
+    [bgPath lineToPoint:NSMakePoint(maxX, maxY)];
+    [bgPath lineToPoint:NSMakePoint(minX, maxY)];
+    [bgPath appendBezierPathWithArcFromPoint:NSMakePoint(minX, maxY) 
+                                     toPoint:NSMakePoint(minX, midY) 
+                                      radius:radius];
+    [bgPath appendBezierPathWithArcFromPoint:bgRect.origin 
+                                     toPoint:NSMakePoint(midX, minY) 
+                                      radius:radius];
+    [bgPath closePath];
+
+    [HUDBackgroundColor set];   [bgPath fill];
+    [HUDBorderColor set];       [bgPath stroke];
+
+    // make titlebar
+    NSBezierPath* titlePath = [NSBezierPath bezierPath];
+    NSRect titlebarRect = NSMakeRect(0, bgSize.height - titlebarHeight, bgSize.width, titlebarHeight);
+    titlebarRect = [cv convertRect:titlebarRect fromView:nil];
+    minX = NSMinX(titlebarRect), midX = NSMidX(titlebarRect), maxX = NSMaxX(titlebarRect);
+    minY = NSMinY(titlebarRect), midY = NSMidY(titlebarRect), maxY = NSMaxY(titlebarRect);
+
+    [titlePath setFlatness:0.01];
+    [titlePath moveToPoint:NSMakePoint(minX, minY)];
+    [titlePath lineToPoint:NSMakePoint(maxX, minY)];
+    [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(maxX, maxY) 
+                                        toPoint:NSMakePoint(midX, maxY) 
+                                         radius:radius];
+    [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(minX, maxY) 
+                                        toPoint:NSMakePoint(minX, minY) 
+                                         radius:radius];
+    [titlePath closePath];
+
+    [HUDTitleBackColor set];    [titlePath fill];
+    [HUDBorderColor set];       [titlePath stroke];
+
+    [bgImage unlockFocus];
+
+    [self setBackgroundColor:[NSColor colorWithPatternImage:bgImage]];
+}
 
 - (void)setMovieURL:(NSURL*)movieURL
 {
@@ -67,66 +254,6 @@
     [animation setDuration:duration];
     [animation startAnimation];
     [animation release];
-}
-
-- (NSColor*)makeHUDBackgroundColor
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSView* cv = [self contentView];
-    NSSize bgSize = [cv convertSize:[self frame].size fromView:nil];
-    NSImage* bg = [[NSImage alloc] initWithSize:bgSize];
-    [bg lockFocus];
-
-    float radius = 6.0;
-    float titlebarHeight = 19.0;
-
-    // make background
-    NSBezierPath* bgPath = [NSBezierPath bezierPath];
-    NSRect bgRect = NSMakeRect(0, 0, bgSize.width, bgSize.height - titlebarHeight);
-    bgRect = [cv convertRect:bgRect fromView:nil];
-    int minX = NSMinX(bgRect), midX = NSMidX(bgRect), maxX = NSMaxX(bgRect);
-    int minY = NSMinY(bgRect), midY = NSMidY(bgRect), maxY = NSMaxY(bgRect);
-    
-    [bgPath moveToPoint:NSMakePoint(midX, minY)];
-    [bgPath appendBezierPathWithArcFromPoint:NSMakePoint(maxX, minY) 
-                                     toPoint:NSMakePoint(maxX, midY) 
-                                      radius:radius];
-    [bgPath lineToPoint:NSMakePoint(maxX, maxY)];
-    [bgPath lineToPoint:NSMakePoint(minX, maxY)];
-    [bgPath appendBezierPathWithArcFromPoint:NSMakePoint(minX, maxY) 
-                                     toPoint:NSMakePoint(minX, midY) 
-                                      radius:radius];
-    [bgPath appendBezierPathWithArcFromPoint:bgRect.origin 
-                                     toPoint:NSMakePoint(midX, minY) 
-                                      radius:radius];
-    [bgPath closePath];
-
-    [[NSColor colorWithCalibratedWhite:0.1 alpha:0.75] set];
-    [bgPath fill];
-
-    // make titlebar
-    NSBezierPath* titlePath = [NSBezierPath bezierPath];
-    NSRect titlebarRect = NSMakeRect(0, bgSize.height - titlebarHeight, bgSize.width, titlebarHeight);
-    titlebarRect = [cv convertRect:titlebarRect fromView:nil];
-    minX = NSMinX(titlebarRect), midX = NSMidX(titlebarRect), maxX = NSMaxX(titlebarRect);
-    minY = NSMinY(titlebarRect), midY = NSMidY(titlebarRect), maxY = NSMaxY(titlebarRect);
-
-    [titlePath moveToPoint:NSMakePoint(minX, minY)];
-    [titlePath lineToPoint:NSMakePoint(maxX, minY)];
-    [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(maxX, maxY) 
-                                        toPoint:NSMakePoint(midX, maxY) 
-                                         radius:radius];
-    [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(minX, maxY) 
-                                        toPoint:NSMakePoint(minX, minY) 
-                                         radius:radius];
-    [titlePath closePath];
-
-    [[NSColor colorWithCalibratedWhite:0.25 alpha:0.75] set];
-    [titlePath fill];
-
-    [bg unlockFocus];
-
-    return [NSColor colorWithPatternImage:[bg autorelease]];
 }
 
 @end

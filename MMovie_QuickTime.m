@@ -218,26 +218,6 @@
     return self;
 }
 
-- (void)dealloc
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([_indexingUpdateTimer isValid]) {
-        [_indexingUpdateTimer invalidate];
-        _indexingUpdateTimer = nil;
-    }
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-    SetMovieVisualContext([_qtMovie quickTimeMovie], 0);
-    if (_visualContext) {
-        CFRelease(_visualContext);
-    }
-    [_qtMovie release];
-    _qtMovie = nil;
-
-    [super dealloc];
-}
-
 - (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
              pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
                    error:(NSError**)error
@@ -269,6 +249,24 @@
     [nc addObserver:self selector:@selector(qtMovieEnded:)
                name:QTMovieDidEndNotification object:_qtMovie];
     return TRUE;
+}
+
+- (void)cleanup
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_indexingUpdateTimer isValid]) {
+        [_indexingUpdateTimer invalidate];
+        _indexingUpdateTimer = nil;
+    }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    SetMovieVisualContext([_qtMovie quickTimeMovie], 0);
+    if (_visualContext) {
+        CFRelease(_visualContext);
+    }
+    [_qtMovie release], _qtMovie = nil;
+    [super cleanup];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -53,7 +53,7 @@
 
 - (id)initWithCapacity:(unsigned int)capacity
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, capacity);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, capacity);
     self = [super init];
     if (self) {
         _data = malloc(sizeof(UInt8) * capacity);
@@ -67,13 +67,14 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     free(_data);
     [_mutex dealloc];
     [super dealloc];
 }
 
-- (void)clear { 
+- (void)clear
+{
     [_mutex lock];
     _rear = _front;
     [_mutex unlock];
@@ -319,21 +320,17 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 
 - (void)cleanupTrack
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    while (AudioOutputUnitStop(_audioUnit) != 0) {
-        assert(FALSE);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_audioUnit) {
+        [self stopAudio];
+        while (AudioUnitUninitialize(_audioUnit) != 0) {
+            assert(FALSE);
+        }
+        while (CloseComponent(_audioUnit) != 0) {
+            assert(FALSE);
+        }
+        _audioUnit = 0;
     }
-    while (AudioUnitUninitialize(_audioUnit) != 0) {
-        assert(FALSE);
-    }
-    while (CloseComponent(_audioUnit) != 0) {
-        assert(FALSE);
-    }
-    /*
-    while (_playThreading) {
-        [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
-    }
-     */
     [_dataQueue release];
     _dataQueue = 0;
 
@@ -356,12 +353,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         //[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }   
     _running = FALSE;
-}
-
-- (void)waitForFinish
-{
-    [self stopAudio];
-    [super waitForFinish];
 }
 
 - (float)volume { return _volume; }

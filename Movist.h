@@ -61,10 +61,20 @@ enum {
     ASPECT_RATIO_2_35,          // 2.35 : 1 (Screen)
 };
 
+#pragma mark dragging-action on movie-area
 enum {
-    ACTION_ON_DRAGGING_MOVIE_AREA_NONE,
-    ACTION_ON_DRAGGING_MOVIE_AREA_MOVE_WINDOW,
-    ACTION_ON_DRAGGING_MOVIE_AREA_CAPTURE_MOVIE,
+    DRAGGING_ACTION_NONE,
+    DRAGGING_ACTION_MOVE_WINDOW,
+    DRAGGING_ACTION_CAPTURE_MOVIE,
+};
+
+#pragma mark movie-capture format
+enum {
+    CAPTURE_FORMAT_TIFF,
+    CAPTURE_FORMAT_JPEG,
+    CAPTURE_FORMAT_PNG,
+    CAPTURE_FORMAT_BMP,
+    CAPTURE_FORMAT_GIF,
 };
 
 #pragma mark subtitle-info display

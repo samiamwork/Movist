@@ -124,16 +124,17 @@
             LANGUAGE = ObjC;
             OUTLETS =             {
                 "_appController" = AppController;
-                "_filenameTextField" = NSTextField;
+                "_movieFilenameTextField" = NSTextField;
                 "_movieView" = MMovieView;
                 "_playbackRateSlider" = NSSlider;
+                "_subtitleFilenameTextField" = NSTextField;
                 "_tabView" = NSTabView;
                 "_videoBrightnessSlider" = NSSlider;
                 "_videoContrastSlider" = NSSlider;
                 "_videoHueSlider" = NSSlider;
                 "_videoSaturationSlider" = NSSlider;
             };
-            SUPERCLASS = NSPanel;
+            SUPERCLASS = NSWindow;
         },
                 {
             CLASS = FSSeekSlider;

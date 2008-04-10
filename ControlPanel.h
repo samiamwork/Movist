@@ -25,8 +25,6 @@
 @class AppController;
 @class MMovieView;
 
-@interface WindowMoveTextField : NSTextField {} @end
-
 @interface ControlPanel : NSPanel
 {
     IBOutlet AppController* _appController;

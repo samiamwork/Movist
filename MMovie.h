@@ -127,6 +127,7 @@ typedef struct {
 - (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
              pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
                    error:(NSError**)error;
+- (void)cleanup;
 
 #pragma mark -
 - (NSURL*)url;

@@ -121,7 +121,7 @@
     IBOutlet MainWindow* _mainWindow;
     IBOutlet MMovieView* _movieView;
     IBOutlet NSButton* _muteButton;
-    IBOutlet MainVolumeSlider* _volumeSlider;
+    IBOutlet NSSlider* _volumeSlider;
     IBOutlet MainSeekSlider* _seekSlider;
     IBOutlet NSButton* _playButton;
     IBOutlet TimeTextField* _lTimeTextField;
@@ -151,7 +151,7 @@
     // play panel
     IBOutlet PlayPanel* _playPanel;
     IBOutlet NSButton* _panelMuteButton;
-    IBOutlet FSVolumeSlider* _panelVolumeSlider;
+    IBOutlet NSSlider* _panelVolumeSlider;
     IBOutlet FSSeekSlider* _panelSeekSlider;
     IBOutlet NSButton* _panelPlayButton;
     IBOutlet TimeTextField* _panelLTimeTextField;

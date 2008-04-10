@@ -44,19 +44,9 @@
 	CVOpenGLTextureRef _image;
     CGRect _movieRect;
     CGRect _imageRect;
-    int _fullScreenFill;
-    float _fullScreenUnderScan;
-    int _actionOnDragging;
-    BOOL _includeLetterBoxOnCapture;
 
     MMovie* _movie;
     NSArray* _subtitles;
-
-    // fps calc.
-    float _currentFps;
-    double _lastFpsCheckTime;
-    double _fpsElapsedTime;
-    int _fpsFrameCount;
 
     // subtitle
     SubtitleRenderer* _subtitleRenderer;
@@ -74,6 +64,22 @@
     float _messageHideInterval;
     NSTimer* _messageHideTimer;
     
+    // etc. options
+    int _fullScreenFill;
+    float _fullScreenUnderScan;
+    int _draggingAction;
+    int _captureFormat;
+    BOOL _includeLetterBoxOnCapture;
+    BOOL _removeGreenBox;
+    NSImage* _captureImage;
+    NSPoint _draggingPoint;
+
+    // fps calc.
+    float _currentFps;
+    double _lastFpsCheckTime;
+    double _fpsElapsedTime;
+    int _fpsFrameCount;
+
     // drag & drop
     unsigned int _dragAction;
     BOOL _activateOnDragging;
@@ -100,8 +106,11 @@
 
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
 
-- (void)setActionOnDragging:(int)actionOnDragging;
-- (void)setIncludeLetterBoxOnCapture:(BOOL)includeLetterBox;
+- (void)setDraggingAction:(int)action;
+- (void)setCaptureFormat:(int)format;
+- (void)setIncludeLetterBoxOnCapture:(BOOL)include;
+- (void)setRemoveGreenBox:(BOOL)remove;
+
 - (void)copyCurrentImage:(BOOL)alternative;
 - (void)saveCurrentImage:(BOOL)alternative;
 - (IBAction)copy:(id)sender;

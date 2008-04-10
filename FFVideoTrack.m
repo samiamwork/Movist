@@ -51,7 +51,7 @@
 
 - (id)initWithCapacity:(unsigned int)capacity
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, capacity);
+    //TRACE(@"%s %d", __PRETTY_FUNCTION__, capacity);
     self = [super init];
     if (self) {
         _packet = malloc(sizeof(AVPacket) * capacity);
@@ -65,7 +65,7 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     free(_packet);
     [_mutex dealloc];
     [super dealloc];

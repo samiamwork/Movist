@@ -90,8 +90,12 @@ extern NSString* MLastUpdateCheckTimeKey;
 #pragma mark prefs: advanced - details
 // General
 extern NSString* MActivateOnDraggingKey;
+extern NSString* MDraggingActionKey;
+// Video
+extern NSString* MCaptureFormatKey;
 extern NSString* MIncludeLetterBoxOnCaptureKey;
-extern NSString* MActionOnDraggingMovieAreaKey;
+extern NSString* MRemoveGreenBoxKey;
+// Audio
 // Subtitle
 extern NSString* MDisablePerianSubtitleKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
@@ -110,6 +114,8 @@ extern NSString* MShowActualPathForLinkKey;
 - (void)registerMovistDefaults;
 
 ////////////////////////////////////////////////////////////////////////////////
+
+- (NSDictionary*)defaultCodecBinding;
 
 - (int)defaultDecoderForCodecId:(int)codecId;
 - (void)setDefaultDecoder:(int)decoder forCodecId:(int)codecId;

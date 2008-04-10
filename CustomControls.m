@@ -22,35 +22,6 @@
 
 #import "CustomControls.h"
 
-@interface NSCell (CopyAttributes)
-
-- (void)copyAttributesFromCell:(NSCell*)cell;
-
-@end
-
-@implementation NSCell (CopyAttributes)
-
-- (void)copyAttributesFromCell:(NSCell*)cell
-{
-    [self setTarget:[cell target]];
-    [self setAction:[cell action]];
-    [self setType:[cell type]];
-    [self setEnabled:[cell isEnabled]];
-    [self setBezeled:[cell isBezeled]];
-    [self setBordered:[cell isBordered]];
-    [self setTag:[cell tag]];
-    [self setState:[cell state]];
-    [self setControlSize:[cell controlSize]];
-    [self setControlTint:[cell controlTint]];
-    [self setEditable:[cell isEditable]];
-    [self setFocusRingType:[cell focusRingType]];
-    [self setHighlighted:[cell isHighlighted]];
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-
 @interface HoverButtonCell : NSButtonCell
 {
     NSImage* _hoverImage;
@@ -92,32 +63,10 @@
 
 @implementation HoverButton
 
-+ (void)initialize
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self setCellClass:[HoverButtonCell class]];
-}
-
 - (void)awakeFromNib
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([[self cell] class] != [HoverButtonCell class]) {
-        // replace cell
-        NSButtonCell* oldCell = [self cell];
-        NSButtonCell* newCell = [[[HoverButtonCell alloc] init] autorelease];
-        [newCell copyAttributesFromCell:oldCell];
-
-        // copy button attributes
-        [newCell setImage:[oldCell image]];
-        [newCell setAlternateImage:[oldCell alternateImage]];
-        [newCell setImagePosition:[oldCell imagePosition]];
-        [newCell setBackgroundColor:[oldCell backgroundColor]];
-        [newCell setBezelStyle:[oldCell bezelStyle]];
-        [newCell setGradientType:[oldCell gradientType]];
-        [newCell setImageDimsWhenDisabled:[oldCell imageDimsWhenDisabled]];
-        [newCell setTransparent:[oldCell isTransparent]];
-        [self setCell:newCell];
-    }
+    [self replaceCell:[HoverButtonCell class]];
     [[self cell] setShowsBorderOnlyWhileMouseInside:TRUE];
 }
 
@@ -145,16 +94,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@implementation TimeTextField
+@implementation MainLCDView
 
 - (void)drawRect:(NSRect)rect
 {
     NSImage* bgImage = [NSImage imageNamed:@"MainLCD"];
     [bgImage drawInRect:[self bounds] fromRect:NSZeroRect
               operation:NSCompositeSourceOver fraction:1.0];
-
-    [super drawRect:rect];
 }
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation TimeTextField
 
 - (void)mouseDown:(NSEvent*)event
 {
@@ -171,101 +125,90 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-void replaceSliderCell(NSSlider* slider, Class sliderCellClass)
-{
-    if ([[slider cell] class] != sliderCellClass) {
-        // replace cell
-        NSSliderCell* oldCell = [slider cell];
-        NSSliderCell* newCell = [[[sliderCellClass alloc] init] autorelease];
-        [newCell copyAttributesFromCell:oldCell];
-        
-        // copy slider attributes
-        [newCell setSliderType:[oldCell sliderType]];
-        [newCell setMaxValue:[oldCell maxValue]];
-        [newCell setMinValue:[oldCell minValue]];
-        [newCell setDoubleValue:[oldCell doubleValue]];
-        [newCell setKnobThickness:[oldCell knobThickness]];
-        [newCell setTickMarkPosition:[oldCell tickMarkPosition]];
-        [newCell setNumberOfTickMarks:[oldCell numberOfTickMarks]];
-        [newCell setAltIncrementValue:[oldCell altIncrementValue]];
-        [newCell setAllowsTickMarkValuesOnly:[oldCell allowsTickMarkValuesOnly]];
-        [slider setCell:newCell];
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface MainVolumeSliderCell : NSSliderCell
-{
-    NSImage* _knobImage;
-    NSImage* _knobImagePressed;
-    NSImage* _knobImageDisabled;
-}
-
-- (void)setKnobImage:(NSImage*)image
-        imagePressed:(NSImage*)imagePressed
-       imageDisabled:(NSImage*)imageDisabled;
-
-@end
-
-@implementation MainVolumeSliderCell
+@implementation CustomSliderCell
 
 - (void)dealloc
 {
+    [_backColor release];
     [_knobImage release];
     [_knobImagePressed release];
     [_knobImageDisabled release];
+    [_trackImage release];
+    [_trackImageDisabled release];
 
     [super dealloc];
 }
 
-- (void)setKnobImage:(NSImage*)image
-        imagePressed:(NSImage*)imagePressed
-       imageDisabled:(NSImage*)imageDisabled
+- (void)setImageName:(NSString*)imageName backColor:(NSColor*)backColor
+         trackOffset:(float)trackOffset knobOffset:(float)knobOffset
 {
-    _knobImage         = [image retain];
-    _knobImagePressed  = [imagePressed retain];
-    _knobImageDisabled = [imageDisabled retain];
+#define sliderImageNamed(postfix)   \
+    [[NSImage imageNamed:[imageName stringByAppendingString:postfix]] retain]
+    _trackImage         = sliderImageNamed(@"SliderTrack");
+    _trackImageDisabled = sliderImageNamed(@"SliderTrackDisabled");
+    if (!_trackImageDisabled) {
+        _trackImageDisabled = [_trackImage retain];
+    }
+    _knobImage          = sliderImageNamed(@"SliderKnob");
+    _knobImagePressed   = sliderImageNamed(@"SliderKnobPressed");
+    if (!_knobImagePressed) {
+        _knobImagePressed = [_knobImage retain];
+    }
+    _knobImageDisabled  = sliderImageNamed(@"SliderKnobDisabled");
+    if (!_knobImageDisabled) {
+        _knobImageDisabled = [_knobImage retain];
+    }
+    _backColor = [backColor retain];
+    _trackOffset = trackOffset;
+    _knobOffset = knobOffset;
+}
+
+- (void)drawBarInside:(NSRect)rect flipped:(BOOL)flipped
+{
+    NSImage* track = ([self isEnabled]) ? _trackImage : _trackImageDisabled;
+
+    rect.origin.x -= ([_trackImage size].width - rect.size.width) / 2;
+    rect.origin.y += _trackOffset;
+    if (_backColor) {   // hide original drawing...
+        [_backColor set];
+        TRACE(@"tick-count=%d", [self numberOfTickMarks]);
+        if (0 < [self numberOfTickMarks]) {
+            NSRect rc = rect;
+            rc.size.height = 5;     // except tick marks
+            NSRectFill(rc);
+        }
+        else {
+            NSRectFill(rect);
+        }
+    }
+    [track setFlipped:flipped];
+    [track drawAtPoint:rect.origin fromRect:NSZeroRect
+             operation:NSCompositeSourceOver fraction:1.0];
+}
+
+- (NSRect)knobRectFlipped:(BOOL)flipped
+{
+    NSRect rect = [super knobRectFlipped:flipped];
+    rect.origin.x -= ([_knobImage size].width - rect.size.width) / 2;
+    rect.origin.y += _knobOffset;
+    return rect;
 }
 
 - (void)drawKnob:(NSRect)knobRect
 {
-    NSImage* image = (![self isEnabled])     ? _knobImageDisabled :
-                     ([self mouseDownFlags]) ? _knobImagePressed :
-                                               _knobImage;
-    [image setFlipped:TRUE];
-    NSPoint p = NSMakePoint(knobRect.origin.x, knobRect.origin.y + 2);
-    [image drawAtPoint:p fromRect:NSZeroRect
-             operation:NSCompositeSourceOver fraction:1.0];
-}
-
-@end
-
-@implementation MainVolumeSlider
-
-+ (void)initialize
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self setCellClass:[MainVolumeSliderCell class]];
-}
-
-- (void)awakeFromNib
-{
-    replaceSliderCell(self, [MainVolumeSliderCell class]);
-    MainVolumeSliderCell* cell = [self cell];
-    [cell setKnobImage:[NSImage imageNamed:@"MainVolumeSliderKnob"]
-          imagePressed:[NSImage imageNamed:@"MainVolumeSliderKnobPressed"]
-         imageDisabled:[NSImage imageNamed:@"MainVolumeSliderKnobDisabled"]];
-    [self setKnobThickness:14.0];
+    NSImage* knob = (![self isEnabled]) ? _knobImageDisabled :
+                    ([self mouseDownFlags]) ? _knobImagePressed : _knobImage;
+    [knob setFlipped:TRUE];
+    [knob drawAtPoint:knobRect.origin fromRect:NSZeroRect
+            operation:NSCompositeSourceOver fraction:1.0];
 }
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
 
-@implementation FSVolumeSlider
+@implementation HUDTabView
+
+- (BOOL)mouseDownCanMoveWindow { return TRUE; }
 
 @end
-

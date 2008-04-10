@@ -34,11 +34,7 @@
                                 styleMask:NSBorderlessWindowMask
                                   backing:bufferingType
                                     defer:deferCreation]) {
-        [self setOpaque:FALSE];
-        [self setAlphaValue:1.0];
-        [self setHasShadow:FALSE];
-        [self useOptimizedDrawing:TRUE];
-        [self setMovableByWindowBackground:TRUE];
+        [self initHUDWindow];
     }
     return self;
 }
@@ -47,7 +43,8 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self setDelegate:self];
-    [self setBackgroundColor:[self makeHUDBackgroundColor]];
+    [self updateHUDBackground];
+    [self initHUDSubview:[self contentView]];
     _movingByDragging = FALSE;
 }
 

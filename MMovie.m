@@ -40,6 +40,7 @@
 
 - (void)dealloc
 {
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_summary release];
     [_name release];
     [_movie release];
@@ -352,14 +353,13 @@
     return TRUE;
 }
 
-- (void)dealloc
+- (void)cleanup
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_audioTracks release];
     [_videoTracks release];
     [_url release];
-
-    [super dealloc];
+    [self release];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

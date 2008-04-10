@@ -42,7 +42,7 @@ static AudioStreamID _audioStreamID;
 {
     if (_audioDeviceSupportsDigital &&
         [_defaults boolForKey:MAutodetectDigitalAudioOutKey]) {
-        return (_movie) ? [_movie hasDigitalAudio] : TRUE;
+        return _movie && [_movie hasDigitalAudio];
     }
     return FALSE;
 }
