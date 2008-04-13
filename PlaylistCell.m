@@ -84,11 +84,21 @@
             textColor = [NSColor disabledControlTextColor];
         }
     }
-    else if ([NSApp isActive] && [self isHighlighted]) {
-        textColor = [NSColor controlHighlightColor];
+    else if ([NSApp isActive]) {
+        if ([self isHighlighted]) {
+            textColor = [NSColor controlHighlightColor];
+        }
+        else {
+            textColor = HUDButtonTextColor;
+        }
     }
     else {
-        textColor = [NSColor controlTextColor];
+        if ([self isHighlighted]) {
+            textColor = [NSColor controlTextColor];
+        }
+        else {
+            textColor = HUDButtonTextColor;
+        }
     }
 
     NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];

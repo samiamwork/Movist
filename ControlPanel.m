@@ -50,7 +50,10 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self updateHUDBackground];
-    [self initHUDSubview:[self contentView]];
+    [self initHUDSubviews];
+
+    _initialDragPoint.x = -1;
+    _initialDragPoint.y = -1;
 
     [_videoBrightnessSlider setMinValue:-1.0];
     [_videoBrightnessSlider setMaxValue:+1.0];
@@ -82,6 +85,12 @@
     }
 }
 
+- (void)dealloc
+{
+    [self cleanupHUDWindow];
+    [super dealloc];
+}
+
 - (void)orderOut:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -92,6 +101,41 @@
 }
 
 - (BOOL)canBecomeKeyWindow { return FALSE; }
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark window-moving by dragging
+
+- (void)mouseDown:(NSEvent*)event
+{
+    NSRect frame = [self frame];
+    _initialDragPoint = [self convertBaseToScreen:[event locationInWindow]];
+    _initialDragPoint.x -= frame.origin.x;
+    _initialDragPoint.y -= frame.origin.y;
+}
+
+- (void)mouseUp:(NSEvent*)event
+{
+    _initialDragPoint.x = -1;
+    _initialDragPoint.y = -1;
+}
+
+- (void)mouseDragged:(NSEvent*)event
+{
+    if (0 <= _initialDragPoint.x && 0 <= _initialDragPoint.y) {
+        NSPoint p = [self convertBaseToScreen:[event locationInWindow]];
+        NSRect sr = [[self screen] frame];
+        NSRect wr = [self frame];
+        
+        NSPoint origin;
+        origin.x = p.x - _initialDragPoint.x;
+        origin.y = p.y - _initialDragPoint.y;
+        if (NSMaxY(sr) < origin.y + wr.size.height) {
+            origin.y = sr.origin.y + (sr.size.height - wr.size.height);
+        }
+        [self setFrameOrigin:origin];
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 #pragma mark -

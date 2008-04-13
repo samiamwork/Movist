@@ -38,7 +38,7 @@
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, playlist);
     if (self = [super initWithWindowNibName:@"Playlist"]) {
-        [self setWindowFrameAutosaveName:@"PlaylistWindow"];
+        [self setWindowFrameAutosaveName:@"PlaylistPanel"];
         _appController = [appController retain];
         _playlist = [playlist retain];
     }
@@ -66,11 +66,18 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist release];
     [_appController release];
+    [[self window] cleanupHUDWindow];
     [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+
+- (void)showWindow:(id)sender
+{
+    [(NSPanel*)[self window] setFloatingPanel:TRUE];
+    [super showWindow:sender];
+}
 
 - (void)runSheetForWindow:(NSWindow*)window
 {
@@ -168,15 +175,9 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL itemSelected = (0 <= [_tableView selectedRow]);
-    if (itemSelected) {
-        [_removeButton setImage:[NSImage imageNamed:@"PlaylistRemove"]];
-        [_removeButton setAlternateImage:[NSImage imageNamed:@"PlaylistRemovePressed"]];
-    }
-    else {
-        NSImage* image = [NSImage imageNamed:@"PlaylistRemoveDisabled"];
-        [_removeButton setImage:image];
-        [_removeButton setAlternateImage:image];
-    }
+    NSString* imageName = (itemSelected) ? @"PlaylistRemove" : @"PlaylistRemoveDisabled";
+    [_removeButton setEnabled:itemSelected];
+    [_removeButton setImage:[NSImage imageNamed:imageName]];
 }
 
 - (void)updateRepeatUI
@@ -192,6 +193,12 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_tableView reloadData];
+    if ([_playlist currentItem]) {
+        int rowIndex = [_playlist indexOfItem:[_playlist currentItem]];
+        if (0 <= rowIndex) {
+            [_tableView scrollRowToVisible:rowIndex];
+        }
+    }
     [self updateRemoveButton];
     [self updateRepeatUI];
 

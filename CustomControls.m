@@ -125,6 +125,140 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@implementation CustomButtonCell
+
+- (void)dealloc
+{
+    [_rImagePressed release];
+    [_rImage release];
+    [_mImagePressed release];
+    [_mImage release];
+    [_lImagePressed release];
+    [_lImage release];
+    
+    [super dealloc];
+}
+
+- (void)setImageName:(NSString*)imageName titleColor:(NSColor*)titleColor
+         titleOffset:(float)titleOffset
+{
+    if ([self tag] < 0) {
+        _lImage        = imageNamedWithPostfix(imageName, @"ButtonRoundLeft");
+        _lImagePressed = imageNamedWithPostfix(imageName, @"ButtonRoundLeftPressed");
+        _rImage        = imageNamedWithPostfix(imageName, @"ButtonFlatRight");
+        _rImagePressed = imageNamedWithPostfix(imageName, @"ButtonFlatRightPressed");
+    }
+    else if ([self tag] == 0) {
+        _lImage        = imageNamedWithPostfix(imageName, @"ButtonRoundLeft");
+        _lImagePressed = imageNamedWithPostfix(imageName, @"ButtonRoundLeftPressed");
+        _rImage        = imageNamedWithPostfix(imageName, @"ButtonRoundRight");
+        _rImagePressed = imageNamedWithPostfix(imageName, @"ButtonRoundRightPressed");
+    }
+    else {  // [self tag] > 0
+        _lImage        = imageNamedWithPostfix(imageName, @"ButtonFlatLeft");
+        _lImagePressed = imageNamedWithPostfix(imageName, @"ButtonFlatLeftPressed");
+        _rImage        = imageNamedWithPostfix(imageName, @"ButtonRoundRight");
+        _rImagePressed = imageNamedWithPostfix(imageName, @"ButtonRoundRightPressed");
+    }
+    _mImage        = imageNamedWithPostfix(imageName, @"ButtonMid");
+    _mImagePressed = imageNamedWithPostfix(imageName, @"ButtonMidPressed");
+
+    if (0 < [[self attributedTitle] length]) {
+        NSMutableAttributedString* title = [NSMutableAttributedString alloc];
+        [[title initWithAttributedString:[self attributedTitle]] autorelease];
+        NSRange range = NSMakeRange(0, [title length]);
+        [title addAttribute:NSForegroundColorAttributeName value:titleColor range:range];
+        [title removeAttribute:NSShadowAttributeName range:range];
+        [self setAttributedTitle:title];
+        _titleOffset = titleOffset;
+    }
+}
+
+- (void)drawBezelWithFrame:(NSRect)frame inView:(NSView*)controlView
+{
+    NSRect rect = frame;
+    rect.origin.y += ((int)frame.size.height - (int)[_lImage size].height) / 2;
+    if (_cFlags.highlighted) {
+        [self drawInRect:rect leftImage:_lImagePressed
+                midImage:_mImagePressed rightImage:_rImagePressed];
+    }
+    else {
+        [self drawInRect:rect leftImage:_lImage
+                midImage:_mImage rightImage:_rImage];
+    }
+}
+
+- (NSRect)titleRectForBounds:(NSRect)rect
+{
+    rect.origin.y -= _titleOffset;
+    return rect;
+}
+/*
+- (NSRect)imageRectForBounds:(NSRect)rect
+{
+    rect.origin.y -= _titleOffset;
+    return rect;
+}
+*/
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation CustomPopUpButtonCell
+
+- (void)dealloc
+{
+    [_titleColor release];
+    [_rImagePressed release];
+    [_rImage release];
+    [_mImagePressed release];
+    [_mImage release];
+    [_lImagePressed release];
+    [_lImage release];
+    
+    [super dealloc];
+}
+
+- (void)setImageName:(NSString*)imageName titleColor:(NSColor*)titleColor
+{
+    _lImage        = imageNamedWithPostfix(imageName, @"PopUpLeft");
+    _lImagePressed = imageNamedWithPostfix(imageName, @"PopUpLeftPressed");
+    _mImage        = imageNamedWithPostfix(imageName, @"PopUpMid");
+    _mImagePressed = imageNamedWithPostfix(imageName, @"PopUpMidPressed");
+    _rImage        = imageNamedWithPostfix(imageName, @"PopUpRight");
+    _rImagePressed = imageNamedWithPostfix(imageName, @"PopUpRightPressed");
+    _titleColor = [titleColor retain];
+}
+
+- (void)drawBorderAndBackgroundWithFrame:(NSRect)frame inView:(NSView*)controlView
+{
+    if (_cFlags.highlighted) {
+        [self drawInRect:frame leftImage:_lImagePressed
+                midImage:_mImagePressed rightImage:_rImagePressed];
+    }
+    else {
+        [self drawInRect:frame leftImage:_lImage
+                midImage:_mImage rightImage:_rImage];
+    }
+}
+
+- (void)drawTitleWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
+    NSRect rect = [self titleRectForBounds:cellFrame];
+    rect.size.width = cellFrame.size.width - rect.origin.x - 14;//[_rImage size].width;
+    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+        [self font], NSFontAttributeName,
+        _titleColor, NSForegroundColorAttributeName,
+        nil];
+    [[[self selectedItem] title] drawInRect:rect withAttributes:dict];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @implementation CustomSliderCell
 
 - (void)dealloc
@@ -142,19 +276,17 @@
 - (void)setImageName:(NSString*)imageName backColor:(NSColor*)backColor
          trackOffset:(float)trackOffset knobOffset:(float)knobOffset
 {
-#define sliderImageNamed(postfix)   \
-    [[NSImage imageNamed:[imageName stringByAppendingString:postfix]] retain]
-    _trackImage         = sliderImageNamed(@"SliderTrack");
-    _trackImageDisabled = sliderImageNamed(@"SliderTrackDisabled");
+    _trackImage         = imageNamedWithPostfix(imageName, @"SliderTrack");
+    _trackImageDisabled = imageNamedWithPostfix(imageName, @"SliderTrackDisabled");
     if (!_trackImageDisabled) {
         _trackImageDisabled = [_trackImage retain];
     }
-    _knobImage          = sliderImageNamed(@"SliderKnob");
-    _knobImagePressed   = sliderImageNamed(@"SliderKnobPressed");
+    _knobImage          = imageNamedWithPostfix(imageName, @"SliderKnob");
+    _knobImagePressed   = imageNamedWithPostfix(imageName, @"SliderKnobPressed");
     if (!_knobImagePressed) {
         _knobImagePressed = [_knobImage retain];
     }
-    _knobImageDisabled  = sliderImageNamed(@"SliderKnobDisabled");
+    _knobImageDisabled  = imageNamedWithPostfix(imageName, @"SliderKnobDisabled");
     if (!_knobImageDisabled) {
         _knobImageDisabled = [_knobImage retain];
     }
@@ -171,7 +303,6 @@
     rect.origin.y += _trackOffset;
     if (_backColor) {   // hide original drawing...
         [_backColor set];
-        TRACE(@"tick-count=%d", [self numberOfTickMarks]);
         if (0 < [self numberOfTickMarks]) {
             NSRect rc = rect;
             rc.size.height = 5;     // except tick marks
@@ -197,7 +328,7 @@
 - (void)drawKnob:(NSRect)knobRect
 {
     NSImage* knob = (![self isEnabled]) ? _knobImageDisabled :
-                    ([self mouseDownFlags]) ? _knobImagePressed : _knobImage;
+                    (_scFlags.isPressed) ? _knobImagePressed : _knobImage;
     [knob setFlipped:TRUE];
     [knob drawAtPoint:knobRect.origin fromRect:NSZeroRect
             operation:NSCompositeSourceOver fraction:1.0];
@@ -210,5 +341,57 @@
 @implementation HUDTabView
 
 - (BOOL)mouseDownCanMoveWindow { return TRUE; }
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@implementation HUDTableView
+
+- (void)drawBackgroundInClipRect:(NSRect)clipRect
+{
+    [HUDTitleBackColor set];
+    NSRectFill(clipRect);
+}
+/*
+- (void)highlightSelectionInClipRect:(NSRect)clipRect
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+}
+*/
+- (void)mouseDown:(NSEvent*)event
+{
+    NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
+    if (0 <= [self rowAtPoint:p]) {
+        [super mouseDown:event];
+    }
+    else {
+        [[self window] mouseDown:event];
+    }
+}
+
+- (void)mouseUp:(NSEvent*)event
+{
+    NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
+    if (0 <= [self rowAtPoint:p]) {
+        [super mouseUp:event];
+    }
+    else {
+        [[self window] mouseUp:event];
+    }
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@implementation HUDTableColumn
+
+- (id)dataCell
+{
+    NSTextFieldCell* cell = [super dataCell];
+    [cell setTextColor:HUDTextColor];
+    return cell;
+}
 
 @end

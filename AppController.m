@@ -69,9 +69,6 @@ NSString* videoCodecName(int codecId);
         root = @"/Library/QuickTime/Perian.component";
         home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
         _perianInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
-
-        [self initDigitalAudioOut];
-        [self initRemoteControl];
     }
     return self;
 }
@@ -79,6 +76,9 @@ NSString* videoCodecName(int codecId);
 - (void)awakeFromNib
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self initDigitalAudioOut];
+    [self initRemoteControl];
+
     // init UI
     [_mainWindow setReleasedWhenClosed:FALSE];
     [_mainWindow setExcludedFromWindowsMenu:TRUE];
@@ -92,10 +92,10 @@ NSString* videoCodecName(int codecId);
     [cell setImageName:@"MainVolume" backColor:nil
            trackOffset:5.0 knobOffset:2.0];
 
-    [_panelVolumeSlider setMinValue:0.0];
-    [_panelVolumeSlider setMaxValue:MAX_VOLUME];
-    [_panelVolumeSlider replaceCell:[CustomSliderCell class]];
-    cell = [_panelVolumeSlider cell];
+    [_fsVolumeSlider setMinValue:0.0];
+    [_fsVolumeSlider setMaxValue:MAX_VOLUME];
+    [_fsVolumeSlider replaceCell:[CustomSliderCell class]];
+    cell = [_fsVolumeSlider cell];
     [cell setImageName:@"FSVolume" backColor:HUDBackgroundColor
            trackOffset:0.0 knobOffset:2.0];
     [self updateVolumeUI];
@@ -106,8 +106,8 @@ NSString* videoCodecName(int codecId);
     _lastPlayedMovieTime = 0.0;
     _lastPlayedMovieRepeatRange.length = 0.0;
     _viewDuration = [_defaults boolForKey:MViewDurationKey];
-    [_lTimeTextField setClickable:FALSE];   [_panelLTimeTextField setClickable:FALSE];
-    [_rTimeTextField setClickable:TRUE];    [_panelRTimeTextField setClickable:TRUE];
+    [_lTimeTextField setClickable:FALSE];   [_fsLTimeTextField setClickable:FALSE];
+    [_rTimeTextField setClickable:TRUE];    [_fsRTimeTextField setClickable:TRUE];
 
     _decoderButton = [_mainWindow createDecoderButton];
     [self updateDecoderUI];
@@ -160,6 +160,8 @@ NSString* videoCodecName(int codecId);
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     // hover-images should be set after -awakeFromNib.
+    [_prevSeekButton setHoverImage:[NSImage imageNamed:@"MainPrevSeekHover"]];
+    [_nextSeekButton setHoverImage:[NSImage imageNamed:@"MainNextSeekHover"]];
     [_controlPanelButton setHoverImage:[NSImage imageNamed:@"MainControlPanelHover"]];
     [_prevMovieButton setHoverImage:[NSImage imageNamed:@"MainPrevMovieHover"]];
     [_nextMovieButton setHoverImage:[NSImage imageNamed:@"MainNextMovieHover"]];

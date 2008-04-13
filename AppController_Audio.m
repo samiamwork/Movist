@@ -78,42 +78,42 @@
     }
     if ([_muteButton state] != state) {
         [_muteButton setState:state];
-        [_panelMuteButton setState:state];
+        [_fsMuteButton setState:state];
     }
     
-    NSImage* mainMuteImage;
-    NSImage* panelMuteImage;
+    NSImage* muteImage;
+    NSImage* fsMuteImage;
     if (muted || volume == 0.0) {
-        mainMuteImage  = [NSImage imageNamed:@"MainVolumeMute"];
-        panelMuteImage = [NSImage imageNamed:@"FSVolumeMute"];
+        muteImage   = [NSImage imageNamed:@"MainVolumeMute"];
+        fsMuteImage = [NSImage imageNamed:@"FSVolumeMute"];
     }
     else if (volume < MAX_VOLUME * 1 / 3) {
-        mainMuteImage  = [NSImage imageNamed:@"MainVolume1"];
-        panelMuteImage = [NSImage imageNamed:@"FSVolume1"];
+        muteImage   = [NSImage imageNamed:@"MainVolume1"];
+        fsMuteImage = [NSImage imageNamed:@"FSVolume1"];
     }
     else if (volume < MAX_VOLUME * 2 / 3) {
-        mainMuteImage  = [NSImage imageNamed:@"MainVolume2"];
-        panelMuteImage = [NSImage imageNamed:@"FSVolume2"];
+        muteImage   = [NSImage imageNamed:@"MainVolume2"];
+        fsMuteImage = [NSImage imageNamed:@"FSVolume2"];
     }
     else {
-        mainMuteImage  = [NSImage imageNamed:@"MainVolume3"];
-        panelMuteImage = [NSImage imageNamed:@"FSVolume3"];
+        muteImage   = [NSImage imageNamed:@"MainVolume3"];
+        fsMuteImage = [NSImage imageNamed:@"FSVolume3"];
     }
-    if ([_muteButton image] != mainMuteImage) {   // need not isEqual:
-        [_muteButton setImage:mainMuteImage];
+    if ([_muteButton image] != muteImage) {   // need not isEqual:
+        [_muteButton setImage:muteImage];
     }
-    if ([_panelMuteButton image] != panelMuteImage) {
-        [_panelMuteButton setImage:panelMuteImage];
+    if ([_fsMuteButton image] != fsMuteImage) {
+        [_fsMuteButton setImage:fsMuteImage];
     }
     
     if ([_volumeSlider floatValue] != volume) {
         [_volumeSlider setFloatValue:volume];
-        [_panelVolumeSlider setFloatValue:volume];
+        [_fsVolumeSlider setFloatValue:volume];
     }
     BOOL enabled = !(muted || [self digitalAudioOut]);
     if ([_volumeSlider isEnabled] != enabled) {
         [_volumeSlider setEnabled:enabled];
-        [_panelVolumeSlider setEnabled:enabled];
+        [_fsVolumeSlider setEnabled:enabled];
     }
 }
 
@@ -274,7 +274,7 @@
         [self setVolume:[sender floatValue]];
 
         [_volumeSlider setFloatValue:[sender floatValue]];
-        [_panelVolumeSlider setFloatValue:[sender floatValue]];
+        [_fsVolumeSlider setFloatValue:[sender floatValue]];
     }
 }
 

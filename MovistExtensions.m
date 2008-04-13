@@ -27,19 +27,82 @@
 
 - (void)copyAttributesFromCell:(NSCell*)cell
 {
-    [self setTarget:[cell target]];
-    [self setAction:[cell action]];
+    // cell attributes
     [self setType:[cell type]];
     [self setEnabled:[cell isEnabled]];
     [self setBezeled:[cell isBezeled]];
     [self setBordered:[cell isBordered]];
-    [self setTag:[cell tag]];
+
+    // state
     [self setState:[cell state]];
+
+    // textural attributes
+    [self setEditable:[cell isEditable]];
+    [self setSelectable:[cell isSelectable]];
+    [self setScrollable:[cell isScrollable]];
+    [self setAlignment:[cell alignment]];
+    [self setFont:[cell font]];
+    [self setLineBreakMode:[cell lineBreakMode]];
+    [self setWraps:[cell wraps]];
+    [self setBaseWritingDirection:[cell baseWritingDirection]];
+    [self setAttributedStringValue:[cell attributedStringValue]];
+    [self setAllowsEditingTextAttributes:[cell allowsEditingTextAttributes]];
+    [self setImportsGraphics:[cell importsGraphics]];
+    [self setTitle:[cell title]];
+
+    // target/action
+    [self setTarget:[cell target]];
+    [self setAction:[cell action]];
+    [self setContinuous:[cell isContinuous]];
+
+    // image/tag
+    [self setImage:[cell image]];
+    [self setTag:[cell tag]];
+
+    // drawing/highlighting
     [self setControlSize:[cell controlSize]];
     [self setControlTint:[cell controlTint]];
-    [self setEditable:[cell isEditable]];
     [self setFocusRingType:[cell focusRingType]];
     [self setHighlighted:[cell isHighlighted]];
+}
+
+- (void)drawInRect:(NSRect)rect leftImage:(NSImage*)lImage
+          midImage:(NSImage*)mImage rightImage:(NSImage*)rImage
+{
+    NSPoint p = rect.origin;
+    [lImage setFlipped:TRUE];
+    [lImage drawAtPoint:p fromRect:NSZeroRect
+              operation:NSCompositeSourceOver fraction:1.0];
+
+    NSRect rc = rect;
+    rc.origin.x    = rect.origin.x + [lImage size].width;
+    rc.origin.y    = rect.origin.y;
+    rc.size.width  = rect.size.width - [lImage size].width - [rImage size].width;
+    rc.size.height = [mImage size].height;
+    [mImage setFlipped:TRUE];
+    [mImage drawInRect:rc fromRect:NSZeroRect
+             operation:NSCompositeSourceOver fraction:1.0];
+    
+    p.x = NSMaxX(rect) - [rImage size].width;
+    [rImage setFlipped:TRUE];
+    [rImage drawAtPoint:p fromRect:NSZeroRect
+              operation:NSCompositeSourceOver fraction:1.0];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation NSControl (Movist)
+
+- (void)replaceCell:(Class)cellClass
+{
+    if ([[self cell] class] != cellClass) {
+        NSCell* newCell = [[[cellClass alloc] init] autorelease];
+        [newCell copyAttributesFromCell:[self cell]];
+        [self setCell:newCell];
+    }
 }
 
 @end
@@ -52,7 +115,7 @@
 - (void)setEnabled:(BOOL)enabled
 {
     [self setTextColor:enabled ? [NSColor controlTextColor] :
-     [NSColor disabledControlTextColor]];
+                                 [NSColor disabledControlTextColor]];
 }
 
 @end
@@ -60,27 +123,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@implementation NSButton (Movist)
+@implementation NSButtonCell (Movist)
 
-- (void)replaceCell:(Class)cellClass
+- (void)copyAttributesFromCell:(NSCell*)cell
 {
-    if ([[self cell] class] != cellClass) {
-        // replace cell
-        NSButtonCell* oldCell = [self cell];
-        NSButtonCell* newCell = [[[cellClass alloc] init] autorelease];
-        [newCell copyAttributesFromCell:oldCell];
+    [super copyAttributesFromCell:cell];
 
-        // copy button attributes
-        [newCell setImage:[oldCell image]];
-        [newCell setAlternateImage:[oldCell alternateImage]];
-        [newCell setImagePosition:[oldCell imagePosition]];
-        [newCell setBackgroundColor:[oldCell backgroundColor]];
-        [newCell setBezelStyle:[oldCell bezelStyle]];
-        [newCell setGradientType:[oldCell gradientType]];
-        [newCell setImageDimsWhenDisabled:[oldCell imageDimsWhenDisabled]];
-        [newCell setTransparent:[oldCell isTransparent]];
-        [self setCell:newCell];
-    }
+    NSButtonCell* buttonCell = (NSButtonCell*)cell;
+    [self setAlternateImage:[buttonCell alternateImage]];
+    [self setImagePosition:[buttonCell imagePosition]];
+    [self setBackgroundColor:[buttonCell backgroundColor]];
+    [self setBezelStyle:[buttonCell bezelStyle]];
+    [self setGradientType:[buttonCell gradientType]];
+    [self setImageDimsWhenDisabled:[buttonCell imageDimsWhenDisabled]];
+    [self setTransparent:[buttonCell isTransparent]];
 }
 
 @end
@@ -88,27 +144,60 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@implementation NSSlider (Movist)
+@implementation NSMenuItemCell (Movist)
 
-- (void)replaceCell:(Class)cellClass
+- (void)copyAttributesFromCell:(NSCell*)cell
 {
-    if ([[self cell] class] != cellClass) {
-        // replace cell
-        NSSliderCell* oldCell = [self cell];
-        NSSliderCell* newCell = [[[cellClass alloc] init] autorelease];
-        [newCell copyAttributesFromCell:oldCell];
+    [super copyAttributesFromCell:cell];
 
-        // copy slider attributes
-        [newCell setSliderType:[oldCell sliderType]];
-        [newCell setMaxValue:[oldCell maxValue]];
-        [newCell setMinValue:[oldCell minValue]];
-        [newCell setDoubleValue:[oldCell doubleValue]];
-        [newCell setTickMarkPosition:[oldCell tickMarkPosition]];
-        [newCell setNumberOfTickMarks:[oldCell numberOfTickMarks]];
-        [newCell setAltIncrementValue:[oldCell altIncrementValue]];
-        [newCell setAllowsTickMarkValuesOnly:[oldCell allowsTickMarkValuesOnly]];
-        [self setCell:newCell];
-    }
+    NSMenuItemCell* menuItemCell = (NSMenuItemCell*)cell;
+    [self setHighlighted:[menuItemCell isHighlighted]];
+    [self setMenuItem:[menuItemCell menuItem]];
+    [self setMenuView:[menuItemCell menuView]];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation NSPopUpButtonCell (Movist)
+
+- (void)copyAttributesFromCell:(NSCell*)cell
+{
+    [super copyAttributesFromCell:cell];
+
+    NSPopUpButtonCell* popUpCell = (NSPopUpButtonCell*)cell;
+    [self setMenu:[popUpCell menu]];
+    [self setPullsDown:[popUpCell pullsDown]];
+    [self setAutoenablesItems:[popUpCell autoenablesItems]];
+    [self setPreferredEdge:[popUpCell preferredEdge]];
+    [self setUsesItemFromMenu:[popUpCell usesItemFromMenu]];
+    [self setAltersStateOfSelectedItem:[popUpCell altersStateOfSelectedItem]];
+    [self setArrowPosition:[popUpCell arrowPosition]];
+    [self selectItem:[popUpCell selectedItem]];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@implementation NSSliderCell (Movist)
+
+- (void)copyAttributesFromCell:(NSCell*)cell
+{
+    [super copyAttributesFromCell:cell];
+
+    NSSliderCell* sliderCell = (NSSliderCell*)cell;
+    [self setSliderType:[sliderCell sliderType]];
+    [self setMaxValue:[sliderCell maxValue]];
+    [self setMinValue:[sliderCell minValue]];
+    [self setDoubleValue:[sliderCell doubleValue]];
+    [self setTickMarkPosition:[sliderCell tickMarkPosition]];
+    [self setNumberOfTickMarks:[sliderCell numberOfTickMarks]];
+    [self setAltIncrementValue:[sliderCell altIncrementValue]];
+    [self setAllowsTickMarkValuesOnly:[sliderCell allowsTickMarkValuesOnly]];
 }
 
 @end
@@ -125,6 +214,17 @@
     [self setHasShadow:FALSE];
     [self useOptimizedDrawing:TRUE];
     [self setMovableByWindowBackground:TRUE];
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(hudWindowDidResize:)
+               name:NSWindowDidResizeNotification object:self];
+}
+
+- (void)cleanupHUDWindow
+{
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc removeObserver:self name:NSWindowDidResizeNotification object:self];
+    [super dealloc];
 }
 
 - (void)initHUDSubview:(NSView*)subview
@@ -135,18 +235,28 @@
     else if ([subview isMemberOfClass:[NSBox class]]) {
         [[(NSBox*)subview titleCell] setTextColor:HUDTextColor];
     }
+    else if ([subview isMemberOfClass:[NSButton class]] &&
+             [(NSButton*)subview isBordered]) {
+        [(NSButton*)subview replaceCell:[CustomButtonCell class]];
+        CustomButtonCell* cell = [(NSButton*)subview cell];
+        [cell setImageName:@"HUD" titleColor:HUDButtonTextColor titleOffset:2];
+    }
+    else if ([subview isMemberOfClass:[NSPopUpButton class]]) {
+        [(NSPopUpButton*)subview replaceCell:[CustomPopUpButtonCell class]];
+        CustomPopUpButtonCell* cell = [(NSPopUpButton*)subview cell];
+        [cell setImageName:@"HUD" titleColor:HUDButtonTextColor];
+    }
     else if ([subview isMemberOfClass:[NSSlider class]] &&
              [[(NSSlider*)subview cell] isMemberOfClass:[NSSliderCell class]]) {
         [(NSSlider*)subview replaceCell:[CustomSliderCell class]];
         CustomSliderCell* cell = [(NSSlider*)subview cell];
-        [cell setImageName:@"HUD" backColor:HUDBackgroundColor
-               trackOffset:2 knobOffset:0];
+        [cell setImageName:@"HUD" backColor:HUDBackgroundColor trackOffset:2 knobOffset:0];
     }
     else if ([subview isMemberOfClass:[NSTableView class]]) {
         [(NSTableView*)subview setBackgroundColor:
             [NSColor colorWithCalibratedWhite:0.05 alpha:0.75]];
     }
-    
+
     // do it all subviews recursively
     if ([subview isKindOfClass:[NSTabView class]]) {
         NSTabViewItem* tabItem;
@@ -163,6 +273,8 @@
     }
 }
 
+- (void)initHUDSubviews { [self initHUDSubview:[self contentView]]; }
+
 - (void)updateHUDBackground
 {
     NSView* cv = [self contentView];
@@ -172,6 +284,9 @@
 
     float radius = 6.0;
     float titlebarHeight = 19.0;
+    if ([self isSheet] || [self standardWindowButton:NSWindowCloseButton]) {
+        titlebarHeight = 0.0;
+    }
 
     // make background
     NSBezierPath* bgPath = [NSBezierPath bezierPath];
@@ -198,30 +313,35 @@
     [HUDBackgroundColor set];   [bgPath fill];
     [HUDBorderColor set];       [bgPath stroke];
 
-    // make titlebar
-    NSBezierPath* titlePath = [NSBezierPath bezierPath];
-    NSRect titlebarRect = NSMakeRect(0, bgSize.height - titlebarHeight, bgSize.width, titlebarHeight);
-    titlebarRect = [cv convertRect:titlebarRect fromView:nil];
-    minX = NSMinX(titlebarRect), midX = NSMidX(titlebarRect), maxX = NSMaxX(titlebarRect);
-    minY = NSMinY(titlebarRect), midY = NSMidY(titlebarRect), maxY = NSMaxY(titlebarRect);
+    if (0 < titlebarHeight) {   // make titlebar
+        NSBezierPath* titlePath = [NSBezierPath bezierPath];
+        NSRect titlebarRect = NSMakeRect(0, bgSize.height - titlebarHeight, bgSize.width, titlebarHeight);
+        titlebarRect = [cv convertRect:titlebarRect fromView:nil];
+        minX = NSMinX(titlebarRect), midX = NSMidX(titlebarRect), maxX = NSMaxX(titlebarRect);
+        minY = NSMinY(titlebarRect), midY = NSMidY(titlebarRect), maxY = NSMaxY(titlebarRect);
 
-    [titlePath setFlatness:0.01];
-    [titlePath moveToPoint:NSMakePoint(minX, minY)];
-    [titlePath lineToPoint:NSMakePoint(maxX, minY)];
-    [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(maxX, maxY) 
-                                        toPoint:NSMakePoint(midX, maxY) 
-                                         radius:radius];
-    [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(minX, maxY) 
-                                        toPoint:NSMakePoint(minX, minY) 
-                                         radius:radius];
-    [titlePath closePath];
+        [titlePath setFlatness:0.01];
+        [titlePath moveToPoint:NSMakePoint(minX, minY)];
+        [titlePath lineToPoint:NSMakePoint(maxX, minY)];
+        [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(maxX, maxY) 
+                                            toPoint:NSMakePoint(midX, maxY) 
+                                             radius:radius];
+        [titlePath appendBezierPathWithArcFromPoint:NSMakePoint(minX, maxY) 
+                                            toPoint:NSMakePoint(minX, minY) 
+                                             radius:radius];
+        [titlePath closePath];
 
-    [HUDTitleBackColor set];    [titlePath fill];
-    [HUDBorderColor set];       [titlePath stroke];
-
+        [HUDTitleBackColor set];    [titlePath fill];
+        [HUDBorderColor set];       [titlePath stroke];
+    }
     [bgImage unlockFocus];
 
     [self setBackgroundColor:[NSColor colorWithPatternImage:bgImage]];
+}
+
+- (void)hudWindowDidResize:(NSNotification*)aNotification
+{
+    [self updateHUDBackground];
 }
 
 - (void)setMovieURL:(NSURL*)movieURL

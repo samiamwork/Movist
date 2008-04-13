@@ -1,19 +1,77 @@
 {
-    IBClasses = (
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
-        {
-            ACTIONS = {addAction = id; closeAction = id; modeAction = id; removeAction = id; }; 
-            CLASS = PlaylistController; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                "_modeButton" = NSButton; 
-                "_removeButton" = NSButton; 
-                "_statusTextField" = NSTextField; 
-                "_tableView" = NSTableView; 
-            }; 
-            SUPERCLASS = NSWindowController; 
-        }, 
-        {CLASS = PlaylistItem; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
-    ); 
-    IBVersion = 1; 
+    IBClasses =     (
+                {
+            CLASS = CustomButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSButtonCell;
+        },
+                {
+            CLASS = CustomPopUpButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSPopUpButtonCell;
+        },
+                {
+            CLASS = CustomSliderCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSSliderCell;
+        },
+                {
+            CLASS = FirstResponder;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = HUDTabView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTabView;
+        },
+                {
+            CLASS = HUDTableView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTableView;
+        },
+                {
+            CLASS = HoverButton;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSButton;
+        },
+                {
+            CLASS = MainLCDView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSView;
+        },
+                {
+            ACTIONS =             {
+                addAction = id;
+                closeAction = id;
+                modeAction = id;
+                removeAction = id;
+            };
+            CLASS = PlaylistController;
+            LANGUAGE = ObjC;
+            OUTLETS =             {
+                "_modeButton" = NSButton;
+                "_removeButton" = NSButton;
+                "_statusTextField" = NSTextField;
+                "_tableView" = NSTableView;
+            };
+            SUPERCLASS = NSWindowController;
+        },
+                {
+            CLASS = PlaylistItem;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSObject;
+        },
+                {
+            CLASS = PlaylistPanel;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSPanel;
+        },
+                {
+            CLASS = TimeTextField;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextField;
+        }
+    );
+    IBVersion = 1;
 }

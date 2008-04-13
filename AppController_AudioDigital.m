@@ -57,13 +57,23 @@ static AudioStreamID _audioStreamID;
 
 - (BOOL)updateDigitalAudioOut:(id)sender
 {
-    if (![self digitalAudioOut]) {
+    [_audioDeviceTextField setStringValue:
+            (_audioDeviceSupportsDigital) ? NSLocalizedString(@"Digital", nil) :
+                                            NSLocalizedString(@"Analog", nil)];
+
+    BOOL currentlyDigitalOut = [self digitalAudioOut];
+    [_audioOutTextField setStringValue:
+            (_movie == nil) ?       NSLocalizedString(@"None", nil) :
+            (currentlyDigitalOut) ? NSLocalizedString(@"Digital", nil) :
+                                    NSLocalizedString(@"Analog", nil)];
+
+    if (!currentlyDigitalOut) {
         if (sender) {
             [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
         }
         return TRUE;
     }
-    
+
     OSStatus err;
     
     // get current format
@@ -111,7 +121,7 @@ static AudioStreamID _audioStreamID;
 - (void)audioDeviceChanged
 {
     _audioDeviceSupportsDigital = audioDeviceSupportsDigital(&_audioStreamID);
-    [self performSelectorOnMainThread:@selector(updateAudioOut:)
+    [self performSelectorOnMainThread:@selector(updateDigitalAudioOut:)
                            withObject:self waitUntilDone:FALSE];
 
     if (_movie) {   // reopen current movie to use new audio device

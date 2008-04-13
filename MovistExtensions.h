@@ -24,7 +24,17 @@
 
 @interface NSCell (Movist)
 
-- (void)copyAttributesFromCell:(NSCell*)cell;
+- (void)drawInRect:(NSRect)rect leftImage:(NSImage*)lImage
+          midImage:(NSImage*)mImage rightImage:(NSImage*)rImage;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface NSControl (Movist)
+
+- (void)replaceCell:(Class)cellClass;
 
 @end
 
@@ -40,28 +50,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface NSButton (Movist)
-
-- (void)replaceCell:(Class)cellClass;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-@interface NSSlider (Movist)
-
-- (void)replaceCell:(Class)cellClass;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
 @interface NSWindow (Movist)
 
 - (void)initHUDWindow;
-- (void)initHUDSubview:(NSView*)subview;
+- (void)initHUDSubviews;
+- (void)cleanupHUDWindow;
 - (void)updateHUDBackground;
 
 - (void)setMovieURL:(NSURL*)movieURL;
@@ -75,6 +68,7 @@
 #define HUDBackgroundColor  [NSColor colorWithCalibratedWhite:0.1 alpha:0.80]
 #define HUDBorderColor      [NSColor colorWithCalibratedWhite:0.4 alpha:0.75]
 #define HUDTextColor        [NSColor colorWithCalibratedWhite:0.8 alpha:0.75]
+#define HUDButtonTextColor  [NSColor colorWithCalibratedWhite:1.0 alpha:0.75]
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

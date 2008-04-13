@@ -53,11 +53,23 @@
                 "_altCopyImageMenuItem" = NSMenuItem;
                 "_altSaveImageMenuItem" = NSMenuItem;
                 "_aspectRatioMenu" = NSMenu;
+                "_audioDeviceTextField" = NSTextField;
+                "_audioOutTextField" = NSTextField;
                 "_controlPanel" = ControlPanel;
                 "_controlPanelButton" = HoverButton;
-                "_controlPanelDecoderButton" = NSButton;
+                "_cpDecoderButton" = NSButton;
                 "_dataSizeBpsTextField" = NSTextField;
                 "_fpsTextField" = NSTextField;
+                "_fsDecoderButton" = NSButton;
+                "_fsLTimeTextField" = TimeTextField;
+                "_fsMuteButton" = NSButton;
+                "_fsNextSeekButton" = NSButton;
+                "_fsPlayButton" = NSButton;
+                "_fsPlaylistButton" = NSButton;
+                "_fsPrevSeekButton" = NSButton;
+                "_fsRTimeTextField" = TimeTextField;
+                "_fsSeekSlider" = FSSeekSlider;
+                "_fsVolumeSlider" = NSSlider;
                 "_fullScreenFillMenu" = NSMenu;
                 "_lTimeTextField" = TimeTextField;
                 "_mainWindow" = MainWindow;
@@ -66,19 +78,13 @@
                 "_muteButton" = NSButton;
                 "_muteMenuItem" = NSMenuItem;
                 "_nextMovieButton" = HoverButton;
-                "_panelDecoderButton" = NSButton;
-                "_panelLTimeTextField" = TimeTextField;
-                "_panelMuteButton" = NSButton;
-                "_panelPlayButton" = NSButton;
-                "_panelPlaylistButton" = NSButton;
-                "_panelRTimeTextField" = TimeTextField;
-                "_panelSeekSlider" = FSSeekSlider;
-                "_panelVolumeSlider" = NSSlider;
+                "_nextSeekButton" = HoverButton;
                 "_playButton" = NSButton;
                 "_playMenuItem" = NSMenuItem;
                 "_playPanel" = PlayPanel;
                 "_playlistButton" = HoverButton;
                 "_prevMovieButton" = HoverButton;
+                "_prevSeekButton" = HoverButton;
                 "_propertiesView" = NSTableView;
                 "_rTimeTextField" = TimeTextField;
                 "_rateDefaultMenuItem" = NSMenuItem;
@@ -139,6 +145,16 @@
             SUPERCLASS = NSPanel;
         },
                 {
+            CLASS = CustomButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSButtonCell;
+        },
+                {
+            CLASS = CustomPopUpButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSPopUpButtonCell;
+        },
+                {
             CLASS = CustomSliderCell;
             LANGUAGE = ObjC;
             SUPERCLASS = NSSliderCell;
@@ -170,6 +186,16 @@
             CLASS = HUDTabView;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTabView;
+        },
+                {
+            CLASS = HUDTableColumn;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTableColumn;
+        },
+                {
+            CLASS = HUDTableView;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTableView;
         },
                 {
             CLASS = HoverButton;

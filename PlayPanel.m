@@ -44,7 +44,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self setDelegate:self];
     [self updateHUDBackground];
-    [self initHUDSubview:[self contentView]];
+    [self initHUDSubviews];
     _movingByDragging = FALSE;
 }
 
@@ -52,6 +52,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_lastShowTime release];
+    [self cleanupHUDWindow];
     [super dealloc];
 }
 

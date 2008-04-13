@@ -53,6 +53,41 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+@interface CustomButtonCell : NSButtonCell
+{
+    NSImage* _lImage;
+    NSImage* _lImagePressed;
+    NSImage* _mImage;
+    NSImage* _mImagePressed;
+    NSImage* _rImage;
+    NSImage* _rImagePressed;
+    float _titleOffset;
+}
+
+- (void)setImageName:(NSString*)imageName titleColor:(NSColor*)titleColor
+         titleOffset:(float)titleOffset;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@interface CustomPopUpButtonCell : NSPopUpButtonCell
+{
+    NSImage* _lImage;
+    NSImage* _lImagePressed;
+    NSImage* _mImage;
+    NSImage* _mImagePressed;
+    NSImage* _rImage;
+    NSImage* _rImagePressed;
+    NSColor* _titleColor;
+}
+
+- (void)setImageName:(NSString*)imageName titleColor:(NSColor*)titleColor;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
 @interface CustomSliderCell : NSSliderCell
 {
     NSImage* _trackImage;
@@ -77,3 +112,22 @@
 }
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@interface HUDTableView : NSTableView
+{
+}
+
+@end
+
+@interface HUDTableColumn : NSTableColumn
+{
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define imageNamedWithPostfix(imageName, postfix)   \
+    [[NSImage imageNamed:[imageName stringByAppendingString:postfix]] retain]

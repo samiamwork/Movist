@@ -226,9 +226,11 @@
     [_seekSlider setMinValue:0];
     [_seekSlider setMaxValue:[_movie duration]];
     [_seekSlider setIndexedDuration:0];
-    [_panelSeekSlider setMinValue:0];
-    [_panelSeekSlider setMaxValue:[_movie duration]];
-    [_panelSeekSlider setIndexedDuration:0];
+    [_fsSeekSlider setMinValue:0];
+    [_fsSeekSlider setMaxValue:[_movie duration]];
+    [_fsSeekSlider setIndexedDuration:0];
+    [_prevSeekButton updateHoverImage];
+    [_nextSeekButton updateHoverImage];
     [_controlPanelButton updateHoverImage];
     [_prevMovieButton updateHoverImage];
     [_nextMovieButton updateHoverImage];
@@ -510,27 +512,27 @@
 
 - (void)updateDecoderUI
 {
-    NSImage* mainImage = nil;
-    NSImage* panelImage = nil;
+    NSImage* image = nil;
+    NSImage* fsImage = nil;
     if ([_movieView movie]) {
         NSString* decoder = [[[_movieView movie] class] name];
         if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
-            mainImage  = [NSImage imageNamed:@"MainQuickTime"];
-            panelImage = [NSImage imageNamed:@"FSQuickTime"];
+            image   = [NSImage imageNamed:@"MainQuickTime"];
+            fsImage = [NSImage imageNamed:@"FSQuickTime"];
         }
         else {  // [decoder isEqualToString:[MMovie_FFmpeg name]]
-            mainImage  = [NSImage imageNamed:@"MainFFMPEG"];
-            panelImage = [NSImage imageNamed:@"FSFFMPEG"];
+            image   = [NSImage imageNamed:@"MainFFMPEG"];
+            fsImage = [NSImage imageNamed:@"FSFFMPEG"];
         }
     }
 
-    [_decoderButton setImage:mainImage];
-    [_panelDecoderButton setImage:panelImage];
-    [_controlPanelDecoderButton setImage:panelImage];
+    [_decoderButton setImage:image];
+    [_fsDecoderButton setImage:fsImage];
+    [_cpDecoderButton setImage:fsImage];
 
-    [_decoderButton setEnabled:(mainImage != nil)];
-    [_panelDecoderButton setEnabled:(panelImage != nil)];
-    [_controlPanelDecoderButton setEnabled:(panelImage != nil)];
+    [_decoderButton setEnabled:(image != nil)];
+    [_fsDecoderButton setEnabled:(fsImage != nil)];
+    [_cpDecoderButton setEnabled:(fsImage != nil)];
 }
 
 - (void)updateDataSizeBpsUI

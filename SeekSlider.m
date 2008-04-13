@@ -25,19 +25,21 @@
 @interface SeekSliderCell : NSSliderCell
 {
     NSImage* _bgImage;
-    NSImage* _lImage, *_cImage, *_rImage;
+    NSImage*  _lImage, * _cImage, * _rImage;
+    NSImage            *_ucImage, *_urImage;
     NSColor* _knobColor;
     float _knobSize;
+    BOOL _rounded;
 
     float _indexedDuration;
     float _repeatBeginning;
     float _repeatEnd;
 }
 
-- (void)setBgImage:(NSImage*)bgImage
-            lImage:(NSImage*)lImage cImage:(NSImage*)cImage rImage:(NSImage*)rImage;
+- (void)setImageName:(NSString*)imageName rounded:(BOOL)rounded;
 - (void)setKnobColor:(NSColor*)knobColor;
 - (void)setKnobSize:(float)knobSize;
+- (void)setBgImage:(NSImage*)image;
 - (float)locationOfValue:(float)value;
 
 - (float)indexedDuration;
@@ -68,26 +70,30 @@
 
 - (void)dealloc
 {
-    [_bgImage release];
+    [_knobColor release];
+    [_ucImage release];
+    [_urImage release];
     [_lImage release];
     [_cImage release];
     [_rImage release];
-    [_knobColor release];
-    
+    [_bgImage release];
+
     [super dealloc];
 }
 
-- (void)setBgImage:(NSImage*)bgImage
-            lImage:(NSImage*)lImage cImage:(NSImage*)cImage rImage:(NSImage*)rImage
+- (void)setImageName:(NSString*)imageName rounded:(BOOL)rounded
 {
-    _bgImage = [bgImage retain];
-    _lImage = [lImage retain];
-    _cImage = [cImage retain];
-    _rImage = [rImage retain];
+    _lImage  = imageNamedWithPostfix(imageName, @"SeekSliderLeft");
+    _cImage  = imageNamedWithPostfix(imageName, @"SeekSliderCenter");
+    _rImage  = imageNamedWithPostfix(imageName, @"SeekSliderRight");
+    _ucImage = imageNamedWithPostfix(imageName, @"SeekSliderUnindexedCenter");
+    _urImage = imageNamedWithPostfix(imageName, @"SeekSliderUnindexedRight");
+    _rounded = rounded;
 }
 
 - (void)setKnobColor:(NSColor*)knobColor { _knobColor = [knobColor retain]; }
 - (void)setKnobSize:(float)knobSize { _knobSize = knobSize; }
+- (void)setBgImage:(NSImage*)image { _bgImage = [image retain]; }
 
 - (float)locationOfValue:(float)value
 {
@@ -97,91 +103,98 @@
 
 - (void)drawBarInside:(NSRect)rect flipped:(BOOL)flipped
 {
+    // hide original drawing...
     if (_bgImage) {
         [_bgImage setFlipped:flipped];
         [_bgImage drawInRect:rect fromRect:NSZeroRect
                    operation:NSCompositeSourceOver fraction:1.0];
     }
     else {
-        // hide original drawing...
-        //[HUDBackgroundColor set];
-        [[NSColor yellowColor] set];
+        [HUDBackgroundColor set];
         NSRectFill(rect);
     }
 
-    NSRect trackRect;
-    trackRect.size.width = rect.size.width - _knobSize;
-    trackRect.size.height= [_lImage size].height;
-    trackRect.origin.x = rect.origin.x + _knobSize / 2;
-    trackRect.origin.y = rect.origin.y + (rect.size.height - trackRect.size.height) / 2;
+    // adjust track rect
+    rect.origin.y += (rect.size.height - [_lImage size].height) / 2;
+    rect.size.height = [_lImage size].height;
+    if (!_rounded) {
+        rect.origin.x += _knobSize / 2;
+        rect.size.width -= _knobSize;
+    }
 
-    // track
-    NSRect rc;
-    rc.origin.x = trackRect.origin.x, rc.size.width = [_lImage size].width;
-    rc.origin.y = trackRect.origin.y, rc.size.height = trackRect.size.height;
-    [_lImage setFlipped:TRUE];
-    [_lImage drawInRect:rc fromRect:NSZeroRect
-              operation:NSCompositeSourceOver fraction:1.0];
-    rc.origin.x = NSMaxX(trackRect) - [_rImage size].width;
-    rc.size.width = [_rImage size].width;
-    [_rImage setFlipped:TRUE];
-    [_rImage drawInRect:rc fromRect:NSZeroRect
-              operation:NSCompositeSourceOver fraction:1.0];
-    rc.origin.x = trackRect.origin.x + [_lImage size].width;
-    rc.size.width = trackRect.size.width - [_lImage size].width - [_rImage size].width;
-    [_cImage setFlipped:TRUE];
-    [_cImage drawInRect:rc fromRect:NSZeroRect
-              operation:NSCompositeSourceOver fraction:1.0];
+    NSRect rc = rect;
+    [_lImage setFlipped:flipped];
+    [_lImage drawAtPoint:rc.origin fromRect:NSZeroRect
+               operation:NSCompositeSourceOver fraction:1.0];
 
-    float minY = NSMinY(trackRect) + 1;
-    float maxY = NSMaxY(trackRect) - 1;
-    // indexed duration
-    if (_indexedDuration < [self maxValue]) {
-        // FIXME
-        [[NSColor colorWithCalibratedWhite:0.8 alpha:0.7] set];     // FIXME
-        NSBezierPath* path = [NSBezierPath bezierPath];
-        float bx = [self locationOfValue:_indexedDuration];
-        float ex = [self locationOfValue:[self maxValue]];
-        [path moveToPoint:NSMakePoint(bx, minY)];
-        [path lineToPoint:NSMakePoint(ex, minY)];
-        [path lineToPoint:NSMakePoint(ex, maxY)];
-        [path lineToPoint:NSMakePoint(bx, maxY)];
-        [path closePath];
-        [path fill];
+    rc.origin.x += [_lImage size].width;
+    if (_indexedDuration == 0 || _indexedDuration == [self maxValue]) {
+        rc.size.width = NSMaxX(rect) - rc.origin.x - [_rImage size].width;
+        [_cImage setFlipped:flipped];
+        [_cImage drawInRect:rc fromRect:NSZeroRect
+                  operation:NSCompositeSourceOver fraction:1.0];
+        rc.origin.x += rc.size.width;
+        [_rImage setFlipped:flipped];
+        [_rImage drawAtPoint:rc.origin fromRect:NSZeroRect
+                   operation:NSCompositeSourceOver fraction:1.0];
+    }
+    else {
+        float ux = [self locationOfValue:_indexedDuration];
+        rc.size.width = ux - rc.origin.x;
+        [_cImage setFlipped:flipped];
+        [_cImage drawInRect:rc fromRect:NSZeroRect
+                   operation:NSCompositeSourceOver fraction:1.0];
+
+        [_ucImage setFlipped:flipped];
+        rc.size.width = [_ucImage size].width;
+        rc.origin.x = (int)ux - (int)ux % (int)rc.size.width;
+        float ex = NSMaxX(rect) - [_urImage size].width;
+        for (; rc.origin.x < ex; rc.origin.x += rc.size.width) {
+            [_ucImage drawInRect:rc fromRect:NSZeroRect
+                        operation:NSCompositeSourceOver fraction:1.0];
+        }
+        rc.origin.x = NSMaxX(rect) - [_urImage size].width;
+        [_urImage setFlipped:flipped];
+        [_urImage drawAtPoint:rc.origin fromRect:NSZeroRect
+                    operation:NSCompositeSourceOver fraction:1.0];
     }
 
     // repeat range
     if (0 <= _repeatBeginning) {
-        [[NSColor colorWithCalibratedWhite:0.5 alpha:0.7] set];
-        NSBezierPath* path = [NSBezierPath bezierPath];
-        float bx = [self locationOfValue:_repeatBeginning];
-        float ex = [self locationOfValue:_repeatEnd];
-        [path moveToPoint:NSMakePoint(bx, minY)];
-        [path lineToPoint:NSMakePoint(ex, minY)];
-        [path lineToPoint:NSMakePoint(ex, maxY)];
-        [path lineToPoint:NSMakePoint(bx, maxY)];
-        [path closePath];
-        [path fill];
+        NSRect rc;
+        rc.origin.x   = [self locationOfValue:_repeatBeginning] + 1;
+        rc.origin.y   = NSMinY(rect) + 1;
+        rc.size.width = [self locationOfValue:_repeatEnd] - 1 - rc.origin.x;
+        rc.size.height= NSMaxY(rect) - 1 - rc.origin.y;
+        [[NSColor colorWithCalibratedWhite:0.5 alpha:0.9] set];
+        NSRectFill(rc);
     }
+}
+
+- (NSRect)knobRectFlipped:(BOOL)flipped
+{
+    float x = [self locationOfValue:[self floatValue]];
+    NSRect rect = [[self controlView] bounds];
+    rect.origin.x = x - _knobSize / 2 - 1;
+    rect.origin.y += (rect.size.height - _knobSize) / 2;
+    rect.size.width = _knobSize;
+    rect.size.height= _knobSize;
+    return rect;
 }
 
 - (void)drawKnob:(NSRect)knobRect
 {
     if ([(NSControl*)[self controlView] isEnabled]) {
-        NSRect rc;
-        rc.size.width  = _knobSize;
-        rc.size.height = _knobSize;
-        rc.origin.x = knobRect.origin.x + (knobRect.size.width  - rc.size.width)  / 2;
-        rc.origin.y = knobRect.origin.y + (knobRect.size.height - rc.size.height) / 2;
+        float cx = knobRect.origin.x + knobRect.size.width  / 2;
+        float cy = knobRect.origin.y + knobRect.size.height / 2;
         NSBezierPath* path = [NSBezierPath bezierPath];
-        float cx = rc.origin.x + rc.size.width  / 2;
-        float cy = rc.origin.y + rc.size.height / 2;
-        [_knobColor set];
-        [path moveToPoint:NSMakePoint(cx, NSMinY(rc))];
-        [path lineToPoint:NSMakePoint(NSMaxX(rc), cy)];
-        [path lineToPoint:NSMakePoint(cx, NSMaxY(rc))];
-        [path lineToPoint:NSMakePoint(NSMinX(rc), cy)];
+        [path moveToPoint:NSMakePoint(cx, NSMinY(knobRect))];
+        [path lineToPoint:NSMakePoint(NSMaxX(knobRect), cy)];
+        [path lineToPoint:NSMakePoint(cx, NSMaxY(knobRect))];
+        [path lineToPoint:NSMakePoint(NSMinX(knobRect), cy)];
         [path closePath];
+
+        [_knobColor set];
         [path fill];
     }
 }
@@ -287,30 +300,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface MainSeekSliderCell : SeekSliderCell {} @end
-
-@implementation MainSeekSliderCell
-/*
-- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
-{
-    // to calc knob rect... I don't know how to draw without super's.
-    [super drawWithFrame:cellFrame inView:controlView];
-
-    [self draw:cellFrame inView:controlView];
-}
-*/
-@end
-
 @implementation MainSeekSlider
 
 - (void)awakeFromNib
 {
-    [self replaceCell:[MainSeekSliderCell class]];
+    [self replaceCell:[SeekSliderCell class]];
     SeekSliderCell* cell = [self cell];
-    [cell setBgImage:[NSImage imageNamed:@"MainLCD"]
-              lImage:[NSImage imageNamed:@"MainSeekSliderLeft"]
-              cImage:[NSImage imageNamed:@"MainSeekSliderCenter"]
-              rImage:[NSImage imageNamed:@"MainSeekSliderRight"]];
+    [cell setBgImage:[NSImage imageNamed:@"MainLCD"]];
+    [cell setImageName:@"Main" rounded:FALSE];
     [cell setKnobColor:[NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.25 alpha:1.0]];
     [cell setKnobSize:8.0];
 }
@@ -325,36 +322,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface FSSeekSliderCell : SeekSliderCell {} @end
-
-@implementation FSSeekSliderCell
-/*
-- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
-{
-    // to calc knob rect... I don't know how to draw without super's.
-    [super drawWithFrame:cellFrame inView:controlView];
-
-    // hide super's original drawing...
-    [[NSColor colorWithCalibratedWhite:0.1 alpha:0.85] set];
-    NSRectFill(cellFrame);
-
-    [self draw:cellFrame inView:controlView];
-}
-*/
-@end
-
 @implementation FSSeekSlider
 
 - (void)awakeFromNib
 {
-    [self replaceCell:[FSSeekSliderCell class]];
+    [self replaceCell:[SeekSliderCell class]];
     SeekSliderCell* cell = [self cell];
-    [cell setBgImage:nil
-              lImage:[NSImage imageNamed:@"FSSeekSliderLeft"]
-              cImage:[NSImage imageNamed:@"FSSeekSliderCenter"]
-              rImage:[NSImage imageNamed:@"FSSeekSliderRight"]];
+    [cell setImageName:@"FS" rounded:TRUE];
     [cell setKnobColor:[NSColor colorWithCalibratedRed:0.75 green:0.75 blue:0.75 alpha:1.0]];
-    [cell setKnobSize:12.0];
+    [cell setKnobSize:10.0];
 }
 
 @end

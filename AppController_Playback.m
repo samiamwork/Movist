@@ -206,7 +206,7 @@
 - (void)setRangeRepeatRange:(NSRange)range
 {
     [_seekSlider setRepeatRange:range];
-    [_panelSeekSlider setRepeatRange:range];
+    [_fsSeekSlider setRepeatRange:range];
     [self updateRangeRepeatUI];
     
     // no OSD message for range
@@ -215,7 +215,7 @@
 - (void)setRangeRepeatBeginning:(float)beginning
 {
     [_seekSlider setRepeatBeginning:beginning];
-    [_panelSeekSlider setRepeatBeginning:beginning];
+    [_fsSeekSlider setRepeatBeginning:beginning];
     [self updateRangeRepeatUI];
 
     [_movieView setMessage:[NSString stringWithFormat:
@@ -226,7 +226,7 @@
 - (void)setRangeRepeatEnd:(float)end
 {
     [_seekSlider setRepeatEnd:end];
-    [_panelSeekSlider setRepeatEnd:end];
+    [_fsSeekSlider setRepeatEnd:end];
     [self updateRangeRepeatUI];
 
     [_movieView setMessage:[NSString stringWithFormat:
@@ -237,7 +237,7 @@
 - (void)clearRangeRepeat
 {
     [_seekSlider clearRepeat];
-    [_panelSeekSlider clearRepeat];
+    [_fsSeekSlider clearRepeat];
     [self updateRangeRepeatUI];
 
     [_movieView setMessage:NSLocalizedString(@"Range Repeat Clear", nil)];
@@ -315,13 +315,13 @@
     if (_movie) {
         if (![_seekSlider isEnabled]) {
             [_seekSlider setEnabled:TRUE];
-            [_panelSeekSlider setEnabled:TRUE];
+            [_fsSeekSlider setEnabled:TRUE];
         }
         float ct = [_movie currentTime];
         float dt = ABS(ct - _prevMovieTime);
         if (1.0 <= dt * [_seekSlider bounds].size.width / [_movie duration]) {
             [_seekSlider setFloatValue:ct];
-            [_panelSeekSlider setFloatValue:ct];
+            [_fsSeekSlider setFloatValue:ct];
             _prevMovieTime = ct;
         }
 
@@ -329,19 +329,19 @@
         dt = ABS(ct - [_seekSlider indexedDuration]);
         if (1.0 <= dt * [_seekSlider bounds].size.width / [_movie duration]) {
             [_seekSlider setIndexedDuration:ct];
-            [_panelSeekSlider setIndexedDuration:ct];
+            [_fsSeekSlider setIndexedDuration:ct];
         }
         
         NSString* s = NSStringFromMovieTime([_movie currentTime]);
         if (![s isEqualToString:[_lTimeTextField stringValue]]) {
             [_lTimeTextField setStringValue:s];
-            [_panelLTimeTextField setStringValue:s];
+            [_fsLTimeTextField setStringValue:s];
         }
         s = NSStringFromMovieTime((_viewDuration) ? [_movie duration] :
                                     [_movie currentTime] - [_movie duration]);
         if (![s isEqualToString:[_rTimeTextField stringValue]]) {
             [_rTimeTextField setStringValue:s];
-            [_panelRTimeTextField setStringValue:s];
+            [_fsRTimeTextField setStringValue:s];
         }
         if ([_movie rate] == 0) {   // paused
             [_fpsTextField setStringValue:
@@ -356,14 +356,14 @@
         [_seekSlider setEnabled:FALSE];
         [_seekSlider setFloatValue:0.0];
         [_seekSlider setIndexedDuration:0.0];
-        [_panelSeekSlider setEnabled:FALSE];
-        [_panelSeekSlider setFloatValue:0.0];
-        [_panelSeekSlider setIndexedDuration:0.0];
+        [_fsSeekSlider setEnabled:FALSE];
+        [_fsSeekSlider setFloatValue:0.0];
+        [_fsSeekSlider setIndexedDuration:0.0];
 
         [_lTimeTextField setStringValue:@"--:--:--"];
         [_rTimeTextField setStringValue:@"--:--:--"];
-        [_panelLTimeTextField setStringValue:@"--:--:--"];
-        [_panelRTimeTextField setStringValue:@"--:--:--"];
+        [_fsLTimeTextField setStringValue:@"--:--:--"];
+        [_fsRTimeTextField setStringValue:@"--:--:--"];
 
         [_fpsTextField setStringValue:@""];
     }
@@ -385,8 +385,8 @@
         [_playMenuItem setTitle:NSLocalizedString(@"Pause_space", nil)];
         [_playButton setImage:mainPauseImage];
         [_playButton setAlternateImage:mainPausePressedImage];
-        [_panelPlayButton setImage:[NSImage imageNamed:@"FSPause"]];
-        [_panelPlayButton setAlternateImage:[NSImage imageNamed:@"FSPausePressed"]];
+        [_fsPlayButton setImage:[NSImage imageNamed:@"FSPause"]];
+        [_fsPlayButton setAlternateImage:[NSImage imageNamed:@"FSPausePressed"]];
     }
     else {
         NSImage* mainPlayImage, *mainPlayPressedImage;
@@ -401,9 +401,11 @@
         [_playMenuItem setTitle:NSLocalizedString(@"Play_space", nil)];
         [_playButton setImage:mainPlayImage];
         [_playButton setAlternateImage:mainPlayPressedImage];
-        [_panelPlayButton setImage:[NSImage imageNamed:@"FSPlay"]];
-        [_panelPlayButton setAlternateImage:[NSImage imageNamed:@"FSPlayPressed"]];
+        [_fsPlayButton setImage:[NSImage imageNamed:@"FSPlay"]];
+        [_fsPlayButton setAlternateImage:[NSImage imageNamed:@"FSPlayPressed"]];
     }
+    [_prevSeekButton setEnabled:(_movie != nil)];
+    [_nextSeekButton setEnabled:(_movie != nil)];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -442,7 +444,22 @@
 - (IBAction)seekAction:(id)sender
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
-    switch ([sender tag]) {
+    int tag = [sender tag];
+    unsigned int flags = [[NSApp currentEvent] modifierFlags];
+    if (flags & NSAlternateKeyMask) {
+        if (flags & NSShiftKeyMask) {
+            if (flags & NSControlKeyMask) {
+                tag = (tag < 0) ? -40 : +40;
+            }
+            else {
+                tag = (tag < 0) ? -30 : +30;
+            }
+        }
+        else {
+            tag = (tag < 0) ? -20 : +20;
+        }
+    }
+    switch (tag) {
         case -100 : [self gotoBeginning];       break;
         case  -40 : [self seekPrevSubtitle];    break;
         case  -30 : [self seekBackward:2];      break;

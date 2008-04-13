@@ -93,12 +93,12 @@
     [_fullScreenLock lock];
     if (_movie && ![self isFullScreen]) {
         NSEvent* event = [NSApp currentEvent];
-        if ([event type] == NSKeyDown &&
-            !([event modifierFlags] & NSCommandKeyMask)) {
-            if ([event modifierFlags] & NSControlKeyMask) {
+        unsigned int flags = [event modifierFlags];
+        if ([event type] == NSKeyDown && !(flags & NSCommandKeyMask)) {
+            if (flags & NSControlKeyMask) {
                 [self setFullScreenFill:FS_FILL_STRETCH];
             }
-            else if ([event modifierFlags] & NSAlternateKeyMask) {
+            else if (flags & NSAlternateKeyMask) {
                 [self setFullScreenFill:FS_FILL_CROP];
             }
         }

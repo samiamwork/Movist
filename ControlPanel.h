@@ -30,6 +30,7 @@
     IBOutlet AppController* _appController;
     IBOutlet MMovieView* _movieView;
     IBOutlet NSTabView* _tabView;
+    NSPoint _initialDragPoint;
 
     // Video
     IBOutlet NSSlider* _videoBrightnessSlider;

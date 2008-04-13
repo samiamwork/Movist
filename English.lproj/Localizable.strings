@@ -93,6 +93,8 @@
 "Mono" = "Mono";
 "Stereo" = "Stereo";
 "5.1 Ch." = "5.1 Ch.";
+"Digital" = "Digital";
+"Analog" = "Analog";
 
 /* Preferences */
 "General" = "General";

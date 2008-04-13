@@ -126,6 +126,8 @@
     IBOutlet NSButton* _playButton;
     IBOutlet TimeTextField* _lTimeTextField;
     IBOutlet TimeTextField* _rTimeTextField;
+    IBOutlet HoverButton* _prevSeekButton;
+    IBOutlet HoverButton* _nextSeekButton;
     IBOutlet HoverButton* _controlPanelButton;
     IBOutlet HoverButton* _prevMovieButton;
     IBOutlet HoverButton* _nextMovieButton;
@@ -136,11 +138,13 @@
 
     // control panel
     IBOutlet ControlPanel* _controlPanel;
+    IBOutlet NSTextField* _audioDeviceTextField;
+    IBOutlet NSTextField* _audioOutTextField;
     IBOutlet NSPopUpButton* _subtitlePositionPopUpButton;
     IBOutlet NSButton* _subtitlePositionDefaultButton;
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
-    IBOutlet NSButton* _controlPanelDecoderButton;
+    IBOutlet NSButton* _cpDecoderButton;
     IBOutlet NSTextField* _dataSizeBpsTextField;
     IBOutlet NSTextField* _fpsTextField;
 
@@ -150,14 +154,16 @@
 
     // play panel
     IBOutlet PlayPanel* _playPanel;
-    IBOutlet NSButton* _panelMuteButton;
-    IBOutlet NSSlider* _panelVolumeSlider;
-    IBOutlet FSSeekSlider* _panelSeekSlider;
-    IBOutlet NSButton* _panelPlayButton;
-    IBOutlet TimeTextField* _panelLTimeTextField;
-    IBOutlet TimeTextField* _panelRTimeTextField;
-    IBOutlet NSButton* _panelPlaylistButton;
-    IBOutlet NSButton* _panelDecoderButton;
+    IBOutlet NSButton* _fsMuteButton;
+    IBOutlet NSSlider* _fsVolumeSlider;
+    IBOutlet FSSeekSlider* _fsSeekSlider;
+    IBOutlet NSButton* _fsPlayButton;
+    IBOutlet NSButton* _fsPrevSeekButton;
+    IBOutlet NSButton* _fsNextSeekButton;
+    IBOutlet TimeTextField* _fsLTimeTextField;
+    IBOutlet TimeTextField* _fsRTimeTextField;
+    IBOutlet NSButton* _fsPlaylistButton;
+    IBOutlet NSButton* _fsDecoderButton;
 }
 
 - (MMovie*)movie;
