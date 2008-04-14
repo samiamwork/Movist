@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2CFA58660DB3496B0084BFB6 /* liba52.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA585E0DB3496B0084BFB6 /* liba52.a */; };
+		2CFA58670DB3496B0084BFB6 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA585F0DB3496B0084BFB6 /* libavcodec.a */; };
+		2CFA58680DB3496B0084BFB6 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58600DB3496B0084BFB6 /* libavdevice.a */; };
+		2CFA58690DB3496B0084BFB6 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58610DB3496B0084BFB6 /* libavformat.a */; };
+		2CFA586A0DB3496B0084BFB6 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58620DB3496B0084BFB6 /* libavutil.a */; };
+		2CFA586B0DB3496B0084BFB6 /* libfaad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58630DB3496B0084BFB6 /* libfaad.a */; };
+		2CFA586C0DB3496B0084BFB6 /* libpostproc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58640DB3496B0084BFB6 /* libpostproc.a */; };
+		2CFA586D0DB3496B0084BFB6 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58650DB3496B0084BFB6 /* libswscale.a */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -77,14 +85,6 @@
 		AF3CB0AE0D964E2800AB004A /* PreferenceController_Advanced_File.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3CB0AB0D964E2800AB004A /* PreferenceController_Advanced_File.m */; };
 		AF3CB0AF0D964E2800AB004A /* PreferenceController_Advanced_Codec.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3CB0AC0D964E2800AB004A /* PreferenceController_Advanced_Codec.m */; };
 		AF3CB0B00D964E2800AB004A /* PreferenceController_Advanced_Details.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3CB0AD0D964E2800AB004A /* PreferenceController_Advanced_Details.m */; };
-		AF41809F0D8FED7200454B9E /* liba52.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF4180970D8FED7200454B9E /* liba52.a */; };
-		AF4180A00D8FED7200454B9E /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF4180980D8FED7200454B9E /* libavcodec.a */; };
-		AF4180A10D8FED7200454B9E /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF4180990D8FED7200454B9E /* libavdevice.a */; };
-		AF4180A20D8FED7200454B9E /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF41809A0D8FED7200454B9E /* libavformat.a */; };
-		AF4180A30D8FED7200454B9E /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF41809B0D8FED7200454B9E /* libavutil.a */; };
-		AF4180A40D8FED7200454B9E /* libfaad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF41809C0D8FED7200454B9E /* libfaad.a */; };
-		AF4180A50D8FED7200454B9E /* libpostproc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF41809D0D8FED7200454B9E /* libpostproc.a */; };
-		AF4180A60D8FED7200454B9E /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF41809E0D8FED7200454B9E /* libswscale.a */; };
 		AF4181090DB0C2EA00C5AE7E /* HUDButtonFlatLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF4180F90DB0C2EA00C5AE7E /* HUDButtonFlatLeft.tiff */; };
 		AF41810A0DB0C2EA00C5AE7E /* HUDButtonFlatLeftPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF4180FA0DB0C2EA00C5AE7E /* HUDButtonFlatLeftPressed.tiff */; };
 		AF41810B0DB0C2EA00C5AE7E /* HUDButtonFlatRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF4180FB0DB0C2EA00C5AE7E /* HUDButtonFlatRight.tiff */; };
@@ -212,6 +212,14 @@
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		2CFA585E0DB3496B0084BFB6 /* liba52.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liba52.a; path = contrib/lib/liba52.a; sourceTree = "<group>"; };
+		2CFA585F0DB3496B0084BFB6 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = contrib/lib/libavcodec.a; sourceTree = "<group>"; };
+		2CFA58600DB3496B0084BFB6 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = contrib/lib/libavdevice.a; sourceTree = "<group>"; };
+		2CFA58610DB3496B0084BFB6 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = contrib/lib/libavformat.a; sourceTree = "<group>"; };
+		2CFA58620DB3496B0084BFB6 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = contrib/lib/libavutil.a; sourceTree = "<group>"; };
+		2CFA58630DB3496B0084BFB6 /* libfaad.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfaad.a; path = contrib/lib/libfaad.a; sourceTree = "<group>"; };
+		2CFA58640DB3496B0084BFB6 /* libpostproc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpostproc.a; path = contrib/lib/libpostproc.a; sourceTree = "<group>"; };
+		2CFA58650DB3496B0084BFB6 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = contrib/lib/libswscale.a; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Movist_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movist_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Movist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movist.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -307,14 +315,6 @@
 		AF3CB0AB0D964E2800AB004A /* PreferenceController_Advanced_File.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferenceController_Advanced_File.m; sourceTree = "<group>"; };
 		AF3CB0AC0D964E2800AB004A /* PreferenceController_Advanced_Codec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferenceController_Advanced_Codec.m; sourceTree = "<group>"; };
 		AF3CB0AD0D964E2800AB004A /* PreferenceController_Advanced_Details.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferenceController_Advanced_Details.m; sourceTree = "<group>"; };
-		AF4180970D8FED7200454B9E /* liba52.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liba52.a; path = ffmpeg/liba52.a; sourceTree = "<group>"; };
-		AF4180980D8FED7200454B9E /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = ffmpeg/libavcodec.a; sourceTree = "<group>"; };
-		AF4180990D8FED7200454B9E /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = ffmpeg/libavdevice.a; sourceTree = "<group>"; };
-		AF41809A0D8FED7200454B9E /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = ffmpeg/libavformat.a; sourceTree = "<group>"; };
-		AF41809B0D8FED7200454B9E /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = ffmpeg/libavutil.a; sourceTree = "<group>"; };
-		AF41809C0D8FED7200454B9E /* libfaad.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfaad.a; path = ffmpeg/libfaad.a; sourceTree = "<group>"; };
-		AF41809D0D8FED7200454B9E /* libpostproc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpostproc.a; path = ffmpeg/libpostproc.a; sourceTree = "<group>"; };
-		AF41809E0D8FED7200454B9E /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = ffmpeg/libswscale.a; sourceTree = "<group>"; };
 		AF4180F90DB0C2EA00C5AE7E /* HUDButtonFlatLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDButtonFlatLeft.tiff; path = Images/HUDButtonFlatLeft.tiff; sourceTree = "<group>"; };
 		AF4180FA0DB0C2EA00C5AE7E /* HUDButtonFlatLeftPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDButtonFlatLeftPressed.tiff; path = Images/HUDButtonFlatLeftPressed.tiff; sourceTree = "<group>"; };
 		AF4180FB0DB0C2EA00C5AE7E /* HUDButtonFlatRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDButtonFlatRight.tiff; path = Images/HUDButtonFlatRight.tiff; sourceTree = "<group>"; };
@@ -470,14 +470,14 @@
 				AFFE5EE60C341EAE00516510 /* AudioToolbox.framework in Frameworks */,
 				AFFE5EE70C341EAE00516510 /* AudioUnit.framework in Frameworks */,
 				AFFE5EE80C341EAE00516510 /* CoreAudio.framework in Frameworks */,
-				AF41809F0D8FED7200454B9E /* liba52.a in Frameworks */,
-				AF4180A00D8FED7200454B9E /* libavcodec.a in Frameworks */,
-				AF4180A10D8FED7200454B9E /* libavdevice.a in Frameworks */,
-				AF4180A20D8FED7200454B9E /* libavformat.a in Frameworks */,
-				AF4180A30D8FED7200454B9E /* libavutil.a in Frameworks */,
-				AF4180A40D8FED7200454B9E /* libfaad.a in Frameworks */,
-				AF4180A50D8FED7200454B9E /* libpostproc.a in Frameworks */,
-				AF4180A60D8FED7200454B9E /* libswscale.a in Frameworks */,
+				2CFA58660DB3496B0084BFB6 /* liba52.a in Frameworks */,
+				2CFA58670DB3496B0084BFB6 /* libavcodec.a in Frameworks */,
+				2CFA58680DB3496B0084BFB6 /* libavdevice.a in Frameworks */,
+				2CFA58690DB3496B0084BFB6 /* libavformat.a in Frameworks */,
+				2CFA586A0DB3496B0084BFB6 /* libavutil.a in Frameworks */,
+				2CFA586B0DB3496B0084BFB6 /* libfaad.a in Frameworks */,
+				2CFA586C0DB3496B0084BFB6 /* libpostproc.a in Frameworks */,
+				2CFA586D0DB3496B0084BFB6 /* libswscale.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,7 +543,7 @@
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
-				AF4180940D8FECFE00454B9E /* FFmpeg */,
+				2CFA585D0DB349390084BFB6 /* FFmpeg */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -593,6 +593,21 @@
 				AF31CFE40B7EF99000676AC6 /* QuickTime.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2CFA585D0DB349390084BFB6 /* FFmpeg */ = {
+			isa = PBXGroup;
+			children = (
+				2CFA585E0DB3496B0084BFB6 /* liba52.a */,
+				2CFA585F0DB3496B0084BFB6 /* libavcodec.a */,
+				2CFA58600DB3496B0084BFB6 /* libavdevice.a */,
+				2CFA58610DB3496B0084BFB6 /* libavformat.a */,
+				2CFA58620DB3496B0084BFB6 /* libavutil.a */,
+				2CFA58630DB3496B0084BFB6 /* libfaad.a */,
+				2CFA58640DB3496B0084BFB6 /* libpostproc.a */,
+				2CFA58650DB3496B0084BFB6 /* libswscale.a */,
+			);
+			name = FFmpeg;
 			sourceTree = "<group>";
 		};
 		AF07C1B90C4BAA490007D17B /* FullScreen */ = {
@@ -664,21 +679,6 @@
 				AF75BBA60DB26A3500CE7DD6 /* HUDWindow */,
 			);
 			name = Images;
-			sourceTree = "<group>";
-		};
-		AF4180940D8FECFE00454B9E /* FFmpeg */ = {
-			isa = PBXGroup;
-			children = (
-				AF4180970D8FED7200454B9E /* liba52.a */,
-				AF4180980D8FED7200454B9E /* libavcodec.a */,
-				AF4180990D8FED7200454B9E /* libavdevice.a */,
-				AF41809A0D8FED7200454B9E /* libavformat.a */,
-				AF41809B0D8FED7200454B9E /* libavutil.a */,
-				AF41809C0D8FED7200454B9E /* libfaad.a */,
-				AF41809D0D8FED7200454B9E /* libpostproc.a */,
-				AF41809E0D8FED7200454B9E /* libswscale.a */,
-			);
-			name = FFmpeg;
 			sourceTree = "<group>";
 		};
 		AF6735660C84007600E16021 /* Preference */ = {
@@ -1195,19 +1195,14 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
-				HEADER_SEARCH_PATHS = (
-					../ffmpeg/libavcodec,
-					../ffmpeg/libavformat,
-					../ffmpeg/libavutil,
-					../ffmpeg/libswscale,
-				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/$(arch)/include/ffmpeg";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/ffmpeg\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/contrib/lib\"";
 				OTHER_LDFLAGS = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib";
 				PRODUCT_NAME = Movist;
 				WRAPPER_EXTENSION = app;
@@ -1225,19 +1220,14 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
-				HEADER_SEARCH_PATHS = (
-					../ffmpeg/libavcodec,
-					../ffmpeg/libavformat,
-					../ffmpeg/libavutil,
-					../ffmpeg/libswscale,
-				);
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/$(arch)/include/ffmpeg";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/ffmpeg\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/contrib/lib\"";
 				OTHER_LDFLAGS = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib";
 				PRODUCT_NAME = Movist;
 				SEPARATE_STRIP = YES;
