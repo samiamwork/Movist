@@ -245,7 +245,7 @@
 #pragma mark -
 #pragma mark aspect-ratio
 
-- (int)aspectRatio { return (_movie) ? [_movie aspectRatio] : ASPECT_RATIO_DEFAULT; }
+- (int)aspectRatio { return (_movie) ? [_movie aspectRatio] : ASPECT_RATIO_DAR; }
 
 - (void)setAspectRatio:(int)aspectRatio
 {
@@ -261,10 +261,9 @@
             }
         }
         [_movie setAspectRatio:aspectRatio];
-        [_movieView updateSubtitlePosition];
-        [_movieView updateMovieRect:TRUE];
         [_movieView setMessage:[NSString stringWithFormat:
                             @"%@: %@", [_aspectRatioMenu title], [item title]]];
+        [self resizeWithMagnification:1.0];
         [self updateAspectRatioMenu];
         [self updateSubtitlePositionMenuItems];
     }

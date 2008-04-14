@@ -340,7 +340,7 @@
         _volume = DEFAULT_VOLUME;
         _muted = FALSE;
 
-        _aspectRatio = ASPECT_RATIO_DEFAULT;
+        _aspectRatio = ASPECT_RATIO_DAR;
     }
     return self;
 }
@@ -404,8 +404,11 @@
 {
     _aspectRatio = aspectRatio;
 
-    if (_aspectRatio == ASPECT_RATIO_DEFAULT) {
+    if (_aspectRatio == ASPECT_RATIO_DAR) {
         _adjustedSize = [[_videoTracks objectAtIndex:0] displaySize];
+    }
+    else if (_aspectRatio == ASPECT_RATIO_SAR) {
+        _adjustedSize = [[_videoTracks objectAtIndex:0] encodedSize];
     }
     else {
         float ratio[] = {
@@ -416,7 +419,7 @@
         };
         NSSize displaySize = [[_videoTracks objectAtIndex:0] displaySize];
         _adjustedSize.width  = displaySize.width;
-        _adjustedSize.height = displaySize.width / ratio[_aspectRatio - 1];
+        _adjustedSize.height = displaySize.width / ratio[_aspectRatio - ASPECT_RATIO_4_3];
     }
 }
 

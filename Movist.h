@@ -54,11 +54,12 @@ enum {
 
 #pragma mark aspect-ratio
 enum {
-    ASPECT_RATIO_DEFAULT,
-    ASPECT_RATIO_4_3,           //    4 : 3 (TV)
-    ASPECT_RATIO_16_9,          //   16 : 9 (HDTV)
-    ASPECT_RATIO_1_85,          // 1.85 : 1 (Screen)
-    ASPECT_RATIO_2_35,          // 2.35 : 1 (Screen)
+    ASPECT_RATIO_DAR,   // DAR (Display Aspect Ratio)
+    ASPECT_RATIO_SAR,   // SAR (Source Aspect Ratio)
+    ASPECT_RATIO_4_3,   //    4 : 3 (TV)
+    ASPECT_RATIO_16_9,  //   16 : 9 (HDTV)
+    ASPECT_RATIO_1_85,  // 1.85 : 1 (Screen)
+    ASPECT_RATIO_2_35,  // 2.35 : 1 (Screen)
 };
 
 #pragma mark dragging-action on movie-area

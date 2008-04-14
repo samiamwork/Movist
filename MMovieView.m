@@ -622,31 +622,66 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (NSData*)dataWithImage:(NSImage*)image
 {
     NSBitmapImageFileType fileType = NSTIFFFileType;
-    NSDictionary* properties = nil;
+    NSMutableDictionary* properties = [NSMutableDictionary dictionary];
     if (_captureFormat == CAPTURE_FORMAT_TIFF) {
         fileType = NSTIFFFileType;
-        properties = nil;
+        //[properties setObject:??? forKey:NSImageColorSyncProfileData];
+        //[properties setObject:??? forKey:NSImageCompressionMethod];
     }
     else if (_captureFormat == CAPTURE_FORMAT_JPEG) {
         fileType = NSJPEGFileType;
-        properties = [NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:0.9]
-                                                 forKey:NSImageCompressionFactor];
+        //[properties setObject:??? forKey:NSImageColorSyncProfileData];
+        //[properties setObject:[NSNumber numberWithFloat:0.9] forKey:NSImageCompressionFactor];
+        //[properties setObject:??? forKey:NSImageProgressive];
     }
     else if (_captureFormat == CAPTURE_FORMAT_PNG) {
         fileType = NSPNGFileType;
-        properties = nil;
+        //[properties setObject:??? forKey:NSImageColorSyncProfileData];
+        //[properties setObject:??? forKey:NSImageGamma];
+        //[properties setObject:??? forKey:NSImageInterlaced];
     }
     else if (_captureFormat == CAPTURE_FORMAT_BMP) {
         fileType = NSBMPFileType;
-        properties = nil;
     }
     else if (_captureFormat == CAPTURE_FORMAT_GIF) {
         fileType = NSGIFFileType;
-        properties = nil;
+        //[properties setObject:??? forKey:NSImageColorSyncProfileData];
+        //[properties setObject:??? forKey:NSImageDitherTransparency];
+        //[properties setObject:??? forKey:NSImageRGBColorTable];
     }
 
     return [[NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]]
             representationUsingType:fileType properties:properties];
+}
+
+- (NSString*)fileExtensionForCaptureFormat:(int)format
+{
+    /*
+    NSString * NSFileTypeForHFSTypeCode(OSType hfsFileTypeCode);
+     */
+    return (format == CAPTURE_FORMAT_JPEG) ? @"jpeg" :
+           (format == CAPTURE_FORMAT_PNG)  ? @"png" :
+           (format == CAPTURE_FORMAT_BMP)  ? @"bmp" :
+           (format == CAPTURE_FORMAT_GIF)  ? @"gif" :
+                   /* CAPTURE_FORMAT_TIFF */ @"tiff";
+}
+
+- (NSString*)capturePathAtDirectory:(NSString*)directory
+{
+    NSString* name = [[[[NSApp delegate] movieURL] path] lastPathComponent];
+    NSString* ext = [self fileExtensionForCaptureFormat:_captureFormat];
+    directory = [[directory stringByExpandingTildeInPath]
+                 stringByAppendingPathComponent:[name stringByDeletingPathExtension]];
+    int i = 1;
+    NSString* path;
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    while (TRUE) {
+        path = [directory stringByAppendingFormat:@" %d.%@", i++, ext];
+        if (![fileManager fileExistsAtPath:path]) {
+            break;
+        }
+    }
+    return path;
 }
 
 - (void)copyCurrentImage:(BOOL)alternative
@@ -660,24 +695,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)saveCurrentImage:(BOOL)alternative
 {
     NSImage* image = [self captureRect:[self rectForCapture:alternative]];
-
-    NSString* name = [[[[NSApp delegate] movieURL] path] lastPathComponent];
-    NSString* ext = (_captureFormat == CAPTURE_FORMAT_JPEG) ? @"jpeg" :
-                    (_captureFormat == CAPTURE_FORMAT_PNG)  ? @"png" :
-                    (_captureFormat == CAPTURE_FORMAT_BMP)  ? @"bmp" :
-                    (_captureFormat == CAPTURE_FORMAT_GIF)  ? @"gif" :
-                                    /* CAPTURE_FORMAT_TIFF */ @"tiff";
-    NSString* directory = [[@"~/Desktop" stringByExpandingTildeInPath]
-        stringByAppendingPathComponent:[name stringByDeletingPathExtension]];
-    int i = 1;
-    NSString* path;
-    NSFileManager* fileManager = [NSFileManager defaultManager];
-    while (TRUE) {
-        path = [directory stringByAppendingFormat:@" %d.%@", i++, ext];
-        if (![fileManager fileExistsAtPath:path]) {
-            break;
-        }
-    }
+    NSString* path = [self capturePathAtDirectory:@"~/Desktop"];
     [[self dataWithImage:image] writeToFile:path atomically:TRUE];
 }
 
@@ -847,50 +865,60 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
     else if (action == DRAGGING_ACTION_CAPTURE_MOVIE) {
         BOOL alt = ([event modifierFlags] & NSShiftKeyMask) ? TRUE : FALSE;
-        NSImage* image = [self captureRect:[self rectForCapture:alt]];
-
-        NSPasteboard* pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-        [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
-        // lazy copy... copy will be performed in -[pasteboard:provideDataForType:].
-        _captureImage = [image retain];
+        _captureImage = [[self captureRect:[self rectForCapture:alt]] retain];
 
 //#define _REAL_SIZE_DRAGGING
 #if defined(_REAL_SIZE_DRAGGING)
         _draggingPoint = [event locationInWindow];
         _draggingPoint.x -= [self frame].origin.x;
         _draggingPoint.y -= [self frame].origin.y;
-        NSSize size = [image size];
-        NSPoint p = NSMakePoint(0, 0);
+        NSRect rect;
+        rect.size = [_captureImage size];
+        rect.origin = NSMakePoint(0, 0);
 #else
-        NSSize size = [self thumbnailSizeForImageSize:[image size]];
-        NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
-        p.x -= size.width / 2;
-        p.y -= size.height / 2;
+        NSRect rect;
+        rect.size = [self thumbnailSizeForImageSize:[_captureImage size]];
+        rect.origin = [self convertPoint:[event locationInWindow] fromView:nil];
+        rect.origin.x -= rect.size.width / 2;
+        rect.origin.y -= rect.size.height / 2;
 #endif
-        NSImage* dragImage = [[[NSImage alloc] initWithSize:size] autorelease];
-        [dragImage lockFocus];
-        [dragImage setBackgroundColor:[NSColor clearColor]];
-        [_captureImage drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:NSZeroRect
-                        operation:NSCompositeSourceOver fraction:0.5];
-        [dragImage unlockFocus];
-        [self dragImage:dragImage at:p offset:NSMakeSize(0, 0)
-                  event:event pasteboard:pboard source:self slideBack:TRUE];
+        NSString* ext = [self fileExtensionForCaptureFormat:_captureFormat];
+        [self dragPromisedFilesOfTypes:[NSArray arrayWithObject:ext]
+                              fromRect:rect source:self slideBack:TRUE event:event];
     }
 }
 
-- (void)pasteboard:(NSPasteboard*)pboard provideDataForType:(NSString*)type
+- (void)dragImage:(NSImage*)image at:(NSPoint)imageLoc offset:(NSSize)mouseOffset
+            event:(NSEvent*)event pasteboard:(NSPasteboard*)pboard
+           source:(id)sourceObject slideBack:(BOOL)slideBack
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([type isEqualToString:NSTIFFPboardType]) {
-        [pboard setData:[self dataWithImage:_captureImage] forType:type];
-    }
+#if defined(_REAL_SIZE_DRAGGING)
+    NSSize size = [_captureImage size];
+#else
+    NSSize size = [self thumbnailSizeForImageSize:[_captureImage size]];
+#endif
+    NSImage* dragImage = [[[NSImage alloc] initWithSize:size] autorelease];
+    [dragImage lockFocus];
+        [dragImage setBackgroundColor:[NSColor clearColor]];
+        [_captureImage drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:NSZeroRect
+                    operation:NSCompositeSourceOver fraction:0.5];
+    [dragImage unlockFocus];
+
+    [super dragImage:dragImage at:imageLoc offset:mouseOffset
+               event:event pasteboard:pboard source:sourceObject slideBack:slideBack];
+}
+
+- (NSArray*)namesOfPromisedFilesDroppedAtDestination:(NSURL*)dropDestination
+{
+    _capturePath = [[self capturePathAtDirectory:[dropDestination path]] retain];
+    return [NSArray arrayWithObject:_capturePath];
 }
 
 - (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)forLocal
 {
-    return (forLocal) ? NSDragOperationNone : NSDragOperationGeneric;//NSDragOperationCopy;
+    return (forLocal) ? NSDragOperationNone : NSDragOperationCopy;
 }
-
+/*
 #if defined(_REAL_SIZE_DRAGGING)
 - (void)draggedImage:(NSImage*)image movedTo:(NSPoint)screenPoint
 {
@@ -904,18 +932,26 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         size = [self thumbnailSizeForImageSize:[_captureImage size]];
     }
     if (!NSEqualSizes([image size], size)) {
-        // FIXME: how to change image size???
-        TRACE(@"change to %@", NSEqualSizes([_captureImage size], size) ?
+        // FIXME: I don't know how to change image size???
+        TRACE(@"change to %@",NSEqualSizes([_captureImage size], size) ?
                                         @"real size" : @"thumbnail size");
+        [image lockFocus];
+        [image setSize:size];
+        [image setBackgroundColor:[NSColor clearColor]];
+        [_captureImage drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:NSZeroRect
+                        operation:NSCompositeSourceOver fraction:0.5];
+        [image unlockFocus];
     }
 }
 #endif
-
+*/
 - (void)draggedImage:(NSImage*)image
              endedAt:(NSPoint)point operation:(NSDragOperation)operation
 {
-    [_captureImage release];
-    _captureImage = nil;
+    [[self dataWithImage:_captureImage] writeToFile:_capturePath atomically:TRUE];
+
+    [_capturePath release], _capturePath = nil;
+    [_captureImage release], _captureImage = nil;
 }
 
 - (void)scrollWheel:(NSEvent*)event

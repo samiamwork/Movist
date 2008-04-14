@@ -71,7 +71,10 @@
     int _captureFormat;
     BOOL _includeLetterBoxOnCapture;
     BOOL _removeGreenBox;
+
+    // capture
     NSImage* _captureImage;
+    NSString* _capturePath;
     NSPoint _draggingPoint;
 
     // fps calc.
