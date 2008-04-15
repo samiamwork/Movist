@@ -3,7 +3,7 @@ set -e
 
 SDK_TARGET="10.4"
 MACOSX_SDK="/Developer/SDKs/MacOSX10.4u.sdk"
-PREFIX="$(cd ..;pwd)/intel"
+PREFIX="$(cd ..;pwd)/i386"
 EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=10.4 -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
 #EXTRA_LDFLAGS="-arch i386 -Wl,-syslibroot,${MACOSX_SDK}"
 CFLAGS="-I$PREFIX/include $EXTRA_CFLAGS"

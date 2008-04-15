@@ -5,7 +5,7 @@ export CONTRIB_PATH="$SRCROOT/contrib/"
 export CONTRIB_SRC_PATH="$CONTRIB_PATH/src/"
 
 # i386 
-BUILDDIR="$CONTRIB_PATH/build/intel"
+BUILDDIR="$CONTRIB_PATH/build/i386"
 cd "$CONTRIB_PATH" && sh bootstrap i686-apple-darwin8
 mkdir -p "$BUILDDIR"
 cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"

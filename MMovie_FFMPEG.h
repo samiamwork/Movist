@@ -23,8 +23,8 @@
 
 #import "MMovie.h"
 
-#import <avcodec.h>
-#import <avformat.h>
+#import <ffmpeg/avcodec.h>
+#import <ffmpeg/avformat.h>
 
 enum {
     COMMAND_NONE,

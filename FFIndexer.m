@@ -24,8 +24,8 @@
 #import "FFIndexer.h"
 #import "MMovie_FFmpeg.h"
 
-#import <avio.h>
-#include <fcntl.h>
+#import <ffmpeg/avio.h>
+#import <fcntl.h>
 
 ///////////// copied from ffmpeg/libavformat/avformat.h ///////////////////////
 

@@ -263,7 +263,13 @@
         [_movie setAspectRatio:aspectRatio];
         [_movieView setMessage:[NSString stringWithFormat:
                             @"%@: %@", [_aspectRatioMenu title], [item title]]];
-        [self resizeWithMagnification:1.0];
+        if ([self isFullScreen]) {
+            [_movieView updateSubtitlePosition];
+            [_movieView updateMovieRect:TRUE];
+        }
+        else {
+            [self resizeWithMagnification:1.0];
+        }
         [self updateAspectRatioMenu];
         [self updateSubtitlePositionMenuItems];
     }
