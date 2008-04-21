@@ -105,6 +105,11 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([self isVisible] && ![self isNavigating]) {
         [_playPanel showPanel];
+
+        NSPoint p = [self convertBaseToScreen:[event locationInWindow]];
+        if (NSPointInRect(p, [_playPanel frame])) {
+            [_playPanel mouseMoved:[_playPanel convertScreenToBase:p]];
+        }
     }
 }
 

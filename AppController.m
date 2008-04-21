@@ -89,15 +89,13 @@ NSString* videoCodecName(int codecId);
     [_volumeSlider      setMaxValue:MAX_VOLUME];
     [_volumeSlider replaceCell:[CustomSliderCell class]];
     CustomSliderCell* cell = [_volumeSlider cell];
-    [cell setImageName:@"MainVolume" backColor:nil
-           trackOffset:5.0 knobOffset:2.0];
+    [cell setImageName:@"MainVolume" backColor:nil trackOffset:5.0 knobOffset:2.0];
 
     [_fsVolumeSlider setMinValue:0.0];
     [_fsVolumeSlider setMaxValue:MAX_VOLUME];
     [_fsVolumeSlider replaceCell:[CustomSliderCell class]];
     cell = [_fsVolumeSlider cell];
-    [cell setImageName:@"FSVolume" backColor:HUDBackgroundColor
-           trackOffset:0.0 knobOffset:2.0];
+    [cell setImageName:@"FSVolume" backColor:HUDBackgroundColor trackOffset:0.0 knobOffset:2.0];
     [self updateVolumeUI];
 
     _playRate = 1.0;
@@ -329,7 +327,6 @@ NSString* videoCodecName(int codecId);
 
 - (MMovie*)movie     { return _movie; }
 - (NSURL*)movieURL    { return (_movie) ?     [[_playlist currentItem] movieURL] : nil; }
-- (NSURL*)subtitleURL { return (_subtitles) ? [[_playlist currentItem] subtitleURL] : nil; }
 
 - (void)updateUI
 {
@@ -338,8 +335,9 @@ NSString* videoCodecName(int codecId);
     [_mainWindow setMovieURL:movieURL];
     [_fullScreener setMovieURL:movieURL];
     [_controlPanel setMovieURL:movieURL];
-    [_controlPanel setSubtitleURL:[self subtitleURL]];
     [_propertiesView reloadData];
+    [_seekSlider setDuration:(_movie) ? [_movie duration] : 0];
+    [_fsSeekSlider setDuration:[_seekSlider duration]];
     [self updatePrevNextMovieButtons];
     [self updateAspectRatioMenu];
     [self updateFullScreenFillMenu];
@@ -553,9 +551,16 @@ NSString* videoCodecName(int codecId);
         return _movie && ![self isFullScreen];
     }
     if ([menuItem action] == @selector(fullScreenAction:) ||
-        [menuItem action] == @selector(fullScreenFillAction:) ||
-        [menuItem action] == @selector(aspectRatioAction:)) {
+        [menuItem action] == @selector(fullScreenFillAction:)) {
         return (_movie != nil);
+    }
+    if ([menuItem action] == @selector(aspectRatioAction:)) {
+        if ([menuItem tag] == ASPECT_RATIO_SAR) {
+            return (_movie && !NSEqualSizes([_movie displaySize], [_movie encodedSize]));
+        }
+        else {
+            return (_movie != nil);
+        }
     }
     if ([menuItem action] == @selector(fullScreenUnderScanAction:)) {
         return (_movie && 0 < [_defaults floatForKey:MFullScreenUnderScanKey]);

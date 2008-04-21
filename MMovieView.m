@@ -232,6 +232,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     glTranslatef(-frame.size.width / 2.0f, -frame.size.height / 2.0f, 0.0f);
 
     NSRect bounds = [self bounds];
+    if ([[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
+        bounds = [self underScannedRect:bounds];
+    }
+
     if ([_iconOSD hasContent]) {
         [_iconOSD drawInViewBounds:bounds];
     }
@@ -406,9 +410,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         _imageRect.origin.y = 0;
         _imageRect.size.width = es.width;
         _imageRect.size.height = es.height;
-        // always crop!!!
-        _imageRect.origin.x++, _imageRect.size.width  -= 2;
-        _imageRect.origin.y++, _imageRect.size.height -= 2;
+        if (_removeGreenBox) {
+            _imageRect.origin.x++, _imageRect.size.width  -= 2;
+            _imageRect.origin.y++, _imageRect.size.height -= 2;
+        }
 
         if ([[NSApp delegate] isFullScreen] && _fullScreenFill == FS_FILL_CROP) {
             NSSize bs = [self bounds].size;
@@ -477,10 +482,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromSize(boundingSize));
     if ([[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
-        float underScan = _fullScreenUnderScan / 100.0;
-        boundingRect = NSInsetRect(boundingRect,
-                                   boundingRect.size.width  * underScan / 2,
-                                   boundingRect.size.height * underScan / 2);
+        boundingRect = [self underScannedRect:boundingRect];
     }
 
     if ([[NSApp delegate] isFullScreen] && _fullScreenFill != FS_FILL_NEVER) {
@@ -572,7 +574,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)setDraggingAction:(int)action { _draggingAction = action; }
 - (void)setCaptureFormat:(int)format { _captureFormat = format; }
 - (void)setIncludeLetterBoxOnCapture:(BOOL)include { _includeLetterBoxOnCapture = include; }
-- (void)setRemoveGreenBox:(BOOL)remove { _removeGreenBox = remove; }
+- (void)setRemoveGreenBox:(BOOL)remove
+{
+    _removeGreenBox = remove;
+    [self updateMovieRect:TRUE];
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -713,6 +719,17 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (float)fullScreenUnderScan { return _fullScreenUnderScan; }
 - (void)setFullScreenFill:(int)fill { _fullScreenFill = fill; }
 - (void)setFullScreenUnderScan:(float)underScan { _fullScreenUnderScan = underScan; }
+
+- (NSRect)underScannedRect:(NSRect)rect
+{
+    assert(0 < _fullScreenUnderScan);
+    float underScan = _fullScreenUnderScan / 100.0;
+    float dw = rect.size.width  * underScan;
+    float dh = rect.size.height * underScan;
+    rect.origin.x += dw / 2, rect.size.width  -= dw;
+    rect.origin.y += dh / 2, rect.size.height -= dh;
+    return rect;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

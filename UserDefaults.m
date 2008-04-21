@@ -101,7 +101,6 @@ NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
 NSString* MAutoSubtitlePositionMaxLinesKey  = @"AutoSubtitlePositionMaxLines";
-NSString* MSubtitleInfoDisplayOnOpeningKey  = @"SubtitleInfoDisplayOnOpening";
 // Full Navigation
 NSString* MFullNavPathKey                   = @"FullNavPath";
 NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
@@ -188,7 +187,6 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
     [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
     [dict setObject:[NSNumber numberWithInt:3] forKey:MAutoSubtitlePositionMaxLinesKey];
-    [dict setObject:[NSNumber numberWithInt:SUBTITLE_INFO_DISPLAY_FULL] forKey:MSubtitleInfoDisplayOnOpeningKey];
     // prefs: advanced - details: full-nav
     [dict setObject:@"~/Movies" forKey:MFullNavPathKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MShowActualPathForLinkKey];

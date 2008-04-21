@@ -6,6 +6,11 @@
             SUPERCLASS = NSButtonCell;
         },
                 {
+            CLASS = CustomCheckBoxCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSButtonCell;
+        },
+                {
             CLASS = CustomPopUpButtonCell;
             LANGUAGE = ObjC;
             SUPERCLASS = NSPopUpButtonCell;
@@ -21,14 +26,49 @@
             SUPERCLASS = NSObject;
         },
                 {
+            CLASS = HUDButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = CustomButtonCell;
+        },
+                {
+            CLASS = HUDCheckBoxCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = CustomCheckBoxCell;
+        },
+                {
+            CLASS = HUDPopUpButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = CustomPopUpButtonCell;
+        },
+                {
+            CLASS = HUDSliderCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = CustomSliderCell;
+        },
+                {
             CLASS = HUDTabView;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTabView;
         },
                 {
+            CLASS = HUDTableColumn;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTableColumn;
+        },
+                {
+            CLASS = HUDTableHeaderCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextFieldCell;
+        },
+                {
             CLASS = HUDTableView;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTableView;
+        },
+                {
+            CLASS = HUDTextFieldCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextFieldCell;
         },
                 {
             CLASS = HoverButton;

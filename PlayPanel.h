@@ -23,11 +23,13 @@
 #import "Movist.h"
 
 @class MMovieView;
+@class FSSeekSlider;
 
 @interface PlayPanel : NSWindow     // not NSPanel
 {
     IBOutlet MMovieView* _movieView;
     IBOutlet NSTextField* _titleTextField;
+    IBOutlet FSSeekSlider* _seekSlider;
 
     NSDate* _lastShowTime;
     BOOL _movingByDragging;
@@ -39,5 +41,7 @@
 - (void)orderOutWithFadeOut:(id)sender;
 - (void)showPanel;
 - (void)autoHidePanel;
+
+- (void)mouseMoved:(NSPoint)locationInWindow;
 
 @end

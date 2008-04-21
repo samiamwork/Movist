@@ -406,13 +406,6 @@
                                   key:MDefaultLanguageIdentifiersKey],
        [IntNode intNodeWithName:LABEL(@"Auto Subtitle Position Max Lines (1~3)")
                             key:MAutoSubtitlePositionMaxLinesKey minValue:1 maxValue:3],
-       [SelectNode selectNodeWithName:LABEL(@"Subtitle Info Display on Opening Movie")
-                                  key:MSubtitleInfoDisplayOnOpeningKey
-                               titles:[NSArray arrayWithObjects:
-                                       NSLocalizedString(@"Never", nil),
-                                       NSLocalizedString(@"Simple", nil),
-                                       NSLocalizedString(@"Full", nil),
-                                       nil]],
        nil]]];
     
     // "Full Screen Navigation" category

@@ -36,8 +36,8 @@
 - (id)copyWithZone:(NSZone*)zone
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    PlaylistMovieCell* cell = [[PlaylistMovieCell alloc] init];
-    [cell setPlaylistItem:_playlistItem];
+    PlaylistMovieCell* cell = [super copyWithZone:zone];
+    cell->_playlistItem = [_playlistItem retain];
     return cell;
 }
 
@@ -143,7 +143,7 @@
     }
 }
 
-- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView*)controlView
+- (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView*)controlView
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(cellFrame));
     NSRect rect = cellFrame;

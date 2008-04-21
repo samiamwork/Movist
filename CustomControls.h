@@ -71,6 +71,22 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+@interface CustomCheckBoxCell : NSButtonCell
+{
+    NSImage* _onImage;
+    NSImage* _onImagePressed;
+    NSImage* _onImageDisabled;
+    NSImage* _offImage;
+    NSImage* _offImagePressed;
+    NSImage* _offImageDisabled;
+}
+
+- (void)setImageName:(NSString*)imageName;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
 @interface CustomPopUpButtonCell : NSPopUpButtonCell
 {
     NSImage* _lImage;
@@ -83,6 +99,26 @@
 }
 
 - (void)setImageName:(NSString*)imageName titleColor:(NSColor*)titleColor;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+
+@interface CustomSegmentedCell : NSSegmentedCell
+{
+    NSImage* _lImage;
+    NSImage* _lImageSelected;
+    NSImage* _mImage;
+    NSImage* _mImageSelected;
+    NSImage* _rImage;
+    NSImage* _rImageSelected;
+    NSImage* _sepImage;
+    NSColor* _titleColor;
+    NSColor* _selectedTitleColor;
+}
+
+- (void)setImageName:(NSString*)imageName titleColor:(NSColor*)titleColor
+                                  selectedTitleColor:(NSColor*)selectedTitleColor;
 
 @end
 
@@ -107,25 +143,25 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-@interface HUDTabView : NSTabView
+@interface HUDTabView : NSTabView {} @end
+@interface HUDTableView : NSTableView {} @end
+@interface HUDTableColumn : NSTableColumn {} @end
+
+@interface HUDTableHeaderCell : NSTextFieldCell
 {
+    NSImage* _lImage;
+    NSImage* _mImage;
+    NSImage* _rImage;
 }
 
 @end
 
-////////////////////////////////////////////////////////////////////////////////
-
-@interface HUDTableView : NSTableView
-{
-}
-
-@end
-
-@interface HUDTableColumn : NSTableColumn
-{
-}
-
-@end
+@interface HUDTextFieldCell : NSTextFieldCell {} @end
+@interface HUDButtonCell : CustomButtonCell {} @end
+@interface HUDCheckBoxCell : CustomCheckBoxCell {} @end
+@interface HUDPopUpButtonCell : CustomPopUpButtonCell {} @end
+@interface HUDSegmentedCell : CustomSegmentedCell {} @end
+@interface HUDSliderCell : CustomSliderCell {} @end
 
 ////////////////////////////////////////////////////////////////////////////////
 

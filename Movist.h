@@ -78,13 +78,6 @@ enum {
     CAPTURE_FORMAT_GIF,
 };
 
-#pragma mark subtitle-info display
-enum {
-    SUBTITLE_INFO_DISPLAY_NONE,
-    SUBTITLE_INFO_DISPLAY_SIMPLE,
-    SUBTITLE_INFO_DISPLAY_FULL,
-};
-
 #pragma mark error-codes
 enum {
     ERROR_FILE_NOT_EXIST = 1,

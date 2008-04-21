@@ -101,7 +101,6 @@ extern NSString* MDisablePerianSubtitleKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultLanguageIdentifiersKey;
 extern NSString* MAutoSubtitlePositionMaxLinesKey;
-extern NSString* MSubtitleInfoDisplayOnOpeningKey;
 // Full Navigation
 extern NSString* MFullNavPathKey;
 extern NSString* MShowActualPathForLinkKey;

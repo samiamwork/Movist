@@ -21,6 +21,7 @@
 //
 
 #import "PlayPanel.h"
+#import "SeekSlider.h"
 
 @implementation PlayPanel
 
@@ -156,7 +157,13 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [[_movieView window] removeChildWindow:self];
+    [_seekSlider mouseMoved:NSMakePoint(-1, -1)];   // hide tooltip
     [super orderOut:sender];
+}
+
+- (void)mouseMoved:(NSPoint)locationInWindow
+{
+    [_seekSlider mouseMoved:locationInWindow];
 }
 
 - (void)scrollWheel:(NSEvent*)event

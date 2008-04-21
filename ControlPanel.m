@@ -78,9 +78,12 @@
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSString* identifier = (NSString*)[defaults objectForKey:MControlTabKey];
     if (NSNotFound == [_tabView indexOfTabViewItemWithIdentifier:identifier]) {
+        [_segmentedControl setSelectedSegment:0];
         [_tabView selectFirstTabViewItem:self];
     }
     else {
+        int index = [_tabView indexOfTabViewItemWithIdentifier:identifier];
+        [_segmentedControl setSelectedSegment:index];
         [_tabView selectTabViewItemWithIdentifier:identifier];
     }
 }
@@ -143,6 +146,11 @@
 - (void)showPanel { [self orderFront:self]; }
 - (void)hidePanel { [self orderOut:self]; }
 
+- (IBAction)segmentedControlAction:(id)sender
+{
+    [_tabView selectTabViewItemAtIndex:[_segmentedControl selectedSegment]];
+}
+
 - (void)setMovieURL:(NSURL*)url
 {
     if (!url) {
@@ -153,19 +161,6 @@
     }
     else {
         [_movieFilenameTextField setStringValue:[[url absoluteString] lastPathComponent]];
-    }
-}
-
-- (void)setSubtitleURL:(NSURL*)url
-{
-    if (!url) {
-        [_subtitleFilenameTextField setStringValue:@""];
-    }
-    else if ([url isFileURL]) {
-        [_subtitleFilenameTextField setStringValue:[[url path] lastPathComponent]];
-    }
-    else {
-        [_subtitleFilenameTextField setStringValue:[[url absoluteString] lastPathComponent]];
     }
 }
 

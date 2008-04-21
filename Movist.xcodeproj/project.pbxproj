@@ -30,8 +30,15 @@
 		AF05B3740C31780F00E56B25 /* Default.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF05B3720C31780F00E56B25 /* Default.tiff */; };
 		AF05B3750C31780F00E56B25 /* DefaultPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF05B3730C31780F00E56B25 /* DefaultPressed.tiff */; };
 		AF05D7360C0E022700773A47 /* FullScreener.m in Sources */ = {isa = PBXBuildFile; fileRef = AF05D7350C0E022700773A47 /* FullScreener.m */; };
+		AF06F9C40DBB09A700C78043 /* HUDCheckBoxOnDisabled.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF06F9C30DBB09A700C78043 /* HUDCheckBoxOnDisabled.tiff */; };
 		AF07C1F00C4BAF900007D17B /* MImageOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = AF07C1EF0C4BAF900007D17B /* MImageOSD.m */; };
 		AF07D2160BE71FD400D7EC30 /* Preferences.nib in Resources */ = {isa = PBXBuildFile; fileRef = AF07D2140BE71FD400D7EC30 /* Preferences.nib */; };
+		AF0864D40DBCEA6A0008CC92 /* HUDTableHeaderLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864D10DBCEA6A0008CC92 /* HUDTableHeaderLeft.tiff */; };
+		AF0864D50DBCEA6A0008CC92 /* HUDTableHeaderMid.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864D20DBCEA6A0008CC92 /* HUDTableHeaderMid.tiff */; };
+		AF0864D60DBCEA6A0008CC92 /* HUDTableHeaderRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864D30DBCEA6A0008CC92 /* HUDTableHeaderRight.tiff */; };
+		AF0865020DBCF0320008CC92 /* HUDSegmentedLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864FC0DBCF0320008CC92 /* HUDSegmentedLeft.tiff */; };
+		AF0865040DBCF0320008CC92 /* HUDSegmentedMid.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864FE0DBCF0320008CC92 /* HUDSegmentedMid.tiff */; };
+		AF0865060DBCF0320008CC92 /* HUDSegmentedRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0865000DBCF0320008CC92 /* HUDSegmentedRight.tiff */; };
 		AF0C4F100C5CAC9900199932 /* AppController_Remote.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */; };
 		AF0C51270C5CDB5800199932 /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C511A0C5CDB5800199932 /* AppleRemote.m */; };
 		AF0C51280C5CDB5800199932 /* GlobalKeyboardDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C511C0C5CDB5800199932 /* GlobalKeyboardDevice.m */; };
@@ -182,7 +189,17 @@
 		AFAE79850C0A6B36005A988C /* PreferenceAudio.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFAE79810C0A6B36005A988C /* PreferenceAudio.tiff */; };
 		AFAE79860C0A6B36005A988C /* PreferenceSubtitle.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFAE79820C0A6B36005A988C /* PreferenceSubtitle.tiff */; };
 		AFAE79870C0A6B36005A988C /* PreferenceVideo.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFAE79830C0A6B36005A988C /* PreferenceVideo.tiff */; };
+		AFB416730DBCF91900B08D60 /* HUDSegmentedSep.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFB416720DBCF91900B08D60 /* HUDSegmentedSep.tiff */; };
+		AFB416A40DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFB416A10DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff */; };
+		AFB416A50DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFB416A20DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff */; };
+		AFB416A60DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFB416A30DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff */; };
 		AFC7D3A90C37084800F5EA5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AFC7D3A70C37084800F5EA5C /* Localizable.strings */; };
+		AFCD04C20DBA39B400348AB0 /* MSubtitleParser_SUB.m in Sources */ = {isa = PBXBuildFile; fileRef = AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */; };
+		AFCD04F20DBA6B6300348AB0 /* unrarlib.c in Sources */ = {isa = PBXBuildFile; fileRef = AFCD04F00DBA6B6300348AB0 /* unrarlib.c */; };
+		AFCD05F80DBB000200348AB0 /* HUDCheckBoxOff.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFCD05F40DBB000200348AB0 /* HUDCheckBoxOff.tiff */; };
+		AFCD05F90DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFCD05F50DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff */; };
+		AFCD05FA0DBB000200348AB0 /* HUDCheckBoxOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFCD05F60DBB000200348AB0 /* HUDCheckBoxOn.tiff */; };
+		AFCD05FB0DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFCD05F70DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff */; };
 		AFEE863D0C0C807D00EABE1D /* Movist.icns in Resources */ = {isa = PBXBuildFile; fileRef = AFEE863C0C0C807D00EABE1D /* Movist.icns */; };
 		AFEE91F70CFC706800DB5C7A /* SubtitleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = AFEE91F50CFC706800DB5C7A /* SubtitleRenderer.m */; };
 		AFEF1EBC0BF8A5160047D887 /* Playlist.m in Sources */ = {isa = PBXBuildFile; fileRef = AFEF1EBB0BF8A5160047D887 /* Playlist.m */; };
@@ -237,10 +254,17 @@
 		AF05B3730C31780F00E56B25 /* DefaultPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = DefaultPressed.tiff; path = Images/DefaultPressed.tiff; sourceTree = "<group>"; };
 		AF05D7340C0E022700773A47 /* FullScreener.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = FullScreener.h; sourceTree = "<group>"; };
 		AF05D7350C0E022700773A47 /* FullScreener.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = FullScreener.m; sourceTree = "<group>"; };
+		AF06F9C30DBB09A700C78043 /* HUDCheckBoxOnDisabled.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOnDisabled.tiff; path = Images/HUDCheckBoxOnDisabled.tiff; sourceTree = "<group>"; };
 		AF079E570BDAC1FE00A3EE52 /* Movist.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = Movist.h; sourceTree = "<group>"; };
 		AF07C1EE0C4BAF900007D17B /* MImageOSD.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MImageOSD.h; sourceTree = "<group>"; };
 		AF07C1EF0C4BAF900007D17B /* MImageOSD.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MImageOSD.m; sourceTree = "<group>"; };
 		AF07D2150BE71FD400D7EC30 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Preferences.nib; sourceTree = "<group>"; };
+		AF0864D10DBCEA6A0008CC92 /* HUDTableHeaderLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDTableHeaderLeft.tiff; path = Images/HUDTableHeaderLeft.tiff; sourceTree = "<group>"; };
+		AF0864D20DBCEA6A0008CC92 /* HUDTableHeaderMid.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDTableHeaderMid.tiff; path = Images/HUDTableHeaderMid.tiff; sourceTree = "<group>"; };
+		AF0864D30DBCEA6A0008CC92 /* HUDTableHeaderRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDTableHeaderRight.tiff; path = Images/HUDTableHeaderRight.tiff; sourceTree = "<group>"; };
+		AF0864FC0DBCF0320008CC92 /* HUDSegmentedLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedLeft.tiff; path = Images/HUDSegmentedLeft.tiff; sourceTree = "<group>"; };
+		AF0864FE0DBCF0320008CC92 /* HUDSegmentedMid.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedMid.tiff; path = Images/HUDSegmentedMid.tiff; sourceTree = "<group>"; };
+		AF0865000DBCF0320008CC92 /* HUDSegmentedRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedRight.tiff; path = Images/HUDSegmentedRight.tiff; sourceTree = "<group>"; };
 		AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Remote.m; sourceTree = "<group>"; };
 		AF0C51190C5CDB5800199932 /* AppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = AppleRemote.h; path = AppleRemote/AppleRemote.h; sourceTree = "<group>"; };
 		AF0C511A0C5CDB5800199932 /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = AppleRemote.m; path = AppleRemote/AppleRemote.m; sourceTree = "<group>"; };
@@ -420,12 +444,24 @@
 		AFAE79810C0A6B36005A988C /* PreferenceAudio.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = PreferenceAudio.tiff; path = Images/PreferenceAudio.tiff; sourceTree = "<group>"; };
 		AFAE79820C0A6B36005A988C /* PreferenceSubtitle.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = PreferenceSubtitle.tiff; path = Images/PreferenceSubtitle.tiff; sourceTree = "<group>"; };
 		AFAE79830C0A6B36005A988C /* PreferenceVideo.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = PreferenceVideo.tiff; path = Images/PreferenceVideo.tiff; sourceTree = "<group>"; };
+		AFB416720DBCF91900B08D60 /* HUDSegmentedSep.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedSep.tiff; path = Images/HUDSegmentedSep.tiff; sourceTree = "<group>"; };
+		AFB416A10DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedLeftSelected.tiff; path = Images/HUDSegmentedLeftSelected.tiff; sourceTree = "<group>"; };
+		AFB416A20DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedMidSelected.tiff; path = Images/HUDSegmentedMidSelected.tiff; sourceTree = "<group>"; };
+		AFB416A30DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedRightSelected.tiff; path = Images/HUDSegmentedRightSelected.tiff; sourceTree = "<group>"; };
 		AFC7D3A80C37084800F5EA5C /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AFC7D3DE0C370FD100F5EA5C /* Korean */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Korean; path = Korean.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AFC7D42E0C37138500F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AFC7D4300C3715A500F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFC7D4330C37160300F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFC7D44D0C371C4C00F5EA5C /* Korean */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Korean; path = Korean.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AFCD04C00DBA39B300348AB0 /* MSubtitleParser_SUB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_SUB.h; sourceTree = "<group>"; };
+		AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SUB.m; sourceTree = "<group>"; };
+		AFCD04F00DBA6B6300348AB0 /* unrarlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unrarlib.c; sourceTree = "<group>"; };
+		AFCD04F10DBA6B6300348AB0 /* unrarlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unrarlib.h; sourceTree = "<group>"; };
+		AFCD05F40DBB000200348AB0 /* HUDCheckBoxOff.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOff.tiff; path = Images/HUDCheckBoxOff.tiff; sourceTree = "<group>"; };
+		AFCD05F50DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOffPressed.tiff; path = Images/HUDCheckBoxOffPressed.tiff; sourceTree = "<group>"; };
+		AFCD05F60DBB000200348AB0 /* HUDCheckBoxOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOn.tiff; path = Images/HUDCheckBoxOn.tiff; sourceTree = "<group>"; };
+		AFCD05F70DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOnPressed.tiff; path = Images/HUDCheckBoxOnPressed.tiff; sourceTree = "<group>"; };
 		AFEE863C0C0C807D00EABE1D /* Movist.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Movist.icns; sourceTree = "<group>"; };
 		AFEE91F50CFC706800DB5C7A /* SubtitleRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubtitleRenderer.m; sourceTree = "<group>"; };
 		AFEE91F60CFC706800DB5C7A /* SubtitleRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubtitleRenderer.h; sourceTree = "<group>"; };
@@ -709,6 +745,10 @@
 				AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */,
 				AF37E14A0D20BA4300F572C4 /* MSubtitleParser_SRT.h */,
 				AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */,
+				AFCD04C00DBA39B300348AB0 /* MSubtitleParser_SUB.h */,
+				AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */,
+				AFCD04F10DBA6B6300348AB0 /* unrarlib.h */,
+				AFCD04F00DBA6B6300348AB0 /* unrarlib.c */,
 			);
 			name = Subtitle;
 			sourceTree = "<group>";
@@ -727,14 +767,29 @@
 				AF4181000DB0C2EA00C5AE7E /* HUDButtonRoundLeftPressed.tiff */,
 				AF4181010DB0C2EA00C5AE7E /* HUDButtonRoundRight.tiff */,
 				AF4181020DB0C2EA00C5AE7E /* HUDButtonRoundRightPressed.tiff */,
+				AFCD05F40DBB000200348AB0 /* HUDCheckBoxOff.tiff */,
+				AFCD05F50DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff */,
+				AFCD05F60DBB000200348AB0 /* HUDCheckBoxOn.tiff */,
+				AF06F9C30DBB09A700C78043 /* HUDCheckBoxOnDisabled.tiff */,
+				AFCD05F70DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff */,
 				AF4181030DB0C2EA00C5AE7E /* HUDPopUpLeft.tiff */,
 				AF4181040DB0C2EA00C5AE7E /* HUDPopUpLeftPressed.tiff */,
 				AF4181050DB0C2EA00C5AE7E /* HUDPopUpMid.tiff */,
 				AF4181060DB0C2EA00C5AE7E /* HUDPopUpMidPressed.tiff */,
 				AF4181070DB0C2EA00C5AE7E /* HUDPopUpRight.tiff */,
 				AF4181080DB0C2EA00C5AE7E /* HUDPopUpRightPressed.tiff */,
+				AF0864FC0DBCF0320008CC92 /* HUDSegmentedLeft.tiff */,
+				AFB416A10DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff */,
+				AF0864FE0DBCF0320008CC92 /* HUDSegmentedMid.tiff */,
+				AFB416A20DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff */,
+				AF0865000DBCF0320008CC92 /* HUDSegmentedRight.tiff */,
+				AFB416A30DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff */,
+				AFB416720DBCF91900B08D60 /* HUDSegmentedSep.tiff */,
 				AFA999DB0DACDFE800E49D6E /* HUDSliderKnob.tiff */,
 				AFA999DC0DACDFE800E49D6E /* HUDSliderTrack.tiff */,
+				AF0864D10DBCEA6A0008CC92 /* HUDTableHeaderLeft.tiff */,
+				AF0864D20DBCEA6A0008CC92 /* HUDTableHeaderMid.tiff */,
+				AF0864D30DBCEA6A0008CC92 /* HUDTableHeaderRight.tiff */,
 			);
 			name = HUDWindow;
 			sourceTree = "<group>";
@@ -1054,6 +1109,21 @@
 				AF4187DD0DB1C99400C5AE7E /* MainNextSeekHover.tiff in Resources */,
 				AF75BB780DB21B1300CE7DD6 /* FSPrevSeek.tiff in Resources */,
 				AF75BB790DB21B1300CE7DD6 /* FSNextSeek.tiff in Resources */,
+				AFCD05F80DBB000200348AB0 /* HUDCheckBoxOff.tiff in Resources */,
+				AFCD05F90DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff in Resources */,
+				AFCD05FA0DBB000200348AB0 /* HUDCheckBoxOn.tiff in Resources */,
+				AFCD05FB0DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff in Resources */,
+				AF06F9C40DBB09A700C78043 /* HUDCheckBoxOnDisabled.tiff in Resources */,
+				AF0864D40DBCEA6A0008CC92 /* HUDTableHeaderLeft.tiff in Resources */,
+				AF0864D50DBCEA6A0008CC92 /* HUDTableHeaderMid.tiff in Resources */,
+				AF0864D60DBCEA6A0008CC92 /* HUDTableHeaderRight.tiff in Resources */,
+				AF0865020DBCF0320008CC92 /* HUDSegmentedLeft.tiff in Resources */,
+				AF0865040DBCF0320008CC92 /* HUDSegmentedMid.tiff in Resources */,
+				AF0865060DBCF0320008CC92 /* HUDSegmentedRight.tiff in Resources */,
+				AFB416730DBCF91900B08D60 /* HUDSegmentedSep.tiff in Resources */,
+				AFB416A40DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff in Resources */,
+				AFB416A50DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff in Resources */,
+				AFB416A60DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1131,6 +1201,8 @@
 				AF1E05380DA790A700CE7196 /* FFVideoTrack.m in Sources */,
 				AF1E10840DA8C6EA00CE7196 /* MMovie_Codec.m in Sources */,
 				AF4185A50DB12B3C00C5AE7E /* PlaylistPanel.m in Sources */,
+				AFCD04C20DBA39B400348AB0 /* MSubtitleParser_SUB.m in Sources */,
+				AFCD04F20DBA6B6300348AB0 /* unrarlib.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

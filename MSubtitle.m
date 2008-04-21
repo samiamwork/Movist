@@ -134,7 +134,7 @@
         _enabled = TRUE;
         _strings = [[NSMutableArray alloc] init];
 
-        _lastIndexOfStringAtTime = -1;     // for initial comparison
+        _lastSearchedIndex = -1;     // for initial comparison
         _emptyString = [[NSMutableAttributedString alloc] initWithString:@"" attributes:nil];
     }
     return self;
@@ -284,10 +284,10 @@
 - (NSMutableAttributedString*)stringAtTime:(float)time
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, time);
-    int index = (_lastIndexOfStringAtTime < 0) ? 0 : _lastIndexOfStringAtTime;
+    int index = (_lastSearchedIndex < 0) ? 0 : _lastSearchedIndex;
     if (index < 0 || [_strings count] <= index) {
         //TRACE(@"%s(\"%@\")[%.03f]: <none>", __PRETTY_FUNCTION__, _name, time);
-        _lastIndexOfStringAtTime = -1;
+        _lastSearchedIndex = -1;
         return nil;
     }
 
@@ -301,8 +301,8 @@
         }
         if (0 <= index && time < [ss endTime]) {
             //TRACE(@"%s(\"%@\")[%.03f:%d=>%d]:\"%@\"", __PRETTY_FUNCTION__, _name,
-            //      time, _lastIndexOfStringAtTime, index, [[ss string] string]);
-            _lastIndexOfStringAtTime = index;
+            //      time, _lastSearchedIndex, index, [[ss string] string]);
+            _lastSearchedIndex = index;
             return [ss string];
         }
     }
@@ -316,28 +316,28 @@
         }
         if (index <= maxIndex && [ss beginTime] <= time) {
             //TRACE(@"%s(\"%@\")[%.03f:%d=>%d]:\"%@\"", __PRETTY_FUNCTION__, _name,
-            //      time, _lastIndexOfStringAtTime, index, [[ss string] string]);
-            _lastIndexOfStringAtTime = index;
+            //      time, _lastSearchedIndex, index, [[ss string] string]);
+            _lastSearchedIndex = index;
             return [ss string];
         }
     }
     else {
         //TRACE(@"%s(\"%@\")[%.03f:%d=>%d]:\"%@\"", __PRETTY_FUNCTION__, _name,
-        //      time, _lastIndexOfStringAtTime, index, [[ss string] string]);
-        _lastIndexOfStringAtTime = index;
+        //      time, _lastSearchedIndex, index, [[ss string] string]);
+        _lastSearchedIndex = index;
         return [ss string];
     }
 
     // string not found
     //TRACE(@"%s(\"%@\")[%.03f]: <none>", __PRETTY_FUNCTION__, _name, time);
-    _lastIndexOfStringAtTime = -1;
+    _lastSearchedIndex = -1;
     return _emptyString;
 }
 
 - (void)clearCache
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    _lastIndexOfStringAtTime = -1;
+    _lastSearchedIndex = -1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,7 @@
 
 @interface NSCell (Movist)
 
+- (void)copyAttributesFromCell:(NSCell*)cell;
 - (void)drawInRect:(NSRect)rect leftImage:(NSImage*)lImage
           midImage:(NSImage*)mImage rightImage:(NSImage*)rImage;
 
@@ -35,6 +36,13 @@
 @interface NSControl (Movist)
 
 - (void)replaceCell:(Class)cellClass;
+
+@end
+
+// override hidden message
+@interface NSObject (NSTableViewPrivateMethods)
+
+- (id)_highlightColorForCell:(NSCell*)cell;
 
 @end
 
@@ -66,7 +74,7 @@
 
 #define HUDTitleBackColor   [NSColor colorWithCalibratedWhite:0.1 alpha:0.85]
 #define HUDBackgroundColor  [NSColor colorWithCalibratedWhite:0.1 alpha:0.80]
-#define HUDBorderColor      [NSColor colorWithCalibratedWhite:0.4 alpha:0.75]
+#define HUDBorderColor      [NSColor colorWithCalibratedWhite:0.2 alpha:0.75]
 #define HUDTextColor        [NSColor colorWithCalibratedWhite:0.8 alpha:0.75]
 #define HUDButtonTextColor  [NSColor colorWithCalibratedWhite:1.0 alpha:0.75]
 

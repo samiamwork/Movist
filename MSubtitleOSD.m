@@ -55,16 +55,11 @@
     _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
 }
 
-- (NSMutableAttributedString*)stringForName:(NSString*)name
-{
-    return [_strings objectForKey:name];
-}
-
 - (BOOL)setString:(NSMutableAttributedString*)string forName:(NSString*)name
 {
     //TRACE(@"%s \"%@\" for \"%@\"", __PRETTY_FUNCTION__, [string string], name);
     assert(string != nil && name != nil);
-    NSAttributedString* prevString = [self stringForName:name];
+    NSAttributedString* prevString = [_strings objectForKey:name];
     if (!prevString || ![prevString isEqualToAttributedString:string]) {
         [_strings setObject:string forKey:name];
         _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
@@ -72,7 +67,19 @@
     }
     return FALSE;
 }
-
+/*
+- (BOOL)setImage:(NSImage*)image forName:(NSString*)name
+{
+    assert(image != nil && name != nil);
+    NSImage* prevImage = [_strings objectForKey:name];
+    if (!prevImage || ![prevImage isEqualTo:image]) {
+        [_strings setObject:image forKey:name];
+        _updateMask |= UPDATE_CONTENT | UPDATE_TEXTURE;
+        return TRUE;
+    }
+    return FALSE;
+}
+*/
 - (void)updateContent
 {
     [_newString release];
@@ -91,7 +98,15 @@
 
     [super updateContent];
 }
+/*
+- (void)drawContent:(NSRect)rect
+{
+    [super drawContent:rect];
 
+    [[NSColor blueColor] set];
+    NSFrameRect(rect);
+}
+*/
 - (void)drawInViewBounds:(NSRect)viewBounds
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(viewBounds));

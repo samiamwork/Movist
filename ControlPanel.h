@@ -29,6 +29,7 @@
 {
     IBOutlet AppController* _appController;
     IBOutlet MMovieView* _movieView;
+    IBOutlet NSSegmentedControl* _segmentedControl;
     IBOutlet NSTabView* _tabView;
     NSPoint _initialDragPoint;
 
@@ -47,11 +48,11 @@
 
     // Properties
     IBOutlet NSTextField* _movieFilenameTextField;
-    IBOutlet NSTextField* _subtitleFilenameTextField;
 }
 
 - (void)showPanel;
 - (void)hidePanel;
+- (IBAction)segmentedControlAction:(id)sender;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -79,6 +80,5 @@
 #pragma mark -
 #pragma mark properites
 - (void)setMovieURL:(NSURL*)url;
-- (void)setSubtitleURL:(NSURL*)url;
 
 @end

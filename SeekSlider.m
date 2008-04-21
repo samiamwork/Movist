@@ -40,7 +40,8 @@
 - (void)setKnobColor:(NSColor*)knobColor;
 - (void)setKnobSize:(float)knobSize;
 - (void)setBgImage:(NSImage*)image;
-- (float)locationOfValue:(float)value;
+- (float)positionOfTime:(float)time;
+- (float)timeAtPosition:(float)position;
 
 - (float)indexedDuration;
 - (void)setIndexedDuration:(float)duration;
@@ -95,10 +96,23 @@
 - (void)setKnobSize:(float)knobSize { _knobSize = knobSize; }
 - (void)setBgImage:(NSImage*)image { _bgImage = [image retain]; }
 
-- (float)locationOfValue:(float)value
+- (float)positionOfTime:(float)time
 {
     float width = [[self controlView] bounds].size.width - _knobSize;
-    return width * value / ([self maxValue] - [self minValue]) + _knobSize / 2 + 1;
+    return width * time / ([self maxValue] - [self minValue]) + _knobSize / 2 + 1;
+}
+
+- (float)timeAtPosition:(float)position
+{
+    if (position < _knobSize / 2) {
+        return [self minValue];
+    }
+    float width = [[self controlView] bounds].size.width - _knobSize;
+    if (_knobSize / 2 + width <= position) {
+        return [self maxValue];
+    }
+    return (float)(int)
+        (([self maxValue] - [self minValue]) * (position - _knobSize / 2) / width);
 }
 
 - (void)drawBarInside:(NSRect)rect flipped:(BOOL)flipped
@@ -139,7 +153,7 @@
                    operation:NSCompositeSourceOver fraction:1.0];
     }
     else {
-        float ux = [self locationOfValue:_indexedDuration];
+        float ux = [self positionOfTime:_indexedDuration];
         rc.size.width = ux - rc.origin.x;
         [_cImage setFlipped:flipped];
         [_cImage drawInRect:rc fromRect:NSZeroRect
@@ -162,9 +176,9 @@
     // repeat range
     if (0 <= _repeatBeginning) {
         NSRect rc;
-        rc.origin.x   = [self locationOfValue:_repeatBeginning] + 1;
+        rc.origin.x   = [self positionOfTime:_repeatBeginning] + 1;
         rc.origin.y   = NSMinY(rect) + 1;
-        rc.size.width = [self locationOfValue:_repeatEnd] - 1 - rc.origin.x;
+        rc.size.width = [self positionOfTime:_repeatEnd] - 1 - rc.origin.x;
         rc.size.height= NSMaxY(rect) - 1 - rc.origin.y;
         [[NSColor colorWithCalibratedWhite:0.5 alpha:0.9] set];
         NSRectFill(rc);
@@ -173,7 +187,7 @@
 
 - (NSRect)knobRectFlipped:(BOOL)flipped
 {
-    float x = [self locationOfValue:[self floatValue]];
+    float x = [self positionOfTime:[self floatValue]];
     NSRect rect = [[self controlView] bounds];
     rect.origin.x = x - _knobSize / 2 - 1;
     rect.origin.y += (rect.size.height - _knobSize) / 2;
@@ -244,12 +258,94 @@
 
 @implementation SeekSlider
 
-- (void)mouseDown:(NSEvent*)theEvent
+- (void)initToolTipWithTextColor:(NSColor*)textColor backColor:(NSColor*)backColor
 {
-    NSPoint p = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    float x = [(SeekSliderCell*)[self cell] locationOfValue:[self indexedDuration]];
+    NSWindow* window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 58, 14)
+                                                   styleMask:NSBorderlessWindowMask
+                                                     backing:NSBackingStoreBuffered
+                                                       defer:TRUE];
+    [window setOpaque:FALSE];
+    [window setAlphaValue:0.9];
+    [window setBackgroundColor:backColor];
+    [window setHasShadow:FALSE];
+    [window setHidesOnDeactivate:TRUE];
+
+    _toolTipTextField = [[NSTextField alloc] initWithFrame:NSZeroRect];
+    [_toolTipTextField setAlignment:NSCenterTextAlignment];
+    [_toolTipTextField setEditable:FALSE];
+    [_toolTipTextField setSelectable:FALSE];
+    [_toolTipTextField setBezeled:FALSE];
+    [_toolTipTextField setBordered:FALSE];
+    [_toolTipTextField setDrawsBackground:FALSE];
+    [_toolTipTextField setFont:[NSFont toolTipsFontOfSize:[NSFont smallSystemFontSize]]];
+    [_toolTipTextField setTextColor:textColor];
+    [window setContentView:_toolTipTextField];
+
+    _mouseTime = -1;
+}
+
+- (void)dealloc
+{
+    [[_toolTipTextField window] release];
+    [_toolTipTextField release];
+    [super dealloc];
+}
+
+- (void)mouseDown:(NSEvent*)event
+{
+    NSPoint p = [self convertPoint:[event locationInWindow] fromView:nil];
+    float x = [(SeekSliderCell*)[self cell] positionOfTime:[self indexedDuration]];
     if (p.x <= x) {
-        [super mouseDown:theEvent];
+        [super mouseDown:event];
+    }
+}
+
+- (void)showMouseTimeToolTip:(NSPoint)locationInWindow
+{
+    [_toolTipTextField setStringValue:NSStringFromMovieTime(_mouseTime)];
+    
+    NSRect r = [self convertRect:[self bounds] toView:nil];
+    r.origin.x = locationInWindow.x;
+    r.origin.y += r.size.height;
+    r.origin = [[self window] convertBaseToScreen:r.origin];
+    r.origin.x -= [[_toolTipTextField window] frame].size.width / 2;
+    [[_toolTipTextField window] setFrameOrigin:r.origin];
+    [[_toolTipTextField window] orderFront:self];
+    [[self window] addChildWindow:[_toolTipTextField window] ordered:NSWindowAbove];
+}
+
+- (void)hideMouseTimeToolTip
+{
+    [[self window] removeChildWindow:[_toolTipTextField window]];
+    [[_toolTipTextField window] orderOut:self];
+    [_toolTipTextField setStringValue:@""];
+}
+
+- (void)mouseMoved:(NSPoint)locationInWindow
+{
+    float t = -1;
+    NSPoint p = [self convertPoint:locationInWindow fromView:nil];
+    if (NSPointInRect(p, [self bounds])) {
+        t = [(SeekSliderCell*)[self cell] timeAtPosition:p.x];
+    }
+
+    if (t != _mouseTime) {
+        _mouseTime = t;
+        if (0 <= _mouseTime && 0 < [self maxValue]) {
+            [self showMouseTimeToolTip:locationInWindow];
+        }
+        else {
+            [self hideMouseTimeToolTip];
+        }
+    }
+}
+
+- (float)duration { return [[self cell] maxValue]; }
+- (void)setDuration:(float)duration
+{
+    [[self cell] setMaxValue:duration];
+    if (duration == 0) {
+        [self hideMouseTimeToolTip];
     }
 }
 
@@ -310,13 +406,10 @@
     [cell setImageName:@"Main" rounded:FALSE];
     [cell setKnobColor:[NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.25 alpha:1.0]];
     [cell setKnobSize:8.0];
+
+    [self initToolTipWithTextColor:[NSColor whiteColor] backColor:HUDTitleBackColor];
 }
-/*
-- (void)mouseMoved:(NSEvent*)theEvent
-{
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-}
-*/
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -331,6 +424,8 @@
     [cell setImageName:@"FS" rounded:TRUE];
     [cell setKnobColor:[NSColor colorWithCalibratedRed:0.75 green:0.75 blue:0.75 alpha:1.0]];
     [cell setKnobSize:10.0];
+
+    [self initToolTipWithTextColor:HUDTextColor backColor:HUDTitleBackColor];
 }
 
 @end

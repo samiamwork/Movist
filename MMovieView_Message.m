@@ -27,53 +27,31 @@
 
 @implementation MMovieView (Message)
 
-- (NSMutableAttributedString*)messageStringWithURL:(NSURL*)url info:(NSString*)info
+- (void)setMessageWithURL:(NSURL*)url info:(NSString*)info
 {
+    //TRACE(@"%s \"%@\", \"%@\"", __PRETTY_FUNCTION__, [url path], info);
     NSString* s = ([url isFileURL]) ? [[url path] lastPathComponent] :
-                                      [[url absoluteString] lastPathComponent];
+    [[url absoluteString] lastPathComponent];
     NSStringEncoding encoding = [NSString defaultCStringEncoding];
     const char* cString = [s cStringUsingEncoding:encoding];
     if (cString) {
         s = [NSString stringWithCString:cString encoding:encoding];
     }
-
+    
     NSMutableAttributedString* mas;
     if (info) {
         NSString* msg = [NSString stringWithFormat:@"%@ (%@)", s, info];
         NSDictionary* attrs = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                               [NSColor colorWithCalibratedRed:0.7 green:0.7 blue:0.7 alpha:1.0],
-                               NSForegroundColorAttributeName, nil];
-        mas = [[NSMutableAttributedString alloc] initWithString:msg];
+            [NSColor colorWithCalibratedRed:0.7 green:0.7 blue:0.7 alpha:1.0],
+            NSForegroundColorAttributeName, nil];
+        mas = [[[NSMutableAttributedString alloc] initWithString:msg] autorelease];
         [mas setAttributes:attrs range:NSMakeRange([s length] + 1, 1 + [info length] + 1)];
         //[mas fixAttributesInRange:NSMakeRange(0, [mas length])];
     }
     else {
-        mas = [[NSMutableAttributedString alloc] initWithString:s];
+        mas = [[[NSMutableAttributedString alloc] initWithString:s] autorelease];
     }
-    return [mas autorelease];
-}
-
-- (void)setMessageWithMovieURL:(NSURL*)movieURL movieInfo:(NSString*)movieInfo
-                   subtitleURL:(NSURL*)subtitleURL subtitleInfo:(NSString*)subtitleInfo
-{
-    //TRACE(@"%s \"%@\", \"%@\"", __PRETTY_FUNCTION__, s, info);
-    NSMutableAttributedString* mas = nil;
-    if (movieURL) {
-        mas = [self messageStringWithURL:movieURL info:movieInfo];
-    }
-    if (subtitleURL) {
-        NSMutableAttributedString* s =
-                [self messageStringWithURL:subtitleURL info:subtitleInfo];
-        if (mas) {
-            [mas appendAttributedString:[[[NSAttributedString alloc]
-                                            initWithString:@"\n"] autorelease]];
-            [mas appendAttributedString:s];
-        }
-        else {
-            mas = s;
-        }
-    }
-
+    
     [self setAttributedMessage:mas];
 }
 

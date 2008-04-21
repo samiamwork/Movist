@@ -21,10 +21,11 @@
 //
 
 #import "Movist.h"
+#import "CustomControls.h"
 
 @class PlaylistItem;
 
-@interface PlaylistMovieCell : NSActionCell <NSCopying>
+@interface PlaylistMovieCell : HUDTextFieldCell
 {
     PlaylistItem* _playlistItem;
 }

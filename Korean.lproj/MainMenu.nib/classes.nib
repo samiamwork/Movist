@@ -125,6 +125,7 @@
                 {
             ACTIONS =             {
                 playbackRateAction = id;
+                segmentedControlAction = id;
                 videoColorControlsAction = id;
                 videoColorControlsDefaultsAction = id;
             };
@@ -135,7 +136,7 @@
                 "_movieFilenameTextField" = NSTextField;
                 "_movieView" = MMovieView;
                 "_playbackRateSlider" = NSSlider;
-                "_subtitleFilenameTextField" = NSTextField;
+                "_segmentedControl" = NSSegmentedControl;
                 "_tabView" = NSTabView;
                 "_videoBrightnessSlider" = NSSlider;
                 "_videoContrastSlider" = NSSlider;
@@ -146,6 +147,11 @@
         },
                 {
             CLASS = CustomButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSButtonCell;
+        },
+                {
+            CLASS = CustomCheckBoxCell;
             LANGUAGE = ObjC;
             SUPERCLASS = NSButtonCell;
         },
@@ -178,9 +184,24 @@
             SUPERCLASS = NSObject;
         },
                 {
+            CLASS = HUDButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = CustomButtonCell;
+        },
+                {
+            CLASS = HUDCheckBoxCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = CustomCheckBoxCell;
+        },
+                {
+            CLASS = HUDPopUpButtonCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = CustomPopUpButtonCell;
+        },
+                {
             CLASS = HUDSliderCell;
             LANGUAGE = ObjC;
-            SUPERCLASS = NSSliderCell;
+            SUPERCLASS = CustomSliderCell;
         },
                 {
             CLASS = HUDTabView;
@@ -193,9 +214,19 @@
             SUPERCLASS = NSTableColumn;
         },
                 {
+            CLASS = HUDTableHeaderCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextFieldCell;
+        },
+                {
             CLASS = HUDTableView;
             LANGUAGE = ObjC;
             SUPERCLASS = NSTableView;
+        },
+                {
+            CLASS = HUDTextFieldCell;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSTextFieldCell;
         },
                 {
             CLASS = HoverButton;
@@ -227,8 +258,14 @@
             LANGUAGE = ObjC;
             OUTLETS =             {
                 "_movieView" = MMovieView;
+                "_seekSlider" = MainSeekSlider;
             };
             SUPERCLASS = NSWindow;
+        },
+                {
+            CLASS = NSSegmentedControl;
+            LANGUAGE = ObjC;
+            SUPERCLASS = NSControl;
         },
                 {
             ACTIONS =             {
@@ -239,6 +276,7 @@
             LANGUAGE = ObjC;
             OUTLETS =             {
                 "_movieView" = MMovieView;
+                "_seekSlider" = FSSeekSlider;
                 "_titleTextField" = NSTextField;
             };
             SUPERCLASS = NSWindow;

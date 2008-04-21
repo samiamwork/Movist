@@ -168,7 +168,6 @@
 
 - (MMovie*)movie;
 - (NSURL*)movieURL;
-- (NSURL*)subtitleURL;
 
 - (void)updateUI;
 - (void)setQuitWhenWindowClose:(BOOL)quitWhenClose;

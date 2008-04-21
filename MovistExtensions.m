@@ -183,6 +183,35 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@implementation NSSegmentedCell (Movist)
+
+- (void)copyAttributesFromCell:(NSCell*)cell
+{
+    [super copyAttributesFromCell:cell];
+
+    NSSegmentedCell* segmentedCell = (NSSegmentedCell*)cell;
+    [self setSegmentCount:[segmentedCell segmentCount]];
+    [self setTrackingMode:[segmentedCell trackingMode]];
+    if (0 <= [segmentedCell selectedSegment]) {
+        [self setSelectedSegment:[segmentedCell selectedSegment]];
+    }
+    int i, count = [self segmentCount];
+    for (i = 0; i < count; i++) {
+        [self setWidth:[segmentedCell widthForSegment:i] forSegment:i];
+        [self setImage:[segmentedCell imageForSegment:i] forSegment:i];
+        [self setLabel:[segmentedCell labelForSegment:i] forSegment:i];
+        [self setEnabled:[segmentedCell isEnabledForSegment:i] forSegment:i];
+        [self setMenu:[segmentedCell menuForSegment:i] forSegment:i];
+        [self setToolTip:[segmentedCell toolTipForSegment:i] forSegment:i];
+        [self setTag:[segmentedCell tagForSegment:i] forSegment:i];
+    }
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @implementation NSSliderCell (Movist)
 
 - (void)copyAttributesFromCell:(NSCell*)cell
@@ -237,20 +266,17 @@
     }
     else if ([subview isMemberOfClass:[NSButton class]] &&
              [(NSButton*)subview isBordered]) {
-        [(NSButton*)subview replaceCell:[CustomButtonCell class]];
-        CustomButtonCell* cell = [(NSButton*)subview cell];
-        [cell setImageName:@"HUD" titleColor:HUDButtonTextColor titleOffset:2];
+        [(NSButton*)subview replaceCell:[HUDButtonCell class]];
     }
     else if ([subview isMemberOfClass:[NSPopUpButton class]]) {
-        [(NSPopUpButton*)subview replaceCell:[CustomPopUpButtonCell class]];
-        CustomPopUpButtonCell* cell = [(NSPopUpButton*)subview cell];
-        [cell setImageName:@"HUD" titleColor:HUDButtonTextColor];
+        [(NSPopUpButton*)subview replaceCell:[HUDPopUpButtonCell class]];
     }
     else if ([subview isMemberOfClass:[NSSlider class]] &&
              [[(NSSlider*)subview cell] isMemberOfClass:[NSSliderCell class]]) {
-        [(NSSlider*)subview replaceCell:[CustomSliderCell class]];
-        CustomSliderCell* cell = [(NSSlider*)subview cell];
-        [cell setImageName:@"HUD" backColor:HUDBackgroundColor trackOffset:2 knobOffset:0];
+        [(NSSlider*)subview replaceCell:[HUDSliderCell class]];
+    }
+    else if ([subview isMemberOfClass:[NSSegmentedControl class]]) {
+        [(NSSegmentedControl*)subview replaceCell:[HUDSegmentedCell class]];
     }
     else if ([subview isMemberOfClass:[NSTableView class]]) {
         [(NSTableView*)subview setBackgroundColor:

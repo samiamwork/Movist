@@ -240,7 +240,7 @@
     }
 
     // vertical align : rect is flipped
-    float tm = NSMaxY(viewBounds) - NSMaxY(mr);
+    float tm = NSMinY(viewBounds) + NSMaxY(viewBounds) - NSMaxY(mr);
     switch (_vAlign) {
         case OSD_VALIGN_CENTER :
             rect.origin.y = mr.origin.y + (mr.size.height - rect.size.height) / 2;

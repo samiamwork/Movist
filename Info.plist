@@ -347,6 +347,7 @@
 			<array>
 				<string>idx</string>
 				<string>sub</string>
+				<string>rar</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Subtitle-SUB</string>

@@ -25,7 +25,15 @@
 
 @interface SeekSlider : NSSlider
 {
+    NSTextField* _toolTipTextField;
+    float _mouseTime;
 }
+
+- (void)initToolTipWithTextColor:(NSColor*)textColor backColor:(NSColor*)backColor;
+- (void)mouseMoved:(NSPoint)locationInWindow;
+
+- (float)duration;
+- (void)setDuration:(float)duration;
 
 - (float)indexedDuration;
 - (void)setIndexedDuration:(float)duration;

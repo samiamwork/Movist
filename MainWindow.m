@@ -211,6 +211,15 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+#pragma mark cursor position
+
+- (void)mouseMoved:(NSEvent*)event
+{
+    [_seekSlider mouseMoved:[event locationInWindow]];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 #pragma mark volume by scroll-wheel
 
 - (void)scrollWheel:(NSEvent*)event

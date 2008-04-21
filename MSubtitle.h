@@ -31,7 +31,7 @@
     NSMutableArray* _strings;   // for MSubtitleString
 
     // for performance of -stringAtTime:
-    int _lastIndexOfStringAtTime;
+    int _lastSearchedIndex;
     NSMutableAttributedString* _emptyString;
 }
 
@@ -42,18 +42,23 @@
 - (NSURL*)url;
 - (NSString*)type;
 - (NSString*)name;
+- (void)setName:(NSString*)name;
+
 - (BOOL)isEmpty;
 - (float)beginTime;
 - (float)endTime;
+
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
-- (void)setName:(NSString*)name;
+
 - (void)addString:(NSMutableAttributedString*)string time:(float)time;
 - (void)addString:(NSMutableAttributedString*)string
         beginTime:(float)beginTime endTime:(float)endTime;
 - (void)checkEndTimes;
+
 - (NSMutableAttributedString*)stringAtTime:(float)time;
 - (void)clearCache;
+
 - (float)prevSubtitleTime:(float)time;
 - (float)nextSubtitleTime:(float)time;
 

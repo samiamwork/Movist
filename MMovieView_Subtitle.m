@@ -182,9 +182,7 @@
         if (_subtitlePosition == SUBTITLE_POSITION_AUTO) {
             NSRect rect = [[[self window] screen] frame];
             if (0 < _fullScreenUnderScan) {
-                float underScan = _fullScreenUnderScan / 100.0;
-                rect = NSInsetRect(rect, rect.size.width  * underScan / 2,
-                                         rect.size.height * underScan / 2);
+                rect = [self underScannedRect:rect];
             }
             NSSize bs = rect.size;
             NSSize ms = [_movie adjustedSizeByAspectRatio];
@@ -192,7 +190,7 @@
                 float lineHeight = [self subtitleLineHeightForMovieWidth:bs.width];
                 float letterBoxHeight = bs.height - (bs.width * ms.height / ms.width);
                 int lines = (int)letterBoxHeight / (int)lineHeight;
-                lines = MIN(_autoSubtitlePositionMaxLines , lines);
+                lines = MIN(_autoSubtitlePositionMaxLines, lines);
                 _subtitlePosition = (lines == 0) ? SUBTITLE_POSITION_ON_MOVIE :
                                     (lines == 1) ? SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE :
                                     (lines == 2) ? SUBTITLE_POSITION_ON_LETTER_BOX_2_LINES:

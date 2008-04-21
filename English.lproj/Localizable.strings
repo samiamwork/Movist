@@ -128,9 +128,6 @@
 "Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
 "Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
 "Auto Subtitle Position Max Lines (1~3)" = "Auto Subtitle Position Max Lines (1~3)";
-"Subtitle Info Display on Opening Movie" = "Subtitle Info Display on Opening Movie";
-"Simple" = "Simple";
-"Full" = "Full";
 
 /* Preferences: advanced - details: full-nav */
 "Full Screen Navigation" = "Full Screen Navigation";

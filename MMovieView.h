@@ -122,6 +122,7 @@
 - (float)fullScreenUnderScan;
 - (void)setFullScreenFill:(int)fill;
 - (void)setFullScreenUnderScan:(float)underScan;
+- (NSRect)underScannedRect:(NSRect)rect;
 
 - (float)brightness;
 - (float)saturation;
@@ -139,8 +140,7 @@
 
 @interface MMovieView (Message)
 
-- (void)setMessageWithMovieURL:(NSURL*)movieURL movieInfo:(NSString*)movieInfo
-                   subtitleURL:(NSURL*)subtitleURL subtitleInfo:(NSString*)subtitleInfo;
+- (void)setMessageWithURL:(NSURL*)url info:(NSString*)info;
 - (void)setMessage:(NSString*)s;
 - (void)setAttributedMessage:(NSMutableAttributedString*)s;
 - (void)invalidateMessageHideTimer;

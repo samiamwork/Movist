@@ -29,6 +29,7 @@
 #import "MMovie_QuickTime.h"
 #import "MSubtitleParser_SMI.h"
 #import "MSubtitleParser_SRT.h"
+#import "MSubtitleParser_SUB.h"
 
 #import "MMovieView.h"
 #import "FullScreener.h"
@@ -75,8 +76,7 @@
     while (movieClass = [enumerator nextObject]) {
         info = [NSString stringWithFormat:
                 NSLocalizedString(@"Opening with %@...", nil), [movieClass name]];
-        [_movieView setMessageWithMovieURL:movieURL movieInfo:info
-                               subtitleURL:nil subtitleInfo:nil];
+        [_movieView setMessageWithURL:movieURL info:info];
         [_movieView display];   // force display
 
         BOOL digitalAudioOut = [self digitalAudioOut] && movieInfo.hasDigitalAudio;
@@ -122,8 +122,9 @@
     NSString* ext = [path pathExtension];
     Class parserClass = ([ext isEqualToString:@"smi"]) ? [MSubtitleParser_SMI class] :
                         ([ext isEqualToString:@"srt"]) ? [MSubtitleParser_SRT class] :
-                        //([ext isEqualToString:@"idx"] ||
-                        // [ext isEqualToString:@"sub"]) ? [MSubtitleParser_SUB class] :
+                        ([ext isEqualToString:@"idx"] ||
+                         [ext isEqualToString:@"sub"] ||
+                         [ext isEqualToString:@"rar"]) ? [MSubtitleParser_SUB class] :
                                                          Nil;
     if (!parserClass) {
         *error = [NSError errorWithDomain:[NSApp localizedAppName] code:1 userInfo:0];
@@ -153,8 +154,9 @@
                    stringEncoding, MSubtitleParserOptionKey_stringEncoding,
                    nil];
     }
-    //else if (parserClass == [MSubtitleParser_SUB class]) {
-    //}
+    else if (parserClass == [MSubtitleParser_SUB class]) {
+        // no options for SUB
+    }
 
     MSubtitleParser* parser = [[[parserClass alloc] initWithURL:subtitleURL] autorelease];
     NSArray* subtitles = [parser parseWithOptions:options error:error];
@@ -196,23 +198,15 @@
     [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
     [_movieView updateMovieRect:TRUE];
 
-    int mode = [_defaults integerForKey:MSubtitleInfoDisplayOnOpeningKey];
-    if (mode == SUBTITLE_INFO_DISPLAY_NONE || ![self subtitleURL]) {
-        [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:[[_movie class] name]
-                               subtitleURL:nil subtitleInfo:nil];
-    }
-    else if (mode == SUBTITLE_INFO_DISPLAY_SIMPLE) {
+    if (_subtitles) {
         NSString* info = [NSString stringWithFormat:@"%@, %@",
-                          [[_movie class] name], [self subtitleInfoMessageString]];
-        [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:info
-                               subtitleURL:nil subtitleInfo:nil];
+                            [[_movie class] name], [self subtitleInfoMessageString]];
+        [_movieView setMessageWithURL:[self movieURL] info:info];
     }
-    else if (mode == SUBTITLE_INFO_DISPLAY_FULL) {
-        [_movieView setMessageWithMovieURL:[self movieURL] movieInfo:[[_movie class] name]
-                               subtitleURL:[self subtitleURL]
-                              subtitleInfo:[self subtitleInfoMessageString]];
+    else {
+        [_movieView setMessageWithURL:[self movieURL] info:[[_movie class] name]];
     }
-
+    
     if (![self isFullScreen]) {
         [self resizeWithMagnification:1.0];
         if ([_defaults boolForKey:MAutoFullScreenKey]) {
@@ -223,11 +217,9 @@
     [_movieView setSubtitles:_subtitles];
 
     // update etc. UI
-    [_seekSlider setMinValue:0];
-    [_seekSlider setMaxValue:[_movie duration]];
+    [_seekSlider setDuration:[_movie duration]];
     [_seekSlider setIndexedDuration:0];
-    [_fsSeekSlider setMinValue:0];
-    [_fsSeekSlider setMaxValue:[_movie duration]];
+    [_fsSeekSlider setDuration:[_movie duration]];
     [_fsSeekSlider setIndexedDuration:0];
     [_prevSeekButton updateHoverImage];
     [_nextSeekButton updateHoverImage];
@@ -422,9 +414,7 @@
 
     [_movie gotoBeginning];
 
-    [_movieView setMessageWithMovieURL:nil movieInfo:nil
-                           subtitleURL:subtitleURL
-                          subtitleInfo:[self subtitleInfoMessageString]];
+    [_movieView setMessageWithURL:subtitleURL info:[self subtitleInfoMessageString]];
 
     return TRUE;
 }

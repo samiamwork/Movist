@@ -22,36 +22,14 @@
 
 #import "Movist.h"
 
-@class PlayPanel;
-@class MMovieView;
-@class MainSeekSlider;
+#import "MSubtitleParser.h"
 
-@interface MainWindow : NSWindow
+@interface MSubtitleParser_SUB : MSubtitleParser
 {
-    IBOutlet MMovieView* _movieView;
-    IBOutlet MainSeekSlider* _seekSlider;
-    NSPoint _movieViewMarginPoint;
-    NSSize _movieViewMarginSize;
-
-    NSRect _zoomRestoreRect;
-    NSPoint _initialDragPoint;
-
-    BOOL _alwaysOnTop;
+    NSMutableArray* _subtitles;
 }
 
-- (NSButton*)createDecoderButton;
-- (MMovieView*)movieView;
-
-- (BOOL)alwaysOnTop;
-- (void)setAlwaysOnTop:(BOOL)alwaysOnTop;
-
-- (NSRect)frameRectForMovieSize:(NSSize)movieSize align:(int)align;
-- (NSRect)frameRectForMovieRect:(NSRect)movieRect;
-- (NSRect)frameRectForScreen;
+- (id)initWithURL:(NSURL*)subtitleURL;
+- (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error;
 
 @end
-
-enum {  // for frameRectFromMovieSize:align:
-    ALIGN_WINDOW_TITLE,
-    ALIGN_SCREEN_CENTER,
-};
