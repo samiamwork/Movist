@@ -33,5 +33,6 @@
 }
 
 + (NSString*)name;
++ (void)checkA52CodecAndPerianInstalled;
 
 @end

@@ -79,23 +79,8 @@
         [_movieView setMessageWithURL:movieURL info:info];
         [_movieView display];   // force display
 
-        BOOL digitalAudioOut = [self digitalAudioOut] && movieInfo.hasDigitalAudio;
-        if (movieClass == [MMovie_QuickTime class]) {
-            // remember original settings & update new settings
-            if (_a52CodecInstalled) {
-                _a52CodecAttemptPassthrough = [_defaults a52CodecAttemptPassthrough];
-                [_defaults setA52CodecAttemptPassthrough:digitalAudioOut];
-            }
-            if (_perianInstalled) {
-                _perianSubtitleEnabled = [_defaults isPerianSubtitleEnabled];
-                if ([_defaults boolForKey:MDisablePerianSubtitleKey]) {
-                    [_defaults setPerianSubtitleEnabled:FALSE];
-                }
-            }
-        }
-
         movie = [[movieClass alloc] initWithURL:movieURL movieInfo:&movieInfo
-                                digitalAudioOut:digitalAudioOut error:error];
+                                digitalAudioOut:_audioDeviceSupportsDigital error:error];
         if (movie) {
             return [movie autorelease];
         }
@@ -447,16 +432,6 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
         [_updateSystemActivityTimer invalidate];
-
-        if ([_movie isMemberOfClass:[MMovie_QuickTime class]]) {
-            // restore original settings
-            if (_a52CodecInstalled) {
-                [_defaults setA52CodecAttemptPassthrough:_a52CodecAttemptPassthrough];
-            }
-            if (_perianInstalled) {
-                [_defaults setPerianSubtitleEnabled:_perianSubtitleEnabled];
-            }
-        }
 
         _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?
                                 [_movie currentTime] : 0.0;

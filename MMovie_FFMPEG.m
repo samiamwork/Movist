@@ -289,4 +289,10 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     [super indexingFinished];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (BOOL)supportsAC3DigitalOut { return TRUE; }
+- (BOOL)supportsDTSDigitalOut { return TRUE; }
+
 @end

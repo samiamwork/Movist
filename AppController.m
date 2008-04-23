@@ -59,16 +59,7 @@ NSString* videoCodecName(int codecId);
         _fullScreenLock = [[NSLock alloc] init];
 
         _defaults = [NSUserDefaults standardUserDefaults];
-
-        NSString* root, *home;
-        NSFileManager* fm = [NSFileManager defaultManager];
-        root = @"/Library/Audio/Plug-Ins/Components/A52Codec.component";
-        home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
-        _a52CodecInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
-
-        root = @"/Library/QuickTime/Perian.component";
-        home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
-        _perianInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
+        [MMovie_QuickTime checkA52CodecAndPerianInstalled];
     }
     return self;
 }

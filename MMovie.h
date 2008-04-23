@@ -87,7 +87,8 @@ typedef struct {
     AVFormatContext* formatContext;
     NSArray* videoTracks;
     NSArray* audioTracks;
-    BOOL hasDigitalAudio;
+    BOOL hasAC3Codec;
+    BOOL hasDTSCodec;
     float startTime;
     float duration;
     int64_t fileSize;
@@ -100,7 +101,8 @@ typedef struct {
     NSURL* _url;
     NSMutableArray* _videoTracks;
     NSMutableArray* _audioTracks;
-    BOOL _hasDigitalAudio;
+    BOOL _hasAC3Codec;
+    BOOL _hasDTSCodec;
     float _startTime;
     float _duration;
     int64_t _fileSize;
@@ -148,7 +150,10 @@ typedef struct {
 - (void)indexedDurationUpdated:(float)indexedDuration;
 - (void)indexingFinished;
 
-- (BOOL)hasDigitalAudio;
+- (BOOL)hasAC3Codec;
+- (BOOL)hasDTSCodec;
+- (BOOL)supportsAC3DigitalOut;
+- (BOOL)supportsDTSDigitalOut;
 - (float)preferredVolume;
 - (float)volume;
 - (BOOL)muted;

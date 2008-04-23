@@ -127,11 +127,11 @@
 
     if (enabled) {
         [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Sound Track %@ enabled", nil), [track name]]];
+            NSLocalizedString(@"%@ enabled", nil), [track name]]];
     }
     else {
         [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Sound Track %@ disabled", nil), [track name]]];
+            NSLocalizedString(@"%@ disabled", nil), [track name]]];
     }
     [self updateAudioTrackMenuItems];
 }
@@ -200,8 +200,8 @@
     }
     
     [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Sound Track %@ selected", nil),
-        [[audioTracks objectAtIndex:index] name]]];
+        NSLocalizedString(@"%@ selected", nil),
+            [[audioTracks objectAtIndex:index] name]]];
     [self updateAudioTrackMenuItems];
     [_propertiesView reloadData];
     

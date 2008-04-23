@@ -38,11 +38,11 @@
 
     if (enabled) {
         [_movieView setMessage:[NSString stringWithFormat:
-                                NSLocalizedString(@"Video Track %@ enabled", nil), [track name]]];
+            NSLocalizedString(@"%@ enabled", nil), [track name]]];
     }
     else {
         [_movieView setMessage:[NSString stringWithFormat:
-                                NSLocalizedString(@"Video Track %@ disabled", nil), [track name]]];
+            NSLocalizedString(@"%@ disabled", nil), [track name]]];
     }
     //[self updateVideoTrackMenuItems];
 }

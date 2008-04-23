@@ -40,11 +40,13 @@ static AudioStreamID _audioStreamID;
 
 - (BOOL)digitalAudioOut
 {
-    if (_audioDeviceSupportsDigital &&
-        [_defaults boolForKey:MAutodetectDigitalAudioOutKey]) {
-        return _movie && [_movie hasDigitalAudio];
+    if (!_movie || !_audioDeviceSupportsDigital ||
+        ![_defaults boolForKey:MAutodetectDigitalAudioOutKey]) {
+        return FALSE;
     }
-    return FALSE;
+
+    return ([_movie hasAC3Codec] && [_movie supportsAC3DigitalOut]) ||
+           ([_movie hasDTSCodec] && [_movie supportsDTSDigitalOut]);
 }
 
 - (void)initDigitalAudioOut

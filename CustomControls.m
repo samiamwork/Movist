@@ -268,6 +268,7 @@
         image = (![self isEnabled]) ? _offImageDisabled :
                 ([self isHighlighted]) ? _offImagePressed : _offImage;
     }
+    frame.origin.y++;
     [image setFlipped:TRUE];
     [image drawAtPoint:frame.origin fromRect:NSZeroRect
              operation:NSCompositeSourceOver fraction:1.0];

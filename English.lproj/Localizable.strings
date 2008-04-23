@@ -53,13 +53,14 @@
 "Range Repeat End %@" = "Range Repeat End %@";
 "Range Repeat Clear" = "Range Repeat Clear";
 
+/* Message : common */
+"%@ enabled" = "%@ enabled";
+"%@ disabled" = "%@ disabled";
+"%@ selected" = "%@ selected";
+
 /* Message : Audio */
 "Mute" = "Mute";
 "Unmute" = "Unmute";
-"Sound Track: %@" = "%@";
-"Sound Track %@ selected" = "%@ selected";
-"Sound Track %@ enabled" = "%@ enabled";
-"Sound Track %@ disabled" = "%@ disabled";
 "Volume cannot be changed in Digital-Out" = "Volume cannot be changed in Digital-Out";
 
 /* Message : Video */
@@ -68,8 +69,6 @@
 "Saturation %.1f" = "Saturation %.1f";
 "Contrast %.1f" = "Contrast %.1f";
 "Hue %.1f" = "Hue %.1f";
-"Video Track %@ enabled" = "Video Track %@ enabled";
-"Video Track %@ disabled" = "Video Track %@ disabled";
 
 /* Message: Subtitle */
 "No Subtitle: Reopen with other encodings" = "No Subtitle: Reopen with other encodings";

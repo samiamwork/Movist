@@ -21,6 +21,7 @@
 //
 
 #import "MMovie_QuickTime.h"
+#import "UserDefaults.h"
 
 @interface QTTrack (Movist)
 
@@ -87,9 +88,58 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+// a52Codec digital-audio
+BOOL _a52CodecInstalled = FALSE;
+BOOL _a52CodecAttemptPassthrough = FALSE;
+
+// perian subtitle
+static BOOL _perianInstalled = FALSE;
+static BOOL _perianSubtitleEnabled = FALSE;
+
 @implementation MMovie_QuickTime
 
 + (NSString*)name { return @"QuickTime"; }
+
++ (void)checkA52CodecAndPerianInstalled
+{
+    NSString* root, *home;
+    NSFileManager* fm = [NSFileManager defaultManager];
+    root = @"/Library/Audio/Plug-Ins/Components/A52Codec.component";
+    home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
+    _a52CodecInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
+    
+    root = @"/Library/QuickTime/Perian.component";
+    home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
+    _perianInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
+}
+
+- (void)initA52CodecAndPerian:(BOOL)digitalAudioOut
+{
+    // remember original settings & update new settings
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    if (_a52CodecInstalled) {
+        _a52CodecAttemptPassthrough = [defaults a52CodecAttemptPassthrough];
+        [defaults setA52CodecAttemptPassthrough:digitalAudioOut];
+    }
+    if (_perianInstalled) {
+        _perianSubtitleEnabled = [defaults isPerianSubtitleEnabled];
+        if ([defaults boolForKey:MDisablePerianSubtitleKey]) {
+            [defaults setPerianSubtitleEnabled:FALSE];
+        }
+    }
+}
+
+- (void)cleanupA52CodecAndPerian
+{
+    // restore original settings
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    if (_a52CodecInstalled) {
+        [defaults setA52CodecAttemptPassthrough:_a52CodecAttemptPassthrough];
+    }
+    if (_perianInstalled) {
+        [defaults setPerianSubtitleEnabled:_perianSubtitleEnabled];
+    }
+}
 
 - (MTrack*)videoTrackWithIndex:(int)index qtTrack:(QTTrack*)qtTrack
 {
@@ -152,6 +202,9 @@
 - (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo
   digitalAudioOut:(BOOL)digitalAudioOut error:(NSError**)error
 {
+    // currently, A52Codec supports AC3 only (not DTS).
+    [self initA52CodecAndPerian:(digitalAudioOut && movieInfo->hasAC3Codec)];
+
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     QTMovie* qtMovie;
     if ([url isFileURL]) {
@@ -266,6 +319,8 @@
         CFRelease(_visualContext);
     }
     [_qtMovie release], _qtMovie = nil;
+    [self cleanupA52CodecAndPerian];
+
     [super cleanup];
 }
 
@@ -289,6 +344,13 @@
     }
     [self indexedDurationUpdated:duration];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+// currently, A52Codec supports AC3 only (not DTS)
+- (BOOL)supportsAC3DigitalOut { return _a52CodecInstalled; }
+- (BOOL)supportsDTSDigitalOut { return FALSE; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

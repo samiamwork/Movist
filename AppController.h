@@ -77,13 +77,7 @@
     NSRange _lastPlayedMovieRepeatRange;
 
     // digital-audio-out
-    BOOL _a52CodecInstalled;
-    BOOL _a52CodecAttemptPassthrough;
     BOOL _audioDeviceSupportsDigital;
-
-    // perian subtitle
-    BOOL _perianInstalled;
-    BOOL _perianSubtitleEnabled;
 
     // main-menu
     IBOutlet NSMenuItem* _reopenWithMenuItem;

@@ -180,7 +180,6 @@
     }
 
     NSString* summary;
-    NSString* name = NSLocalizedString(@"Video Track ##", nil);
     if (NSEqualSizes(displaySize, encodedSize)) {
         summary = [NSString stringWithFormat:@"%@, %d x %d",
                    codecDescription(codecId),
@@ -195,7 +194,7 @@
 
     MTrack* track = [MTrack trackWithImpl:
                      [FFVideoTrack videoTrackWithAVStream:stream index:streamIndex]];
-    [track setName:name];
+    // name will be set later
     [track setSummary:summary];
     [track setCodecId:codecId];
     [track setEncodedSize:encodedSize];
@@ -213,7 +212,6 @@
     float sampleRate = codecContext->sample_rate;
 
     NSString* summary;
-    NSString* name = NSLocalizedString(@"Sound Track ##", nil);
     if (channels == 0) {
         summary = @"";
     }
@@ -229,12 +227,27 @@
 
     MTrack* track = [MTrack trackWithImpl:
                      [FFAudioTrack audioTrackWithAVStream:stream index:streamIndex]];
-    [track setName:name];
+    // name will be set later
     [track setSummary:summary];
     [track setCodecId:codecId];
     [track setAudioChannels:channels];
     [track setAudioSampleRate:sampleRate];
     return track;
+}
+
++ (void)setNamesForTracks:(NSArray*)tracks defaultName:(NSString*)defaultName
+{
+    if ([tracks count] == 1) {
+        [(MTrack*)[tracks objectAtIndex:0] setName:defaultName];
+    }
+    else if (1 < [tracks count]) {
+        MTrack* track;
+        int number = 1;
+        NSEnumerator* enumerator = [tracks objectEnumerator];
+        while (track = [enumerator nextObject]) {
+            [track setName:[NSString stringWithFormat:@"%@ %d", defaultName, number++]];
+        }
+    }
 }
 
 + (BOOL)getMovieInfo:(MMovieInfo*)info forMovieURL:(NSURL*)url error:(NSError**)error
@@ -267,7 +280,7 @@
     float fps = 0;
     MTrack* track;
     AVStream* stream;
-    BOOL hasDigitalAudio = FALSE;
+    BOOL hasAC3Codec = FALSE, hasDTSCodec = FALSE;
     NSMutableArray* videoTracks = [NSMutableArray arrayWithCapacity:1];
     NSMutableArray* audioTracks = [NSMutableArray arrayWithCapacity:1];
     for (i = 0; i < formatContext->nb_streams; i++) {
@@ -282,10 +295,11 @@
         else if (stream->codec->codec_type == CODEC_TYPE_AUDIO) {
             track = [self audioTrackWithAVStream:stream streamIndex:i];
             [audioTracks addObject:track];
-            if (!hasDigitalAudio &&
-                ([track codecId] == MCODEC_AC3 ||
-                 [track codecId] == MCODEC_DTS)) {
-                hasDigitalAudio = TRUE;
+            if ([track codecId] == MCODEC_AC3) {
+                hasAC3Codec = TRUE;
+            }
+            if ([track codecId] == MCODEC_DTS) {
+                hasDTSCodec = TRUE;
             }
         }
     }
@@ -297,11 +311,16 @@
         }
         return FALSE;
     }
-    
+    [self setNamesForTracks:videoTracks
+                defaultName:NSLocalizedString(@"Video Track", nil)];
+    [self setNamesForTracks:audioTracks
+                defaultName:NSLocalizedString(@"Sound Track", nil)];
+
     info->formatContext = formatContext;
     info->videoTracks = videoTracks;
     info->audioTracks = audioTracks;
-    info->hasDigitalAudio = hasDigitalAudio;
+    info->hasAC3Codec = hasAC3Codec;
+    info->hasDTSCodec = hasDTSCodec;
     info->startTime = (formatContext->start_time == AV_NOPTS_VALUE) ? 0 :
                                 formatContext->start_time / AV_TIME_BASE;
     info->duration = (formatContext->duration == AV_NOPTS_VALUE) ? 0 :
@@ -328,7 +347,8 @@
         _url = [url retain];
         _videoTracks = [movieInfo->videoTracks retain];
         _audioTracks = [movieInfo->audioTracks retain];
-        _hasDigitalAudio = movieInfo->hasDigitalAudio;
+        _hasAC3Codec = movieInfo->hasAC3Codec;
+        _hasDTSCodec = movieInfo->hasDTSCodec;
         _startTime = movieInfo->startTime;
         _duration = movieInfo->duration;
         _fileSize = movieInfo->fileSize;
@@ -391,7 +411,10 @@
 }
 - (void)indexingFinished {}
 
-- (BOOL)hasDigitalAudio { return _hasDigitalAudio; }
+- (BOOL)hasAC3Codec { return _hasAC3Codec; }
+- (BOOL)hasDTSCodec { return _hasDTSCodec; }
+- (BOOL)supportsAC3DigitalOut { return FALSE; }
+- (BOOL)supportsDTSDigitalOut { return FALSE; }
 - (float)preferredVolume { return _preferredVolume; }
 - (float)volume { return _volume; }
 - (BOOL)muted { return _muted; }
