@@ -29,7 +29,7 @@
 
 - (float)preferredVolume:(float)volume
 {
-    return [self digitalAudioOut] ? 1.0 :   // always 1.0 for digital-audio
+    return [self isCurrentlyDigitalAudioOut] ? 1.0 :   // always 1.0 for digital-audio
                 normalizedVolume(MIN(MAX(0.0, volume), MAX_VOLUME));
 }
 
@@ -44,7 +44,7 @@
     }
     volume = [self preferredVolume:volume];
     [_movie setVolume:volume];
-    if ([self digitalAudioOut]) {
+    if ([self isCurrentlyDigitalAudioOut]) {
         [_movieView setMessage:NSLocalizedString(
                                 @"Volume cannot be changed in Digital-Out", nil)];
     }
@@ -110,7 +110,7 @@
         [_volumeSlider setFloatValue:volume];
         [_fsVolumeSlider setFloatValue:volume];
     }
-    BOOL enabled = !(muted || [self digitalAudioOut]);
+    BOOL enabled = !(muted || [self isCurrentlyDigitalAudioOut]);
     if ([_volumeSlider isEnabled] != enabled) {
         [_volumeSlider setEnabled:enabled];
         [_fsVolumeSlider setEnabled:enabled];
@@ -151,7 +151,7 @@
         }
     }
     else if (0 < [_audioTrackIndexSet count]) {
-        if ([self digitalAudioOut] && 1 < [_audioTrackIndexSet count]) {
+        if ([self isCurrentlyDigitalAudioOut] && 1 < [_audioTrackIndexSet count]) {
             // only one audio track should be enabled for digial audio.
             unsigned int index = [_audioTrackIndexSet firstIndex];
             [_audioTrackIndexSet removeAllIndexes];

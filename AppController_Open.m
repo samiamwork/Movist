@@ -72,6 +72,8 @@
 
     MMovie* movie;
     NSString* info;
+    BOOL digitalAudioOut = _audioDeviceSupportsDigital &&
+                           [_defaults boolForKey:MAutodetectDigitalAudioOutKey];
     NSEnumerator* enumerator = [classes objectEnumerator];
     while (movieClass = [enumerator nextObject]) {
         info = [NSString stringWithFormat:
@@ -80,7 +82,7 @@
         [_movieView display];   // force display
 
         movie = [[movieClass alloc] initWithURL:movieURL movieInfo:&movieInfo
-                                digitalAudioOut:_audioDeviceSupportsDigital error:error];
+                                digitalAudioOut:digitalAudioOut error:error];
         if (movie) {
             return [movie autorelease];
         }

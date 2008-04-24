@@ -323,9 +323,9 @@
 
 @interface AppController (AudioDigital)
 
-- (BOOL)digitalAudioOut;
 - (void)initDigitalAudioOut;
 - (BOOL)updateDigitalAudioOut:(id)sender;
+- (BOOL)isCurrentlyDigitalAudioOut;
 
 @end
 

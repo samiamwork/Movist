@@ -38,7 +38,7 @@ static AudioStreamID _audioStreamID;
 
 @implementation AppController (AudioDigital)
 
-- (BOOL)digitalAudioOut
+- (BOOL)isCurrentlyDigitalAudioOut
 {
     if (!_movie || !_audioDeviceSupportsDigital ||
         ![_defaults boolForKey:MAutodetectDigitalAudioOutKey]) {
@@ -63,7 +63,7 @@ static AudioStreamID _audioStreamID;
             (_audioDeviceSupportsDigital) ? NSLocalizedString(@"Digital", nil) :
                                             NSLocalizedString(@"Analog", nil)];
 
-    BOOL currentlyDigitalOut = [self digitalAudioOut];
+    BOOL currentlyDigitalOut = [self isCurrentlyDigitalAudioOut];
     [_audioOutTextField setStringValue:
             (_movie == nil) ?       NSLocalizedString(@"None", nil) :
             (currentlyDigitalOut) ? NSLocalizedString(@"Digital", nil) :
