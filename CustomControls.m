@@ -392,35 +392,36 @@
 
 - (void)drawSegment:(int)segment inFrame:(NSRect)frame withView:(NSView*)controlView
 {
+    NSColor* titleColor = ([self selectedSegment] == segment) ?
+                                            _selectedTitleColor : _titleColor;
+    // ugly hack : I don't know how to customize full-drawing...
     NSImage* lImage, *mImage, *rImage;
-    NSColor* titleColor;
-    if ([self selectedSegment] == segment) {
-        if (segment == 0) {
-            frame.origin.x -= 2, frame.size.width += 2;
+    if (segment == 0) {
+        frame.origin.x -= 11, frame.size.width += 19;
+        if ([self selectedSegment] == segment) {
             lImage = _lImageSelected, mImage = rImage = _mImageSelected;
         }
-        else if (segment < [(NSSegmentedControl*)controlView segmentCount] - 1) {
+        else {
+            lImage = _lImage, mImage = rImage = _mImage;
+        }
+    }
+    else if (segment < [(NSSegmentedControl*)controlView segmentCount] - 1) {
+        frame.origin.x -= 9, frame.size.width += 18;
+        if ([self selectedSegment] == segment) {
             lImage = _sepImage, mImage = rImage = _mImageSelected;
         }
         else {
-            frame.size.width += 2;
-            lImage = _sepImage, mImage = _mImageSelected, rImage = _rImageSelected;
-        }
-        titleColor = _selectedTitleColor;
-    }
-    else {
-        if (segment == 0) {
-            frame.origin.x -= 2, frame.size.width += 2;
-            lImage = _lImage, mImage = rImage = _mImage;
-        }
-        else if (segment < [(NSSegmentedControl*)controlView segmentCount] - 1) {
             lImage = _sepImage, mImage = rImage = _mImage;
         }
+    }
+    else {
+        frame.origin.x -= 9, frame.size.width += 19;
+        if ([self selectedSegment] == segment) {
+            lImage = _sepImage, mImage = _mImageSelected, rImage = _rImageSelected;
+        }
         else {
-            frame.size.width += 2;
             lImage = _sepImage, mImage = _mImage, rImage = _rImage;
         }
-        titleColor = _titleColor;
     }
     [self drawInRect:frame leftImage:lImage midImage:mImage rightImage:rImage];
 

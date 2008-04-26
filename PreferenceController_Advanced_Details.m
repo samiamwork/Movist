@@ -382,11 +382,11 @@
        [SelectNode selectNodeWithName:LABEL(@"Capture Format")
                                   key:MCaptureFormatKey
                                titles:[NSArray arrayWithObjects:
-                                       NSLocalizedString(@"tiff", nil),
-                                       NSLocalizedString(@"jpeg", nil),
-                                       NSLocalizedString(@"png", nil),
-                                       NSLocalizedString(@"bmp", nil),
-                                       NSLocalizedString(@"gif", nil),
+                                       NSLocalizedString(@"TIFF", nil),
+                                       NSLocalizedString(@"JPEG", nil),
+                                       NSLocalizedString(@"PNG", nil),
+                                       NSLocalizedString(@"BMP", nil),
+                                       NSLocalizedString(@"GIF", nil),
                                        nil]],
        [BoolNode boolNodeWithName:LABEL(@"Include Letter Box on Capture")
                               key:MIncludeLetterBoxOnCaptureKey],

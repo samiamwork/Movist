@@ -197,12 +197,13 @@
     }
     int i, count = [self segmentCount];
     for (i = 0; i < count; i++) {
-        [self setWidth:[segmentedCell widthForSegment:i] forSegment:i];
         [self setImage:[segmentedCell imageForSegment:i] forSegment:i];
         [self setLabel:[segmentedCell labelForSegment:i] forSegment:i];
+        //[self setWidth:[segmentedCell widthForSegment:i] forSegment:i];
+        [self setWidth:0 forSegment:i];     // always auto size
         [self setEnabled:[segmentedCell isEnabledForSegment:i] forSegment:i];
-        [self setMenu:[segmentedCell menuForSegment:i] forSegment:i];
         [self setToolTip:[segmentedCell toolTipForSegment:i] forSegment:i];
+        [self setMenu:[segmentedCell menuForSegment:i] forSegment:i];
         [self setTag:[segmentedCell tagForSegment:i] forSegment:i];
     }
 }
