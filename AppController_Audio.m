@@ -193,15 +193,17 @@
         }
         index = (i + 1) % count;
     }
-    NSArray* audioTracks = [_movie audioTracks];
-    unsigned int i, count = [audioTracks count];
-    for (i = 0; i < count; i++) {
-        [[audioTracks objectAtIndex:i] setEnabled:(i == index)];
+    // at first, disable all audio tracks and then enable the track at index.
+    MTrack* track;
+    NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
+    while (track = [enumerator nextObject]) {
+        [track setEnabled:FALSE];
     }
-    
+    track = [[_movie audioTracks] objectAtIndex:index];
+    [track setEnabled:TRUE];
+
     [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"%@ selected", nil),
-            [[audioTracks objectAtIndex:index] name]]];
+        NSLocalizedString(@"%@ selected", nil), [track name]]];
     [self updateAudioTrackMenuItems];
     [_propertiesView reloadData];
     

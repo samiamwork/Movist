@@ -706,7 +706,20 @@
         }
         else if (aIndex < aCount) {
             BOOL enabled = [(NSNumber*)object boolValue];
-            [self setAudioTrackAtIndex:aIndex enabled:enabled];
+            if (![self isCurrentlyDigitalAudioOut] || !enabled) {
+                [self setAudioTrackAtIndex:aIndex enabled:enabled];
+            }
+            else {
+                // only one track should be enabled in digital-out.
+                // at first, disable all audio tracks and then enable the track at aIndex.
+                MTrack* track;
+                NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
+                while (track = [enumerator nextObject]) {
+                    [track setEnabled:FALSE];
+                }
+                [self setAudioTrackAtIndex:aIndex enabled:enabled];
+                [tableView reloadData];  // to update other audio tracks availablity
+            }
         }
         else {
             MSubtitle* subtitle = [_subtitles objectAtIndex:sIndex];
