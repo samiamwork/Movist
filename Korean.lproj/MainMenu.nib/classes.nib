@@ -1,313 +1,508 @@
-{
-    IBClasses =     (
-                {
-            ACTIONS =             {
-                aspectRatioAction = id;
-                audioTrackAction = id;
-                controlPanelAction = id;
-                fullNavigationAction = id;
-                fullScreenAction = id;
-                fullScreenFillAction = id;
-                fullScreenUnderScanAction = id;
-                moviePropertyAction = id;
-                movieSizeAction = id;
-                muteAction = id;
-                openFileAction = id;
-                openSubtitleFileAction = id;
-                openURLAction = id;
-                playAction = id;
-                playlistAction = id;
-                preferencePanelAction = id;
-                prevNextMovieAction = id;
-                rangeRepeatAction = id;
-                rateAction = id;
-                remoteControlLeftAction = id;
-                remoteControlLeftHoldAction = id;
-                remoteControlMenuAction = id;
-                remoteControlMenuHoldAction = id;
-                remoteControlMinusAction = id;
-                remoteControlMinusHoldAction = id;
-                remoteControlPlayAction = id;
-                remoteControlPlayHoldAction = id;
-                remoteControlPlusAction = id;
-                remoteControlPlusHoldAction = id;
-                remoteControlRightAction = id;
-                remoteControlRightHoldAction = id;
-                reopenMovieAction = id;
-                reopenSubtitleAction = id;
-                repeatAction = id;
-                saveCurrentImage = id;
-                seekAction = id;
-                subtitleFontSizeAction = id;
-                subtitleLanguageAction = id;
-                subtitlePositionAction = id;
-                subtitleSyncAction = id;
-                subtitleVMarginAction = id;
-                subtitleVisibleAction = id;
-                viewDurationAction = id;
-                volumeAction = id;
-            };
-            CLASS = AppController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "_altCopyImageMenuItem" = NSMenuItem;
-                "_altSaveImageMenuItem" = NSMenuItem;
-                "_aspectRatioMenu" = NSMenu;
-                "_audioDeviceTextField" = NSTextField;
-                "_audioOutTextField" = NSTextField;
-                "_controlPanel" = ControlPanel;
-                "_controlPanelButton" = HoverButton;
-                "_cpDecoderButton" = NSButton;
-                "_dataSizeBpsTextField" = NSTextField;
-                "_fpsTextField" = NSTextField;
-                "_fsDecoderButton" = NSButton;
-                "_fsLTimeTextField" = TimeTextField;
-                "_fsMuteButton" = NSButton;
-                "_fsNextSeekButton" = NSButton;
-                "_fsPlayButton" = NSButton;
-                "_fsPlaylistButton" = NSButton;
-                "_fsPrevSeekButton" = NSButton;
-                "_fsRTimeTextField" = TimeTextField;
-                "_fsSeekSlider" = FSSeekSlider;
-                "_fsVolumeSlider" = NSSlider;
-                "_fullScreenFillMenu" = NSMenu;
-                "_lTimeTextField" = TimeTextField;
-                "_mainWindow" = MainWindow;
-                "_movieMenu" = NSMenu;
-                "_movieView" = MMovieView;
-                "_muteButton" = NSButton;
-                "_muteMenuItem" = NSMenuItem;
-                "_nextMovieButton" = HoverButton;
-                "_nextSeekButton" = HoverButton;
-                "_playButton" = NSButton;
-                "_playMenuItem" = NSMenuItem;
-                "_playPanel" = PlayPanel;
-                "_playlistButton" = HoverButton;
-                "_prevMovieButton" = HoverButton;
-                "_prevSeekButton" = HoverButton;
-                "_propertiesView" = NSTableView;
-                "_rTimeTextField" = TimeTextField;
-                "_rateDefaultMenuItem" = NSMenuItem;
-                "_rateFasterMenuItem" = NSMenuItem;
-                "_rateSlowerMenuItem" = NSMenuItem;
-                "_reopenWithMenuItem" = NSMenuItem;
-                "_repeatAllMenuItem" = NSMenuItem;
-                "_repeatBeginningTextField" = NSTextField;
-                "_repeatEndTextField" = NSTextField;
-                "_repeatOffMenuItem" = NSMenuItem;
-                "_repeatOneMenuItem" = NSMenuItem;
-                "_seekBackward1MenuItem" = NSMenuItem;
-                "_seekBackward2MenuItem" = NSMenuItem;
-                "_seekBackward3MenuItem" = NSMenuItem;
-                "_seekForward1MenuItem" = NSMenuItem;
-                "_seekForward2MenuItem" = NSMenuItem;
-                "_seekForward3MenuItem" = NSMenuItem;
-                "_seekNextSubtitleMenuItem" = NSMenuItem;
-                "_seekPrevSubtitleMenuItem" = NSMenuItem;
-                "_seekSlider" = MainSeekSlider;
-                "_subtitleEncodingMenu" = NSMenu;
-                "_subtitleMenu" = NSMenu;
-                "_subtitlePositionDefaultButton" = NSButton;
-                "_subtitlePositionOnLetterBox1LineMenuItem" = NSMenuItem;
-                "_subtitlePositionOnLetterBox2LinesMenuItem" = NSMenuItem;
-                "_subtitlePositionOnLetterBox3LinesMenuItem" = NSMenuItem;
-                "_subtitlePositionOnLetterBoxMenuItem" = NSMenuItem;
-                "_subtitlePositionOnMovieMenuItem" = NSMenuItem;
-                "_subtitlePositionPopUpButton" = NSPopUpButton;
-                "_subtitleVisibleMenuItem" = NSMenuItem;
-                "_syncDefaultMenuItem" = NSMenuItem;
-                "_syncEarlierMenuItem" = NSMenuItem;
-                "_syncLaterMenuItem" = NSMenuItem;
-                "_volumeSlider" = NSSlider;
-            };
-            SUPERCLASS = NSObject;
-        },
-                {
-            ACTIONS =             {
-                playbackRateAction = id;
-                segmentedControlAction = id;
-                videoColorControlsAction = id;
-                videoColorControlsDefaultsAction = id;
-            };
-            CLASS = ControlPanel;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "_appController" = AppController;
-                "_movieFilenameTextField" = NSTextField;
-                "_movieView" = MMovieView;
-                "_playbackRateSlider" = NSSlider;
-                "_segmentedControl" = NSSegmentedControl;
-                "_tabView" = NSTabView;
-                "_videoBrightnessSlider" = NSSlider;
-                "_videoContrastSlider" = NSSlider;
-                "_videoHueSlider" = NSSlider;
-                "_videoSaturationSlider" = NSSlider;
-            };
-            SUPERCLASS = NSPanel;
-        },
-                {
-            CLASS = CustomButtonCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSButtonCell;
-        },
-                {
-            CLASS = CustomCheckBoxCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSButtonCell;
-        },
-                {
-            CLASS = CustomPopUpButtonCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSPopUpButtonCell;
-        },
-                {
-            CLASS = CustomSliderCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSSliderCell;
-        },
-                {
-            CLASS = FSSeekSlider;
-            LANGUAGE = ObjC;
-            SUPERCLASS = SeekSlider;
-        },
-                {
-            CLASS = FSVolumeSlider;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSSlider;
-        },
-                {
-            ACTIONS =             {
-                "" = id;
-            };
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            CLASS = HUDButtonCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = CustomButtonCell;
-        },
-                {
-            CLASS = HUDCheckBoxCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = CustomCheckBoxCell;
-        },
-                {
-            CLASS = HUDPopUpButtonCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = CustomPopUpButtonCell;
-        },
-                {
-            CLASS = HUDSliderCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = CustomSliderCell;
-        },
-                {
-            CLASS = HUDTabView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTabView;
-        },
-                {
-            CLASS = HUDTableColumn;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTableColumn;
-        },
-                {
-            CLASS = HUDTableHeaderCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTextFieldCell;
-        },
-                {
-            CLASS = HUDTableView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTableView;
-        },
-                {
-            CLASS = HUDTextFieldCell;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTextFieldCell;
-        },
-                {
-            CLASS = HoverButton;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSButton;
-        },
-                {
-            CLASS = MMovieView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSOpenGLView;
-        },
-                {
-            CLASS = MainLCDView;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSView;
-        },
-                {
-            CLASS = MainSeekSlider;
-            LANGUAGE = ObjC;
-            SUPERCLASS = SeekSlider;
-        },
-                {
-            CLASS = MainVolumeSlider;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSSlider;
-        },
-                {
-            CLASS = MainWindow;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "_movieView" = MMovieView;
-                "_seekSlider" = MainSeekSlider;
-            };
-            SUPERCLASS = NSWindow;
-        },
-                {
-            CLASS = NSSegmentedControl;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSControl;
-        },
-                {
-            ACTIONS =             {
-                orderFrontWithFadeIn = id;
-                orderOutWithFadeOut = id;
-            };
-            CLASS = PlayPanel;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "_movieView" = MMovieView;
-                "_seekSlider" = FSSeekSlider;
-                "_titleTextField" = NSTextField;
-            };
-            SUPERCLASS = NSWindow;
-        },
-                {
-            ACTIONS =             {
-                addAction = id;
-                closeAction = id;
-                modeAction = id;
-                removeAction = id;
-            };
-            CLASS = PlaylistController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "_modeButton" = NSButton;
-                "_removeButton" = NSButton;
-                "_statusTextField" = NSTextField;
-                "_tableView" = NSTableView;
-            };
-            SUPERCLASS = NSWindowController;
-        },
-                {
-            CLASS = SeekSlider;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSSlider;
-        },
-                {
-            CLASS = TimeTextField;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTextField;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>CLASS</key>
+			<string>NSSegmentedControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainLCDView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FSSeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>SeekSlider</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>SeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSSlider</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTableColumn</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableColumn</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainWindow</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_movieView</key>
+				<string>MMovieView</string>
+				<key>_seekSlider</key>
+				<string>MainSeekSlider</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindow</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSApplication</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HoverButton</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSButton</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDCheckBoxCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>CustomCheckBoxCell</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSTextField</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTextFieldCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextFieldCell</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>orderFrontWithFadeIn</key>
+				<string>id</string>
+				<key>orderOutWithFadeOut</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>PlayPanel</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_movieView</key>
+				<string>MMovieView</string>
+				<key>_seekSlider</key>
+				<string>FSSeekSlider</string>
+				<key>_titleTextField</key>
+				<string>NSTextField</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindow</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainSeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>SeekSlider</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key></key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>playbackRateAction</key>
+				<string>id</string>
+				<key>segmentedControlAction</key>
+				<string>id</string>
+				<key>videoColorControlsAction</key>
+				<string>id</string>
+				<key>videoColorControlsDefaultsAction</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>ControlPanel</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_appController</key>
+				<string>AppController</string>
+				<key>_movieFilenameTextField</key>
+				<string>NSTextField</string>
+				<key>_movieView</key>
+				<string>MMovieView</string>
+				<key>_playbackRateSlider</key>
+				<string>NSSlider</string>
+				<key>_segmentedControl</key>
+				<string>NSSegmentedControl</string>
+				<key>_tabView</key>
+				<string>NSTabView</string>
+				<key>_videoBrightnessSlider</key>
+				<string>NSSlider</string>
+				<key>_videoContrastSlider</key>
+				<string>NSSlider</string>
+				<key>_videoHueSlider</key>
+				<string>NSSlider</string>
+				<key>_videoSaturationSlider</key>
+				<string>NSSlider</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSPanel</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>TimeTextField</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextField</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSWindow</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTableView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>CustomCheckBoxCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSButtonCell</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTabView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTabView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>aspectRatioAction</key>
+				<string>id</string>
+				<key>audioTrackAction</key>
+				<string>id</string>
+				<key>controlPanelAction</key>
+				<string>id</string>
+				<key>fullNavigationAction</key>
+				<string>id</string>
+				<key>fullScreenAction</key>
+				<string>id</string>
+				<key>fullScreenFillAction</key>
+				<string>id</string>
+				<key>fullScreenUnderScanAction</key>
+				<string>id</string>
+				<key>moviePropertyAction</key>
+				<string>id</string>
+				<key>movieSizeAction</key>
+				<string>id</string>
+				<key>muteAction</key>
+				<string>id</string>
+				<key>openFileAction</key>
+				<string>id</string>
+				<key>openSubtitleFileAction</key>
+				<string>id</string>
+				<key>openURLAction</key>
+				<string>id</string>
+				<key>playAction</key>
+				<string>id</string>
+				<key>playlistAction</key>
+				<string>id</string>
+				<key>preferencePanelAction</key>
+				<string>id</string>
+				<key>prevNextMovieAction</key>
+				<string>id</string>
+				<key>rangeRepeatAction</key>
+				<string>id</string>
+				<key>rateAction</key>
+				<string>id</string>
+				<key>remoteControlLeftAction</key>
+				<string>id</string>
+				<key>remoteControlLeftHoldAction</key>
+				<string>id</string>
+				<key>remoteControlMenuAction</key>
+				<string>id</string>
+				<key>remoteControlMenuHoldAction</key>
+				<string>id</string>
+				<key>remoteControlMinusAction</key>
+				<string>id</string>
+				<key>remoteControlMinusHoldAction</key>
+				<string>id</string>
+				<key>remoteControlPlayAction</key>
+				<string>id</string>
+				<key>remoteControlPlayHoldAction</key>
+				<string>id</string>
+				<key>remoteControlPlusAction</key>
+				<string>id</string>
+				<key>remoteControlPlusHoldAction</key>
+				<string>id</string>
+				<key>remoteControlRightAction</key>
+				<string>id</string>
+				<key>remoteControlRightHoldAction</key>
+				<string>id</string>
+				<key>reopenMovieAction</key>
+				<string>id</string>
+				<key>reopenSubtitleAction</key>
+				<string>id</string>
+				<key>repeatAction</key>
+				<string>id</string>
+				<key>saveCurrentImage</key>
+				<string>id</string>
+				<key>seekAction</key>
+				<string>id</string>
+				<key>subtitleFontSizeAction</key>
+				<string>id</string>
+				<key>subtitleLanguageAction</key>
+				<string>id</string>
+				<key>subtitlePositionAction</key>
+				<string>id</string>
+				<key>subtitleSyncAction</key>
+				<string>id</string>
+				<key>subtitleVMarginAction</key>
+				<string>id</string>
+				<key>subtitleVisibleAction</key>
+				<string>id</string>
+				<key>viewDurationAction</key>
+				<string>id</string>
+				<key>volumeAction</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>AppController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_altCopyImageMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_altSaveImageMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_aspectRatioMenu</key>
+				<string>NSMenu</string>
+				<key>_audioDeviceTextField</key>
+				<string>NSTextField</string>
+				<key>_audioOutTextField</key>
+				<string>NSTextField</string>
+				<key>_controlPanel</key>
+				<string>ControlPanel</string>
+				<key>_controlPanelButton</key>
+				<string>HoverButton</string>
+				<key>_cpDecoderButton</key>
+				<string>NSButton</string>
+				<key>_dataSizeBpsTextField</key>
+				<string>NSTextField</string>
+				<key>_fpsTextField</key>
+				<string>NSTextField</string>
+				<key>_fsDecoderButton</key>
+				<string>NSButton</string>
+				<key>_fsLTimeTextField</key>
+				<string>TimeTextField</string>
+				<key>_fsMuteButton</key>
+				<string>NSButton</string>
+				<key>_fsNextSeekButton</key>
+				<string>NSButton</string>
+				<key>_fsPlayButton</key>
+				<string>NSButton</string>
+				<key>_fsPlaylistButton</key>
+				<string>NSButton</string>
+				<key>_fsPrevSeekButton</key>
+				<string>NSButton</string>
+				<key>_fsRTimeTextField</key>
+				<string>TimeTextField</string>
+				<key>_fsSeekSlider</key>
+				<string>FSSeekSlider</string>
+				<key>_fsVolumeSlider</key>
+				<string>NSSlider</string>
+				<key>_fullScreenFillMenu</key>
+				<string>NSMenu</string>
+				<key>_lTimeTextField</key>
+				<string>TimeTextField</string>
+				<key>_mainWindow</key>
+				<string>MainWindow</string>
+				<key>_movieMenu</key>
+				<string>NSMenu</string>
+				<key>_movieView</key>
+				<string>MMovieView</string>
+				<key>_muteButton</key>
+				<string>NSButton</string>
+				<key>_muteMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_nextMovieButton</key>
+				<string>HoverButton</string>
+				<key>_nextSeekButton</key>
+				<string>HoverButton</string>
+				<key>_playButton</key>
+				<string>NSButton</string>
+				<key>_playMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_playPanel</key>
+				<string>PlayPanel</string>
+				<key>_playlistButton</key>
+				<string>HoverButton</string>
+				<key>_prevMovieButton</key>
+				<string>HoverButton</string>
+				<key>_prevSeekButton</key>
+				<string>HoverButton</string>
+				<key>_propertiesView</key>
+				<string>NSTableView</string>
+				<key>_rTimeTextField</key>
+				<string>TimeTextField</string>
+				<key>_rateDefaultMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_rateFasterMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_rateSlowerMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_reopenWithMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_repeatAllMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_repeatBeginningTextField</key>
+				<string>NSTextField</string>
+				<key>_repeatEndTextField</key>
+				<string>NSTextField</string>
+				<key>_repeatOffMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_repeatOneMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekBackward1MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekBackward2MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekBackward3MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekForward1MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekForward2MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekForward3MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekNextSubtitleMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekPrevSubtitleMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_seekSlider</key>
+				<string>MainSeekSlider</string>
+				<key>_subtitleEncodingMenu</key>
+				<string>NSMenu</string>
+				<key>_subtitleMenu</key>
+				<string>NSMenu</string>
+				<key>_subtitlePositionDefaultButton</key>
+				<string>NSButton</string>
+				<key>_subtitlePositionOnLetterBox1LineMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitlePositionOnLetterBox2LinesMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitlePositionOnLetterBox3LinesMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitlePositionOnLetterBoxMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitlePositionOnMovieMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitlePositionPopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>_subtitleVisibleMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_syncDefaultMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_syncEarlierMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_syncLaterMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_volumeSlider</key>
+				<string>NSSlider</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>copy</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>MMovieView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSOpenGLView</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

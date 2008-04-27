@@ -6,14 +6,6 @@
 	<array>
 		<dict>
 			<key>CLASS</key>
-			<string>FSSeekSlider</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>SeekSlider</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>MainLCDView</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
@@ -27,6 +19,14 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FSSeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>SeekSlider</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -85,19 +85,19 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>HUDTextFieldCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTextFieldCell</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>NSTextField</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTextFieldCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextFieldCell</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
