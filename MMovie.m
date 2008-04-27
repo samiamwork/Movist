@@ -96,25 +96,13 @@
 
 + (NSArray*)fileExtensions
 {
-    static NSArray* fileExtensions = nil;
-    if (!fileExtensions) {
-        NSMutableArray* exts = [[NSMutableArray alloc] initWithCapacity:32];
-
-        NSDictionary* dict = [[NSBundle mainBundle] infoDictionary];
-        NSDictionary* type;
-        NSString* bundleTypeName;
-        NSArray* types = [dict objectForKey:@"CFBundleDocumentTypes"];
-        NSEnumerator* typeEnumerator = [types objectEnumerator];
-        while (type = [typeEnumerator nextObject]) {
-            bundleTypeName = [type objectForKey:@"CFBundleTypeName"];
-            if ([bundleTypeName hasPrefix:@"Movie-"]) {
-                [exts addObjectsFromArray:[type objectForKey:@"CFBundleTypeExtensions"]];
-            }
-        }
-        fileExtensions = exts;
+    static NSArray* exts = nil;
+    if (!exts) {
+        exts = [[NSApp supportedFileExtensionsWithPrefix:@"Movie-"] retain];
     }
-    //TRACE(@"fileExtentions=%@", [fileExtensions retainCount], fileExtensions);
-    return fileExtensions;  // don't send autorelease. it should be alive forever.
+
+    //TRACE(@"exts=%@", [exts retainCount], exts);
+    return exts;  // don't send autorelease. it should be alive forever.
 
     // add following extensions to Info.plist in future.
     // .swf : Flash

@@ -94,6 +94,7 @@
     [_subtitleRenderer setFontName:fontName size:size];
     [_messageOSD setFontName:fontName size:15.0];
     [_errorOSD setFontName:fontName size:24.0];
+    [self updateSubtitlePosition];
     [self updateMovieRect:TRUE];
     [self updateSubtitle];
 }
@@ -253,6 +254,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_subtitleRenderer setLineSpacing:lineSpacing];
     [_messageOSD setLineSpacing:lineSpacing];
+    [self updateSubtitlePosition];
     [self updateMovieRect:FALSE];
     [self updateSubtitle];
 }

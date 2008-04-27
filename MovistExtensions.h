@@ -142,6 +142,7 @@
 @interface NSApplication (Movist)
 
 - (NSString*)localizedAppName;
+- (NSArray*)supportedFileExtensionsWithPrefix:(NSString*)prefix;
 
 @end
 

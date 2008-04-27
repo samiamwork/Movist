@@ -658,6 +658,24 @@
                                                   table:@"InfoPlist"];
 }
 
+- (NSArray*)supportedFileExtensionsWithPrefix:(NSString*)prefix;
+{
+    NSMutableArray* exts = [[[NSMutableArray alloc] initWithCapacity:2] autorelease];
+
+    NSDictionary* dict = [[NSBundle mainBundle] infoDictionary];
+    NSDictionary* type;
+    NSString* bundleTypeName;
+    NSArray* types = [dict objectForKey:@"CFBundleDocumentTypes"];
+    NSEnumerator* typeEnumerator = [types objectEnumerator];
+    while (type = [typeEnumerator nextObject]) {
+        bundleTypeName = [type objectForKey:@"CFBundleTypeName"];
+        if ([bundleTypeName hasPrefix:prefix]) {
+            [exts addObjectsFromArray:[type objectForKey:@"CFBundleTypeExtensions"]];
+        }
+    }
+    return exts;
+}
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

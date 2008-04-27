@@ -232,7 +232,6 @@
 
 - (void)dealloc
 {
-    TRACE(@"%s self=0x%x onImage=0x%x", __PRETTY_FUNCTION__, self, _onImage);
     [_offImageDisabled release];
     [_offImagePressed release];
     [_offImage release];
@@ -617,7 +616,7 @@
 
 - (id)init
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         [self setImageName:@"HUD"];
     }
