@@ -189,6 +189,7 @@
 - (BOOL)openSubtitle:(NSURL*)subtitleURL encoding:(CFStringEncoding)encoding;
 - (BOOL)reopenMovieWithMovieClass:(Class)movieClass;
 - (void)reopenSubtitle;
+- (void)closeMovieWithoutUpdateMovieView;
 - (void)closeMovie;
 
 - (void)updateDecoderUI;

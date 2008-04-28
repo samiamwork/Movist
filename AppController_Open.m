@@ -234,22 +234,19 @@
          subtitle:(NSURL*)subtitleURL subtitleEncoding:(CFStringEncoding)subtitleEncoding
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    // -[closeMovie] should be called after opening new-movie not to display black screen.
     if (!movieURL) {
-        if (_movie) {
-            [self closeMovie];
-        }
+        [self closeMovie];
         return FALSE;
     }
+
+    [self closeMovieWithoutUpdateMovieView];
 
     // open movie
     NSError* error;
     MMovie* movie = [self movieFromURL:movieURL withMovieClass:movieClass error:&error];
     if (!movie || ![movie setOpenGLContext:[_movieView openGLContext]
                                pixelFormat:[_movieView pixelFormat] error:&error]) {
-        if (_movie) {
-            [self closeMovie];
-        }
+        [self closeMovie];  // for updating _movieView
         if ([self isFullScreen]) {
             NSString* s = [movieURL isFileURL] ? [movieURL path] : [movieURL absoluteString];
             [_movieView setError:error info:[s lastPathComponent]];
@@ -259,9 +256,8 @@
         }
         return FALSE;
     }
-    if (_movie) {
-        [self closeMovie];
-    }
+    [self closeMovie];  // for updating _movieView
+
     assert(_movie == nil);
     _movie = [movie retain];
 
@@ -429,7 +425,7 @@
     }
 }
 
-- (void)closeMovie
+- (void)closeMovieWithoutUpdateMovieView
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
@@ -465,9 +461,6 @@
         [nc removeObserver:self name:nil object:_movie];
         [nc removeObserver:self name:nil object:_playlist];
 
-        [_movieView setMovie:nil];
-        [_movieView setSubtitles:nil];
-        [_movieView setMessage:@""];
         [_movie cleanup], _movie = nil;
 
         [_subtitles release], _subtitles = nil;
@@ -475,6 +468,16 @@
             NSLocalizedString(@"Reopen With %@", nil), @"..."]];
         [self updateUI];
     }
+}
+
+- (void)closeMovie
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self closeMovieWithoutUpdateMovieView];
+
+    [_movieView setMovie:nil];
+    [_movieView setSubtitles:nil];
+    [_movieView setMessage:@""];
 }
 
 - (void)updateDecoderUI
