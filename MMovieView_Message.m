@@ -27,6 +27,18 @@
 
 @implementation MMovieView (Message)
 
+- (void)setAttributedMessage:(NSMutableAttributedString*)s
+{
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [s string]);
+    [_messageOSD setString:s];
+    [self redisplay];
+    
+    [self invalidateMessageHideTimer];
+    _messageHideTimer = [NSTimer scheduledTimerWithTimeInterval:_messageHideInterval
+                         target:self selector:@selector(hideMessage:)
+                         userInfo:nil repeats:FALSE];
+}
+
 - (void)setMessageWithURL:(NSURL*)url info:(NSString*)info
 {
     //TRACE(@"%s \"%@\", \"%@\"", __PRETTY_FUNCTION__, [url path], info);
@@ -60,18 +72,6 @@
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, s);
     [self setAttributedMessage:
      [[[NSMutableAttributedString alloc] initWithString:s] autorelease]];
-}
-
-- (void)setAttributedMessage:(NSMutableAttributedString*)s
-{
-    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [s string]);
-    [_messageOSD setString:s];
-    [self redisplay];
-
-    [self invalidateMessageHideTimer];
-    _messageHideTimer = [NSTimer scheduledTimerWithTimeInterval:_messageHideInterval
-                                        target:self selector:@selector(hideMessage:)
-                                        userInfo:nil repeats:FALSE];
 }
 
 - (void)hideMessage:(NSTimer*)timer

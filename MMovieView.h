@@ -91,32 +91,34 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (CGDirectDisplayID)displayID;
-
-- (MMovie*)movie;
-- (NSRect)movieRect;
-- (float)currentFps;
-- (void)setMovie:(MMovie*)movie;
-- (void)showLogo;
-- (void)hideLogo;
-- (void)updateMovieRect:(BOOL)display;
-- (float)subtitleLineHeightForMovieWidth:(float)movieWidth;
-- (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect;
-
 - (void)lockDraw;
 - (void)unlockDraw;
 - (void)redisplay;
 
+- (MMovie*)movie;
+- (float)currentFps;
+- (void)setMovie:(MMovie*)movie;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface MMovieView (Image)
+
+- (CGDirectDisplayID)displayID;
+
+- (BOOL)initCoreVideo;
+- (void)cleanupCoreVideo;
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
 
-- (void)setDraggingAction:(int)action;
-- (void)setCaptureFormat:(int)format;
-- (void)setIncludeLetterBoxOnCapture:(BOOL)include;
-- (void)setRemoveGreenBox:(BOOL)remove;
+- (BOOL)initCoreImage;
+- (void)cleanupCoreImage;
 
-- (void)copyCurrentImage:(BOOL)alternative;
-- (void)saveCurrentImage:(BOOL)alternative;
-- (IBAction)copy:(id)sender;
+- (NSRect)movieRect;
+- (void)updateMovieRect:(BOOL)display;
+- (float)subtitleLineHeightForMovieWidth:(float)movieWidth;
+- (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect;
 
 - (int)fullScreenFill;
 - (float)fullScreenUnderScan;
@@ -132,6 +134,24 @@
 - (void)setSaturation:(float)saturation;
 - (void)setContrast:(float)contrast;
 - (void)setHue:(float)hue;
+- (void)setRemoveGreenBox:(BOOL)remove;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface MMovieView (OSD)
+
+- (BOOL)initOSD;
+- (void)cleanupOSD;
+
+- (void)drawOSD;
+- (void)drawDragHighlight;
+- (void)clearOSD;
+
+- (void)showLogo;
+- (void)hideLogo;
 
 @end
 
@@ -142,7 +162,6 @@
 
 - (void)setMessageWithURL:(NSURL*)url info:(NSString*)info;
 - (void)setMessage:(NSString*)s;
-- (void)setAttributedMessage:(NSMutableAttributedString*)s;
 - (void)invalidateMessageHideTimer;
 - (float)messageHideInterval;
 - (void)setMessageHideInterval:(float)interval;
@@ -191,6 +210,22 @@
 - (float)currentSubtitleTime;
 - (float)prevSubtitleTime;
 - (float)nextSubtitleTime;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface MMovieView (Capture)
+
+- (int)draggingActionWithModifierFlags:(unsigned int)flags;
+- (void)setDraggingAction:(int)action;
+- (void)setCaptureFormat:(int)format;
+- (void)setIncludeLetterBoxOnCapture:(BOOL)include;
+
+- (void)copyCurrentImage:(BOOL)alternative;
+- (void)saveCurrentImage:(BOOL)alternative;
+- (IBAction)copy:(id)sender;
 
 @end
 

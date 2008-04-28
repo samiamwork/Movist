@@ -33,6 +33,9 @@
 		AF06F9C40DBB09A700C78043 /* HUDCheckBoxOnDisabled.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF06F9C30DBB09A700C78043 /* HUDCheckBoxOnDisabled.tiff */; };
 		AF07C1F00C4BAF900007D17B /* MImageOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = AF07C1EF0C4BAF900007D17B /* MImageOSD.m */; };
 		AF07D2160BE71FD400D7EC30 /* Preferences.nib in Resources */ = {isa = PBXBuildFile; fileRef = AF07D2140BE71FD400D7EC30 /* Preferences.nib */; };
+		AF08532E0DC62B910061B8CD /* MMovieView_Image.m in Sources */ = {isa = PBXBuildFile; fileRef = AF08532D0DC62B910061B8CD /* MMovieView_Image.m */; };
+		AF0853560DC6307B0061B8CD /* MMovieView_OSD.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0853550DC6307B0061B8CD /* MMovieView_OSD.m */; };
+		AF0853680DC635440061B8CD /* MMovieView_Capture.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0853670DC635440061B8CD /* MMovieView_Capture.m */; };
 		AF0864D40DBCEA6A0008CC92 /* HUDTableHeaderLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864D10DBCEA6A0008CC92 /* HUDTableHeaderLeft.tiff */; };
 		AF0864D50DBCEA6A0008CC92 /* HUDTableHeaderMid.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864D20DBCEA6A0008CC92 /* HUDTableHeaderMid.tiff */; };
 		AF0864D60DBCEA6A0008CC92 /* HUDTableHeaderRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864D30DBCEA6A0008CC92 /* HUDTableHeaderRight.tiff */; };
@@ -259,6 +262,9 @@
 		AF07C1EE0C4BAF900007D17B /* MImageOSD.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MImageOSD.h; sourceTree = "<group>"; };
 		AF07C1EF0C4BAF900007D17B /* MImageOSD.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MImageOSD.m; sourceTree = "<group>"; };
 		AF07D2150BE71FD400D7EC30 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Preferences.nib; sourceTree = "<group>"; };
+		AF08532D0DC62B910061B8CD /* MMovieView_Image.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovieView_Image.m; sourceTree = "<group>"; };
+		AF0853550DC6307B0061B8CD /* MMovieView_OSD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovieView_OSD.m; sourceTree = "<group>"; };
+		AF0853670DC635440061B8CD /* MMovieView_Capture.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovieView_Capture.m; sourceTree = "<group>"; };
 		AF0864D10DBCEA6A0008CC92 /* HUDTableHeaderLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDTableHeaderLeft.tiff; path = Images/HUDTableHeaderLeft.tiff; sourceTree = "<group>"; };
 		AF0864D20DBCEA6A0008CC92 /* HUDTableHeaderMid.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDTableHeaderMid.tiff; path = Images/HUDTableHeaderMid.tiff; sourceTree = "<group>"; };
 		AF0864D30DBCEA6A0008CC92 /* HUDTableHeaderRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDTableHeaderRight.tiff; path = Images/HUDTableHeaderRight.tiff; sourceTree = "<group>"; };
@@ -549,8 +555,11 @@
 				AFFA4D400B80B6FB0024700D /* MainWindow.m */,
 				AF31CEDB0B7EE42F00676AC6 /* MMovieView.h */,
 				AF31CEDC0B7EE42F00676AC6 /* MMovieView.m */,
-				AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */,
+				AF08532D0DC62B910061B8CD /* MMovieView_Image.m */,
+				AF0853550DC6307B0061B8CD /* MMovieView_OSD.m */,
 				AF30E2A30C2EB114009DB59C /* MMovieView_Subtitle.m */,
+				AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */,
+				AF0853670DC635440061B8CD /* MMovieView_Capture.m */,
 				AF30E2CD0C2EB3EA009DB59C /* MMovieView_DragDrop.m */,
 				AF07C1BB0C4BAA570007D17B /* OSD */,
 				AF07C1B90C4BAA490007D17B /* FullScreen */,
@@ -1203,6 +1212,9 @@
 				AF4185A50DB12B3C00C5AE7E /* PlaylistPanel.m in Sources */,
 				AFCD04C20DBA39B400348AB0 /* MSubtitleParser_SUB.m in Sources */,
 				AFCD04F20DBA6B6300348AB0 /* unrarlib.c in Sources */,
+				AF08532E0DC62B910061B8CD /* MMovieView_Image.m in Sources */,
+				AF0853560DC6307B0061B8CD /* MMovieView_OSD.m in Sources */,
+				AF0853680DC635440061B8CD /* MMovieView_Capture.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -27,88 +27,29 @@
 
 #import "MTextOSD.h"
 #import "MImageOSD.h"
-#import "SubtitleRenderer.h"
 
 #import "AppController.h"   // for NSApp's delegate
-
-static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
-                                          const CVTimeStamp* inNow,
-                                          const CVTimeStamp* inOutputTime,
-                                          CVOptionFlags flagsIn,
-                                          CVOptionFlags* flagsOut,
-                                          void* displayLinkContext)
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-	return [(MMovieView*)displayLinkContext updateImage:inOutputTime];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
 
 @implementation MMovieView
 
 - (void)awakeFromNib
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    // _displayLink
-    _displayID = CGMainDisplayID();
-    CVReturn cvRet = CVDisplayLinkCreateWithCGDisplay(_displayID, &_displayLink);
-    if (cvRet != kCVReturnSuccess) {
-        //TRACE(@"CVDisplayLinkCreateWithCGDisplay() failed: %d", cvRet);
+    if (![self initCoreVideo]) {
         // FIXME: alert...
         return;
     }
-    CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
-                                                      [[self openGLContext] CGLContextObj],
-                                                      [[self pixelFormat] CGLPixelFormatObj]);
-    CVDisplayLinkSetOutputCallback(_displayLink, &displayLinkOutputCallback, self);
-    CVDisplayLinkStart(_displayLink);
     _drawLock = [[NSRecursiveLock alloc] init];
 
-    // image
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                        (id)colorSpace, kCIContextOutputColorSpace,
-                                        (id)colorSpace, kCIContextWorkingColorSpace, nil];
-    _ciContext = [[CIContext contextWithCGLContext:[[self openGLContext] CGLContextObj]
-                                       pixelFormat:[[self pixelFormat] CGLPixelFormatObj]
-                                           options:dict] retain];
-    CGColorSpaceRelease(colorSpace);
+    if (![self initCoreImage]) {
+        // FIXME: alert...
+        return;
+    }
 
-    _colorFilter = [[CIFilter filterWithName:@"CIColorControls"] retain];
-    _hueFilter = [[CIFilter filterWithName:@"CIHueAdjust"] retain];
-    _cropFilter = [[CIFilter filterWithName:@"CICrop"] retain];
-    [_colorFilter setDefaults];
-    [_hueFilter setDefaults];
-
-    // OSD: icon, message, subtitle
-    NSRect rect = [self bounds];
-    _subtitleRenderer = [[SubtitleRenderer alloc] initWithMovieView:self];
-    _subtitleImageOSD = [[MTextImageOSD alloc] init];
-    [_subtitleImageOSD setMovieRect:rect];
-    [_subtitleImageOSD setHAlign:OSD_HALIGN_CENTER];
-    [_subtitleImageOSD setVAlign:OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM];
-    _subtitleVisible = TRUE;
-    _autoSubtitlePositionMaxLines = 3;
-    _subtitlePosition = SUBTITLE_POSITION_AUTO; // for initial update
-
-    _messageOSD = [[MTextOSD alloc] init];
-    [_messageOSD setMovieRect:rect];
-    [_messageOSD setHAlign:OSD_HALIGN_LEFT];
-    [_messageOSD setVAlign:OSD_VALIGN_UPPER_FROM_MOVIE_TOP];
-    _messageHideInterval = 2.0;
-
-    _errorOSD = [[MTextOSD alloc] init];
-    [_errorOSD setMovieRect:rect];
-    [_errorOSD setTextAlignment:NSCenterTextAlignment];
-    [_errorOSD setHAlign:OSD_HALIGN_CENTER];
-    [_errorOSD setVAlign:OSD_VALIGN_CENTER];
-
-    _iconOSD = [[MImageOSD alloc] init];
-    [_iconOSD setMovieRect:rect];
-    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
-    [_iconOSD setHAlign:OSD_HALIGN_CENTER];
-    [_iconOSD setVAlign:OSD_VALIGN_CENTER];
+    if (![self initOSD]) {
+        // FIXME: alert...
+        return;
+    }
 
     // etc. options
     _fullScreenFill = FS_FILL_NEVER;
@@ -133,26 +74,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self invalidateMessageHideTimer];
-    if (_displayLink) {
-        CVDisplayLinkStop(_displayLink);
-        CVDisplayLinkRelease(_displayLink);
-    }
+    [self cleanupCoreImage];
+    [self cleanupCoreVideo];
     [_drawLock release];
 
-    if (_image) {
-        CVOpenGLTextureRelease(_image);
-        _image = nil;
-    }
-    [_cropFilter release];
-    [_hueFilter release];
-    [_colorFilter release];
-    [_ciContext release];
-
-    [_iconOSD release];
-    [_errorOSD release];
-    [_messageOSD release];
-    [_subtitleImageOSD release];
-    [_subtitleRenderer release];
+    [self cleanupOSD];
     [_subtitles release];
     [_movie release];
 
@@ -160,23 +86,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
     [super dealloc];
 }
-
-- (void)windowMoved:(NSNotification*)aNotification
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSDictionary* deviceDesc = [[[self window] screen] deviceDescription];
-    NSNumber* screenNumber = [deviceDesc objectForKey:@"NSScreenNumber"];
-    CGDirectDisplayID displayID = (CGDirectDisplayID)[screenNumber intValue];
-    if (displayID && displayID != _displayID) {
-        CVDisplayLinkSetCurrentCGDisplay(_displayLink, displayID);
-        _displayID = displayID;
-        TRACE(@"main window moved: display changed");
-        [self updateSubtitlePosition];
-        [[NSApp delegate] updateSubtitlePositionMenuItems];
-    }
-}
-
-- (CGDirectDisplayID)displayID { return _displayID; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -211,82 +120,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-}
-
-- (void)drawOSD
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    // set OpenGL states
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_RECTANGLE_EXT);
-    
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    NSRect frame = [self frame];
-    glScalef(2.0f / frame.size.width, -2.0f / frame.size.height, 1.0f);
-    glTranslatef(-frame.size.width / 2.0f, -frame.size.height / 2.0f, 0.0f);
-
-    NSRect bounds = [self bounds];
-    if ([[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
-        bounds = [self underScannedRect:bounds];
-    }
-
-    if ([_iconOSD hasContent]) {
-        [_iconOSD drawInViewBounds:bounds];
-    }
-    if (_subtitleVisible && [_subtitleImageOSD hasContent]) {
-        [_subtitleImageOSD drawInViewBounds:bounds];
-    }
-    if ([_messageOSD hasContent]) {
-        [_messageOSD drawInViewBounds:bounds];
-    }
-    if ([_errorOSD hasContent]) {
-        [_errorOSD drawInViewBounds:bounds];
-    }
-
-    // restore OpenGL status
-    glPopMatrix(); // GL_MODELVIEW
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-
-    glDisable(GL_TEXTURE_RECTANGLE_EXT);
-    glDisable(GL_BLEND);
-}
-
-- (void)drawDragHighlight
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-
-    NSRect rect = [self bounds];
-    float x1 = NSMinX(rect), y1 = NSMinY(rect);
-    float x2 = NSMaxX(rect), y2 = NSMaxY(rect);
-    float w = 8.0;
-    glColor4f(0.0, 0.0, 1.0, 0.25);
-    glBegin(GL_QUADS);
-        // bottom
-        glVertex2f(x1, y1);         glVertex2f(x2,     y1);
-        glVertex2f(x2, y1 + w);     glVertex2f(x1,     y1 + w);
-        // right
-        glVertex2f(x2 - w, y1 + w); glVertex2f(x2,     y1 + w);
-        glVertex2f(x2,     y2 - w); glVertex2f(x2 - w, y2 - w);
-        // top
-        glVertex2f(x1, y2 - w);     glVertex2f(x2,     y2 - w);
-        glVertex2f(x2, y2);         glVertex2f(x1,     y2);
-        // left
-        glVertex2f(x1,     y1 + w); glVertex2f(x1 + w, y1 + w);
-        glVertex2f(x1 + w, y2 - w); glVertex2f(x1,     y2 - w);
-    glEnd();
-    glColor3f(1.0, 1.0, 1.0);
-
-    glDisable(GL_BLEND);
 }
 
 - (void)drawRect:(NSRect)rect
@@ -329,455 +162,46 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_drawLock unlock];
 }
 
-- (void)frameResized:(NSNotification*)notification
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self updateMovieRect:FALSE];
-    if ([self subtitleVisible]) {
-        [self updateSubtitle];
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark movie
-
-- (MMovie*)movie { return _movie; }
-- (NSRect)movieRect { return *(NSRect*)&_movieRect; }
-- (float)currentFps { return _currentFps; }
-
-- (void)setMovie:(MMovie*)movie
-{
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
-    [_drawLock lock];
-    [movie retain], [_movie release], _movie = movie;
-    [_subtitles release], _subtitles = nil;
-    if (_image) {
-        CVOpenGLTextureRelease(_image);
-        _image = nil;
-    }
-
-    if (_movie) {
-        NSSize es = [_movie encodedSize];
-        CIVector* vector = [CIVector vectorWithX:1.0 Y:1.0
-                                               Z:es.width - 2.0 W:es.height - 2.0];
-        [_cropFilter setValue:vector forKey:@"inputRectangle"];
-        NSSize movieSize = [_movie adjustedSizeByAspectRatio];
-        [_messageOSD setMovieSize:movieSize];
-        [_subtitleImageOSD setMovieSize:movieSize];
-        [_subtitleRenderer setMovieSize:movieSize];
-    }
-    [_subtitleRenderer clearSubtitleContent];
-    [_subtitleImageOSD clearContent];
-    [self updateSubtitlePosition];
-    [_drawLock unlock];
-    [self updateMovieRect:TRUE];
-
-    _lastFpsCheckTime = 0.0;
-    _fpsElapsedTime = 0.0;
-    _fpsFrameCount = 0;
-}
-
-- (void)showLogo
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
-    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
-    [_drawLock unlock];
-}
-
-- (void)hideLogo
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
-    [_iconOSD clearContent];
-    [_drawLock unlock];
-}
-
-- (void)updateMovieRect:(BOOL)display
-{
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, display ? @"display" : @"no-display");
-    [_drawLock lock];
-    if (!_movie) {
-        NSRect mr = [self bounds];
-        [_iconOSD setMovieRect:mr];
-        [_messageOSD setMovieRect:mr];
-    }
-    else {
-        // update _imageRect
-        NSSize es = [_movie encodedSize];
-        _imageRect.origin.x = 0;
-        _imageRect.origin.y = 0;
-        _imageRect.size.width = es.width;
-        _imageRect.size.height = es.height;
-        if (_removeGreenBox) {
-            _imageRect.origin.x++, _imageRect.size.width  -= 2;
-            _imageRect.origin.y++, _imageRect.size.height -= 2;
-        }
-
-        if ([[NSApp delegate] isFullScreen] && _fullScreenFill == FS_FILL_CROP) {
-            NSSize bs = [self bounds].size;
-            NSSize ms = [_movie adjustedSizeByAspectRatio];
-            if (bs.width / bs.height < ms.width / ms.height) {
-                float mw = ms.width * bs.height / ms.height;
-                float dw = (mw - bs.width) * ms.width / mw;
-                _imageRect.origin.x += dw / 2;
-                _imageRect.size.width -= dw;
-            }
-            else {
-                float mh = ms.height * bs.width / ms.width;
-                float dh = (mh - bs.height) * ms.height / mh;
-                _imageRect.origin.y += dh / 2;
-                _imageRect.size.height -= dh;
-            }
-        }
-        // update _movieRect
-        NSRect mr = [self calcMovieRectForBoundingRect:[self bounds]];
-        _movieRect = *(CGRect*)&mr;
-        [_iconOSD setMovieRect:mr];
-        [_messageOSD setMovieRect:mr];
-        [_subtitleImageOSD setMovieRect:mr];
-        [_subtitleRenderer setMovieRect:mr];
-    }
-    [_errorOSD setMovieRect:NSInsetRect([self bounds], 50, 0)];
-    [_drawLock unlock];
-
-    if (display) {
-        [self redisplay];
-    }
-}
-
-- (float)subtitleLineHeightForMovieWidth:(float)movieWidth
-{
-    float fontSize = [_subtitleRenderer fontSize] * movieWidth / 640.0;
-    //fontSize = MAX(15.0, fontSize);
-    NSFont* font = [NSFont fontWithName:[_subtitleRenderer fontName] size:fontSize];
-
-    NSMutableAttributedString* s = [[[NSMutableAttributedString alloc]
-        initWithString:NSLocalizedString(@"SubtitleTestChar", nil)] autorelease];
-    [s addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, 1)];
-    
-    NSSize maxSize = NSMakeSize(1000, 1000);
-    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
-                                     NSStringDrawingUsesFontLeading |
-                                     NSStringDrawingUsesDeviceMetrics;
-    return [s boundingRectWithSize:maxSize options:options].size.height;
-}
-
-- (float)calcLetterBoxHeight:(NSRect)movieRect
-{
-    if (_subtitlePosition == SUBTITLE_POSITION_ON_MOVIE ||
-        _subtitlePosition == SUBTITLE_POSITION_ON_LETTER_BOX) {
-        return 0.0;
-    }
-
-    float lineHeight = [self subtitleLineHeightForMovieWidth:movieRect.size.width];
-    float lineSpacing = [_subtitleRenderer lineSpacing] * movieRect.size.width / 640.0;
-    int lines = _subtitlePosition - SUBTITLE_POSITION_ON_LETTER_BOX;
-    // FIXME: how to apply line-spacing for line-height?  it's estimated roughly...
-    return lines * (lineHeight + lineSpacing / 2);
-}
-
-- (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect
-{
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromSize(boundingSize));
-    if ([[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
-        boundingRect = [self underScannedRect:boundingRect];
-    }
-
-    if ([[NSApp delegate] isFullScreen] && _fullScreenFill != FS_FILL_NEVER) {
-        return boundingRect;
-    }
-    else {
-        NSRect rect;
-        rect.origin = boundingRect.origin;
-
-        NSSize bs = boundingRect.size;
-        NSSize ms = [_movie adjustedSizeByAspectRatio];
-        if (bs.width / bs.height < ms.width / ms.height) {
-            rect.size.width = bs.width;
-            rect.size.height = rect.size.width * ms.height / ms.width;
-
-            float letterBoxMinHeight = [self calcLetterBoxHeight:rect];
-            float letterBoxHeight = (bs.height - rect.size.height) / 2;
-            if (letterBoxHeight < letterBoxMinHeight) {
-                if (bs.height < rect.size.height + letterBoxMinHeight) {
-                    letterBoxHeight = bs.height - rect.size.height;
-                }
-                else if (bs.height < rect.size.height + letterBoxMinHeight * 2) {
-                    letterBoxHeight = letterBoxMinHeight;
-                }
-            }
-            /*
-            else if (0 < letterBoxMinHeight) {
-                letterBoxHeight = letterBoxMinHeight;
-            }
-             */
-            rect.origin.y += letterBoxHeight;
-        }
-        else {
-            rect.size.height = bs.height;
-            rect.size.width = rect.size.height * ms.width / ms.height;
-            rect.origin.x += (bs.width - rect.size.width) / 2;
-        }
-        return rect;
-    }
-}
-
 - (void)lockDraw   { [_drawLock lock]; }
 - (void)unlockDraw { [_drawLock unlock]; }
 - (void)redisplay { [self setNeedsDisplay:TRUE]; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark display-link
+#pragma mark movie
 
-- (CVReturn)updateImage:(const CVTimeStamp*)timeStamp
+- (MMovie*)movie { return _movie; }
+- (float)currentFps { return _currentFps; }
+
+- (void)setMovie:(MMovie*)movie
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
     [_drawLock lock];
-    if (_movie) {
-        CVOpenGLTextureRef image = [_movie nextImage:timeStamp];
-        if (image) {
-            if (_image) {
-                CVOpenGLTextureRelease(_image);
-            }
-            _image = image;
-            [self updateSubtitleString];
-            if ([self canDraw]) {
-                [self drawRect:NSZeroRect];
-            }
-            _fpsFrameCount++;
+        [movie retain], [_movie release], _movie = movie;
+        [_subtitles release], _subtitles = nil;
+        if (_image) {
+            CVOpenGLTextureRelease(_image);
+            _image = nil;
         }
-        // calc. fps
-        double ct = (double)timeStamp->videoTime / timeStamp->videoTimeScale;
-        _fpsElapsedTime += ABS(ct - _lastFpsCheckTime);
-        _lastFpsCheckTime = ct;
-        if (1.0 <= _fpsElapsedTime) {
-            _currentFps = (float)(_fpsFrameCount / _fpsElapsedTime);
-            _fpsElapsedTime = 0.0;
-            _fpsFrameCount = 0;
+
+        if (_movie) {
+            NSSize es = [_movie encodedSize];
+            CIVector* vector = [CIVector vectorWithX:1.0 Y:1.0
+                                Z:es.width - 2.0 W:es.height - 2.0];
+            [_cropFilter setValue:vector forKey:@"inputRectangle"];
+            NSSize movieSize = [_movie adjustedSizeByAspectRatio];
+            [_messageOSD setMovieSize:movieSize];
+            [_subtitleImageOSD setMovieSize:movieSize];
+            [_subtitleRenderer setMovieSize:movieSize];
         }
-    }
+        [self clearOSD];
+        [self updateSubtitlePosition];
     [_drawLock unlock];
-    
-    [pool release];
-    
-	return kCVReturnSuccess;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-- (void)setDraggingAction:(int)action { _draggingAction = action; }
-- (void)setCaptureFormat:(int)format { _captureFormat = format; }
-- (void)setIncludeLetterBoxOnCapture:(BOOL)include { _includeLetterBoxOnCapture = include; }
-- (void)setRemoveGreenBox:(BOOL)remove
-{
-    _removeGreenBox = remove;
     [self updateMovieRect:TRUE];
-}
 
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-
-- (NSRect)rectForCapture:(BOOL)alternative
-{
-    if (_includeLetterBoxOnCapture) {
-        return (alternative) ? *(NSRect*)&_movieRect : [self bounds];
-    }
-    else {
-        return (alternative) ? [self bounds] : *(NSRect*)&_movieRect;
-    }
-}
-
-- (NSImage*)captureRect:(NSRect)rect
-{
-    float width = MAX(rect.size.width, _movieRect.size.width);
-    NSBitmapImageRep* imageRep = [[[NSBitmapImageRep alloc]
-        initWithBitmapDataPlanes:0
-        pixelsWide:rect.size.width pixelsHigh:rect.size.height
-        bitsPerSample:8 samplesPerPixel:4 hasAlpha:TRUE isPlanar:FALSE
-        colorSpaceName:NSCalibratedRGBColorSpace
-        bytesPerRow:width * 4 bitsPerPixel:0] autorelease];
-
-    [_drawLock lock];
-    [[self openGLContext] makeCurrentContext];
-    glReadPixels((int)rect.origin.x, (int)rect.origin.y,
-                 (int)rect.size.width, (int)rect.size.height,
-                 GL_RGBA, GL_UNSIGNED_BYTE, [imageRep bitmapData]);
-    [NSOpenGLContext clearCurrentContext];
-    [_drawLock unlock];
-
-    NSImage* image = [[NSImage alloc] initWithSize:rect.size];
-    [image addRepresentation:imageRep];
-
-    // image is flipped. so, flip again. teach me better idea...
-    NSImage* imageFlipped = [[NSImage alloc] initWithSize:rect.size];
-    [imageFlipped lockFocus];
-        [image setFlipped:TRUE];
-        [image drawAtPoint:NSMakePoint(0, 0) fromRect:NSZeroRect
-                 operation:NSCompositeSourceOver fraction:1.0];
-        [image release];
-    [imageFlipped unlockFocus];
-    return [imageFlipped autorelease];
-}
-
-- (NSData*)dataWithImage:(NSImage*)image
-{
-    NSBitmapImageFileType fileType = NSTIFFFileType;
-    NSMutableDictionary* properties = [NSMutableDictionary dictionary];
-    if (_captureFormat == CAPTURE_FORMAT_TIFF) {
-        fileType = NSTIFFFileType;
-        //[properties setObject:??? forKey:NSImageColorSyncProfileData];
-        //[properties setObject:??? forKey:NSImageCompressionMethod];
-    }
-    else if (_captureFormat == CAPTURE_FORMAT_JPEG) {
-        fileType = NSJPEGFileType;
-        //[properties setObject:??? forKey:NSImageColorSyncProfileData];
-        //[properties setObject:[NSNumber numberWithFloat:0.9] forKey:NSImageCompressionFactor];
-        //[properties setObject:??? forKey:NSImageProgressive];
-    }
-    else if (_captureFormat == CAPTURE_FORMAT_PNG) {
-        fileType = NSPNGFileType;
-        //[properties setObject:??? forKey:NSImageColorSyncProfileData];
-        //[properties setObject:??? forKey:NSImageGamma];
-        //[properties setObject:??? forKey:NSImageInterlaced];
-    }
-    else if (_captureFormat == CAPTURE_FORMAT_BMP) {
-        fileType = NSBMPFileType;
-    }
-    else if (_captureFormat == CAPTURE_FORMAT_GIF) {
-        fileType = NSGIFFileType;
-        //[properties setObject:??? forKey:NSImageColorSyncProfileData];
-        //[properties setObject:??? forKey:NSImageDitherTransparency];
-        //[properties setObject:??? forKey:NSImageRGBColorTable];
-    }
-
-    return [[NSBitmapImageRep imageRepWithData:[image TIFFRepresentation]]
-            representationUsingType:fileType properties:properties];
-}
-
-- (NSString*)fileExtensionForCaptureFormat:(int)format
-{
-    /*
-    NSString * NSFileTypeForHFSTypeCode(OSType hfsFileTypeCode);
-     */
-    return (format == CAPTURE_FORMAT_JPEG) ? @"jpeg" :
-           (format == CAPTURE_FORMAT_PNG)  ? @"png" :
-           (format == CAPTURE_FORMAT_BMP)  ? @"bmp" :
-           (format == CAPTURE_FORMAT_GIF)  ? @"gif" :
-                   /* CAPTURE_FORMAT_TIFF */ @"tiff";
-}
-
-- (NSString*)capturePathAtDirectory:(NSString*)directory
-{
-    NSString* name = [[[[NSApp delegate] movieURL] path] lastPathComponent];
-    NSString* ext = [self fileExtensionForCaptureFormat:_captureFormat];
-    directory = [[directory stringByExpandingTildeInPath]
-                 stringByAppendingPathComponent:[name stringByDeletingPathExtension]];
-    int i = 1;
-    NSString* path;
-    NSFileManager* fileManager = [NSFileManager defaultManager];
-    while (TRUE) {
-        path = [directory stringByAppendingFormat:@" %d.%@", i++, ext];
-        if (![fileManager fileExistsAtPath:path]) {
-            break;
-        }
-    }
-    return path;
-}
-
-- (void)copyCurrentImage:(BOOL)alternative
-{
-    NSImage* image = [self captureRect:[self rectForCapture:alternative]];
-    NSPasteboard* pboard = [NSPasteboard generalPasteboard];
-    [pboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
-    [pboard setData:[self dataWithImage:image] forType:NSTIFFPboardType];
-}
-
-- (void)saveCurrentImage:(BOOL)alternative
-{
-    NSImage* image = [self captureRect:[self rectForCapture:alternative]];
-    NSString* path = [self capturePathAtDirectory:@"~/Desktop"];
-    [[self dataWithImage:image] writeToFile:path atomically:TRUE];
-}
-
-- (IBAction)copy:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self copyCurrentImage:[sender tag] != 0];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark full-screen fill
-
-- (int)fullScreenFill { return _fullScreenFill; }
-- (float)fullScreenUnderScan { return _fullScreenUnderScan; }
-- (void)setFullScreenFill:(int)fill { _fullScreenFill = fill; }
-- (void)setFullScreenUnderScan:(float)underScan { _fullScreenUnderScan = underScan; }
-
-- (NSRect)underScannedRect:(NSRect)rect
-{
-    assert(0 < _fullScreenUnderScan);
-    float underScan = _fullScreenUnderScan / 100.0;
-    float dw = rect.size.width  * underScan;
-    float dh = rect.size.height * underScan;
-    rect.origin.x += dw / 2, rect.size.width  -= dw;
-    rect.origin.y += dh / 2, rect.size.height -= dh;
-    return rect;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-#pragma mark color-controls
-
-- (float)brightness { return [[_colorFilter valueForKey:@"inputBrightness"] floatValue]; }
-- (float)saturation { return [[_colorFilter valueForKey:@"inputSaturation"] floatValue]; }
-- (float)contrast   { return [[_colorFilter valueForKey:@"inputContrast"] floatValue]; }
-- (float)hue        { return [[_hueFilter valueForKey:@"inputAngle"] floatValue]; }
-
-- (void)setBrightness:(float)brightness
-{
-    //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
-    [_drawLock lock];
-    [_colorFilter setValue:[NSNumber numberWithFloat:brightness]
-                    forKey:@"inputBrightness"];
-    [_drawLock unlock];
-    [self redisplay];
-}
-
-- (void)setSaturation:(float)saturation
-{
-    //TRACE(@"%s %g", __PRETTY_FUNCTION__, saturation);
-    [_drawLock lock];
-    [_colorFilter setValue:[NSNumber numberWithFloat:saturation]
-                    forKey:@"inputSaturation"];
-    [_drawLock unlock];
-    [self redisplay];
-}
-
-- (void)setContrast:(float)contrast
-{
-    //TRACE(@"%s %g", __PRETTY_FUNCTION__, contrast);
-    [_drawLock lock];
-    [_colorFilter setValue:[NSNumber numberWithFloat:contrast]
-                    forKey:@"inputContrast"];
-    [_drawLock unlock];
-    [self redisplay];
-}
-
-- (void)setHue:(float)hue
-{
-    //TRACE(@"%s %g", __PRETTY_FUNCTION__, hue);
-    [_drawLock lock];
-    [_hueFilter setValue:[NSNumber numberWithFloat:hue]
-                  forKey:@"inputAngle"];
-    [_drawLock unlock];
-    [self redisplay];
+    _lastFpsCheckTime = 0.0;
+    _fpsElapsedTime = 0.0;
+    _fpsFrameCount = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -841,13 +265,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
 }
 
-- (int)draggingActionWithModifierFlags:(unsigned int)flags
-{
-    return (flags & NSControlKeyMask)   ? DRAGGING_ACTION_MOVE_WINDOW :
-           (flags & NSAlternateKeyMask) ? DRAGGING_ACTION_CAPTURE_MOVIE :
-                                          _draggingAction;
-}
-
 - (void)mouseDown:(NSEvent*)event
 {
     //TRACE(@"%s clickCount=%d", __PRETTY_FUNCTION__, [event clickCount]);
@@ -864,117 +281,38 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
 }
 
-- (NSSize)thumbnailSizeForImageSize:(NSSize)imageSize
-{
-    const float MAX_SIZE = 192;
-    return (imageSize.width < imageSize.height) ?
-        NSMakeSize(MAX_SIZE * imageSize.width / imageSize.height, MAX_SIZE) :
-        NSMakeSize(MAX_SIZE, MAX_SIZE * imageSize.height / imageSize.width);
-}
-
-- (void)mouseDragged:(NSEvent*)event
-{
-    int action = [self draggingActionWithModifierFlags:[event modifierFlags]];
-    if (action == DRAGGING_ACTION_MOVE_WINDOW) {
-        if (![[NSApp delegate] isFullScreen]) {
-            [[self window] mouseDragged:event];
-        }
-    }
-    else if (action == DRAGGING_ACTION_CAPTURE_MOVIE) {
-        BOOL alt = ([event modifierFlags] & NSShiftKeyMask) ? TRUE : FALSE;
-        _captureImage = [[self captureRect:[self rectForCapture:alt]] retain];
-
-//#define _REAL_SIZE_DRAGGING
-#if defined(_REAL_SIZE_DRAGGING)
-        _draggingPoint = [event locationInWindow];
-        _draggingPoint.x -= [self frame].origin.x;
-        _draggingPoint.y -= [self frame].origin.y;
-        NSRect rect;
-        rect.size = [_captureImage size];
-        rect.origin = NSMakePoint(0, 0);
-#else
-        NSRect rect;
-        rect.size = [self thumbnailSizeForImageSize:[_captureImage size]];
-        rect.origin = [self convertPoint:[event locationInWindow] fromView:nil];
-        rect.origin.x -= rect.size.width / 2;
-        rect.origin.y -= rect.size.height / 2;
-#endif
-        NSString* ext = [self fileExtensionForCaptureFormat:_captureFormat];
-        [self dragPromisedFilesOfTypes:[NSArray arrayWithObject:ext]
-                              fromRect:rect source:self slideBack:TRUE event:event];
-    }
-}
-
-- (void)dragImage:(NSImage*)image at:(NSPoint)imageLoc offset:(NSSize)mouseOffset
-            event:(NSEvent*)event pasteboard:(NSPasteboard*)pboard
-           source:(id)sourceObject slideBack:(BOOL)slideBack
-{
-#if defined(_REAL_SIZE_DRAGGING)
-    NSSize size = [_captureImage size];
-#else
-    NSSize size = [self thumbnailSizeForImageSize:[_captureImage size]];
-#endif
-    NSImage* dragImage = [[[NSImage alloc] initWithSize:size] autorelease];
-    [dragImage lockFocus];
-        [dragImage setBackgroundColor:[NSColor clearColor]];
-        [_captureImage drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:NSZeroRect
-                    operation:NSCompositeSourceOver fraction:0.5];
-    [dragImage unlockFocus];
-
-    [super dragImage:dragImage at:imageLoc offset:mouseOffset
-               event:event pasteboard:pboard source:sourceObject slideBack:slideBack];
-}
-
-- (NSArray*)namesOfPromisedFilesDroppedAtDestination:(NSURL*)dropDestination
-{
-    _capturePath = [[self capturePathAtDirectory:[dropDestination path]] retain];
-    return [NSArray arrayWithObject:_capturePath];
-}
-
-- (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)forLocal
-{
-    return (forLocal) ? NSDragOperationNone : NSDragOperationCopy;
-}
-/*
-#if defined(_REAL_SIZE_DRAGGING)
-- (void)draggedImage:(NSImage*)image movedTo:(NSPoint)screenPoint
-{
-    screenPoint.x += _draggingPoint.x;
-    screenPoint.y += _draggingPoint.y;
-    NSSize size;
-    if (NSPointInRect(screenPoint, [[self window] frame])) {
-        size = [_captureImage size];
-    }
-    else {
-        size = [self thumbnailSizeForImageSize:[_captureImage size]];
-    }
-    if (!NSEqualSizes([image size], size)) {
-        // FIXME: I don't know how to change image size???
-        TRACE(@"change to %@",NSEqualSizes([_captureImage size], size) ?
-                                        @"real size" : @"thumbnail size");
-        [image lockFocus];
-        [image setSize:size];
-        [image setBackgroundColor:[NSColor clearColor]];
-        [_captureImage drawInRect:NSMakeRect(0, 0, size.width, size.height) fromRect:NSZeroRect
-                        operation:NSCompositeSourceOver fraction:0.5];
-        [image unlockFocus];
-    }
-}
-#endif
-*/
-- (void)draggedImage:(NSImage*)image
-             endedAt:(NSPoint)point operation:(NSDragOperation)operation
-{
-    [[self dataWithImage:_captureImage] writeToFile:_capturePath atomically:TRUE];
-
-    [_capturePath release], _capturePath = nil;
-    [_captureImage release], _captureImage = nil;
-}
-
 - (void)scrollWheel:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [[self window] scrollWheel:event];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark notification
+
+- (void)windowMoved:(NSNotification*)aNotification
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSDictionary* deviceDesc = [[[self window] screen] deviceDescription];
+    NSNumber* screenNumber = [deviceDesc objectForKey:@"NSScreenNumber"];
+    CGDirectDisplayID displayID = (CGDirectDisplayID)[screenNumber intValue];
+    if (displayID && displayID != _displayID) {
+        CVDisplayLinkSetCurrentCGDisplay(_displayLink, displayID);
+        _displayID = displayID;
+        TRACE(@"main window moved: display changed");
+        [self updateSubtitlePosition];
+        [[NSApp delegate] updateSubtitlePositionMenuItems];
+    }
+}
+
+- (void)frameResized:(NSNotification*)notification
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self updateMovieRect:FALSE];
+    if ([self subtitleVisible]) {
+        [self updateSubtitle];
+    }
 }
 
 @end

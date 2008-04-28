@@ -189,7 +189,6 @@
 - (BOOL)openSubtitle:(NSURL*)subtitleURL encoding:(CFStringEncoding)encoding;
 - (BOOL)reopenMovieWithMovieClass:(Class)movieClass;
 - (void)reopenSubtitle;
-- (void)closeMovieWithoutUpdateMovieView;
 - (void)closeMovie;
 
 - (void)updateDecoderUI;
@@ -312,6 +311,7 @@
 - (void)updateVolumeUI;
 
 - (void)setAudioTrackAtIndex:(unsigned int)index enabled:(BOOL)enabled;
+- (void)enableAudioTracksInIndexSet:(NSIndexSet*)set;
 - (void)autoenableAudioTracks;
 - (void)changeAudioTrack:(int)tag;
 - (void)updateAudioTrackMenuItems;

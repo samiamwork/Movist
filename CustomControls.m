@@ -445,6 +445,8 @@
 - (id)copyWithZone:(NSZone*)zone
 {
     CustomSliderCell* cell = [super copyWithZone:zone];
+    cell->_knobOffset         = _knobOffset;
+    cell->_trackOffset        = _trackOffset;
     cell->_backColor          = [_backColor retain];
     cell->_knobImage          = [_knobImage retain];
     cell->_knobImagePressed   = [_knobImagePressed retain];

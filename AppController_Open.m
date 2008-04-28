@@ -234,19 +234,18 @@
          subtitle:(NSURL*)subtitleURL subtitleEncoding:(CFStringEncoding)subtitleEncoding
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    // -[closeMovie] should be called after opening new-movie not to display black screen.
     if (!movieURL) {
         [self closeMovie];
         return FALSE;
     }
-
-    [self closeMovieWithoutUpdateMovieView];
 
     // open movie
     NSError* error;
     MMovie* movie = [self movieFromURL:movieURL withMovieClass:movieClass error:&error];
     if (!movie || ![movie setOpenGLContext:[_movieView openGLContext]
                                pixelFormat:[_movieView pixelFormat] error:&error]) {
-        [self closeMovie];  // for updating _movieView
+        [self closeMovie];
         if ([self isFullScreen]) {
             NSString* s = [movieURL isFileURL] ? [movieURL path] : [movieURL absoluteString];
             [_movieView setError:error info:[s lastPathComponent]];
@@ -256,8 +255,7 @@
         }
         return FALSE;
     }
-    [self closeMovie];  // for updating _movieView
-
+    [self closeMovie];
     assert(_movie == nil);
     _movie = [movie retain];
 
@@ -425,7 +423,7 @@
     }
 }
 
-- (void)closeMovieWithoutUpdateMovieView
+- (void)closeMovie
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
@@ -461,6 +459,9 @@
         [nc removeObserver:self name:nil object:_movie];
         [nc removeObserver:self name:nil object:_playlist];
 
+        [_movieView setMovie:nil];
+        [_movieView setSubtitles:nil];
+        [_movieView setMessage:@""];
         [_movie cleanup], _movie = nil;
 
         [_subtitles release], _subtitles = nil;
@@ -468,16 +469,6 @@
             NSLocalizedString(@"Reopen With %@", nil), @"..."]];
         [self updateUI];
     }
-}
-
-- (void)closeMovie
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self closeMovieWithoutUpdateMovieView];
-
-    [_movieView setMovie:nil];
-    [_movieView setSubtitles:nil];
-    [_movieView setMessage:@""];
 }
 
 - (void)updateDecoderUI
@@ -713,14 +704,8 @@
                 [self setAudioTrackAtIndex:aIndex enabled:enabled];
             }
             else {
-                // only one track should be enabled in digital-out.
-                // at first, disable all audio tracks and then enable the track at aIndex.
-                MTrack* track;
-                NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
-                while (track = [enumerator nextObject]) {
-                    [track setEnabled:FALSE];
-                }
-                [self setAudioTrackAtIndex:aIndex enabled:enabled];
+                [self enableAudioTracksInIndexSet:[NSIndexSet indexSetWithIndex:aIndex]];
+                [self setAudioTrackAtIndex:aIndex enabled:enabled]; // to show message and update menu-items
                 [tableView reloadData];  // to update other audio tracks availablity
             }
         }

@@ -82,7 +82,7 @@
 
 - (BOOL)canDecodeVideo
 {
-    return _dispatchPacket && (_command != COMMAND_SEEK || _seekComplete);
+    return _dispatchPacket && (_command != COMMAND_SEEK || !_seekComplete);
 }
 
 - (void)videoTrack:(FFVideoTrack*)videoTrack decodedTime:(double)time

@@ -123,7 +123,9 @@
 - (void)setAudioTrackAtIndex:(unsigned int)index enabled:(BOOL)enabled
 {
     MTrack* track = (MTrack*)[[_movie audioTracks] objectAtIndex:index];
-    [track setEnabled:enabled];
+    if (enabled != [track isEnabled]) {
+        [track setEnabled:enabled];
+    }
 
     if (enabled) {
         [_movieView setMessage:[NSString stringWithFormat:
@@ -134,6 +136,25 @@
             NSLocalizedString(@"%@ disabled", nil), [track name]]];
     }
     [self updateAudioTrackMenuItems];
+}
+
+- (void)enableAudioTracksInIndexSet:(NSIndexSet*)set
+{
+    int i = 0;
+    MTrack* track;
+    NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
+    while (track = [enumerator nextObject]) {
+        if (![set containsIndex:i++]/* && [track isEnabled]*/) {
+            [track setEnabled:FALSE];
+        }
+    }
+    i = 0;
+    enumerator = [[_movie audioTracks] objectEnumerator];
+    while (track = [enumerator nextObject]) {
+        if ([set containsIndex:i++]/* && ![track isEnabled]*/) {
+            [track setEnabled:TRUE];
+        }
+    }
 }
 
 - (void)autoenableAudioTracks
@@ -157,13 +178,11 @@
             [_audioTrackIndexSet removeAllIndexes];
             [_audioTrackIndexSet addIndex:index];
         }
+        [self enableAudioTracksInIndexSet:_audioTrackIndexSet];
+
         NSArray* tracks = [_movie audioTracks];
-        unsigned int i, count = [tracks count];
-        for (i = 0; i < count; i++) {
-            [[tracks objectAtIndex:i] setEnabled:[_audioTrackIndexSet containsIndex:i]];
-        }
-        unsigned int lastIndex = [_audioTrackIndexSet lastIndex];
-        for (; i <= lastIndex; i++) {
+        unsigned int i, lastIndex = [_audioTrackIndexSet lastIndex];
+        for (i = [tracks count]; i <= lastIndex; i++) {
             if ([_audioTrackIndexSet containsIndex:i]) {
                 [_audioTrackIndexSet removeIndex:i];
             }
@@ -184,26 +203,22 @@
     
     int index = tag;
     if (index < 0) { // rotation
-        NSArray* audioTracks = [_movie audioTracks];
-        int i, count = [audioTracks count];
-        for (i = 0; i < count; i++) {
-            if ([[audioTracks objectAtIndex:i] isEnabled]) {
+        int i = 0;
+        MTrack* track;
+        NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
+        while (track = [enumerator nextObject]) {
+            if ([track isEnabled]) {
                 break;
             }
+            i++;
         }
-        index = (i + 1) % count;
+        index = (i + 1) % [[_movie audioTracks] count];
     }
-    // at first, disable all audio tracks and then enable the track at index.
-    MTrack* track;
-    NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
-    while (track = [enumerator nextObject]) {
-        [track setEnabled:FALSE];
-    }
-    track = [[_movie audioTracks] objectAtIndex:index];
-    [track setEnabled:TRUE];
+    [self enableAudioTracksInIndexSet:[NSIndexSet indexSetWithIndex:index]];
 
     [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"%@ selected", nil), [track name]]];
+        NSLocalizedString(@"%@ selected", nil),
+                          [[[_movie audioTracks] objectAtIndex:index] name]]];
     [self updateAudioTrackMenuItems];
     [_propertiesView reloadData];
     
