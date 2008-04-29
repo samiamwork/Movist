@@ -113,14 +113,12 @@ AVPacket s_flushPacket;
         return FALSE;
     }
 
-    _enabled = FALSE;
-    _running = FALSE;
-
     return TRUE;
 }
 
 - (void)cleanupTrack
 {
+    TRACE(@"%s", __PRETTY_FUNCTION__);
     [self cleanupContext];
 }
 
@@ -133,5 +131,7 @@ AVPacket s_flushPacket;
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
 }
+
+- (void)putPacket:(AVPacket*)packet {}
 
 @end

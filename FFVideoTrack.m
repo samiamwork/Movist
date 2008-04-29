@@ -122,11 +122,14 @@
 }
 
 - (BOOL)initTrack:(int*)errorCode
-{
+{    
+    _enabled = FALSE;
+    _running = FALSE;
+    
     if (![super initTrack:errorCode]) {
         return FALSE;
     }
-
+    
     AVCodecContext* context = _stream->codec;
 
     // allocate frame
@@ -267,7 +270,7 @@
         return -1;
     }
     if (!gotFrame) {
-        TRACE(@"%s incomplete decoded frame", __PRETTY_FUNCTION__);
+        //TRACE(@"%s incomplete decoded frame", __PRETTY_FUNCTION__);
         return -1;
     }
 

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2CC012030DC484910020241D /* FFAudioTrack_Digital.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CC012020DC484910020241D /* FFAudioTrack_Digital.m */; };
+		2CDF931B0DC4D1360069B195 /* FFAudioTrack_Analog.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */; };
 		2CFA58660DB3496B0084BFB6 /* liba52.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA585E0DB3496B0084BFB6 /* liba52.a */; };
 		2CFA58670DB3496B0084BFB6 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA585F0DB3496B0084BFB6 /* libavcodec.a */; };
 		2CFA58680DB3496B0084BFB6 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58600DB3496B0084BFB6 /* libavdevice.a */; };
@@ -232,6 +234,8 @@
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		2CC012020DC484910020241D /* FFAudioTrack_Digital.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFAudioTrack_Digital.m; sourceTree = "<group>"; };
+		2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFAudioTrack_Analog.m; sourceTree = "<group>"; };
 		2CFA585E0DB3496B0084BFB6 /* liba52.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liba52.a; path = contrib/lib/liba52.a; sourceTree = "<group>"; };
 		2CFA585F0DB3496B0084BFB6 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = contrib/lib/libavcodec.a; sourceTree = "<group>"; };
 		2CFA58600DB3496B0084BFB6 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = contrib/lib/libavdevice.a; sourceTree = "<group>"; };
@@ -931,6 +935,8 @@
 				AF30D8C30DA53A8F00A51D1A /* FFTrack.h */,
 				AF30D8C20DA53A8F00A51D1A /* FFTrack.m */,
 				AF30D9360DA5512000A51D1A /* FFAudioTrack.m */,
+				2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */,
+				2CC012020DC484910020241D /* FFAudioTrack_Digital.m */,
 				AF1E05370DA790A700CE7196 /* FFVideoTrack.m */,
 				AF1E05260DA77F3D00CE7196 /* FFIndexer.h */,
 				AF1E05270DA77F3D00CE7196 /* FFIndexer.m */,
@@ -1212,6 +1218,8 @@
 				AF4185A50DB12B3C00C5AE7E /* PlaylistPanel.m in Sources */,
 				AFCD04C20DBA39B400348AB0 /* MSubtitleParser_SUB.m in Sources */,
 				AFCD04F20DBA6B6300348AB0 /* unrarlib.c in Sources */,
+				2CC012030DC484910020241D /* FFAudioTrack_Digital.m in Sources */,
+				2CDF931B0DC4D1360069B195 /* FFAudioTrack_Analog.m in Sources */,
 				AF08532E0DC62B910061B8CD /* MMovieView_Image.m in Sources */,
 				AF0853560DC6307B0061B8CD /* MMovieView_OSD.m in Sources */,
 				AF0853680DC635440061B8CD /* MMovieView_Capture.m in Sources */,

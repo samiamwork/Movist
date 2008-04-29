@@ -54,6 +54,7 @@ enum {
     NSConditionLock* _commandLock;
     //NSLock* _avSyncMutex;
     NSLock* _frameReadMutex;
+    NSLock* _trackMutex;
     BOOL _running;
     BOOL _quitRequested;
     BOOL _dispatchPacket;
@@ -82,7 +83,7 @@ enum {
 
 + (NSString*)name;
 
-- (BOOL)initAVCodec:(int*)errorCode;
+- (BOOL)initAVCodec:(int*)errorCode digitalAudioOut:(BOOL)digitalAudioOut;
 - (void)cleanupAVCodec;
 
 @end

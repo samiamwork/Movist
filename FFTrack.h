@@ -68,6 +68,7 @@ extern AVPacket s_flushPacket;
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
 
+- (void)putPacket:(const AVPacket*)packet;
 - (void)waitForFinish;
 
 @end
@@ -100,7 +101,6 @@ extern AVPacket s_flushPacket;
 - (BOOL)isIndexComplete;
 - (BOOL)isQueueEmpty;
 - (BOOL)isQueueFull;
-- (void)putPacket:(const AVPacket*)packet;
 - (void)clearQueue;
 
 - (BOOL)isNewImageAvailable:(double)hostTime
@@ -113,18 +113,28 @@ extern AVPacket s_flushPacket;
 #pragma mark -
 
 @class AudioDataQueue;
+@class AudioRawDataQueue;
 
 @interface FFAudioTrack : FFTrack
 {
     float _volume;
     int _speakerCount;
+    BOOL _passThrough;
+    BOOL _started;
+    double PTS_TO_SEC;
 
     AudioUnit _audioUnit;
     AudioDataQueue* _dataQueue;
+    AudioRawDataQueue* _rawDataQueue;
+    AudioDeviceID _audioDev;
+    AudioStreamID _digitalStream;
     double _nextDecodedTime;
 }
 
 + (id)audioTrackWithAVStream:(AVStream*)stream index:(int)index;
+
+- (BOOL)initTrack:(int*)errorCode passThrough:(BOOL)passThrough;
+- (BOOL)isAc3Dts;
 
 - (void)startAudio;
 - (void)stopAudio;
@@ -133,7 +143,24 @@ extern AVPacket s_flushPacket;
 - (void)setVolume:(float)volume;
 - (void)setSpeakerCount:(int)count;
 
-- (void)decodePacket:(AVPacket*)packet;
 - (void)clearQueue;
 
+@end
+
+@interface FFAudioTrack (Analog)
+- (BOOL)initAnalogAudio:(int*)errorCode;
+- (void)cleanupAnalogAudio;
+- (void)startAnalogAudio;
+- (void)stopAnalogAudio;
+- (void)decodePacket:(AVPacket*)packer;
+- (void)clearAnalogDataQueue;
+@end
+
+@interface FFAudioTrack (Digital)
+- (BOOL)initDigitalAudio:(int*)error;
+- (void)cleanupDigitalAudio;
+- (void)startDigitalAudio;
+- (void)stopDigitalAudio;
+- (void)putDigitalAudioPacket:(AVPacket*)packer;
+- (void)clearDigitalDataQueue;
 @end

@@ -126,7 +126,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         traceAVFormatContext(_formatContext);
 
         int errorCode;
-        if (![self initAVCodec:&errorCode] ||
+        if (![self initAVCodec:&errorCode digitalAudioOut:digitalAudioOut] ||
             ![self initPlayback:&errorCode]) {
             *error = [NSError errorWithDomain:[MMovie_FFmpeg name]
                                          code:errorCode userInfo:nil];
@@ -182,8 +182,10 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (BOOL)initAVCodec:(int*)errorCode
+- (BOOL)initAVCodec:(int*)errorCode digitalAudioOut:(BOOL)digitalAudioOut
 {
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    _trackMutex = [[NSLock alloc] init];
     MTrack* track;
     FFVideoTrack* vTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
@@ -201,11 +203,13 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         [vTrack setMovie:self];
         [track setMovie:self];
     }
+    BOOL passThrough = FALSE;
     FFAudioTrack* aTrack;
     enumerator = [_audioTracks objectEnumerator];
     while (track = (MTrack*)[enumerator nextObject]) {
         aTrack = (FFAudioTrack*)[track impl];
-        if ([aTrack initTrack:errorCode]) {
+        passThrough = digitalAudioOut && [aTrack isAc3Dts];
+        if ([aTrack initTrack:errorCode passThrough:passThrough]) {
             if (!_mainAudioTrack) {
                 _mainAudioTrack = aTrack;
             }
@@ -225,9 +229,16 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 {
     MTrack* track;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
+    FFVideoTrack* videoTrack;
     while (track = [enumerator nextObject]) {
-        [(FFTrack*)[track impl] cleanupTrack];
-        [(FFTrack*)[track impl] waitForFinish];
+        videoTrack = (FFVideoTrack*)[track impl];
+        [_trackMutex lock];
+        if (videoTrack == _mainVideoTrack) {
+            _mainVideoTrack = 0;
+        }
+        [videoTrack cleanupTrack];
+        [videoTrack waitForFinish];
+        [_trackMutex unlock];
     }
 
     enumerator = [_audioTracks objectEnumerator];
@@ -243,7 +254,11 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 - (void)trackEnabled:(MTrack*)track
 {
     if (![track isVideoTrack]) {
-        [(FFAudioTrack*)[track impl] startAudio];
+        FFAudioTrack* aTrack = (FFAudioTrack*)[track impl];
+        [aTrack startAudio];
+        if (!_mainAudioTrack) {
+            _mainAudioTrack = aTrack;
+        }
     }
     [super trackEnabled:track];
 }

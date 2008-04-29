@@ -144,7 +144,7 @@
     while (aTrack = (FFAudioTrack*)[[enumerator nextObject] impl]) {
         if ([aTrack isEnabled] &&
             [aTrack streamIndex] == packet.stream_index) {
-            [aTrack decodePacket:&packet];
+            [aTrack putPacket:&packet];
             return TRUE;
         }
     }
@@ -207,7 +207,9 @@
     }
     enumerator = [_audioTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
-        [(FFAudioTrack*)[track impl] clearQueue];
+        if ([[track impl] isEnabled]) {
+            [(FFAudioTrack*)[track impl] clearQueue];
+        }
     }
 
     if ([self duration] < _seekTime) {
@@ -412,15 +414,23 @@
 - (CVOpenGLTextureRef)nextImage:(const CVTimeStamp*)timeStamp
 {
     double hostTime = (double)timeStamp->hostTime / _hostTimeFreq;
-    if (![_mainVideoTrack isNewImageAvailable:hostTime
+    [_trackMutex lock];
+    if (!_mainVideoTrack ||
+        ![_mainVideoTrack isNewImageAvailable:hostTime
                                hostTime0point:&_hostTime0point]) {
+        [_trackMutex unlock];
         return 0;
     }
 
     _hostTime = hostTime;
     _hostTime0point -= _avFineTuningTime;
 
+    if (!_mainVideoTrack) {
+        [_trackMutex unlock];
+        return 0;
+    }
     CVOpenGLTextureRef image = [_mainVideoTrack nextImage:&_currentTime];
+    [_trackMutex unlock];
     [[NSNotificationCenter defaultCenter]
      postNotificationName:MMovieCurrentTimeNotification object:self];
 
