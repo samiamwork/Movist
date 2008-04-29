@@ -280,6 +280,8 @@
     if (!_lastPlayedMovieURL || ![_lastPlayedMovieURL isEqualTo:movieURL]) {
         [_lastPlayedMovieURL release];
         _lastPlayedMovieURL = [movieURL retain];
+        _lastPlayedMovieTime = 0;
+        _lastPlayedMovieRepeatRange.length = 0;
     }
     else if (0 < _lastPlayedMovieTime) {
         [_movie gotoTime:_lastPlayedMovieTime];
@@ -474,22 +476,26 @@
 - (void)updateDecoderUI
 {
     NSImage* image = nil;
-    NSImage* fsImage = nil;
+    NSImage* fsImage = nil, *fsImagePressed = nil;
     if ([_movieView movie]) {
         NSString* decoder = [[[_movieView movie] class] name];
         if ([decoder isEqualToString:[MMovie_QuickTime name]]) {
-            image   = [NSImage imageNamed:@"MainQuickTime"];
-            fsImage = [NSImage imageNamed:@"FSQuickTime"];
+            image          = [NSImage imageNamed:@"MainQuickTime"];
+            fsImage        = [NSImage imageNamed:@"FSQuickTime"];
+            fsImagePressed = [NSImage imageNamed:@"FSQuickTimePressed"];
         }
         else {  // [decoder isEqualToString:[MMovie_FFmpeg name]]
-            image   = [NSImage imageNamed:@"MainFFMPEG"];
-            fsImage = [NSImage imageNamed:@"FSFFMPEG"];
+            image          = [NSImage imageNamed:@"MainFFMPEG"];
+            fsImage        = [NSImage imageNamed:@"FSFFMPEG"];
+            fsImagePressed = [NSImage imageNamed:@"FSFFmpegPressed"];
         }
     }
 
     [_decoderButton setImage:image];
     [_fsDecoderButton setImage:fsImage];
+    [_fsDecoderButton setAlternateImage:fsImagePressed];
     [_cpDecoderButton setImage:fsImage];
+    [_cpDecoderButton setAlternateImage:fsImagePressed];
 
     [_decoderButton setEnabled:(image != nil)];
     [_fsDecoderButton setEnabled:(fsImage != nil)];

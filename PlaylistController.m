@@ -126,10 +126,12 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSOpenPanel* panel = [NSOpenPanel openPanel];
+    [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:TRUE];
+    [panel setAllowsMultipleSelection:TRUE];
     if (NSOKButton == [panel runModalForTypes:nil]) {
         int row = MAX(0, [[_tableView selectedRowIndexes] firstIndex]);
-        [_playlist insertFile:[panel filename] atIndex:row option:OPTION_ONLY];
+        [_playlist insertFiles:[panel filenames] atIndex:row];
         [self updateUI];
 
         [_tableView selectRow:row byExtendingSelection:FALSE];

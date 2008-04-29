@@ -205,10 +205,15 @@
 
 - (void)setRangeRepeatRange:(NSRange)range
 {
-    [_seekSlider setRepeatRange:range];
-    [_fsSeekSlider setRepeatRange:range];
+    if (0 < range.length) {
+        [_seekSlider setRepeatRange:range];
+        [_fsSeekSlider setRepeatRange:range];
+    }
+    else {
+        [_seekSlider clearRepeat];
+        [_fsSeekSlider clearRepeat];
+    }
     [self updateRangeRepeatUI];
-    
     // no OSD message for range
 }
 

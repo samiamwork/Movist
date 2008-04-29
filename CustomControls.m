@@ -711,7 +711,8 @@
 - (id)initWithCoder:(NSCoder*)decoder
 {
     if (self = [super initWithCoder:decoder]) {
-        [self setImageName:@"HUD" titleColor:HUDButtonTextColor titleOffset:2];
+        float offset = ([self controlSize] == NSRegularControlSize) ? 3 : 1;
+        [self setImageName:@"HUD" titleColor:HUDButtonTextColor titleOffset:offset];
     }
     return self;
 }
@@ -720,7 +721,8 @@
 {
     [super copyAttributesFromCell:cell];
 
-    [self setImageName:@"HUD" titleColor:HUDButtonTextColor titleOffset:2];
+    float offset = ([self controlSize] == NSRegularControlSize) ? 3 : 1;
+    [self setImageName:@"HUD" titleColor:HUDButtonTextColor titleOffset:offset];
 }
 
 @end

@@ -82,28 +82,33 @@
     }
     
     NSImage* muteImage;
-    NSImage* fsMuteImage;
+    NSImage* fsMuteImage, *fsMuteImagePressed;
     if (muted || volume == 0.0) {
-        muteImage   = [NSImage imageNamed:@"MainVolumeMute"];
-        fsMuteImage = [NSImage imageNamed:@"FSVolumeMute"];
+        muteImage          = [NSImage imageNamed:@"MainVolumeMute"];
+        fsMuteImage        = [NSImage imageNamed:@"FSVolumeMute"];
+        fsMuteImagePressed = [NSImage imageNamed:@"FSVolumeMutePressed"];
     }
     else if (volume < MAX_VOLUME * 1 / 3) {
-        muteImage   = [NSImage imageNamed:@"MainVolume1"];
-        fsMuteImage = [NSImage imageNamed:@"FSVolume1"];
+        muteImage          = [NSImage imageNamed:@"MainVolume1"];
+        fsMuteImage        = [NSImage imageNamed:@"FSVolume1"];
+        fsMuteImagePressed = [NSImage imageNamed:@"FSVolume1Pressed"];
     }
     else if (volume < MAX_VOLUME * 2 / 3) {
-        muteImage   = [NSImage imageNamed:@"MainVolume2"];
-        fsMuteImage = [NSImage imageNamed:@"FSVolume2"];
+        muteImage          = [NSImage imageNamed:@"MainVolume2"];
+        fsMuteImage        = [NSImage imageNamed:@"FSVolume2"];
+        fsMuteImagePressed = [NSImage imageNamed:@"FSVolume2Pressed"];
     }
     else {
-        muteImage   = [NSImage imageNamed:@"MainVolume3"];
-        fsMuteImage = [NSImage imageNamed:@"FSVolume3"];
+        muteImage          = [NSImage imageNamed:@"MainVolume3"];
+        fsMuteImage        = [NSImage imageNamed:@"FSVolume3"];
+        fsMuteImagePressed = [NSImage imageNamed:@"FSVolume3Pressed"];
     }
     if ([_muteButton image] != muteImage) {   // need not isEqual:
         [_muteButton setImage:muteImage];
     }
     if ([_fsMuteButton image] != fsMuteImage) {
         [_fsMuteButton setImage:fsMuteImage];
+        [_fsMuteButton setAlternateImage:fsMuteImagePressed];
     }
     
     if ([_volumeSlider floatValue] != volume) {

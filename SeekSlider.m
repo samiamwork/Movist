@@ -27,6 +27,7 @@
     NSImage* _bgImage;
     NSImage*  _lImage, * _cImage, * _rImage;
     NSImage            *_ucImage, *_urImage;
+    NSColor* _rangeRepeatColor;
     NSColor* _knobColor;
     float _knobSize;
     BOOL _rounded;
@@ -37,6 +38,7 @@
 }
 
 - (void)setImageName:(NSString*)imageName rounded:(BOOL)rounded;
+- (void)setRangeRepeatColor:(NSColor*)rangeRepeatColor;
 - (void)setKnobColor:(NSColor*)knobColor;
 - (void)setKnobSize:(float)knobSize;
 - (void)setBgImage:(NSImage*)image;
@@ -71,6 +73,7 @@
 
 - (void)dealloc
 {
+    [_rangeRepeatColor release];
     [_knobColor release];
     [_ucImage release];
     [_urImage release];
@@ -92,6 +95,7 @@
     _rounded = rounded;
 }
 
+- (void)setRangeRepeatColor:(NSColor*)color { _rangeRepeatColor = [color retain]; }
 - (void)setKnobColor:(NSColor*)knobColor { _knobColor = [knobColor retain]; }
 - (void)setKnobSize:(float)knobSize { _knobSize = knobSize; }
 - (void)setBgImage:(NSImage*)image { _bgImage = [image retain]; }
@@ -176,11 +180,11 @@
     // repeat range
     if (0 <= _repeatBeginning) {
         NSRect rc;
-        rc.origin.x   = [self positionOfTime:_repeatBeginning] + 1;
-        rc.origin.y   = NSMinY(rect) + 1;
         rc.size.width = [self positionOfTime:_repeatEnd] - 1 - rc.origin.x;
-        rc.size.height= NSMaxY(rect) - 1 - rc.origin.y;
-        [[NSColor colorWithCalibratedWhite:0.5 alpha:0.9] set];
+        rc.size.height= _knobSize - 2;
+        rc.origin.x   = [self positionOfTime:_repeatBeginning] + 1;
+        rc.origin.y   = rect.origin.y + (rect.size.height - rc.size.height) / 2;
+        [_rangeRepeatColor set];
         NSRectFill(rc);
     }
 }
@@ -404,6 +408,7 @@
     SeekSliderCell* cell = [self cell];
     [cell setBgImage:[NSImage imageNamed:@"MainLCD"]];
     [cell setImageName:@"Main" rounded:FALSE];
+    [cell setRangeRepeatColor:[NSColor colorWithCalibratedWhite:0.5 alpha:0.9]];
     [cell setKnobColor:[NSColor colorWithCalibratedRed:0.25 green:0.25 blue:0.25 alpha:1.0]];
     [cell setKnobSize:8.0];
 
@@ -422,6 +427,7 @@
     [self replaceCell:[SeekSliderCell class]];
     SeekSliderCell* cell = [self cell];
     [cell setImageName:@"FS" rounded:TRUE];
+    [cell setRangeRepeatColor:[NSColor colorWithCalibratedWhite:0.4 alpha:0.9]];
     [cell setKnobColor:[NSColor colorWithCalibratedRed:0.75 green:0.75 blue:0.75 alpha:1.0]];
     [cell setKnobSize:10.0];
 

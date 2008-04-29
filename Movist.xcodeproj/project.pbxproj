@@ -153,6 +153,18 @@
 		AF5E31E90D13905200F49909 /* MainPauseTiger.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5E31E50D13905200F49909 /* MainPauseTiger.tiff */; };
 		AF5E31EA0D13905200F49909 /* MainPlayPressedTiger.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5E31E60D13905200F49909 /* MainPlayPressedTiger.tiff */; };
 		AF5E31EB0D13905200F49909 /* MainPlayTiger.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF5E31E70D13905200F49909 /* MainPlayTiger.tiff */; };
+		AF71A5D60DC7693C00CD4037 /* FSFFmpegPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A5D50DC7693C00CD4037 /* FSFFmpegPressed.tiff */; };
+		AF71A5D80DC7694500CD4037 /* FSQuickTimePressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A5D70DC7694500CD4037 /* FSQuickTimePressed.tiff */; };
+		AF71A5F50DC7711E00CD4037 /* FSVolume1Pressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A5F10DC7711E00CD4037 /* FSVolume1Pressed.tiff */; };
+		AF71A5F60DC7711E00CD4037 /* FSVolume2Pressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A5F20DC7711E00CD4037 /* FSVolume2Pressed.tiff */; };
+		AF71A5F70DC7711E00CD4037 /* FSVolume3Pressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A5F30DC7711E00CD4037 /* FSVolume3Pressed.tiff */; };
+		AF71A5F80DC7711E00CD4037 /* FSVolumeMutePressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A5F40DC7711E00CD4037 /* FSVolumeMutePressed.tiff */; };
+		AF71A61B0DC7775A00CD4037 /* FSControlPanelPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A6160DC7775A00CD4037 /* FSControlPanelPressed.tiff */; };
+		AF71A61C0DC7775A00CD4037 /* FSNextMoviePressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A6170DC7775A00CD4037 /* FSNextMoviePressed.tiff */; };
+		AF71A61D0DC7775A00CD4037 /* FSNextSeekPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A6180DC7775A00CD4037 /* FSNextSeekPressed.tiff */; };
+		AF71A61E0DC7775A00CD4037 /* FSPrevMoviePressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A6190DC7775A00CD4037 /* FSPrevMoviePressed.tiff */; };
+		AF71A61F0DC7775A00CD4037 /* FSPrevSeekPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A61A0DC7775A00CD4037 /* FSPrevSeekPressed.tiff */; };
+		AF71A6280DC7781900CD4037 /* FSPlaylistPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF71A6270DC7781900CD4037 /* FSPlaylistPressed.tiff */; };
 		AF75BB780DB21B1300CE7DD6 /* FSPrevSeek.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF75BB760DB21B1300CE7DD6 /* FSPrevSeek.tiff */; };
 		AF75BB790DB21B1300CE7DD6 /* FSNextSeek.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF75BB770DB21B1300CE7DD6 /* FSNextSeek.tiff */; };
 		AF76EF180BF60AE3000995C9 /* Playlist.nib in Resources */ = {isa = PBXBuildFile; fileRef = AF76EF160BF60AE2000995C9 /* Playlist.nib */; };
@@ -411,6 +423,18 @@
 		AF5E31E50D13905200F49909 /* MainPauseTiger.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainPauseTiger.tiff; path = Images/MainPauseTiger.tiff; sourceTree = "<group>"; };
 		AF5E31E60D13905200F49909 /* MainPlayPressedTiger.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainPlayPressedTiger.tiff; path = Images/MainPlayPressedTiger.tiff; sourceTree = "<group>"; };
 		AF5E31E70D13905200F49909 /* MainPlayTiger.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainPlayTiger.tiff; path = Images/MainPlayTiger.tiff; sourceTree = "<group>"; };
+		AF71A5D50DC7693C00CD4037 /* FSFFmpegPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSFFmpegPressed.tiff; path = Images/FSFFmpegPressed.tiff; sourceTree = "<group>"; };
+		AF71A5D70DC7694500CD4037 /* FSQuickTimePressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSQuickTimePressed.tiff; path = Images/FSQuickTimePressed.tiff; sourceTree = "<group>"; };
+		AF71A5F10DC7711E00CD4037 /* FSVolume1Pressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSVolume1Pressed.tiff; path = Images/FSVolume1Pressed.tiff; sourceTree = "<group>"; };
+		AF71A5F20DC7711E00CD4037 /* FSVolume2Pressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSVolume2Pressed.tiff; path = Images/FSVolume2Pressed.tiff; sourceTree = "<group>"; };
+		AF71A5F30DC7711E00CD4037 /* FSVolume3Pressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSVolume3Pressed.tiff; path = Images/FSVolume3Pressed.tiff; sourceTree = "<group>"; };
+		AF71A5F40DC7711E00CD4037 /* FSVolumeMutePressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSVolumeMutePressed.tiff; path = Images/FSVolumeMutePressed.tiff; sourceTree = "<group>"; };
+		AF71A6160DC7775A00CD4037 /* FSControlPanelPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSControlPanelPressed.tiff; path = Images/FSControlPanelPressed.tiff; sourceTree = "<group>"; };
+		AF71A6170DC7775A00CD4037 /* FSNextMoviePressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNextMoviePressed.tiff; path = Images/FSNextMoviePressed.tiff; sourceTree = "<group>"; };
+		AF71A6180DC7775A00CD4037 /* FSNextSeekPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNextSeekPressed.tiff; path = Images/FSNextSeekPressed.tiff; sourceTree = "<group>"; };
+		AF71A6190DC7775A00CD4037 /* FSPrevMoviePressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPrevMoviePressed.tiff; path = Images/FSPrevMoviePressed.tiff; sourceTree = "<group>"; };
+		AF71A61A0DC7775A00CD4037 /* FSPrevSeekPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPrevSeekPressed.tiff; path = Images/FSPrevSeekPressed.tiff; sourceTree = "<group>"; };
+		AF71A6270DC7781900CD4037 /* FSPlaylistPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPlaylistPressed.tiff; path = Images/FSPlaylistPressed.tiff; sourceTree = "<group>"; };
 		AF75BB760DB21B1300CE7DD6 /* FSPrevSeek.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPrevSeek.tiff; path = Images/FSPrevSeek.tiff; sourceTree = "<group>"; };
 		AF75BB770DB21B1300CE7DD6 /* FSNextSeek.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNextSeek.tiff; path = Images/FSNextSeek.tiff; sourceTree = "<group>"; };
 		AF76EF170BF60AE2000995C9 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Playlist.nib; sourceTree = "<group>"; };
@@ -860,25 +884,37 @@
 				AF4182F60DB0FE0700C5AE7E /* FSSeekSliderUnindexedCenter.tiff */,
 				AF4182F70DB0FE0700C5AE7E /* FSSeekSliderUnindexedRight.tiff */,
 				AFF80E490C31E29900ADFD22 /* FSVolume1.tiff */,
+				AF71A5F10DC7711E00CD4037 /* FSVolume1Pressed.tiff */,
 				AFF80E4A0C31E29900ADFD22 /* FSVolume2.tiff */,
+				AF71A5F20DC7711E00CD4037 /* FSVolume2Pressed.tiff */,
 				AFF80E4B0C31E29900ADFD22 /* FSVolume3.tiff */,
+				AF71A5F30DC7711E00CD4037 /* FSVolume3Pressed.tiff */,
 				AFF80E400C31E24700ADFD22 /* FSVolumeMute.tiff */,
+				AF71A5F40DC7711E00CD4037 /* FSVolumeMutePressed.tiff */,
 				AFA99BD90DACFE3000E49D6E /* FSVolumeSliderKnob.tiff */,
 				AFA99BDA0DACFE3000E49D6E /* FSVolumeSliderKnobDisabled.tiff */,
 				AFA99BDB0DACFE3000E49D6E /* FSVolumeSliderKnobPressed.tiff */,
 				AFA99BDC0DACFE3000E49D6E /* FSVolumeSliderTrack.tiff */,
 				AF75BB760DB21B1300CE7DD6 /* FSPrevSeek.tiff */,
+				AF71A61A0DC7775A00CD4037 /* FSPrevSeekPressed.tiff */,
 				AF75BB770DB21B1300CE7DD6 /* FSNextSeek.tiff */,
+				AF71A6180DC7775A00CD4037 /* FSNextSeekPressed.tiff */,
 				AF0204A70C31D01F008F7D03 /* FSPlay.tiff */,
 				AF0204A80C31D01F008F7D03 /* FSPlayPressed.tiff */,
 				AF0204A50C31D01F008F7D03 /* FSPause.tiff */,
 				AF0204A60C31D01F008F7D03 /* FSPausePressed.tiff */,
 				AFF80E1E0C31E16A00ADFD22 /* FSControlPanel.tiff */,
+				AF71A6160DC7775A00CD4037 /* FSControlPanelPressed.tiff */,
 				AF3C3A390D92A6050064CA28 /* FSPrevMovie.tiff */,
+				AF71A6190DC7775A00CD4037 /* FSPrevMoviePressed.tiff */,
 				AF3C3A370D92A5FA0064CA28 /* FSNextMovie.tiff */,
+				AF71A6170DC7775A00CD4037 /* FSNextMoviePressed.tiff */,
 				AFF80E1F0C31E16A00ADFD22 /* FSPlaylist.tiff */,
+				AF71A6270DC7781900CD4037 /* FSPlaylistPressed.tiff */,
 				AF5E2FBA0D12E0EB00F49909 /* FSFFMPEG.tiff */,
+				AF71A5D50DC7693C00CD4037 /* FSFFmpegPressed.tiff */,
 				AF5E2FBB0D12E0EB00F49909 /* FSQuickTime.tiff */,
+				AF71A5D70DC7694500CD4037 /* FSQuickTimePressed.tiff */,
 				AFADAB4A0D16F11C001686FA /* FSNavSelBoxLeft.tiff */,
 				AFADAB4B0D16F11C001686FA /* FSNavSelBoxRight.tiff */,
 				AFADAB490D16F11C001686FA /* FSNavSelBoxCenter.tiff */,
@@ -1139,6 +1175,18 @@
 				AFB416A40DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff in Resources */,
 				AFB416A50DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff in Resources */,
 				AFB416A60DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff in Resources */,
+				AF71A5D60DC7693C00CD4037 /* FSFFmpegPressed.tiff in Resources */,
+				AF71A5D80DC7694500CD4037 /* FSQuickTimePressed.tiff in Resources */,
+				AF71A5F50DC7711E00CD4037 /* FSVolume1Pressed.tiff in Resources */,
+				AF71A5F60DC7711E00CD4037 /* FSVolume2Pressed.tiff in Resources */,
+				AF71A5F70DC7711E00CD4037 /* FSVolume3Pressed.tiff in Resources */,
+				AF71A5F80DC7711E00CD4037 /* FSVolumeMutePressed.tiff in Resources */,
+				AF71A61B0DC7775A00CD4037 /* FSControlPanelPressed.tiff in Resources */,
+				AF71A61C0DC7775A00CD4037 /* FSNextMoviePressed.tiff in Resources */,
+				AF71A61D0DC7775A00CD4037 /* FSNextSeekPressed.tiff in Resources */,
+				AF71A61E0DC7775A00CD4037 /* FSPrevMoviePressed.tiff in Resources */,
+				AF71A61F0DC7775A00CD4037 /* FSPrevSeekPressed.tiff in Resources */,
+				AF71A6280DC7781900CD4037 /* FSPlaylistPressed.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
