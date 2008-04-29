@@ -76,20 +76,20 @@ NSString* videoCodecName(int codecId);
     [_playPanel setControlPanel:_controlPanel];
     [self updatePlayUI];
 
-    [_volumeSlider      setMinValue:0.0];
+    [_volumeSlider      setMinValue:MIN_VOLUME];
     [_volumeSlider      setMaxValue:MAX_VOLUME];
     [_volumeSlider replaceCell:[CustomSliderCell class]];
     CustomSliderCell* cell = [_volumeSlider cell];
     [cell setImageName:@"MainVolume" backColor:nil trackOffset:5.0 knobOffset:2.0];
 
-    [_fsVolumeSlider setMinValue:0.0];
+    [_fsVolumeSlider setMinValue:MIN_VOLUME];
     [_fsVolumeSlider setMaxValue:MAX_VOLUME];
     [_fsVolumeSlider replaceCell:[CustomSliderCell class]];
     cell = [_fsVolumeSlider cell];
     [cell setImageName:@"FSVolume" backColor:HUDBackgroundColor trackOffset:0.0 knobOffset:2.0];
     [self updateVolumeUI];
 
-    _playRate = 1.0;
+    _playRate = DEFAULT_PLAY_RATE;
     _prevMovieTime = 0.0;
     _lastPlayedMovieURL = nil;
     _lastPlayedMovieTime = 0.0;

@@ -41,7 +41,7 @@
     //_avSyncMutex = [[NSLock alloc] init];
     _frameReadMutex = [[NSLock alloc] init];
 
-    _rate = 1.0;
+    _rate = DEFAULT_PLAY_RATE;
     _playAfterSeek = FALSE;
     _seekKeyFrame = TRUE;
 

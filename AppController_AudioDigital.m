@@ -77,7 +77,7 @@ static AudioStreamID _audioStreamID;
     }
     if (_movie && [_movie isMemberOfClass:[MMovie_FFmpeg class]]) {
         if (sender) {
-            [self setVolume:1.0];   // always 1.0
+            [self setVolume:DIGITAL_VOLUME];   // always
         }
         return TRUE;
     }
@@ -121,7 +121,7 @@ static AudioStreamID _audioStreamID;
         return FALSE;
     }
     if (sender) {
-        [self setVolume:1.0];   // always 1.0
+        [self setVolume:DIGITAL_VOLUME];   // always
     }
     return TRUE;
 }

@@ -125,7 +125,7 @@
 - (void)drawRect:(NSRect)rect
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(rect));
-    [_drawLock lock];
+    if ([_drawLock tryLock]) {
         [[self openGLContext] makeCurrentContext];
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -135,13 +135,13 @@
                 [_cropFilter setValue:img forKey:@"inputImage"];
                 img = [_cropFilter valueForKey:@"outputImage"];
             }
-            if ([self brightness] != 0.0 ||
-                [self saturation] != 1.0 ||
-                [self contrast] != 1.0) {
+            if (_brightnessValue != DEFAULT_BRIGHTNESS ||
+                _saturationValue != DEFAULT_SATURATION ||
+                _contrastValue   != DEFAULT_CONTRAST) {
                 [_colorFilter setValue:img forKey:@"inputImage"];
                 img = [_colorFilter valueForKey:@"outputImage"];
             }
-            if ([self hue] != 0.0) {
+            if (_hueValue != DEFAULT_HUE) {
                 [_hueFilter setValue:img forKey:@"inputImage"];
                 img = [_hueFilter valueForKey:@"outputImage"];
             }
@@ -159,7 +159,8 @@
         }
         glFlush();
         [_movie idleTask];
-    [_drawLock unlock];
+        [_drawLock unlock];
+    }
 }
 
 - (void)lockDraw   { [_drawLock lock]; }

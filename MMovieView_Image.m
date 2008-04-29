@@ -128,6 +128,12 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     _cropFilter = [[CIFilter filterWithName:@"CICrop"] retain];
     [_colorFilter setDefaults];
     [_hueFilter setDefaults];
+
+    _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
+    _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
+    _contrastValue   = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
+    _hueValue        = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
+    
     return TRUE;
 }
 
@@ -299,17 +305,17 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 #pragma mark -
 #pragma mark color-controls
 
-- (float)brightness { return [[_colorFilter valueForKey:@"inputBrightness"] floatValue]; }
-- (float)saturation { return [[_colorFilter valueForKey:@"inputSaturation"] floatValue]; }
-- (float)contrast   { return [[_colorFilter valueForKey:@"inputContrast"] floatValue]; }
-- (float)hue        { return [[_hueFilter valueForKey:@"inputAngle"] floatValue]; }
+- (float)brightness { return _brightnessValue; }
+- (float)saturation { return _saturationValue; }
+- (float)contrast   { return _contrastValue; }
+- (float)hue        { return _hueValue; }
 
 - (void)setBrightness:(float)brightness
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
     [_drawLock lock];
-    [_colorFilter setValue:[NSNumber numberWithFloat:brightness]
-                    forKey:@"inputBrightness"];
+    [_colorFilter setValue:[NSNumber numberWithFloat:brightness] forKey:@"inputBrightness"];
+    _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
     [_drawLock unlock];
     [self redisplay];
 }
@@ -318,8 +324,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, saturation);
     [_drawLock lock];
-    [_colorFilter setValue:[NSNumber numberWithFloat:saturation]
-                    forKey:@"inputSaturation"];
+    [_colorFilter setValue:[NSNumber numberWithFloat:saturation] forKey:@"inputSaturation"];
+    _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
     [_drawLock unlock];
     [self redisplay];
 }
@@ -328,8 +334,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, contrast);
     [_drawLock lock];
-    [_colorFilter setValue:[NSNumber numberWithFloat:contrast]
-                    forKey:@"inputContrast"];
+    [_colorFilter setValue:[NSNumber numberWithFloat:contrast] forKey:@"inputContrast"];
+    _contrastValue = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
     [_drawLock unlock];
     [self redisplay];
 }
@@ -338,8 +344,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, hue);
     [_drawLock lock];
-    [_hueFilter setValue:[NSNumber numberWithFloat:hue]
-                  forKey:@"inputAngle"];
+    [_hueFilter setValue:[NSNumber numberWithFloat:hue] forKey:@"inputAngle"];
+    _hueValue = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
     [_drawLock unlock];
     [self redisplay];
 }

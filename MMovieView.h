@@ -44,6 +44,10 @@
 	CVOpenGLTextureRef _image;
     CGRect _movieRect;
     CGRect _imageRect;
+    float _brightnessValue; // for performance
+    float _saturationValue;
+    float _contrastValue;
+    float _hueValue;
 
     MMovie* _movie;
     NSArray* _subtitles;

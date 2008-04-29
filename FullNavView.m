@@ -448,7 +448,7 @@
 
     if (movie) {
         [movie setMuted:FALSE];
-        [movie setRate:1.0];
+        [movie setRate:DEFAULT_PLAY_RATE];
     }
     else if ([item isMemberOfClass:[FullNavFileItem class]]) {
         [[NSApp delegate] openFile:[(FullNavFileItem*)item path]];
@@ -478,7 +478,7 @@
     [window flushWindow];
     [fader fadeIn:FADE_DURATION];
     [_listView startItemNameScroll];
-    [[_movieView movie] setRate:1.0];
+    [[_movieView movie] setRate:DEFAULT_PLAY_RATE];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

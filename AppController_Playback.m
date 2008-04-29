@@ -181,7 +181,7 @@
 {
     switch (tag) {
         case -1 : [self setPlayRate:_playRate - 0.1];   break;
-        case  0 : [self setPlayRate:1.0];               break;
+        case  0 : [self setPlayRate:DEFAULT_PLAY_RATE]; break;
         case +1 : [self setPlayRate:_playRate + 0.1];   break;
     }
 }

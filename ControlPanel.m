@@ -55,25 +55,25 @@
     _initialDragPoint.x = -1;
     _initialDragPoint.y = -1;
 
-    [_videoBrightnessSlider setMinValue:-1.0];
-    [_videoBrightnessSlider setMaxValue:+1.0];
-    [_videoBrightnessSlider setFloatValue:0.0];
+    [_videoBrightnessSlider setMinValue:MIN_BRIGHTNESS];
+    [_videoBrightnessSlider setMaxValue:MAX_BRIGHTNESS];
+    [_videoBrightnessSlider setFloatValue:DEFAULT_BRIGHTNESS];
 
-    [_videoSaturationSlider setMinValue:0.0];
-    [_videoSaturationSlider setMaxValue:2.0];
-    [_videoSaturationSlider setFloatValue:1.0];
+    [_videoSaturationSlider setMinValue:MIN_SATURATION];
+    [_videoSaturationSlider setMaxValue:MAX_SATURATION];
+    [_videoSaturationSlider setFloatValue:DEFAULT_SATURATION];
 
-    [_videoContrastSlider setMinValue:0.0];
-    [_videoContrastSlider setMaxValue:2.0];
-    [_videoContrastSlider setFloatValue:1.0];
+    [_videoContrastSlider setMinValue:MIN_CONTRAST];
+    [_videoContrastSlider setMaxValue:MAX_CONTRAST];
+    [_videoContrastSlider setFloatValue:DEFAULT_CONTRAST];
 
-    [_videoHueSlider setMinValue:-3.14];
-    [_videoHueSlider setMaxValue:+3.14];
-    [_videoHueSlider setFloatValue:0.0];
+    [_videoHueSlider setMinValue:MIN_HUE];
+    [_videoHueSlider setMaxValue:MAX_HUE];
+    [_videoHueSlider setFloatValue:DEFAULT_HUE];
 
-    [_playbackRateSlider setMinValue:0.5];
-    [_playbackRateSlider setMaxValue:3.0];
-    [self updatePlaybackRateSlider:1.0];
+    [_playbackRateSlider setMinValue:MIN_PLAY_RATE];
+    [_playbackRateSlider setMaxValue:MAX_PLAY_RATE];
+    [self updatePlaybackRateSlider:DEFAULT_PLAY_RATE];
 
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSString* identifier = (NSString*)[defaults objectForKey:MControlTabKey];
@@ -198,19 +198,19 @@
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, [sender tag]);
     switch ([sender tag]) {
         case 0 :
-            [_videoBrightnessSlider setFloatValue:0.0];
+            [_videoBrightnessSlider setFloatValue:DEFAULT_BRIGHTNESS];
             [self videoColorControlsAction:_videoBrightnessSlider];
             break;
         case 1 :
-            [_videoSaturationSlider setFloatValue:1.0];
+            [_videoSaturationSlider setFloatValue:DEFAULT_SATURATION];
             [self videoColorControlsAction:_videoSaturationSlider];
             break;
         case 2 :
-            [_videoContrastSlider setFloatValue:1.0];
+            [_videoContrastSlider setFloatValue:DEFAULT_CONTRAST];
             [self videoColorControlsAction:_videoContrastSlider];
             break;
         case 3 :
-            [_videoHueSlider setFloatValue:0.0];
+            [_videoHueSlider setFloatValue:DEFAULT_HUE];
             [self videoColorControlsAction:_videoHueSlider];
             break;
     }
@@ -263,7 +263,7 @@
     }
     else {
         [_playbackRateSlider setFloatValue:0.5 + dv * 2];
-        [_appController setPlayRate:1.0];
+        [_appController setPlayRate:DEFAULT_PLAY_RATE];
     }
 }
 

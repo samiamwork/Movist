@@ -29,8 +29,8 @@
 
 - (float)preferredVolume:(float)volume
 {
-    return [self isCurrentlyDigitalAudioOut] ? 1.0 :   // always 1.0 for digital-audio
-                normalizedVolume(MIN(MAX(0.0, volume), MAX_VOLUME));
+    return [self isCurrentlyDigitalAudioOut] ? DIGITAL_VOLUME :   // always for digital-audio
+                normalizedVolume(MIN(MAX(MIN_VOLUME, volume), MAX_VOLUME));
 }
 
 - (void)volumeUp   { [self setVolume:[_volumeSlider floatValue] + 0.1]; }
@@ -83,7 +83,7 @@
     
     NSImage* muteImage;
     NSImage* fsMuteImage, *fsMuteImagePressed;
-    if (muted || volume == 0.0) {
+    if (muted || volume == MIN_VOLUME) {
         muteImage          = [NSImage imageNamed:@"MainVolumeMute"];
         fsMuteImage        = [NSImage imageNamed:@"FSVolumeMute"];
         fsMuteImagePressed = [NSImage imageNamed:@"FSVolumeMutePressed"];

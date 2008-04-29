@@ -62,6 +62,16 @@ enum {
     ASPECT_RATIO_2_35,  // 2.35 : 1 (Screen)
 };
 
+#pragma mark subtitle-position
+enum {
+    SUBTITLE_POSITION_ON_MOVIE              =  -1,
+    SUBTITLE_POSITION_ON_LETTER_BOX         =   0,
+    SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE  =   1,
+    SUBTITLE_POSITION_ON_LETTER_BOX_2_LINES =   2,
+    SUBTITLE_POSITION_ON_LETTER_BOX_3_LINES =   3,
+    SUBTITLE_POSITION_AUTO                  = 100,
+};
+
 #pragma mark dragging-action on movie-area
 enum {
     DRAGGING_ACTION_NONE,
@@ -190,18 +200,30 @@ enum {
 };
 
 #pragma mark -
-#define DEFAULT_VOLUME  1.0
-#define MAX_VOLUME      4.0
+#define MIN_VOLUME          0.0
+#define MAX_VOLUME          4.0
+#define DEFAULT_VOLUME      1.0
+#define DIGITAL_VOLUME      1.0
 
-#define MIN_PLAY_RATE   0.5
-#define MAX_PLAY_RATE   3.0
+#define MIN_PLAY_RATE       0.5
+#define MAX_PLAY_RATE       3.0
+#define DEFAULT_PLAY_RATE   1.0
 
-#define SUBTITLE_POSITION_AUTO                      100
-#define SUBTITLE_POSITION_ON_MOVIE                  -1
-#define SUBTITLE_POSITION_ON_LETTER_BOX             0
-#define SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE      1
-#define SUBTITLE_POSITION_ON_LETTER_BOX_2_LINES     2
-#define SUBTITLE_POSITION_ON_LETTER_BOX_3_LINES     3
+#define MIN_BRIGHTNESS     -1.0
+#define MAX_BRIGHTNESS     +1.0
+#define DEFAULT_BRIGHTNESS  0.0
+
+#define MIN_SATURATION      0.0
+#define MAX_SATURATION      2.0
+#define DEFAULT_SATURATION  1.0
+
+#define MIN_CONTRAST        0.0
+#define MAX_CONTRAST        2.0
+#define DEFAULT_CONTRAST    1.0
+
+#define MIN_HUE            -3.14
+#define MAX_HUE            +3.14
+#define DEFAULT_HUE         0.0
 
 #pragma mark -
 #pragma mark notifications: movie

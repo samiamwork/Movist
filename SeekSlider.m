@@ -180,10 +180,10 @@
     // repeat range
     if (0 <= _repeatBeginning) {
         NSRect rc;
+        rc.origin.x   = [self positionOfTime:_repeatBeginning] + 1;
+        rc.origin.y   = rect.origin.y + (rect.size.height - (_knobSize - 2)) / 2;
         rc.size.width = [self positionOfTime:_repeatEnd] - 1 - rc.origin.x;
         rc.size.height= _knobSize - 2;
-        rc.origin.x   = [self positionOfTime:_repeatBeginning] + 1;
-        rc.origin.y   = rect.origin.y + (rect.size.height - rc.size.height) / 2;
         [_rangeRepeatColor set];
         NSRectFill(rc);
     }
