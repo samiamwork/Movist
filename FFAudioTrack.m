@@ -58,16 +58,21 @@
     _running = TRUE;
     int error;
 	if (_passThrough) {
-        
-		[self initDigitalAudio:&error];
-        assert(_audioDev);
 		assert(!_audioUnit);
+		if (![self initDigitalAudio:&error]) {
+            _enabled = FALSE;
+            _running = FALSE;
+            return;
+        }
         [self startDigitalAudio];
     }
     else {
         assert(!_audioDev);
-        [self initAnalogAudio:&error];
-        assert(_audioUnit);
+        if (![self initAnalogAudio:&error]) {
+            _enabled = FALSE;
+            _running = FALSE;
+            return;
+        }
         [self startAnalogAudio];
     }       
 }

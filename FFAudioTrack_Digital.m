@@ -153,7 +153,6 @@ static int AudioStreamChangeFormat(AudioStreamID i_stream_id, AudioStreamBasicDe
 
 static AudioDeviceID s_audioDeviceId = 0;
 static BOOL s_first = TRUE;
-static AudioStreamBasicDescription s_orgDesc;
 
 - (AudioDeviceID)getDeviceId
 {
@@ -177,7 +176,6 @@ static AudioStreamBasicDescription s_orgDesc;
                                  kAudioDevicePropertyHogMode, sizeof(pid_t), &pid );
     if (err != noErr ) {
         TRACE(@"failed to set hogmode %d : [%4.4s]", hog, (char *)&err );
-		assert(FALSE);
 		return FALSE;
     }
 	return TRUE;
@@ -222,7 +220,9 @@ static AudioStreamBasicDescription s_orgDesc;
         s_audioDeviceId = _audioDev;
     }
 
-	[self setDeviceHogMode:TRUE];
+	if (![self setDeviceHogMode:TRUE]) {
+        return FALSE;
+    }
 	[self setDeviceMixable:FALSE];
 
     /* Retrieve all the output streams. */
@@ -233,94 +233,74 @@ static AudioStreamBasicDescription s_orgDesc;
         TRACE(@"could not get number of streams: [%4.4s]\n", (char *)&err);
         return FALSE;
     }
-    int i_streams = paramSize / sizeof(AudioStreamID);
-    AudioStreamID* p_streams = (AudioStreamID*)malloc(paramSize);
-	assert(p_streams);
-    
+    int streamCount = paramSize / sizeof(AudioStreamID);
+    AudioStreamID* stream = (AudioStreamID*)malloc(paramSize);
     err = AudioDeviceGetProperty(_audioDev, 0, FALSE,
                                  kAudioDevicePropertyStreams,
-                                 &paramSize, p_streams);
+                                 &paramSize, stream);
     if (err != noErr) {
         TRACE(@"could not get number of streams: [%4.4s]\n", (char *)&err);
-        free(p_streams);
+        free(stream);
         return FALSE;
     }
 
-    int i, digitalIndex = -1;
+    int i, j;
     AudioStreamBasicDescription desc;
-
-    for( i = 0; i < i_streams && digitalIndex < 0 ; i++ ) {
+    for (i = 0; i < streamCount; i++) {
         /* Find a stream with a cac3 stream */
-        AudioStreamBasicDescription *p_format_list = NULL;
-        int i_formats = 0, j = 0;
+        AudioStreamBasicDescription* format = 0;
                 
         /* Retrieve all the stream formats supported by each output stream */
-        err = AudioStreamGetPropertyInfo(p_streams[i], 0,
+        err = AudioStreamGetPropertyInfo(stream[i], 0,
                                          kAudioStreamPropertyPhysicalFormats,
-                                         &paramSize, NULL );
+                                         &paramSize, 0);
         if (err != noErr ) {
             TRACE(@"could not get number of streamformats: [%4.4s]", (char *)&err );
             continue;
         }
-        i_formats = paramSize / sizeof(AudioStreamBasicDescription);
-        p_format_list = (AudioStreamBasicDescription*)malloc(paramSize);
-		assert(p_format_list);
-
-        err = AudioStreamGetProperty(p_streams[i], 0,
+        int formatCount = paramSize / sizeof(AudioStreamBasicDescription);
+        format = (AudioStreamBasicDescription*)malloc(paramSize);
+        err = AudioStreamGetProperty(stream[i], 0,
                                      kAudioStreamPropertyPhysicalFormats,
-                                     &paramSize, p_format_list );
+                                     &paramSize, format);
         if (err != noErr) {
             TRACE(@"could not get the list of streamformats: [%4.4s]", (char *)&err );
-            if (p_format_list) {
-                free(p_format_list);
-            }
+            free(format);
             continue;
         }
-        
         /* Check if one of the supported formats is a digital format */
-        for (j = 0; j < i_formats; j++) {
-            if (p_format_list[j].mFormatID == 'IAC3' ||
-                p_format_list[j].mFormatID == kAudioFormat60958AC3) {
-                break;
-            }
-        }
-        if (j == i_formats) {
-            free(p_format_list);
-            free(p_streams);
-            return FALSE;
-        }
-        /* if this stream supports a digital (cac3) format, then go set it. */
-        _digitalStream = p_streams[i];
-        digitalIndex = i;
-        
-        if (s_first) {
-            /* Retrieve the original format of this stream first if not done so already */
-            paramSize = sizeof(s_orgDesc);
-            err = AudioStreamGetProperty(_digitalStream, 0,
-                                         kAudioStreamPropertyPhysicalFormat,
-                                         &paramSize,
-                                         &s_orgDesc);
-            if (err != noErr) {
-                TRACE(@"could not retrieve the original streamformat: [%4.4s]", (char *)&err );
-				assert(FALSE);
-            }
-			s_first = FALSE;
-        }
-        
-        for (j = 0; j < i_formats; j++) {
-            if (p_format_list[j].mFormatID == 'IAC3' ||
-                p_format_list[j].mFormatID == kAudioFormat60958AC3) {
-                if ((int)(p_format_list[j].mSampleRate) == _stream->codec->sample_rate) {
+        for (j = 0; j < formatCount; j++) {
+            if (format[j].mFormatID == 'IAC3' ||
+                format[j].mFormatID == kAudioFormat60958AC3) {
+                if ((int)(format[j].mSampleRate) == _stream->codec->sample_rate) {
                     TRACE(@"%s %d", __PRETTY_FUNCTION__, _stream->codec->sample_rate);
-                    desc = p_format_list[j];
+                    desc = format[j];
                     break;
                 }
             }
         }
-        free( p_format_list );
+        free(format);
+        if (j < formatCount) {
+            _digitalStream = stream[i];
+            break;
+        }
     }
-    free( p_streams );
-
+    free(stream);
+    
+    if (s_first) {
+        /* Retrieve the original format of this stream first if not done so already */
+        paramSize = sizeof(_originalDesc);
+        err = AudioStreamGetProperty(_digitalStream, 0,
+                                     kAudioStreamPropertyPhysicalFormat,
+                                     &paramSize,
+                                     &_originalDesc);
+        if (err != noErr) {
+            TRACE(@"could not retrieve the original streamformat: [%4.4s]", (char *)&err );
+            assert(FALSE);
+        }
+        s_first = FALSE;
+    }
+    
     if (!AudioStreamChangeFormat(_digitalStream, desc)) {
         return FALSE;
     }
@@ -362,9 +342,7 @@ static AudioStreamBasicDescription s_orgDesc;
     if (err != noErr) {
         TRACE(@"AudioDeviceRemoveIOProc failed: [%4.4s]", (char *)&err );
     }
-    if (!AudioStreamChangeFormat(_digitalStream, s_orgDesc)) {
-        assert(FALSE);
-    }
+    AudioStreamChangeFormat(_digitalStream, _originalDesc);
 	[self setDeviceMixable:TRUE];
     
 /*

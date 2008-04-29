@@ -128,7 +128,10 @@ extern AVPacket s_flushPacket;
     AudioRawDataQueue* _rawDataQueue;
     AudioDeviceID _audioDev;
     AudioStreamID _digitalStream;
+    AudioStreamBasicDescription _originalDesc;
+    AudioStreamBasicDescription _currentDesc;
     double _nextDecodedTime;
+    int _nextAudioPts;
 }
 
 + (id)audioTrackWithAVStream:(AVStream*)stream index:(int)index;

@@ -310,4 +310,26 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 - (BOOL)supportsAC3DigitalOut { return TRUE; }
 - (BOOL)supportsDTSDigitalOut { return TRUE; }
 
+- (void)setVolume:(float)volume
+{
+    NSEnumerator* enumerator = [_audioTracks objectEnumerator];
+    FFAudioTrack* aTrack;
+    while (aTrack = (FFAudioTrack*)[[enumerator nextObject] impl]) {
+        [aTrack setVolume:volume];
+    }
+    [super setVolume:volume];
+}
+
+- (void)setMuted:(BOOL)muted
+{
+    NSEnumerator* enumerator = [_audioTracks objectEnumerator];
+    FFAudioTrack* aTrack;
+    float volume = muted ? 0 : _volume;
+    while (aTrack = (FFAudioTrack*)[[enumerator nextObject] impl]) {
+        [aTrack setVolume:volume];
+    }
+    [super setMuted:muted];
+}
+
+
 @end

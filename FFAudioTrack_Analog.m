@@ -99,7 +99,7 @@
     _bitRate = bitRate;
 }
 
-- (BOOL)putData:(UInt8*)data size:(int)size time:(double)time;
+- (BOOL)putData:(UInt8*)data size:(int)size time:(double)time
 {
     [_mutex lock];
     if ([self freeSize] < size) {
@@ -118,7 +118,7 @@
     return TRUE;
 }
 
-- (BOOL)getData:(UInt8*)data size:(int)size time:(double*)time;
+- (BOOL)getData:(UInt8*)data size:(int)size time:(double*)time
 {
     [_mutex lock];
     if ([self dataSize] < size) {
@@ -135,7 +135,7 @@
     return TRUE;
 }
 
-- (void)removeDataDuring:(double)dt time:(double*)time;
+- (void)removeDataDuring:(double)dt time:(double*)time
 {
     int size = 1. * dt * _bitRate;
     [_mutex lock];
@@ -148,7 +148,7 @@
     [_mutex unlock];
 }
 
-- (void)getFirstTime:(double*)time;
+- (void)getFirstTime:(double*)time
 {
     [_mutex lock];
     *time = _time - 1. * [self dataSize] / _bitRate;
@@ -282,18 +282,18 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     // create audio unit
     if (![self initAudioUnit]) {
         *errorCode = ERROR_FFMPEG_AUDIO_UNIT_CREATE_FAILED;
-        assert(FALSE);
         return FALSE;
     }
     
     _volume = DEFAULT_VOLUME;
-    _speakerCount = 2;
+     _speakerCount = 2;
     
     // init playback
     unsigned int queueCapacity = AVCODEC_MAX_AUDIO_FRAME_SIZE * 20 * 5;
     _dataQueue = [[AudioDataQueue alloc] initWithCapacity:queueCapacity];
     [_dataQueue setBitRate:sizeof(int16_t) * context->sample_rate * context->channels];
     _nextDecodedTime = 0;
+    _nextAudioPts = 0;
     
     return TRUE;
 }
@@ -371,7 +371,8 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
             }
             else {
                 TRACE(@"packet.dts == AV_NOPTS_VALUE");
-                assert(FALSE);
+                pts = _nextAudioPts;
+                //assert(FALSE);
             }
         }
         if (dataSize > 0) {
@@ -391,6 +392,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
                 [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
             }
             [_dataQueue putData:(UInt8*)audioBuf size:dataSize time:decodedTime];
+            _nextAudioPts = nextPts;
         }
     }
     if (packet->data) {
