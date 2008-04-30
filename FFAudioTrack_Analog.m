@@ -66,7 +66,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     free(_data);
-    [_mutex dealloc];
+    [_mutex release];
     [super dealloc];
 }
 

@@ -256,15 +256,22 @@
     //_hostTime = 0;
     _playAfterSeek = TRUE;
     _dispatchPacket = TRUE;
+    NSAutoreleasePool* pool;
     while (DEFAULT_FUNC_CONDITION) {
+        pool = [[NSAutoreleasePool alloc] init];
+
         if ([_mainVideoTrack isQueueFull]) {
             [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+            [pool release];
             continue;
         }
         if (![self readFrame]) {
             TRACE(@"%s read failed : no more frame", __PRETTY_FUNCTION__);
+            [pool release];
             break;
         }
+
+        [pool release];
     }
     if (!_quitRequested) {
         [self waitForVideoQueueEmpty:_mainVideoTrack];
@@ -356,11 +363,12 @@
 - (void)playThreadFunc:(id)anObject
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
+    NSAutoreleasePool* pool;
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     int prevCommand = COMMAND_NONE;
     while (!_quitRequested) {
+        pool = [[NSAutoreleasePool alloc] init];
+
         //TRACE(@"%s waiting for command-reservation", __PRETTY_FUNCTION__);
         [_commandLock lockWhenCondition:DISPATCHING_COMMAND];
         //TRACE(@"%s _reservedCommand = %d", __PRETTY_FUNCTION__, _reservedCommand);
@@ -400,8 +408,9 @@
         if (_fileEnded) {
             [nc postNotificationName:MMovieEndNotification object:self];
         }
+
+        [pool release];
     }
-    [pool release];
     _running = FALSE;
 
     TRACE(@"%s finished", __PRETTY_FUNCTION__);

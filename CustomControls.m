@@ -422,6 +422,7 @@
             lImage = _sepImage, mImage = _mImage, rImage = _rImage;
         }
     }
+    frame.origin.y--;
     [self drawInRect:frame leftImage:lImage midImage:mImage rightImage:rImage];
 
     NSMutableParagraphStyle* paragraphStyle;

@@ -115,6 +115,7 @@
 - (BOOL)initCoreVideo;
 - (void)cleanupCoreVideo;
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
+- (void)drawImage;
 
 - (BOOL)initCoreImage;
 - (void)cleanupCoreImage;

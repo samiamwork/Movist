@@ -69,7 +69,7 @@ static int AudioStreamChangeFormat(AudioStreamID i_stream_id, AudioStreamBasicDe
     TRACE(@"%s", __PRETTY_FUNCTION__);
     free(_data);
     free(_time);
-    [_mutex dealloc];
+    [_mutex release];
     [super dealloc];
 }
 
@@ -320,7 +320,7 @@ static BOOL s_first = TRUE;
     return TRUE;
 }
 
--(void) startDigitalAudio
+- (void)startDigitalAudio
 {
 	TRACE(@"%s", __PRETTY_FUNCTION__);
     if (noErr !=  AudioDeviceStart(_audioDev, digitalAudioProc)) {
@@ -330,7 +330,7 @@ static BOOL s_first = TRUE;
     return;
 }
 
--(void) stopDigitalAudio
+- (void)stopDigitalAudio
 {
 	TRACE(@"%s", __PRETTY_FUNCTION__);
     if (noErr != AudioDeviceStop(_audioDev, digitalAudioProc)) {
@@ -340,7 +340,7 @@ static BOOL s_first = TRUE;
     }
 }
 
--(void) cleanupDigitalAudio
+- (void)cleanupDigitalAudio
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     
@@ -368,7 +368,7 @@ static BOOL s_first = TRUE;
     _rawDataQueue = 0;
 }
 
--(void) enqueueAc3Data:(AVPacket*)packet
+- (void)enqueueAc3Data:(AVPacket*)packet
 {
     static const UInt8 HEADER_LE[] = {0x72, 0xf8, 0x1f, 0x4e, 0x01, 0x00};        
     static const UInt8 HEADER_BE[] = {0xF8, 0x72, 0x4E, 0x1F, 0x00, 0x01};
@@ -399,7 +399,7 @@ static BOOL s_first = TRUE;
     [_rawDataQueue putData:buffer size:6144 time:decodedAudioTime];
 }
 
--(void) enqueueDtsData:(AVPacket*)packet
+- (void)enqueueDtsData:(AVPacket*)packet
 {
     static const uint8_t HEADER_LE[6] = { 0x72, 0xF8, 0x1F, 0x4E, 0x00, 0x00 };
     static const uint8_t HEADER_BE[6] = { 0xF8, 0x72, 0x4E, 0x1F, 0x00, 0x00 };
@@ -432,7 +432,7 @@ static BOOL s_first = TRUE;
     [_rawDataQueue putData:buffer size:6144/3 time:decodedAudioTime];        
 }
 
--(void) putDigitalAudioPacket:(AVPacket*)packet
+- (void)putDigitalAudioPacket:(AVPacket*)packet
 {
     if (packet->data == s_flushPacket.data) {
         return;
@@ -444,7 +444,7 @@ static BOOL s_first = TRUE;
     [self enqueueAc3Data:packet];
 }
 
--(void) nextDigitalAudio:(AudioBuffer)audioBuf
+- (void)nextDigitalAudio:(AudioBuffer)audioBuf
                timeStamp:(const AudioTimeStamp*)timeStamp
 {
 	int requestSize = audioBuf.mDataByteSize;
@@ -517,7 +517,7 @@ OSStatus digitalAudioProc(AudioDeviceID           device,
 /*****************************************************************************
  * StreamListener
  *****************************************************************************/
-static OSStatus StreamListener( AudioStreamID inStream,
+static OSStatus StreamListener(AudioStreamID inStream,
                                UInt32 inChannel,
                                AudioDevicePropertyID inPropertyID,
                                void * inClientData )

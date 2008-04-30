@@ -336,7 +336,7 @@
             [_seekSlider setIndexedDuration:ct];
             [_fsSeekSlider setIndexedDuration:ct];
         }
-        
+
         NSString* s = NSStringFromMovieTime([_movie currentTime]);
         if (![s isEqualToString:[_lTimeTextField stringValue]]) {
             [_lTimeTextField setStringValue:s];
@@ -348,13 +348,15 @@
             [_rTimeTextField setStringValue:s];
             [_fsRTimeTextField setStringValue:s];
         }
+
         if ([_movie rate] == 0) {   // paused
-            [_fpsTextField setStringValue:
-             [NSString stringWithFormat:@"--.-- / %.2f", [_movie fps]]];
+            s = [NSString stringWithFormat:@"--.-- / %.2f", [_movie fps]];
         }
         else {
-            [_fpsTextField setStringValue:
-             [NSString stringWithFormat:@"%.2f / %.2f", [_movieView currentFps], [_movie fps]]];
+            s = [NSString stringWithFormat:@"%.2f / %.2f", [_movieView currentFps], [_movie fps]];
+        }
+        if (![s isEqualToString:[_fpsTextField stringValue]]) {
+            [_fpsTextField setStringValue:s];
         }
     }
     else {

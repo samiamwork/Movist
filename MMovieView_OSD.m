@@ -162,17 +162,21 @@
 - (void)showLogo
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
+    [self lockDraw];
+
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
-    [_drawLock unlock];
+
+    [self unlockDraw];
 }
 
 - (void)hideLogo
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
+    [self lockDraw];
+
     [_iconOSD clearContent];
-    [_drawLock unlock];
+
+    [self unlockDraw];
 }
 
 @end

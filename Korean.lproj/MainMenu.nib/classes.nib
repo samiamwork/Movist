@@ -85,19 +85,19 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>HUDTextFieldCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTextFieldCell</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>NSTextField</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTextFieldCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextFieldCell</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>

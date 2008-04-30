@@ -103,14 +103,18 @@
 - (void)update
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
-        [super update];
-    [_drawLock unlock];
+    [self lockDraw];
+
+    [super update];
+
+    [self unlockDraw];
 }
 
 - (void)reshape
 { 
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self lockDraw];
+
     NSRect bounds = [self bounds];
     glViewport(0, 0, bounds.size.width, bounds.size.height);
 
@@ -120,45 +124,15 @@
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    [self unlockDraw];
 }
 
 - (void)drawRect:(NSRect)rect
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(rect));
     if ([_drawLock tryLock]) {
-        [[self openGLContext] makeCurrentContext];
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        if (_image) {
-            CIImage* img = [CIImage imageWithCVImageBuffer:_image];
-            if (_removeGreenBox) {
-                [_cropFilter setValue:img forKey:@"inputImage"];
-                img = [_cropFilter valueForKey:@"outputImage"];
-            }
-            if (_brightnessValue != DEFAULT_BRIGHTNESS ||
-                _saturationValue != DEFAULT_SATURATION ||
-                _contrastValue   != DEFAULT_CONTRAST) {
-                [_colorFilter setValue:img forKey:@"inputImage"];
-                img = [_colorFilter valueForKey:@"outputImage"];
-            }
-            if (_hueValue != DEFAULT_HUE) {
-                [_hueFilter setValue:img forKey:@"inputImage"];
-                img = [_hueFilter valueForKey:@"outputImage"];
-            }
-            [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
-        }
-
-        if ([_iconOSD hasContent] ||
-            [_messageOSD hasContent] || [_errorOSD hasContent] ||
-            (_subtitleVisible && [_subtitleImageOSD hasContent])) {
-            [self drawOSD];
-        }
-
-        if (_dragAction != DRAG_ACTION_NONE) {
-            [self drawDragHighlight];
-        }
-        glFlush();
-        [_movie idleTask];
+        [self drawImage];
         [_drawLock unlock];
     }
 }
@@ -177,32 +151,33 @@
 - (void)setMovie:(MMovie*)movie
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
-    [_drawLock lock];
-        [movie retain], [_movie release], _movie = movie;
-        [_subtitles release], _subtitles = nil;
-        if (_image) {
-            CVOpenGLTextureRelease(_image);
-            _image = nil;
-        }
+    [self lockDraw];
 
-        if (_movie) {
-            NSSize es = [_movie encodedSize];
-            CIVector* vector = [CIVector vectorWithX:1.0 Y:1.0
-                                Z:es.width - 2.0 W:es.height - 2.0];
-            [_cropFilter setValue:vector forKey:@"inputRectangle"];
-            NSSize movieSize = [_movie adjustedSizeByAspectRatio];
-            [_messageOSD setMovieSize:movieSize];
-            [_subtitleImageOSD setMovieSize:movieSize];
-            [_subtitleRenderer setMovieSize:movieSize];
-        }
-        [self clearOSD];
-        [self updateSubtitlePosition];
-    [_drawLock unlock];
+    [movie retain], [_movie release], _movie = movie;
+    [_subtitles release], _subtitles = nil;
+    if (_image) {
+        CVOpenGLTextureRelease(_image);
+        _image = nil;
+    }
+
+    if (_movie) {
+        NSSize es = [_movie encodedSize];
+        CIVector* vector = [CIVector vectorWithX:1.0 Y:1.0
+                            Z:es.width - 2.0 W:es.height - 2.0];
+        [_cropFilter setValue:vector forKey:@"inputRectangle"];
+        NSSize movieSize = [_movie adjustedSizeByAspectRatio];
+        [_messageOSD setMovieSize:movieSize];
+        [_subtitleImageOSD setMovieSize:movieSize];
+        [_subtitleRenderer setMovieSize:movieSize];
+    }
+    [self clearOSD];
+    [self updateSubtitlePosition];
     [self updateMovieRect:TRUE];
-
     _lastFpsCheckTime = 0.0;
     _fpsElapsedTime = 0.0;
     _fpsFrameCount = 0;
+
+    [self unlockDraw];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -87,7 +87,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                 _image = image;
                 [self updateSubtitleString];
                 if ([self canDraw]) {
-                    [self drawRect:NSZeroRect];
+                    [self drawImage];
                 }
                 _fpsFrameCount++;
             }
@@ -107,6 +107,43 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [pool release];
     
 	return kCVReturnSuccess;
+}
+
+- (void)drawImage
+{
+    [[self openGLContext] makeCurrentContext];
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (_image) {
+        CIImage* img = [CIImage imageWithCVImageBuffer:_image];
+        if (_removeGreenBox) {
+            [_cropFilter setValue:img forKey:@"inputImage"];
+            img = [_cropFilter valueForKey:@"outputImage"];
+        }
+        if (_brightnessValue != DEFAULT_BRIGHTNESS ||
+            _saturationValue != DEFAULT_SATURATION ||
+            _contrastValue   != DEFAULT_CONTRAST) {
+            [_colorFilter setValue:img forKey:@"inputImage"];
+            img = [_colorFilter valueForKey:@"outputImage"];
+        }
+        if (_hueValue != DEFAULT_HUE) {
+            [_hueFilter setValue:img forKey:@"inputImage"];
+            img = [_hueFilter valueForKey:@"outputImage"];
+        }
+        [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
+    }
+
+    if ([_iconOSD hasContent] ||
+        [_messageOSD hasContent] || [_errorOSD hasContent] ||
+        (_subtitleVisible && [_subtitleImageOSD hasContent])) {
+        [self drawOSD];
+    }
+
+    if (_dragAction != DRAG_ACTION_NONE) {
+        [self drawDragHighlight];
+    }
+    [[self openGLContext] flushBuffer];
+    [_movie idleTask];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -155,7 +192,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)updateMovieRect:(BOOL)display
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, display ? @"display" : @"no-display");
-    [_drawLock lock];
+    [self lockDraw];
+
     if (!_movie) {
         NSRect mr = [self bounds];
         [_iconOSD setMovieRect:mr];
@@ -198,11 +236,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         [_subtitleRenderer setMovieRect:mr];
     }
     [_errorOSD setMovieRect:NSInsetRect([self bounds], 50, 0)];
-    [_drawLock unlock];
-    
     if (display) {
         [self redisplay];
     }
+    
+    [self unlockDraw];
 }
 
 - (float)subtitleLineHeightForMovieWidth:(float)movieWidth
@@ -314,41 +352,49 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)setBrightness:(float)brightness
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
-    [_drawLock lock];
+    [self lockDraw];
+
     [_colorFilter setValue:[NSNumber numberWithFloat:brightness] forKey:@"inputBrightness"];
     _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
-    [_drawLock unlock];
     [self redisplay];
+
+    [self unlockDraw];
 }
 
 - (void)setSaturation:(float)saturation
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, saturation);
-    [_drawLock lock];
+    [self lockDraw];
+
     [_colorFilter setValue:[NSNumber numberWithFloat:saturation] forKey:@"inputSaturation"];
     _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
-    [_drawLock unlock];
     [self redisplay];
+
+    [self unlockDraw];
 }
 
 - (void)setContrast:(float)contrast
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, contrast);
-    [_drawLock lock];
+    [self lockDraw];
+
     [_colorFilter setValue:[NSNumber numberWithFloat:contrast] forKey:@"inputContrast"];
     _contrastValue = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
-    [_drawLock unlock];
     [self redisplay];
+
+    [self unlockDraw];
 }
 
 - (void)setHue:(float)hue
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, hue);
-    [_drawLock lock];
+    [self lockDraw];
+
     [_hueFilter setValue:[NSNumber numberWithFloat:hue] forKey:@"inputAngle"];
     _hueValue = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
-    [_drawLock unlock];
     [self redisplay];
+
+    [self unlockDraw];
 }
 
 - (void)setRemoveGreenBox:(BOOL)remove

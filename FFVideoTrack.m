@@ -67,7 +67,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     free(_packet);
-    [_mutex dealloc];
+    [_mutex release];
     [super dealloc];
 }
 
@@ -321,21 +321,25 @@
 - (void)decodeThreadFunc:(id)anObject
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     /*
     TRACE(@"cur thread priority %f", [NSThread threadPriority]);
     [NSThread setThreadPriority:0.9];
     TRACE(@"set thread priority %f", [NSThread threadPriority]);
      */
+    NSAutoreleasePool* pool;
     while (![_movie quitRequested]) {
+        pool = [[NSAutoreleasePool alloc] init];
+
         if (MAX_VIDEO_DATA_BUF_SIZE - 3 <= _decodedImageCount ||
             ![_movie canDecodeVideo]) {
             [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+            [pool release];
             continue;
         }
 
         _decodedImageTime[_nextDataBufId] = [self decodePacket];
         if (_decodedImageTime[_nextDataBufId] < 0) {
+            [pool release];
             continue;
         }
         [self convertImage];
@@ -348,8 +352,8 @@
         _decodedImageBufCount++;
         _decodedImageCount++;
         _nextDataBufId = (_nextDataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;
+        [pool release];
     }
-    [pool release];
     _running = FALSE;
 
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
