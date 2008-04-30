@@ -125,13 +125,17 @@
 {    
     _enabled = FALSE;
     _running = FALSE;
-    
+
+    // context->coded_width/height can be reset by -initContext.
+    // so, we should remember them before -initContext.
+    AVCodecContext* context = _stream->codec;
+    float width = context->coded_width;
+    float height= context->coded_height;
+
     if (![super initTrack:errorCode]) {
         return FALSE;
     }
     
-    AVCodecContext* context = _stream->codec;
-
     // allocate frame
     _frame = avcodec_alloc_frame();
     if (_frame == 0) {
@@ -140,8 +144,6 @@
     }
 
     // init sw-scaler context
-    float width = context->coded_width;
-    float height= context->coded_height;
     _scalerContext = sws_getContext(width, height, context->pix_fmt,
                                     width, height, RGB_PIXEL_FORMAT,
                                     SWS_FAST_BILINEAR, 0, 0, 0);
