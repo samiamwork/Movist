@@ -386,7 +386,7 @@ static BOOL s_first = TRUE;
         memcpy(buffer + 8, packetPtr, packetSize);
     }
     else {
-        memcpy(buffer, HEADER_BE, sizeof(HEADER_LE));
+        memcpy(buffer, HEADER_LE, sizeof(HEADER_LE));
         buffer[5] = packetPtr[5] & 0x07; /* bsmod */
         buffer[6] = ((packetSize / 2)<< 4) & 0xff;
         buffer[7] = ((packetSize / 2)>> 4) & 0xff;
