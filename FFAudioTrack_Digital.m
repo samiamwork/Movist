@@ -286,6 +286,10 @@ static BOOL s_first = TRUE;
         }
     }
     free(stream);
+    if (i == streamCount) {
+        TRACE(@"could not find a properstreamformat");
+        return FALSE;
+    }
     
     if (s_first) {
         /* Retrieve the original format of this stream first if not done so already */
@@ -304,6 +308,9 @@ static BOOL s_first = TRUE;
     if (!AudioStreamChangeFormat(_digitalStream, desc)) {
         return FALSE;
     }
+    _currentDesc = desc;
+    _bigEndian = _currentDesc.mFormatFlags & kAudioFormatFlagIsBigEndian;
+
     err = AudioDeviceAddIOProc(_audioDev, digitalAudioProc, (void *)self);
     if (err != noErr) {
         TRACE(@"AudioDeviceAddIOProc failed: [%4.4s]", (char *)&err );
@@ -343,6 +350,8 @@ static BOOL s_first = TRUE;
         TRACE(@"AudioDeviceRemoveIOProc failed: [%4.4s]", (char *)&err );
     }
     AudioStreamChangeFormat(_digitalStream, _originalDesc);
+    _currentDesc = _originalDesc;
+    _bigEndian = _currentDesc.mFormatFlags & kAudioFormatFlagIsBigEndian;
 	[self setDeviceMixable:TRUE];
     
 /*
@@ -361,18 +370,28 @@ static BOOL s_first = TRUE;
 
 -(void) enqueueAc3Data:(AVPacket*)packet
 {
-    static const UInt8 HEADER[] = {0x72, 0xf8, 0x1f, 0x4e, 0x01, 0x00};        
+    static const UInt8 HEADER_LE[] = {0x72, 0xf8, 0x1f, 0x4e, 0x01, 0x00};        
+    static const UInt8 HEADER_BE[] = {0xF8, 0x72, 0x4E, 0x1F, 0x00, 0x01};
+
     UInt8 buffer[6144];
     UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
     int i;
-    for (i = 0; i < sizeof(HEADER); i++) {
-        buffer[i] = HEADER[i];
+    /* Copy the S/PDIF headers. */
+    if (_bigEndian) {
+        memcpy(buffer, HEADER_BE, sizeof(HEADER_BE));
+        buffer[4] = packetPtr[5] & 0x7; /* bsmod */
+        buffer[6] = ((packetSize / 2) >> 4) & 0xff;
+        buffer[7] = ((packetSize / 2) << 4) & 0xff;
+        memcpy(buffer + 8, packetPtr, packetSize);
     }
-    buffer[5] = packetPtr[5] & 0x07; /* bsmod */
-    buffer[6] = ((packetSize / 2)<< 4) & 0xff;
-    buffer[7] = ((packetSize / 2)>> 4) & 0xff;
-    swab(packetPtr, buffer + 8, packetSize);
+    else {
+        memcpy(buffer, HEADER_BE, sizeof(HEADER_LE));
+        buffer[5] = packetPtr[5] & 0x07; /* bsmod */
+        buffer[6] = ((packetSize / 2)<< 4) & 0xff;
+        buffer[7] = ((packetSize / 2)>> 4) & 0xff;
+        swab(packetPtr, buffer + 8, packetSize);
+    }
     for (i = packetSize + 8; i < 6144; i++) {
         buffer[i] = 0;
     }
@@ -382,16 +401,32 @@ static BOOL s_first = TRUE;
 
 -(void) enqueueDtsData:(AVPacket*)packet
 {
-    static const uint8_t HEADER[6] = { 0x72, 0xF8, 0x1F, 0x4E, 0x00, 0x00 };
+    static const uint8_t HEADER_LE[6] = { 0x72, 0xF8, 0x1F, 0x4E, 0x00, 0x00 };
+    static const uint8_t HEADER_BE[6] = { 0xF8, 0x72, 0x4E, 0x1F, 0x00, 0x00 };
     uint32_t i_ac5_spdif_type = 0x0B; // FIXME what is it?
     UInt8 buffer[6144];
     UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
-    memcpy(buffer, HEADER, sizeof(HEADER));
-    buffer[4] = i_ac5_spdif_type;
+    
+    if (_bigEndian) {
+        memcpy(buffer, HEADER_BE, sizeof(HEADER_BE));
+        buffer[5] = i_ac5_spdif_type;
+    }
+    else {
+        memcpy(buffer, HEADER_LE, sizeof(HEADER_LE));
+        buffer[4] = i_ac5_spdif_type;
+    }
     buffer[6] = (packetSize<< 3) & 0xFF;
     buffer[7] = (packetSize>> 5) & 0xFF;
-    swab(packetPtr, buffer + 8, packetSize);
+    
+    UInt8 p0 = packetPtr[0];
+    if ((p0 == 0xFF || p0 == 0xFE) && _bigEndian ||
+        (p0 == 0x1F || p0 == 0x7F) && !_bigEndian) {
+        swab(packetPtr, buffer + 8, packetSize);
+    }
+    else {
+        memcpy(buffer + 8, packetPtr, packetSize);        
+    }
     double decodedAudioTime = (double)1. * packet->dts * PTS_TO_SEC;
 	assert(packetSize + 8 <= 6144/3);
     [_rawDataQueue putData:buffer size:6144/3 time:decodedAudioTime];        

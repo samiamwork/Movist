@@ -126,6 +126,7 @@ extern AVPacket s_flushPacket;
     AudioUnit _audioUnit;
     AudioDataQueue* _dataQueue;
     AudioRawDataQueue* _rawDataQueue;
+    BOOL _bigEndian;
     AudioDeviceID _audioDev;
     AudioStreamID _digitalStream;
     AudioStreamBasicDescription _originalDesc;
