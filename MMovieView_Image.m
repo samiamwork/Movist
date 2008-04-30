@@ -77,32 +77,33 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-    [_drawLock lock];
-    if (_movie) {
-        CVOpenGLTextureRef image = [_movie nextImage:timeStamp];
-        if (image) {
-            if (_image) {
-                CVOpenGLTextureRelease(_image);
+    if ([_drawLock tryLock]) {
+        if (_movie) {
+            CVOpenGLTextureRef image = [_movie nextImage:timeStamp];
+            if (image) {
+                if (_image) {
+                    CVOpenGLTextureRelease(_image);
+                }
+                _image = image;
+                [self updateSubtitleString];
+                if ([self canDraw]) {
+                    [self drawRect:NSZeroRect];
+                }
+                _fpsFrameCount++;
             }
-            _image = image;
-            [self updateSubtitleString];
-            if ([self canDraw]) {
-                [self drawRect:NSZeroRect];
+            // calc. fps
+            double ct = (double)timeStamp->videoTime / timeStamp->videoTimeScale;
+            _fpsElapsedTime += ABS(ct - _lastFpsCheckTime);
+            _lastFpsCheckTime = ct;
+            if (1.0 <= _fpsElapsedTime) {
+                _currentFps = (float)(_fpsFrameCount / _fpsElapsedTime);
+                _fpsElapsedTime = 0.0;
+                _fpsFrameCount = 0;
             }
-            _fpsFrameCount++;
         }
-        // calc. fps
-        double ct = (double)timeStamp->videoTime / timeStamp->videoTimeScale;
-        _fpsElapsedTime += ABS(ct - _lastFpsCheckTime);
-        _lastFpsCheckTime = ct;
-        if (1.0 <= _fpsElapsedTime) {
-            _currentFps = (float)(_fpsFrameCount / _fpsElapsedTime);
-            _fpsElapsedTime = 0.0;
-            _fpsFrameCount = 0;
-        }
+        [_drawLock unlock];
     }
-    [_drawLock unlock];
-    
+
     [pool release];
     
 	return kCVReturnSuccess;

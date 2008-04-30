@@ -207,6 +207,7 @@
 - (void)setObjectValue:(id)object
 forFileBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
 {
+    /*
     int index = [(NSNumber*)object intValue];
     if (0 <= index) {
         NSString* ext = [_fileExtensions objectAtIndex:rowIndex];
@@ -216,6 +217,7 @@ forFileBindingTableColumn:(NSTableColumn*)tableColumn row:(int)rowIndex
         TRACE(@"\"%@\"(\"%@\") => \"%@\"(\"%@\")", ext, contentType, app, bundleID);
         //LSSetDefaultRoleHandlerForContentType(contentType, kLSRolesViewer, bundleID);
     }
+     */
 }
 
 - (void)willDisplayCell:(id)cell
