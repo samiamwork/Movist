@@ -33,6 +33,9 @@
 
 - (BOOL)initTrack:(int*)errorCode passThrough:(BOOL)passThrough
 {
+    // don't send [super initTrack].
+    // this will be sent in -[startAudio].
+
     PTS_TO_SEC = av_q2d(_stream->time_base);
 	_passThrough = passThrough;
     _enabled = FALSE;
@@ -43,7 +46,16 @@
 - (void)cleanupTrack
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    assert(!_running);
+
+    // don't [super cleanupTrack].
+    // this should be alreay sent in -[stopAudio].
+}
+
+- (void)quit
+{
     [self stopAudio];
+    [super quit];
 }
 
 - (BOOL)isAc3Dts
@@ -90,8 +102,8 @@
     else {
         [self stopAnalogAudio];
         [self cleanupAnalogAudio];
-    }   
-    _running = FALSE;
+    }
+    assert(!_running);
 }
 
 - (float)volume { return _volume; }

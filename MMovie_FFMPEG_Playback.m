@@ -68,7 +68,17 @@
     while ([self isRunning]) {
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
     }
-    TRACE(@"%s waiting done", __PRETTY_FUNCTION__);
+    MTrack* track;
+    NSEnumerator* enumerator = [_videoTracks objectEnumerator];
+    while (track = [enumerator nextObject]) {
+        [(FFVideoTrack*)[track impl] quit];
+    }
+    enumerator = [_audioTracks objectEnumerator];
+    while (track = [enumerator nextObject]) {
+        [(FFAudioTrack*)[track impl] quit];
+    }
+    TRACE(@"%s waiting done.", __PRETTY_FUNCTION__);
+
     [_commandLock release];
 }
 

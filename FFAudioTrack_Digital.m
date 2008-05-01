@@ -320,26 +320,6 @@ static BOOL s_first = TRUE;
     return TRUE;
 }
 
-- (void)startDigitalAudio
-{
-	TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (noErr !=  AudioDeviceStart(_audioDev, digitalAudioProc)) {
-        TRACE(@"AudioDeviceStart failed");
-        assert(FALSE);
-    }
-    return;
-}
-
-- (void)stopDigitalAudio
-{
-	TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (noErr != AudioDeviceStop(_audioDev, digitalAudioProc)) {
-        //_started = FALSE;
-        TRACE(@"AudioDeviceStop failed");
-        return;
-    }
-}
-
 - (void)cleanupDigitalAudio
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -364,8 +344,30 @@ static BOOL s_first = TRUE;
 */
 	[self setDeviceHogMode:FALSE];
     _audioDev = 0;
+    [_rawDataQueue clear];
     [_rawDataQueue release];
     _rawDataQueue = 0;
+    _running = FALSE;
+}
+
+- (void)startDigitalAudio
+{
+	TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (noErr !=  AudioDeviceStart(_audioDev, digitalAudioProc)) {
+        TRACE(@"AudioDeviceStart failed");
+        assert(FALSE);
+    }
+    return;
+}
+
+- (void)stopDigitalAudio
+{
+	TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (noErr != AudioDeviceStop(_audioDev, digitalAudioProc)) {
+        //_started = FALSE;
+        TRACE(@"AudioDeviceStop failed");
+        return;
+    }
 }
 
 - (void)enqueueAc3Data:(AVPacket*)packet
@@ -493,7 +495,7 @@ static BOOL s_first = TRUE;
     [_rawDataQueue getData:(UInt8*)(audioBuf.mData)];
 }
 
-- (void) clearDigitalDataQueue
+- (void)clearDigitalDataQueue
 {
     [_rawDataQueue clear];
 }

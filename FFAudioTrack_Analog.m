@@ -311,8 +311,10 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         }
         _audioUnit = 0;
     }
+    [_dataQueue clear];
     [_dataQueue release];
     _dataQueue = 0;
+    _running = FALSE;
 
     [super cleanupTrack];
 }
@@ -324,7 +326,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     while (AudioOutputUnitStart(_audioUnit) != 0) {
         assert(FALSE);
         //[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-    }       
+    }
 }
 
 - (void)stopAnalogAudio

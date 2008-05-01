@@ -119,18 +119,20 @@ AVPacket s_flushPacket;
 - (void)cleanupTrack
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    // -[quit] should be sent before sending -[cleanupTrack].
+    assert(!_running);
     [self cleanupContext];
 }
 
-- (BOOL)isEnabled { return _enabled; }
-- (void)setEnabled:(BOOL)enabled { _enabled = enabled; }
-
-- (void)waitForFinish
+- (void)quit
 {
     while (_running) {
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     }
 }
+
+- (BOOL)isEnabled { return _enabled; }
+- (void)setEnabled:(BOOL)enabled { _enabled = enabled; }
 
 - (void)putPacket:(AVPacket*)packet {}
 

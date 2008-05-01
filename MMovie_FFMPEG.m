@@ -240,11 +240,9 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         [_trackMutex unlock];
     }
 
-    FFAudioTrack* audioTrack;
     enumerator = [_audioTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
-        audioTrack = (FFAudioTrack*)[track impl];
-        [audioTrack cleanupTrack];
+        [(FFAudioTrack*)[track impl] cleanupTrack];
     }
 }
 

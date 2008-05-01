@@ -194,8 +194,7 @@
 - (void)cleanupTrack
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self waitForFinish];
-
+    assert(!_running);
     if (_scalerContext) {
         av_free(_scalerContext);
         _scalerContext = 0;

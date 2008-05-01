@@ -64,12 +64,12 @@ extern AVPacket s_flushPacket;
 
 - (BOOL)initTrack:(int*)errorCode;
 - (void)cleanupTrack;
+- (void)quit;
 
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
 
 - (void)putPacket:(const AVPacket*)packet;
-- (void)waitForFinish;
 
 @end
 
