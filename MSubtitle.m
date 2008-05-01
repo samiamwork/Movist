@@ -118,7 +118,7 @@
     if (self = [super init]) {
         _url = [url retain];
         _type = [type retain];
-        _name = [NSLocalizedString(@"Unnamed", nil) retain];
+        _name = [NSLocalizedString(@"Unnamed Subtitle", nil) retain];
         _enabled = TRUE;
         _strings = [[NSMutableArray alloc] init];
 

@@ -170,15 +170,12 @@ NSString* codecName(int codecId)
 
 NSString* codecDescription(int codecId)
 {
-    if (codecId == MCODEC_ETC_) {
-        return NSLocalizedString(@"etc. DESC.", nil);
-    }
     NSString* s = codecName(codecId);
     if (0 < [s length]) {
         s = [NSString stringWithFormat:@"%@ DESC.", s];
         return NSLocalizedString(s, nil);
     }
-    return NSLocalizedString(@"Unnamed", nil);
+    return @"";
 }
 
 NSString* NSStringFromSubtitlePosition(int position)

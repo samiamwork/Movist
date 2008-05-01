@@ -308,7 +308,7 @@ extern NSString* MFontBoldAttributeName;
     }
 
     if (!class) {
-        class = NSLocalizedString(@"Unnamed", nil);
+        class = NSLocalizedString(@"Unnamed Subtitle", nil);
     }
     MSubtitle* subtitle = [_classes objectForKey:class];
     if (!subtitle) {

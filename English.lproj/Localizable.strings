@@ -38,7 +38,7 @@
 "No Subtitle" = "No Subtitle";
 "Subtitle %@" = "Subtitle %@";
 "Subtitle Rotation" = "Subtitle Rotation";
-"Unnamed" = "Unnamed";
+"Unnamed Subtitle" = "Unnamed Subtitle";
 
 /* Message : Playback */
 "Play" = "Play";
@@ -137,7 +137,7 @@
 "%d items" = "%d items";
 
 /* Properties */
-"External Subtitle %d" = "External Subtitle %d";
+"External Subtitle" = "External Subtitle";
 
 /* Codec Desc. */
 "etc." = "Etc.";

@@ -228,8 +228,8 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 - (void)cleanupAVCodec
 {
     MTrack* track;
-    NSEnumerator* enumerator = [_videoTracks objectEnumerator];
     FFVideoTrack* videoTrack;
+    NSEnumerator* enumerator = [_videoTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
         videoTrack = (FFVideoTrack*)[track impl];
         [_trackMutex lock];
@@ -237,14 +237,14 @@ void traceAVFormatContext(AVFormatContext* formatContext)
             _mainVideoTrack = 0;
         }
         [videoTrack cleanupTrack];
-        [videoTrack waitForFinish];
         [_trackMutex unlock];
     }
 
+    FFAudioTrack* audioTrack;
     enumerator = [_audioTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
-        [(FFTrack*)[track impl] cleanupTrack];
-        [(FFTrack*)[track impl] waitForFinish];
+        audioTrack = (FFAudioTrack*)[track impl];
+        [audioTrack cleanupTrack];
     }
 }
 

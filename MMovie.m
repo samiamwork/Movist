@@ -233,7 +233,7 @@
         int number = 1;
         NSEnumerator* enumerator = [tracks objectEnumerator];
         while (track = [enumerator nextObject]) {
-            [track setName:[NSString stringWithFormat:@"%@ %d", defaultName, number++]];
+            [track setName:[defaultName stringByAppendingFormat:@" %d", number++]];
         }
     }
 }

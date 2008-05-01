@@ -394,6 +394,7 @@
     [self autoenableSubtitles];
     [self updateSubtitleLanguageMenuItems];
     [self setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
+    [_propertiesView reloadData];
 
     [_movie gotoBeginning];
 
@@ -609,6 +610,7 @@
     //TRACE(@"%s %@:%d", __PRETTY_FUNCTION__, [tableColumn identifier], rowIndex);
     int vCount = [[_movie videoTracks] count];
     int aCount = [[_movie audioTracks] count];
+    int sCount = [_subtitles count];
     int vIndex = rowIndex;
     int aIndex = vIndex - vCount;
     int sIndex = aIndex - aCount;
@@ -648,8 +650,11 @@
             return [[[_movie audioTracks] objectAtIndex:aIndex] name];
         }
         else {
-            return [NSString stringWithFormat:
-                    NSLocalizedString(@"External Subtitle %d", nil), sIndex + 1];
+            NSString* s = NSLocalizedString(@"External Subtitle", nil);
+            if (1 < sCount) {
+                s = [s stringByAppendingFormat:@" %d", sIndex + 1];
+            }
+            return s;
         }
     }
     else if ([identifier isEqualToString:@"codec"]) {
