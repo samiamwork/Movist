@@ -432,6 +432,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
+        [_movie setRate:0.0];   // at first, pause.
         [_updateSystemActivityTimer invalidate];
 
         _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?

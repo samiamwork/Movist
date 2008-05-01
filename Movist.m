@@ -170,6 +170,10 @@ NSString* codecName(int codecId)
 
 NSString* codecDescription(int codecId)
 {
+    if (codecId == MCODEC_ETC_) {
+        // -[codecName:] returns localized name for "etc.". (the others are not)
+        return NSLocalizedString(@"etc. DESC.", nil);
+    }
     NSString* s = codecName(codecId);
     if (0 < [s length]) {
         s = [NSString stringWithFormat:@"%@ DESC.", s];
