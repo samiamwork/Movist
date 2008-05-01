@@ -38,6 +38,14 @@ enum {
     DECODER_FFMPEG,
 };
 
+#pragma mark window-resize-on-opening-movie
+enum {
+    OPENING_RESIZE_NEVER,
+    OPENING_RESIZE_TITLE_CENTER,
+    OPENING_RESIZE_BOTTOM_CENTER,
+    OPENING_RESIZE_BOTTOM_RIGHT,
+};
+
 #pragma mark full-scren transition
 enum {
     FS_EFFECT_NONE,

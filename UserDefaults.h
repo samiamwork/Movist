@@ -90,6 +90,7 @@ extern NSString* MLastUpdateCheckTimeKey;
 #pragma mark prefs: advanced - details
 // General
 extern NSString* MActivateOnDraggingKey;
+extern NSString* MOpeningResizeKey;
 extern NSString* MDraggingActionKey;
 // Video
 extern NSString* MCaptureFormatKey;

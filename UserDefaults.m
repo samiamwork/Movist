@@ -90,6 +90,7 @@ NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 #pragma mark prefs: advanced - details
 // General
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
+NSString* MOpeningResizeKey                 = @"OpeningResize";
 NSString* MDraggingActionKey                = @"DraggingAction";
 // Video
 NSString* MCaptureFormatKey                 = @"CaptureFormat";
@@ -176,11 +177,12 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[self defaultCodecBinding] forKey:MDefaultCodecBindingKey];
     // prefs: advanced - details: general
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
+    [dict setObject:[NSNumber numberWithInt:OPENING_RESIZE_TITLE_CENTER] forKey:MOpeningResizeKey];
     [dict setObject:[NSNumber numberWithInt:DRAGGING_ACTION_NONE] forKey:MDraggingActionKey];
     // prefs: advanced - details: video
     [dict setObject:[NSNumber numberWithInt:CAPTURE_FORMAT_PNG] forKey:MCaptureFormatKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MIncludeLetterBoxOnCaptureKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MRemoveGreenBoxKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MRemoveGreenBoxKey];
     // prefs: advanced - details: audio
     // prefs: advanced - details: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];

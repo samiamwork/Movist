@@ -1,5 +1,7 @@
 /* App General */
 "Cancel" = "Cancel";
+"Never" = "Never";
+"None" = "None";
 "Decoder" = "Decoder";
 "iTunes Movies" = "iTunes Movies";
 "iTunes Video Podcast" = "iTunes Video Podcast";
@@ -64,7 +66,6 @@
 "Volume cannot be changed in Digital-Out" = "Volume cannot be changed in Digital-Out";
 
 /* Message : Video */
-"Never" = "Never";
 "Brightness %.1f" = "Brightness %.1f";
 "Saturation %.1f" = "Saturation %.1f";
 "Contrast %.1f" = "Contrast %.1f";
@@ -112,8 +113,11 @@
 
 /* Preferences: advanced - details: general */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
+"Window Resize on Opening Movie" = "Window Resize on Opening Movie";
+"Title Center" = "Title Center";
+"Bottom Center" = "Bottom Center";
+"Bottom Right" = "Bottom Right";
 "Dragging Action on Movie Area" = "Dragging Action on Movie Area";
-"None" = "None";
 "Move Window" = "Move Window";
 "Capture Movie" = "Capture Movie";
 

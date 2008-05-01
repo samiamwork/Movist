@@ -366,6 +366,14 @@
       [NSArray arrayWithObjects:
        [BoolNode boolNodeWithName:LABEL(@"Activate on Dragging over Main Window")
                               key:MActivateOnDraggingKey],
+       [SelectNode selectNodeWithName:LABEL(@"Window Resize on Opening Movie")
+                                  key:MOpeningResizeKey
+                               titles:[NSArray arrayWithObjects:
+                                       NSLocalizedString(@"Never", nil),
+                                       NSLocalizedString(@"Title Center", nil),
+                                       NSLocalizedString(@"Bottom Center", nil),
+                                       NSLocalizedString(@"Bottom Right", nil),
+                                       nil]],
        [SelectNode selectNodeWithName:LABEL(@"Dragging Action on Movie Area")
                                   key:MDraggingActionKey
                                titles:[NSArray arrayWithObjects:

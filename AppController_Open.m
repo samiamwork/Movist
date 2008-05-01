@@ -195,7 +195,9 @@
     }
     
     if (![self isFullScreen]) {
-        [self resizeWithMagnification:1.0];
+        if ([_defaults integerForKey:MOpeningResizeKey] != OPENING_RESIZE_NEVER) {
+            [self resizeWithMagnification:1.0];
+        }
         if ([_defaults boolForKey:MAutoFullScreenKey]) {
             [self beginFullScreen];
         }

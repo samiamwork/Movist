@@ -56,8 +56,12 @@
             size.width  *= magnification;
             size.height *= magnification;
         }
-        NSRect frame = [_mainWindow frameRectForMovieSize:size
-                                                    align:ALIGN_WINDOW_TITLE];
+        int resize = [_defaults integerForKey:MOpeningResizeKey];
+        int align =
+            (resize == OPENING_RESIZE_BOTTOM_CENTER) ? ALIGN_WINDOW_BOTTOM_CENTER :
+            (resize == OPENING_RESIZE_BOTTOM_RIGHT)  ? ALIGN_WINDOW_BOTTOM_RIGHT :
+                                                       ALIGN_WINDOW_TITLE_CENTER;
+        NSRect frame = [_mainWindow frameRectForMovieSize:size align:align];
         [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
         [_movieView setSubtitleVisible:TRUE];

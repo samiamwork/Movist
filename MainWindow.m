@@ -292,10 +292,18 @@
     NSRect sr = [[self screen] visibleFrame];
     NSSize frameSize = [self frameSizeForMovieSize:movieSize];
     NSRect frame;
-    if (align == ALIGN_WINDOW_TITLE) {
+    if (align == ALIGN_WINDOW_TITLE_CENTER) {
         frame = [self frame];
         frame.origin.x -= (frameSize.width - frame.size.width) / 2;
         frame.origin.y -= frameSize.height - frame.size.height;
+    }
+    else if (align == ALIGN_WINDOW_BOTTOM_CENTER) {
+        frame = [self frame];
+        frame.origin.x -= (frameSize.width - frame.size.width) / 2;
+    }
+    else if (align == ALIGN_WINDOW_BOTTOM_RIGHT) {
+        frame = [self frame];
+        frame.origin.x -= frameSize.width - frame.size.width;
     }
     else if (align == ALIGN_SCREEN_CENTER) {
         frame.origin.x = sr.origin.x + (sr.size.width - frameSize.width) / 2;

@@ -52,6 +52,8 @@
 @end
 
 enum {  // for frameRectFromMovieSize:align:
-    ALIGN_WINDOW_TITLE,
+    ALIGN_WINDOW_TITLE_CENTER,
+    ALIGN_WINDOW_BOTTOM_CENTER,
+    ALIGN_WINDOW_BOTTOM_RIGHT,
     ALIGN_SCREEN_CENTER,
 };
