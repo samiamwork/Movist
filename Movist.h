@@ -119,6 +119,41 @@ enum {
 
 #pragma mark -
 #pragma mark codec-id
+// how to add codec
+// 1. define codec-id constant.
+//    . "Movist.h"
+//    . enum (here)
+//    . such as MCODEC_XXXX
+//    . video/audio separated and similar grouped.
+//    . constant value should be unique.
+//
+// 2. add codec-name.
+//    . "Movist.m"
+//    . NSString* codecName(int codecId);
+//    . use CASE_CODEC_STRING() macro.
+//
+// 3. add to mapping table of [codec-id : ffmpeg-codec-id].
+//    . "MMovie_Codec.h"
+//    . for video, + (int)videoCodecIdFromFFmpegCodecId:(int)ffmpegCodecId fourCC:(NSString*)fourCC;
+//    . for audio, + (int)audioCodecIdFromFFmpegCodecId:(int)ffmpegCodecId;
+//    . use CASE_FFCODEC_MCODEC(), CASE_FFCODEC_______() macroes.
+//    . use IF_FFCODEC_MCODEC() macro for video fourCC.
+//
+// 4. add to codec-binding table view.
+//    . "PreferenceController_Advanced_Codec.m"
+//    . - (void)initCodecBinding.
+//    . use MCODEC_ID() macro.
+//    . for video codec only
+//
+// 5. add to user-defaults.
+//    . "UserDefaults.m"
+//    . - (void)defaultCodecBinding;
+//    . use CODEC_BINDING() macro.
+//
+// 6. add localized codec-description string.
+//    . "Localizable.strings" for each language.
+//    . cf) localized codec-name string need not.
+
 enum {
     MCODEC_ETC_         = 0,    // for all other codecs
 
@@ -179,6 +214,7 @@ enum {
     MCODEC_INDEO2       = 9040, // Indeo Video 2
     MCODEC_INDEO3       = 9050, // Indeo Video 3
     MCODEC_MJPEG        = 9060, // Motion-JPEG
+    MCODEC_DV           = 9070, // DV Video
 
     // audio codec //////////////////////////////////////
 

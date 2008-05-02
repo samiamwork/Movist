@@ -205,9 +205,10 @@
 {
     _seekTime = _reservedSeekTime;
     TRACE(@"%s seek to %g", __PRETTY_FUNCTION__, _seekTime);
-    if (_indexedDuration < _seekTime) {
-        TRACE(@"not indexed time");
-        return;
+    if (_indexedDuration < _duration &&
+        _indexedDuration < _seekTime) {
+        TRACE(@"not indexed time => repositioning to indexed-duration");
+        _seekTime = _indexedDuration;
     }
 
     MTrack* track;

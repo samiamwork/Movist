@@ -74,6 +74,7 @@
     int _draggingAction;
     int _captureFormat;
     BOOL _includeLetterBoxOnCapture;
+    //BOOL _removeGreenBoxByUser;
     BOOL _removeGreenBox;
 
     // capture
@@ -140,6 +141,7 @@
 - (void)setContrast:(float)contrast;
 - (void)setHue:(float)hue;
 - (void)setRemoveGreenBox:(BOOL)remove;
+//- (void)updateRemoveGreenBox;
 
 @end
 

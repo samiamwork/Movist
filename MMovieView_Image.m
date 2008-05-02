@@ -21,7 +21,7 @@
 //
 
 #import "MMovieView.h"
-#import "MMovie.h"
+#import "MMovie_QuickTime.h"
 #import "MTextOSD.h"
 #import "MImageOSD.h"
 #import "AppController.h"   // for NSApp's delegate
@@ -401,6 +401,22 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 {
     _removeGreenBox = remove;
     [self updateMovieRect:TRUE];
+    /*
+    _removeGreenBoxByUser = remove;
+    [self updateRemoveGreenBox];
+    [self updateMovieRect:TRUE];
+    */
 }
-
+/*
+- (void)updateRemoveGreenBox
+{
+    //_removeGreenBox = FALSE;    // need not for using FFmpeg.
+    _removeGreenBox = TRUE;     // need not for using FFmpeg.
+                                // but, this will reduce screen flickering.
+                                // I don't know why it has such effect. -_-
+    if (_movie && [_movie isMemberOfClass:[MMovie_QuickTime class]]) {
+        _removeGreenBox = _removeGreenBoxByUser;
+    }
+}
+*/
 @end

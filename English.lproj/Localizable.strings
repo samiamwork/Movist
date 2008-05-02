@@ -195,6 +195,7 @@
 "INDEO2 DESC." = "Indeo Video 2";
 "INDEO3 DESC." = "Indeo Video 3";
 "MJPEG DESC." = "Motion-JPEG";
+"DV DESC." = "DV";
 "PCM DESC." = "PCM";
 "DPCM DESC." = "DPCM";
 "ADPCM DESC." = "ADPCM";

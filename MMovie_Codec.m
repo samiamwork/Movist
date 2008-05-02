@@ -71,7 +71,7 @@
         CASE_FFCODEC_MCODEC(FLV1,            FLV);
         CASE_FFCODEC_MCODEC(SVQ1,            SVQ1);
         CASE_FFCODEC_MCODEC(SVQ3,            SVQ3);
-        CASE_FFCODEC_______(DVVIDEO);
+        CASE_FFCODEC_MCODEC(DVVIDEO,         DV);
         CASE_FFCODEC_MCODEC(HUFFYUV,         HUFFYUV);
         CASE_FFCODEC_______(CYUV);
         CASE_FFCODEC_MCODEC(H264,            H264);

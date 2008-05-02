@@ -262,6 +262,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
             CODEC_BINDING(DECODER_FFMPEG,   MCODEC_INDEO2),
             CODEC_BINDING(DECODER_FFMPEG,   MCODEC_INDEO3),
             CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MJPEG),
+            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DV),
             nil];
 }
 

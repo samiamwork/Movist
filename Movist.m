@@ -142,6 +142,7 @@ NSString* codecName(int codecId)
         CASE_CODEC_STRING(INDEO2);
         CASE_CODEC_STRING(INDEO3);
         CASE_CODEC_STRING(MJPEG);
+        CASE_CODEC_STRING(DV);
 
         CASE_CODEC_STRING(PCM);
         CASE_CODEC_STRING(DPCM);

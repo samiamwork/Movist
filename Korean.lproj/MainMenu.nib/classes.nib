@@ -6,11 +6,11 @@
 	<array>
 		<dict>
 			<key>CLASS</key>
-			<string>FSSeekSlider</string>
+			<string>NSSegmentedControl</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>SeekSlider</string>
+			<string>NSControl</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -22,11 +22,11 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>NSSegmentedControl</string>
+			<string>FSSeekSlider</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>NSControl</string>
+			<string>SeekSlider</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -85,19 +85,19 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>NSTextField</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSControl</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>HUDTextFieldCell</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSTextFieldCell</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSTextField</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
@@ -132,6 +132,14 @@
 			<string>NSView</string>
 		</dict>
 		<dict>
+			<key>CLASS</key>
+			<string>MainSeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>SeekSlider</string>
+		</dict>
+		<dict>
 			<key>ACTIONS</key>
 			<dict>
 				<key></key>
@@ -143,14 +151,6 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>MainSeekSlider</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>SeekSlider</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>

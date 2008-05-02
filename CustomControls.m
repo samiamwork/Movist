@@ -662,14 +662,17 @@
         [self drawInRect:cellFrame leftImage:_mImage midImage:_mImage rightImage:_rImage];
     }
 
+    NSFont* font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
     NSMutableParagraphStyle* paragraphStyle;
     paragraphStyle = [[[NSMutableParagraphStyle alloc] init] autorelease];
     [paragraphStyle setAlignment:[self alignment]];
     NSDictionary* attrs = [NSDictionary dictionaryWithObjectsAndKeys:
+                           font, NSFontAttributeName,
                            HUDTextColor, NSForegroundColorAttributeName,
                            paragraphStyle, NSParagraphStyleAttributeName,
                            nil];
     cellFrame.origin.x += 3, cellFrame.size.width -= 6;
+    cellFrame.origin.y += 1;
     [[self stringValue] drawInRect:cellFrame withAttributes:attrs];
 }
 
