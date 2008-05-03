@@ -42,6 +42,7 @@
     IBOutlet NSButton* _showiTunesMoviesButton;
     IBOutlet NSButton* _showiTunesPodcastsButton;
     IBOutlet NSButton* _showiTunesTVShowsButton;
+    IBOutlet NSButton* _fullNavOnStartupButton;
     IBOutlet NSTextField* _seekInterval0TextField;
     IBOutlet NSTextField* _seekInterval1TextField;
     IBOutlet NSTextField* _seekInterval2TextField;
@@ -137,6 +138,7 @@
 - (IBAction)supportAppleRemoteAction:(id)sender;
 - (IBAction)fullNavUseAction:(id)sender;
 - (IBAction)showFullNavItemsAction:(id)sender;
+- (IBAction)fullNavOnStartupAction:(id)sender;
 - (IBAction)seekIntervalAction:(id)sender;
 
 @end

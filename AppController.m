@@ -170,6 +170,19 @@ NSString* videoCodecName(int codecId);
     // ...
 
     // initial update preferences: subtitle
+    // check if subtitle font exist. if not, then restore to default.
+    NSString* fontName = [_defaults stringForKey:MSubtitleFontNameKey];
+    NSFont* font = [NSFont fontWithName:fontName size:10.0];
+    if (!font) {
+        NSRunAlertPanel(NSLocalizedString(@"Subtitle Font Not Found", nil),
+                        [NSString stringWithFormat:NSLocalizedString(
+                         @"Subtitle font not found: \"%@\"\n"
+                          "Subtitle font setting will be restored to default.", nil),
+                         fontName],
+                        NSLocalizedString(@"OK", nil), nil, nil);
+        [_defaults setObject:[[NSFont boldSystemFontOfSize:1.0] fontName]
+                      forKey:MSubtitleFontNameKey];
+    }
     [_movieView setSubtitleFontName:[_defaults stringForKey:MSubtitleFontNameKey]
                                size:[_defaults floatForKey:MSubtitleFontSizeKey]];
     [_movieView setSubtitleTextColor:[_defaults colorForKey:MSubtitleTextColorKey]];
@@ -211,8 +224,12 @@ NSString* videoCodecName(int codecId);
 
 - (void)applicationDidFinishLaunching:(NSNotification*)aNotification
 {
-    // open last played movie (but, no play)
-    if (!_movie && _lastPlayedMovieURL) {
+    if ([_defaults boolForKey:MFullNavUseKey] &&
+        [_defaults boolForKey:MFullNavOnStartupKey]) {
+        [self beginFullNavigation];
+    }
+    else if (!_movie && _lastPlayedMovieURL) {
+        // open last played movie (but, no play)
         float rate = _playRate;
         _playRate = 0.0;    // no play
         [self openCurrentPlaylistItem];

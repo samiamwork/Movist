@@ -1,133 +1,271 @@
-{
-    IBClasses =     (
-                {
-            CLASS = AdvancedDetailsTableColumn;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSTableColumn;
-        },
-                {
-            CLASS = FirstResponder;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSObject;
-        },
-                {
-            CLASS = NSApplication;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSResponder;
-        },
-                {
-            CLASS = NSObject;
-            LANGUAGE = ObjC;
-        },
-                {
-            CLASS = NSTextField;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSControl;
-        },
-                {
-            CLASS = NSWindow;
-            LANGUAGE = ObjC;
-            SUPERCLASS = NSResponder;
-        },
-                {
-            ACTIONS =             {
-                alwaysOnTopAction = id;
-                autoFullScreenAction = id;
-                autoPlayOnFullScreenAction = id;
-                autodetectDigitalAudioOutAction = id;
-                autodetectMovieSeriesAction = id;
-                checkUpdateNowAction = id;
-                codecBindingAction = id;
-                deactivateScreenSaverAction = id;
-                fileBindingAction = id;
-                fullNavUseAction = id;
-                fullScreenEffectAction = id;
-                fullScreenFillAction = id;
-                fullScreenUnderScanAction = id;
-                quitWhenWindowCloseAction = id;
-                rememberLastPlayAction = id;
-                seekIntervalAction = id;
-                showFullNavItemsAction = id;
-                subtitleAttributesAction = id;
-                subtitleAutoFontSizeAction = id;
-                subtitleAutoFontSizeCharsAction = id;
-                subtitleEnbleAction = id;
-                subtitleEncodingAction = id;
-                subtitleFontAction = id;
-                subtitlePositionAction = id;
-                supportAppleRemoteAction = id;
-                updateCheckIntervalAction = id;
-            };
-            CLASS = PreferenceController;
-            LANGUAGE = ObjC;
-            OUTLETS =             {
-                "_advancedPane" = NSView;
-                "_alwaysOnTopButton" = NSButton;
-                "_audioPane" = NSView;
-                "_autoFullScreenButton" = NSButton;
-                "_autoPlayOnFullScreenButton" = NSButton;
-                "_autodetectDigitalAudioOutButton" = NSButton;
-                "_autodetectMovieSeriesButton" = NSButton;
-                "_codecBindingTableView" = NSTableView;
-                "_deactivateScreenSaverButton" = NSButton;
-                "_detailsOutlineView" = NSOutlineView;
-                "_fileBindingTableView" = NSTableView;
-                "_fullNavUseButton" = NSButton;
-                "_fullScreenEffectPopUpButton" = NSPopUpButton;
-                "_fullScreenFillForStdMoviePopUpButton" = NSPopUpButton;
-                "_fullScreenFillForWideMoviePopUpButton" = NSPopUpButton;
-                "_fullScreenUnderScanSlider" = NSSlider;
-                "_generalPane" = NSView;
-                "_lastUpdateCheckTimeTextField" = NSTextField;
-                "_quitWhenWindowCloseButton" = NSButton;
-                "_rememberLastPlayButton" = NSButton;
-                "_seekInterval0Stepper" = NSStepper;
-                "_seekInterval0TextField" = NSTextField;
-                "_seekInterval1Stepper" = NSStepper;
-                "_seekInterval1TextField" = NSTextField;
-                "_seekInterval2Stepper" = NSStepper;
-                "_seekInterval2TextField" = NSTextField;
-                "_showiTunesMoviesButton" = NSButton;
-                "_showiTunesPodcastsButton" = NSButton;
-                "_showiTunesTVShowsButton" = NSButton;
-                "_subtitleAutoFontSizeButton" = NSButton;
-                "_subtitleAutoFontSizeLabelTextField" = NSTextField;
-                "_subtitleAutoFontSizeStepper" = NSStepper;
-                "_subtitleAutoFontSizeTextField" = NSTextField;
-                "_subtitleEnableButton" = NSButton;
-                "_subtitleEncodingPopUpButton" = NSPopUpButton;
-                "_subtitleFontButton" = NSButton;
-                "_subtitleHMarginSlider" = NSSlider;
-                "_subtitleHMarginTextField" = NSTextField;
-                "_subtitleLineSpacingSlider" = NSSlider;
-                "_subtitleLineSpacingTextField" = NSTextField;
-                "_subtitlePane" = NSView;
-                "_subtitlePositionPopUpButton" = NSPopUpButton;
-                "_subtitleShadowBlurSlider" = NSSlider;
-                "_subtitleShadowBlurTextField" = NSTextField;
-                "_subtitleShadowColorWell" = NSColorWell;
-                "_subtitleShadowDarknessSlider" = NSSlider;
-                "_subtitleShadowDarknessTextField" = NSTextField;
-                "_subtitleShadowOffsetSlider" = NSSlider;
-                "_subtitleShadowOffsetTextField" = NSTextField;
-                "_subtitleShadowOpacitySlider" = NSSlider;
-                "_subtitleShadowOpacityTextField" = NSTextField;
-                "_subtitleStrokeColorWell" = NSColorWell;
-                "_subtitleStrokeOpacitySlider" = NSSlider;
-                "_subtitleStrokeOpacityTextField" = NSTextField;
-                "_subtitleStrokeWidthSlider" = NSSlider;
-                "_subtitleStrokeWidthTextField" = NSTextField;
-                "_subtitleTextColorWell" = NSColorWell;
-                "_subtitleTextOpacitySlider" = NSSlider;
-                "_subtitleTextOpacityTextField" = NSTextField;
-                "_subtitleVMarginSlider" = NSSlider;
-                "_subtitleVMarginTextField" = NSTextField;
-                "_supportAppleRemoteButton" = NSButton;
-                "_updateCheckIntervalPopUpButton" = NSPopUpButton;
-                "_videoPane" = NSView;
-            };
-            SUPERCLASS = NSWindowController;
-        }
-    );
-    IBVersion = 1;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>alwaysOnTopAction</key>
+				<string>id</string>
+				<key>autoFullScreenAction</key>
+				<string>id</string>
+				<key>autoPlayOnFullScreenAction</key>
+				<string>id</string>
+				<key>autodetectDigitalAudioOutAction</key>
+				<string>id</string>
+				<key>autodetectMovieSeriesAction</key>
+				<string>id</string>
+				<key>checkUpdateNowAction</key>
+				<string>id</string>
+				<key>codecBindingAction</key>
+				<string>id</string>
+				<key>deactivateScreenSaverAction</key>
+				<string>id</string>
+				<key>fileBindingAction</key>
+				<string>id</string>
+				<key>fullNavOnStartupAction</key>
+				<string>id</string>
+				<key>fullNavUseAction</key>
+				<string>id</string>
+				<key>fullScreenEffectAction</key>
+				<string>id</string>
+				<key>fullScreenFillAction</key>
+				<string>id</string>
+				<key>fullScreenUnderScanAction</key>
+				<string>id</string>
+				<key>quitWhenWindowCloseAction</key>
+				<string>id</string>
+				<key>rememberLastPlayAction</key>
+				<string>id</string>
+				<key>seekIntervalAction</key>
+				<string>id</string>
+				<key>showFullNavItemsAction</key>
+				<string>id</string>
+				<key>subtitleAttributesAction</key>
+				<string>id</string>
+				<key>subtitleAutoFontSizeAction</key>
+				<string>id</string>
+				<key>subtitleAutoFontSizeCharsAction</key>
+				<string>id</string>
+				<key>subtitleEnbleAction</key>
+				<string>id</string>
+				<key>subtitleEncodingAction</key>
+				<string>id</string>
+				<key>subtitleFontAction</key>
+				<string>id</string>
+				<key>subtitlePositionAction</key>
+				<string>id</string>
+				<key>supportAppleRemoteAction</key>
+				<string>id</string>
+				<key>updateCheckIntervalAction</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>PreferenceController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_advancedPane</key>
+				<string>NSView</string>
+				<key>_alwaysOnTopButton</key>
+				<string>NSButton</string>
+				<key>_audioPane</key>
+				<string>NSView</string>
+				<key>_autoFullScreenButton</key>
+				<string>NSButton</string>
+				<key>_autoPlayOnFullScreenButton</key>
+				<string>NSButton</string>
+				<key>_autodetectDigitalAudioOutButton</key>
+				<string>NSButton</string>
+				<key>_autodetectMovieSeriesButton</key>
+				<string>NSButton</string>
+				<key>_codecBindingTableView</key>
+				<string>NSTableView</string>
+				<key>_deactivateScreenSaverButton</key>
+				<string>NSButton</string>
+				<key>_detailsOutlineView</key>
+				<string>NSOutlineView</string>
+				<key>_fileBindingTableView</key>
+				<string>NSTableView</string>
+				<key>_fullNavOnStartupButton</key>
+				<string>NSButton</string>
+				<key>_fullNavUseButton</key>
+				<string>NSButton</string>
+				<key>_fullScreenEffectPopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>_fullScreenFillForStdMoviePopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>_fullScreenFillForWideMoviePopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>_fullScreenUnderScanSlider</key>
+				<string>NSSlider</string>
+				<key>_generalPane</key>
+				<string>NSView</string>
+				<key>_lastUpdateCheckTimeTextField</key>
+				<string>NSTextField</string>
+				<key>_quitWhenWindowCloseButton</key>
+				<string>NSButton</string>
+				<key>_rememberLastPlayButton</key>
+				<string>NSButton</string>
+				<key>_seekInterval0Stepper</key>
+				<string>NSStepper</string>
+				<key>_seekInterval0TextField</key>
+				<string>NSTextField</string>
+				<key>_seekInterval1Stepper</key>
+				<string>NSStepper</string>
+				<key>_seekInterval1TextField</key>
+				<string>NSTextField</string>
+				<key>_seekInterval2Stepper</key>
+				<string>NSStepper</string>
+				<key>_seekInterval2TextField</key>
+				<string>NSTextField</string>
+				<key>_showiTunesMoviesButton</key>
+				<string>NSButton</string>
+				<key>_showiTunesPodcastsButton</key>
+				<string>NSButton</string>
+				<key>_showiTunesTVShowsButton</key>
+				<string>NSButton</string>
+				<key>_subtitleAutoFontSizeButton</key>
+				<string>NSButton</string>
+				<key>_subtitleAutoFontSizeLabelTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleAutoFontSizeStepper</key>
+				<string>NSStepper</string>
+				<key>_subtitleAutoFontSizeTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleEnableButton</key>
+				<string>NSButton</string>
+				<key>_subtitleEncodingPopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>_subtitleFontButton</key>
+				<string>NSButton</string>
+				<key>_subtitleHMarginSlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleHMarginTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleLineSpacingSlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleLineSpacingTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitlePane</key>
+				<string>NSView</string>
+				<key>_subtitlePositionPopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>_subtitleShadowBlurSlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleShadowBlurTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleShadowColorWell</key>
+				<string>NSColorWell</string>
+				<key>_subtitleShadowDarknessSlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleShadowDarknessTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleShadowOffsetSlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleShadowOffsetTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleShadowOpacitySlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleShadowOpacityTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleStrokeColorWell</key>
+				<string>NSColorWell</string>
+				<key>_subtitleStrokeOpacitySlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleStrokeOpacityTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleStrokeWidthSlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleStrokeWidthTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleTextColorWell</key>
+				<string>NSColorWell</string>
+				<key>_subtitleTextOpacitySlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleTextOpacityTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitleVMarginSlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleVMarginTextField</key>
+				<string>NSTextField</string>
+				<key>_supportAppleRemoteButton</key>
+				<string>NSButton</string>
+				<key>_updateCheckIntervalPopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>_videoPane</key>
+				<string>NSView</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindowController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSApplication</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSTextField</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObject</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSWindow</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>AdvancedDetailsTableColumn</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableColumn</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

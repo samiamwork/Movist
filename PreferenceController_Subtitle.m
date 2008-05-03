@@ -366,8 +366,9 @@
     float fontSize = [_defaults floatForKey:MSubtitleFontSizeKey];
     NSFont* font = [NSFont fontWithName:[_defaults stringForKey:MSubtitleFontNameKey]
                                    size:MIN(fontSize, 20.0)];
-    [attrs setObject:font forKey:NSFontAttributeName];
-
+    if (font) {
+        [attrs setObject:font forKey:NSFontAttributeName];
+    }
     NSString* title = [NSString localizedStringWithFormat:
                                         @"%@ %g", [font displayName], fontSize];
     NSMutableAttributedString* mas = [[NSMutableAttributedString alloc]

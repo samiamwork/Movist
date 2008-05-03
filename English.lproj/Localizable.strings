@@ -6,6 +6,9 @@
 "iTunes Movies" = "iTunes Movies";
 "iTunes Video Podcast" = "iTunes Video Podcast";
 "No movie file" = "No movie file";
+"Subtitle Font Not Found" = "Subtitle Font Not Found";
+"Subtitle font not found: \"%@\"\nSubtitle font setting will be restored to default." =
+    "Subtitle font not found: \"%@\"\nSubtitle font setting will be restored to default.";
 
 /* Check for Updates */
 "Checking for Updates..." = "Checking for Updates...";

@@ -44,6 +44,7 @@ extern NSString* MFullNavUseKey;
 extern NSString* MFullNavShowiTunesMoviesKey;
 extern NSString* MFullNavShowiTunesPodcastsKey;
 extern NSString* MFullNavShowiTunesTVShowsKey;
+extern NSString* MFullNavOnStartupKey;
 extern NSString* MSeekInterval0Key;
 extern NSString* MSeekInterval1Key;
 extern NSString* MSeekInterval2Key;

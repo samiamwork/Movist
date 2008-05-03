@@ -31,6 +31,7 @@
 
 - (void)setFullNavShowItemsEnabled:(BOOL)enabled
 {
+    [_fullNavOnStartupButton setEnabled:enabled];
     [_showiTunesMoviesButton setEnabled:enabled];
     [_showiTunesPodcastsButton setEnabled:enabled];
     [_showiTunesTVShowsButton setEnabled:enabled];
@@ -52,6 +53,7 @@
     [_showiTunesMoviesButton setState:[_defaults boolForKey:MFullNavShowiTunesMoviesKey]];
     [_showiTunesPodcastsButton setState:[_defaults boolForKey:MFullNavShowiTunesPodcastsKey]];
     [_showiTunesTVShowsButton setState:[_defaults boolForKey:MFullNavShowiTunesTVShowsKey]];
+    [_fullNavOnStartupButton setState:[_defaults boolForKey:MFullNavOnStartupKey]];
     [self setFullNavShowItemsEnabled:[_defaults boolForKey:MFullNavUseKey]];
 
     [_seekInterval0TextField setFloatValue:[_defaults floatForKey:MSeekInterval0Key]];
@@ -144,6 +146,11 @@
         MFullNavShowiTunesTVShowsKey,
     };
     [_defaults setBool:[sender state] forKey:key[[sender tag]]];
+}
+
+- (IBAction)fullNavOnStartupAction:(id)sender
+{
+    [_defaults setBool:[sender state] forKey:MFullNavOnStartupKey];
 }
 
 - (IBAction)seekIntervalAction:(id)sender
