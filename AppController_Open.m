@@ -218,9 +218,11 @@
     [_playlistButton updateHoverImage];
     [self updateDataSizeBpsUI];
     [self setRangeRepeatRange:_lastPlayedMovieRepeatRange];
-    
+
+    Class otherClass = ([_movie isMemberOfClass:[MMovie_QuickTime class]]) ?
+                                [MMovie_FFmpeg class] : [MMovie_QuickTime class];
     [_reopenWithMenuItem setTitle:[NSString stringWithFormat:
-            NSLocalizedString(@"Reopen With %@", nil), [[_movie class] name]]];
+            NSLocalizedString(@"Reopen With %@", nil), [otherClass name]]];
     _prevMovieTime = 0.0;
     [self updateUI];
 
