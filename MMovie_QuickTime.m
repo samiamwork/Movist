@@ -64,20 +64,11 @@
                                 kQTPropertyClass_ImageDescription,
                                 kICMImageDescriptionPropertyID_SummaryString,
                                 sizeof(CFStringRef), &s, 0)) {
-            NSString* ss = [NSString stringWithString:(NSString*)s];
-            CFRelease(s);
             // remove strange contents after codec name.
-            NSRange range = [ss rangeOfString:@", "];
-            result = [ss substringToIndex:range.location];
+            NSRange range = [(NSString*)s rangeOfString:@", "];
+            result = [(NSString*)s substringToIndex:range.location];
+            CFRelease(s);
         }
-        /*
-        CodecInfo ci;
-        ImageDescription* desc = *idh;
-        GetCodecInfo(&ci, desc->cType, 0);
-        NSString* name = [self attributeForKey:QTTrackDisplayNameAttribute];
-        result = (codecInfo.typeName[0] == '\0') ?
-                            name : [NSString stringWithUTF8String:ci.typeName];
-         */
     }
     DisposeHandle((Handle)idh);
     return result;
@@ -144,59 +135,66 @@ static BOOL _perianSubtitleEnabled = FALSE;
 - (MTrack*)videoTrackWithIndex:(int)index qtTrack:(QTTrack*)qtTrack
 {
     NSSize displaySize = [[qtTrack attributeForKey:QTTrackDimensionsAttribute] sizeValue];
-    /* ... in 10.5 or later
-    NSSize encodedSize;
-    if ([[_qtMovie attributeForKey:QTMovieApertureModeAttribute]
-        isEqualToString:QTMovieApertureModeEncodedPixels]) {
-        encodedSize = [[qtTrack apertureModeDimensionsForMode:
-                                QTMovieApertureModeEncodedPixels] sizeValue];
-    }
-     */
-    /**/
     NSSize encodedSize = displaySize;
-    ImageDescriptionHandle idh;
-    idh = (ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
-    GetMediaSampleDescription([[qtTrack media] quickTimeMedia], 1,
-                              (SampleDescriptionHandle)idh);
-    FixedPoint esp;
-    if (noErr == ICMImageDescriptionGetProperty(idh, kQTPropertyClass_ImageDescription,
-                                                kICMImageDescriptionPropertyID_EncodedPixelsDimensions,
-                                                sizeof(esp), &esp, 0)) {
-        NSSize es = NSMakeSize(FixedToFloat(esp.x), FixedToFloat(esp.y));
-        if (es.width <= displaySize.width && es.height <= displaySize.height) {
-            encodedSize = es;
+
+    ImageDescriptionHandle idh = (ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
+    if (idh) {
+        GetMediaSampleDescription([[qtTrack media] quickTimeMedia], 1, (SampleDescriptionHandle)idh);
+        FixedPoint fp;
+        if (noErr == ICMImageDescriptionGetProperty(idh,
+                        kQTPropertyClass_ImageDescription,
+                        kICMImageDescriptionPropertyID_CleanApertureDisplayDimensions,
+                        sizeof(fp), &fp, 0)) {
+            NSSize size = NSMakeSize(FixedToFloat(fp.x), FixedToFloat(fp.y));
+            if (displaySize.width  == size.width ||     // check invalid value
+                displaySize.height == size.height) {
+                displaySize = size;
+            }
         }
+        if (noErr == ICMImageDescriptionGetProperty(idh,
+                        kQTPropertyClass_ImageDescription,
+                        kICMImageDescriptionPropertyID_EncodedPixelsDimensions,
+                        sizeof(fp), &fp, 0)) {
+            NSSize size = NSMakeSize(FixedToFloat(fp.x), FixedToFloat(fp.y));
+            if (encodedSize.width  == size.width ||     // check invalid value
+                encodedSize.height == size.height) {
+                encodedSize = size;
+            }
+        }
+        DisposeHandle((Handle)idh);
     }
-    DisposeHandle((Handle)idh);
-    /**/
     //TRACE(@"displaySize=%@, encodedSize=%@",
     //      NSStringFromSize(displaySize), NSStringFromSize(encodedSize));
 
-    MTrack* old = (index < [_videoTracks count]) ? [_videoTracks objectAtIndex:index] : nil;
-    MTrack* track = [MTrack trackWithImpl:qtTrack];
-    [track setCodecId:[old codecId]];
-    [track setName:[qtTrack attributeForKey:QTTrackDisplayNameAttribute]];
-    [track setSummary:[qtTrack summary]];
-    [track setEncodedSize:encodedSize];
-    [track setDisplaySize:displaySize];
-    [track setFps:[old fps]];
-    [track setEnabled:index == 0];  // enable first track only
-    [track setMovie:self];
-    return track;
+    MTrack* newTrack = [MTrack trackWithImpl:qtTrack];
+    [newTrack setName:[qtTrack attributeForKey:QTTrackDisplayNameAttribute]];
+    [newTrack setSummary:[qtTrack summary]];
+    [newTrack setEncodedSize:encodedSize];
+    [newTrack setDisplaySize:displaySize];
+    [newTrack setEnabled:index == 0];  // enable first track only
+    [newTrack setMovie:self];
+    if (index < [_videoTracks count]) {
+        MTrack* track = [_videoTracks objectAtIndex:index];
+        [newTrack setCodecId:[track codecId]];
+        [newTrack setFps:[track fps]];
+    }
+    return newTrack;
 }
 
 - (MTrack*)audioTrackWithIndex:(int)index qtTrack:(QTTrack*)qtTrack
 {
-    MTrack* old = (index < [_audioTracks count]) ? [_audioTracks objectAtIndex:index] : nil;
-    MTrack* track = [MTrack trackWithImpl:qtTrack];
-    [track setCodecId:[old codecId]];
-    [track setName:[qtTrack attributeForKey:QTTrackDisplayNameAttribute]];
-    [track setSummary:[qtTrack summary]];
-    [track setAudioChannels:[old audioChannels]];
-    [track setAudioSampleRate:[old audioSampleRate]];
-    [track setEnabled:index == 0];  // enable first track only
-    [track setMovie:self];
-    return track;
+    MTrack* newTrack = [MTrack trackWithImpl:qtTrack];
+    [newTrack setName:[qtTrack attributeForKey:QTTrackDisplayNameAttribute]];
+    [newTrack setSummary:[qtTrack summary]];
+    [newTrack setEnabled:index == 0];  // enable first track only
+    [newTrack setMovie:self];
+    if (index < [_audioTracks count]) {
+        MTrack* track = [_audioTracks objectAtIndex:index];
+        [newTrack setCodecId:[track codecId]];
+        [newTrack setAudioChannels:[track audioChannels]];
+        [newTrack setAudioSampleRate:[track audioSampleRate]];
+    }
+    return newTrack;
 }
 
 - (id)initWithURL:(NSURL*)url movieInfo:(MMovieInfo*)movieInfo

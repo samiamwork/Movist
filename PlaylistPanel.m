@@ -45,6 +45,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self initHUDWindow];
     [self updateHUDBackground];
+    [self setHasShadow:TRUE];
     [self initHUDSubviews];
     //[self setFloatingPanel:TRUE];
 

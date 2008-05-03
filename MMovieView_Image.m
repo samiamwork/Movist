@@ -109,6 +109,34 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 	return kCVReturnSuccess;
 }
 
+- (void)updateImageRect
+{
+    assert(_image != 0);
+    _imageRect = CVImageBufferGetCleanRect(_image);
+    if (_removeGreenBox) {
+        _imageRect.origin.x++, _imageRect.size.width  -= 2;
+        _imageRect.origin.y++, _imageRect.size.height -= 2;
+    }
+    
+    if ([[NSApp delegate] isFullScreen] && _fullScreenFill == FS_FILL_CROP) {
+        NSSize bs = [self bounds].size;
+        NSSize ms = [_movie adjustedSizeByAspectRatio];
+        if (bs.width / bs.height < ms.width / ms.height) {
+            float mw = ms.width * bs.height / ms.height;
+            float dw = (mw - bs.width) * ms.width / mw;
+            _imageRect.origin.x += dw / 2;
+            _imageRect.size.width -= dw;
+        }
+        else {
+            float mh = ms.height * bs.width / ms.width;
+            float dh = (mh - bs.height) * ms.height / mh;
+            _imageRect.origin.y += dh / 2;
+            _imageRect.size.height -= dh;
+        }
+    }
+    //TRACE(@"_imageRect=%@", NSStringFromRect(*(NSRect*)&_imageRect));
+}
+
 - (void)drawImage
 {
     [[self openGLContext] makeCurrentContext];
@@ -129,6 +157,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         if (_hueValue != DEFAULT_HUE) {
             [_hueFilter setValue:img forKey:@"inputImage"];
             img = [_hueFilter valueForKey:@"outputImage"];
+        }
+        if (_imageRect.size.width == 0) {
+            [self updateImageRect];
         }
         [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
     }
@@ -200,33 +231,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         [_messageOSD setMovieRect:mr];
     }
     else {
-        // update _imageRect
-        NSSize es = [_movie encodedSize];
-        _imageRect.origin.x = 0;
-        _imageRect.origin.y = 0;
-        _imageRect.size.width = es.width;
-        _imageRect.size.height = es.height;
-        if (_removeGreenBox) {
-            _imageRect.origin.x++, _imageRect.size.width  -= 2;
-            _imageRect.origin.y++, _imageRect.size.height -= 2;
-        }
-        
-        if ([[NSApp delegate] isFullScreen] && _fullScreenFill == FS_FILL_CROP) {
-            NSSize bs = [self bounds].size;
-            NSSize ms = [_movie adjustedSizeByAspectRatio];
-            if (bs.width / bs.height < ms.width / ms.height) {
-                float mw = ms.width * bs.height / ms.height;
-                float dw = (mw - bs.width) * ms.width / mw;
-                _imageRect.origin.x += dw / 2;
-                _imageRect.size.width -= dw;
-            }
-            else {
-                float mh = ms.height * bs.width / ms.width;
-                float dh = (mh - bs.height) * ms.height / mh;
-                _imageRect.origin.y += dh / 2;
-                _imageRect.size.height -= dh;
-            }
-        }
+        // make invalid to update later
+        _imageRect.size.width = 0;
+
         // update _movieRect
         NSRect mr = [self calcMovieRectForBoundingRect:[self bounds]];
         _movieRect = *(CGRect*)&mr;

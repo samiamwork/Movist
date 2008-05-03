@@ -53,6 +53,7 @@
     //[self setMovableByWindowBackground:TRUE];
     [self setAcceptsMouseMovedEvents:TRUE];
     [self setAutorecalculatesKeyViewLoop:TRUE];
+    [self setMinSize:NSMakeSize(320, 100)];
 
     // move to screen-center with default size
     cr.size = [cv convertSize:cr.size toView:nil];

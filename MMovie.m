@@ -34,6 +34,7 @@
 {
     if (self = [super init]) {
         _impl = [impl retain];
+        _codecId = MCODEC_ETC_;
     }
     return self;
 }
@@ -148,17 +149,25 @@
         }
     }
     int codecId = [self videoCodecIdFromFFmpegCodecId:codecContext->codec_id fourCC:fourCC];
+
     NSSize encodedSize = NSMakeSize(codecContext->coded_width, codecContext->coded_height);
     NSSize displaySize = NSMakeSize(codecContext->width,       codecContext->height);
     if (0 < codecContext->sample_aspect_ratio.num &&
         0 < codecContext->sample_aspect_ratio.den) {
-        displaySize.width *= (float)codecContext->sample_aspect_ratio.num /
-                                    codecContext->sample_aspect_ratio.den;
+        displaySize.width = (int)(displaySize.width *
+                                  codecContext->sample_aspect_ratio.num /
+                                  codecContext->sample_aspect_ratio.den);
         // FIXME: ignore strange(vertically long) pixel-aspect-ratio.
         if (displaySize.width < displaySize.height) {
             displaySize.width = encodedSize.width;
         }
     }
+    if (codecId == MCODEC_DV &&     // ugly hack for "DV"
+        encodedSize.width == 720 && encodedSize.height == 480 &&
+        displaySize.width == 720 && displaySize.height == 480) {
+        displaySize.width = 640;
+    }
+
     float fps;
     if (stream->r_frame_rate.den && stream->r_frame_rate.num) {
         fps = av_q2d(stream->r_frame_rate);
