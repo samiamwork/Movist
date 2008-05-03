@@ -79,6 +79,7 @@ NSString* MSubtitleShadowDarknessKey        = @"SubtitleShadowDarkness";
 NSString* MSubtitlePositionKey              = @"SubtitlePosition";
 NSString* MSubtitleHMarginKey               = @"SubtitleHMargin";
 NSString* MSubtitleVMarginKey               = @"SubtitleVMargin";
+NSString* MSubtitleScreenMarginKey          = @"SubtitleScreenMargin";
 NSString* MSubtitleLineSpacingKey           = @"SubtitleLineSpacing";
 
 #pragma mark -
@@ -147,7 +148,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MFullScreenUnderScanKey];
 
     // prefs: audio
-    [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MVolumeKey];
+    [dict setObject:[NSNumber numberWithFloat:DEFAULT_VOLUME] forKey:MVolumeKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
 
     // prefs: subtitle
@@ -168,9 +169,10 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithFloat:2.5] forKey:MSubtitleShadowBlurKey];
     [dict setObject:[NSNumber numberWithInt:5] forKey:MSubtitleShadowDarknessKey];
     [dict setObject:[NSNumber numberWithInt:SUBTITLE_POSITION_AUTO] forKey:MSubtitlePositionKey];
-    [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleHMarginKey];
-    [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleVMarginKey];
-    [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleLineSpacingKey];
+    [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_H_MARGIN] forKey:MSubtitleHMarginKey];
+    [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_V_MARGIN] forKey:MSubtitleVMarginKey];
+    [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_SCREEN_MARGIN] forKey:MSubtitleScreenMarginKey];
+    [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_LINE_SPACING] forKey:MSubtitleLineSpacingKey];
 
     // prefs: advanced - general
     [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MUpdateCheckIntervalKey];

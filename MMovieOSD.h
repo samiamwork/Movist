@@ -66,6 +66,7 @@ enum {  // for _updateMask
     unsigned int _vAlign;       // bit-mask of OSD_VALIGN_*
     float _hMargin;             // percentage of width
     float _vMargin;             // percentage of height
+    float _screenMargin;        // pixels
 
     GLuint _texName;
 }
@@ -79,11 +80,13 @@ enum {  // for _updateMask
 - (unsigned int)vAlign;
 - (float)hMargin;
 - (float)vMargin;
+- (float)screenMargin;
 - (void)setHAlign:(unsigned int)hAlign;
 - (void)setVAlign:(unsigned int)vAlign;
 - (void)updateVAlign:(BOOL)displayOnLetterBox;
 - (void)setHMargin:(float)hMargin;
 - (void)setVMargin:(float)vMargin;
+- (void)setScreenMargin:(float)screenMargin;
 
 #pragma mark -
 - (BOOL)hasContent;

@@ -195,6 +195,7 @@ NSString* videoCodecName(int codecId);
     [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
     [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
     [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
+    [_movieView setSubtitleScreenMargin:[_defaults floatForKey:MSubtitleScreenMarginKey]];
     [_movieView setSubtitleLineSpacing:[_defaults floatForKey:MSubtitleLineSpacingKey]];
 
     // initial update preferences: advanced

@@ -190,12 +190,13 @@
 
 - (float)hMargin { return _hMargin * 100; }
 - (float)vMargin { return _vMargin * 100; }
+- (float)screenMargin { return _screenMargin; }
 
 - (void)setHMargin:(float)hMargin
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, hMargin);
     _hMargin = hMargin / 100.0f; // percentage
-    
+
     _updateMask |= UPDATE_TEXTURE;
 }
 
@@ -203,7 +204,15 @@
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, vMargin);
     _vMargin = vMargin / 100.0f; // percentage
-    
+
+    _updateMask |= UPDATE_TEXTURE;
+}
+
+- (void)setScreenMargin:(float)screenMargin
+{
+    //TRACE(@"%s %g", __PRETTY_FUNCTION__, screenMargin);
+    _screenMargin = screenMargin;
+
     _updateMask |= UPDATE_TEXTURE;
 }
 
@@ -215,10 +224,22 @@
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(viewBounds));
     float hmargin = _movieRect.size.width * _hMargin;
     float vmargin = _movieRect.size.height* _vMargin;
+    //viewBounds.origin.x += _screenMargin;
+    viewBounds.origin.y += _screenMargin;
+    //viewBounds.size.width -= _screenMargin * 2;
+    viewBounds.size.height-= _screenMargin * 2;
 
     NSRect mr = _movieRect;
     mr.origin.x   += hmargin;
     mr.size.width -= hmargin * 2;
+    if (mr.origin.x < viewBounds.origin.x) {
+        mr.origin.x = viewBounds.origin.x;
+        mr.size.width = viewBounds.size.width;
+    }
+    if (mr.origin.y < viewBounds.origin.y) {
+        mr.origin.y = viewBounds.origin.y;
+        mr.size.height = viewBounds.size.height;
+    }
 
     NSRect rect;
     rect.size = _contentSize;

@@ -278,7 +278,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     float lineSpacing = [_subtitleRenderer lineSpacing] * movieRect.size.width / 640.0;
     int lines = _subtitlePosition - SUBTITLE_POSITION_ON_LETTER_BOX;
     // FIXME: how to apply line-spacing for line-height?  it's estimated roughly...
-    return lines * (lineHeight + lineSpacing / 2);
+    return lines * (lineHeight + lineSpacing / 2) + [self subtitleScreenMargin];
 }
 
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect

@@ -269,6 +269,22 @@ enum {
 #define MAX_HUE            +3.14
 #define DEFAULT_HUE         0.0
 
+#define MIN_SUBTITLE_H_MARGIN            0.0
+#define MAX_SUBTITLE_H_MARGIN           10.0
+#define DEFAULT_SUBTITLE_H_MARGIN        1.0
+
+#define MIN_SUBTITLE_V_MARGIN            0.0
+#define MAX_SUBTITLE_V_MARGIN           10.0
+#define DEFAULT_SUBTITLE_V_MARGIN        1.0
+
+#define MIN_SUBTITLE_SCREEN_MARGIN       0.0
+#define MAX_SUBTITLE_SCREEN_MARGIN      50.0
+#define DEFAULT_SUBTITLE_SCREEN_MARGIN   0.0
+
+#define MIN_SUBTITLE_LINE_SPACING        0.0
+#define MAX_SUBTITLE_LINE_SPACING       10.0
+#define DEFAULT_SUBTITLE_LINE_SPACING    0.0
+
 #pragma mark -
 #pragma mark notifications: movie
 extern NSString* MMovieIndexedDurationNotification;

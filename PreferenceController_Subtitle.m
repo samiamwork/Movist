@@ -74,6 +74,10 @@
     [_subtitleVMarginSlider setFloatValue:vMargin];
     [_subtitleVMarginTextField setFloatValue:vMargin];
 
+    float screenMargin = [_defaults floatForKey:MSubtitleScreenMarginKey];
+    [_subtitleScreenMarginSlider setFloatValue:screenMargin];
+    [_subtitleScreenMarginTextField setFloatValue:screenMargin];
+    
     float lineSpacing = [_defaults floatForKey:MSubtitleLineSpacingKey];
     [_subtitleLineSpacingSlider setFloatValue:lineSpacing];
     [_subtitleLineSpacingTextField setFloatValue:lineSpacing];
@@ -309,6 +313,7 @@
         SUBTITLE_POSITION,
         SUBTITLE_H_MARGIN,
         SUBTITLE_V_MARGIN,
+        SUBTITLE_SCREEN_MARGIN,
         SUBTITLE_LINE_SPACING,
     };
 
@@ -334,6 +339,13 @@
             [_subtitleVMarginTextField setFloatValue:vMargin];
             [_defaults setFloat:vMargin forKey:MSubtitleVMarginKey];
             [_appController setSubtitleVMargin:vMargin];
+            break;
+        }
+        case SUBTITLE_SCREEN_MARGIN : {
+            float screenMargin = [_subtitleScreenMarginSlider floatValue];
+            [_subtitleScreenMarginTextField setFloatValue:screenMargin];
+            [_defaults setFloat:screenMargin forKey:MSubtitleScreenMarginKey];
+            [_appController setSubtitleScreenMargin:screenMargin];
             break;
         }
         case SUBTITLE_LINE_SPACING : {

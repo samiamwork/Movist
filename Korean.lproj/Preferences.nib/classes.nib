@@ -154,6 +154,10 @@
 				<string>NSView</string>
 				<key>_subtitlePositionPopUpButton</key>
 				<string>NSPopUpButton</string>
+				<key>_subtitleScreenMarginSlider</key>
+				<string>NSSlider</string>
+				<key>_subtitleScreenMarginTextField</key>
+				<string>NSTextField</string>
 				<key>_subtitleShadowBlurSlider</key>
 				<string>NSSlider</string>
 				<key>_subtitleShadowBlurTextField</key>

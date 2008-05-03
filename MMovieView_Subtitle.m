@@ -169,6 +169,7 @@
 - (int)subtitlePosition { return _subtitlePosition; }
 - (float)subtitleHMargin { return [_subtitleImageOSD hMargin]; }
 - (float)subtitleVMargin { return [_subtitleImageOSD vMargin]; }
+- (float)subtitleScreenMargin { return [_subtitleImageOSD screenMargin]; }
 - (float)subtitleSync { return _subtitleSync; }
 
 - (void)updateSubtitlePosition
@@ -247,6 +248,16 @@
     [_messageOSD setVMargin:vMargin];
     // need not update subtitle
     [self redisplay];
+}
+
+- (void)setSubtitleScreenMargin:(float)screenMargin
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    // need not update _subtitleRenderer.
+    [_subtitleImageOSD setScreenMargin:screenMargin];
+    [_messageOSD setScreenMargin:screenMargin];
+    // need not update subtitle
+    [self updateMovieRect:TRUE];
 }
 
 - (void)setSubtitleLineSpacing:(float)lineSpacing

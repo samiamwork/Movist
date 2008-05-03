@@ -92,6 +92,8 @@
     IBOutlet NSTextField*   _subtitleHMarginTextField;
     IBOutlet NSSlider*      _subtitleVMarginSlider;
     IBOutlet NSTextField*   _subtitleVMarginTextField;
+    IBOutlet NSSlider*      _subtitleScreenMarginSlider;
+    IBOutlet NSTextField*   _subtitleScreenMarginTextField;
     IBOutlet NSSlider*      _subtitleLineSpacingSlider;
     IBOutlet NSTextField*   _subtitleLineSpacingTextField;
     

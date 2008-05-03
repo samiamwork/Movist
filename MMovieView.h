@@ -204,11 +204,13 @@
 - (int)subtitlePosition;
 - (float)subtitleHMargin;
 - (float)subtitleVMargin;
+- (float)subtitleScreenMargin;
 - (void)updateSubtitlePosition;
 - (void)setAutoSubtitlePositionMaxLines:(int)lines;
 - (void)setSubtitlePosition:(int)position;
 - (void)setSubtitleHMargin:(float)hMargin;
 - (void)setSubtitleVMargin:(float)vMargin;
+- (void)setSubtitleScreenMargin:(float)screenMargin;
 - (void)setSubtitleLineSpacing:(float)lineSpacing;
 
 - (float)subtitleSync;

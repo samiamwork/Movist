@@ -110,7 +110,8 @@
 
 - (void)setSubtitleHMargin:(float)hMargin
 {
-    hMargin = (hMargin < 0.0) ? 0.0 : (10.0 < hMargin) ? 10.0 : hMargin;
+    hMargin = MAX(MIN_SUBTITLE_H_MARGIN, hMargin);
+    hMargin = MIN(MAX_SUBTITLE_H_MARGIN, hMargin);
     [_movieView setSubtitleHMargin:hMargin];
     [_movieView setMessage:[NSString localizedStringWithFormat:
         NSLocalizedString(@"Subtitle HMargin %.1f %%", nil), hMargin]];
@@ -118,7 +119,8 @@
 
 - (void)setSubtitleVMargin:(float)vMargin
 {
-    vMargin = (vMargin < 0.0) ? 0.0 : (10.0 < vMargin) ? 10.0 : vMargin;
+    vMargin = MAX(MIN_SUBTITLE_V_MARGIN, vMargin);
+    vMargin = MIN(MAX_SUBTITLE_V_MARGIN, vMargin);
     [_movieView setSubtitleVMargin:vMargin];
     [_movieView setMessage:[NSString localizedStringWithFormat:
         NSLocalizedString(@"Subtitle VMargin %.1f %%", nil), vMargin]];
@@ -136,9 +138,20 @@
     [self setSubtitleVMargin:vmargin];
 }
 
+- (void)setSubtitleScreenMargin:(float)screenMargin
+{
+    screenMargin = MAX(MIN_SUBTITLE_SCREEN_MARGIN, screenMargin);
+    screenMargin = MIN(MAX_SUBTITLE_SCREEN_MARGIN, screenMargin);
+    [_movieView setSubtitleScreenMargin:screenMargin];
+    [_movieView setMessage:[NSString localizedStringWithFormat:
+                            NSLocalizedString(@"Subtitle Screen Margin %.1f", nil),
+                            screenMargin]];
+}
+
 - (void)setSubtitleLineSpacing:(float)spacing
 {
-    spacing = (spacing < 0.0) ? 0.0 : (10.0 < spacing) ? 10.0 : spacing;
+    spacing = MAX(MIN_SUBTITLE_LINE_SPACING, spacing);
+    spacing = MIN(MAX_SUBTITLE_LINE_SPACING, spacing);
     [_movieView setSubtitleLineSpacing:spacing];
     [_movieView setMessage:[NSString localizedStringWithFormat:
         NSLocalizedString(@"Subtitle Line Spacing %.1f", nil), spacing]];

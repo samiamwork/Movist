@@ -79,6 +79,7 @@ extern NSString* MSubtitleShadowDarknessKey;
 extern NSString* MSubtitlePositionKey;
 extern NSString* MSubtitleHMarginKey;
 extern NSString* MSubtitleVMarginKey;
+extern NSString* MSubtitleScreenMarginKey;
 extern NSString* MSubtitleLineSpacingKey;
 
 #pragma mark -
