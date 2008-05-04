@@ -128,7 +128,12 @@ static AudioStreamID _audioStreamID;
 
 - (void)audioDeviceChanged
 {
-    _audioDeviceSupportsDigital = audioDeviceSupportsDigital(&_audioStreamID);
+    BOOL digital = audioDeviceSupportsDigital(&_audioStreamID);
+    if (digital == _audioDeviceSupportsDigital) {
+        return;
+    }
+
+    _audioDeviceSupportsDigital = digital;
     [self performSelectorOnMainThread:@selector(updateDigitalAudioOut:)
                            withObject:self waitUntilDone:FALSE];
 

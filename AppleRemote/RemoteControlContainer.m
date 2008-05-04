@@ -58,7 +58,7 @@
 }
 
 - (void) reset {
-	NSLog(@"reset...");
+	//NSLog(@"reset...");
 	[self willChangeValueForKey:@"listeningToRemote"];
 	[self didChangeValueForKey:@"listeningToRemote"];
 }
