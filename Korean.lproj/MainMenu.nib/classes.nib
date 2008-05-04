@@ -132,14 +132,6 @@
 			<string>NSView</string>
 		</dict>
 		<dict>
-			<key>CLASS</key>
-			<string>MainSeekSlider</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>SeekSlider</string>
-		</dict>
-		<dict>
 			<key>ACTIONS</key>
 			<dict>
 				<key></key>
@@ -151,6 +143,14 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainSeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>SeekSlider</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
