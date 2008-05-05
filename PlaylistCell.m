@@ -146,6 +146,11 @@
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView*)controlView
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(cellFrame));
+    if ([self isHighlighted]) {
+        [[controlView _highlightColorForCell:self] set];
+        NSRectFill(cellFrame);
+    }
+
     NSRect rect = cellFrame;
     rect.size.height /= 2;
     [self drawURL:[_playlistItem movieURL] subtitle:FALSE inRect:rect];

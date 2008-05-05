@@ -49,8 +49,8 @@
     assert(!_running);
 
     // don't [super cleanupTrack].
-    // -[stopAudio] will send [super cleanupTrack]
-    // and performs real cleanup.
+    // -[stopAudio] already sent [super cleanupTrack]
+    // and performed real cleanup.
 }
 
 - (void)quit
