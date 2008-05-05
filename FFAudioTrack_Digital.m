@@ -134,7 +134,19 @@ static int AudioStreamChangeFormat(AudioStreamID i_stream_id, AudioStreamBasicDe
     return TRUE;
 }
 
-- (void)removeData:(double)time
+- (BOOL)removeData
+{
+    [_mutex lock];
+    if ([self isEmpty]) {
+        [_mutex unlock];
+        return FALSE;
+    }
+    _front = (_front + 1) % _bufferCount;
+    [_mutex unlock];
+    return TRUE;
+}
+
+- (void)removeDataUntilTime:(double)time
 {
     [_mutex lock];
     while (![self isEmpty]) {
@@ -481,7 +493,7 @@ static BOOL s_first = TRUE;
     else if (audioTime != 0 && audioTime + 0.02 < currentTime) {
         if (audioTime + 0.2 < currentTime) {
             //TRACE(@"currentTime(%f) > audioTime[%d] %f data removed", currentTime, streamId, audioTime);
-            [_rawDataQueue removeData:currentTime];
+            [_rawDataQueue removeDataUntilTime:currentTime];
 			memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
             [_movie audioTrack:self avFineTuningTime:(double)0];
             return;
@@ -492,7 +504,14 @@ static BOOL s_first = TRUE;
     else {
         [_movie audioTrack:self avFineTuningTime:(double)0];
     }
-    [_rawDataQueue getData:(UInt8*)(audioBuf.mData)];
+
+    if ([_movie muted]) {
+        [_rawDataQueue removeData];
+        memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
+    }
+    else {
+        [_rawDataQueue getData:(UInt8*)(audioBuf.mData)];
+    }
 }
 
 - (void)clearDigitalDataQueue

@@ -22,7 +22,6 @@
 //
 
 #import "FFTrack.h"
-#import "MMovie_FFmpeg.h"
 
 @implementation FFAudioTrack
 
@@ -33,8 +32,9 @@
 
 - (BOOL)initTrack:(int*)errorCode passThrough:(BOOL)passThrough
 {
-    // don't send [super initTrack].
-    // this will be sent in -[startAudio].
+    // don't send [super initTrack:].
+    // -[startAudio] will send [super initTrack:]
+    // and performs real initialization.
 
     PTS_TO_SEC = av_q2d(_stream->time_base);
 	_passThrough = passThrough;
@@ -49,7 +49,8 @@
     assert(!_running);
 
     // don't [super cleanupTrack].
-    // this should be alreay sent in -[stopAudio].
+    // -[stopAudio] will send [super cleanupTrack]
+    // and performs real cleanup.
 }
 
 - (void)quit
