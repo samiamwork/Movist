@@ -30,6 +30,10 @@
 "Pause_space" = "Pause              space";
 "Backward %d sec." = "Backward %d sec.";
 "Forward %d sec." = "Forward %d sec.";
+"Volume Up" = "Volume Up";
+"Volume Down" = "Volume Down";
+"System Volume Up" = "System Volume Up";
+"System Volume Down" = "System Volume Down";
 
 /* MainMenu : Movie */
 "Reopen With %@" = "Reopen With %@";
@@ -51,9 +55,10 @@
 "Pause" = "Pause";
 "Beginning" = "Beginning";
 "End" = "End";
+"Previous Subtitle" = "Previous Subtitle";
+"Next Subtitle" = "Next Subtitle";
 "Previous Frame" = "Previous Frame";
 "Next Frame" = "Next Frame";
-"Volume %.1f" = "Volume %.1f";
 "Play Rate %.1fx" = "Play Rate %.1fx";
 "Range Repeat Beginning %@" = "Range Repeat Beginning %@";
 "Range Repeat End %@" = "Range Repeat End %@";
@@ -67,13 +72,15 @@
 /* Message : Audio */
 "Mute" = "Mute";
 "Unmute" = "Unmute";
+"Volume %.1f" = "Volume %.1f";
+"System Volume %.2f" = "System Volume %.2f";
 "Volume cannot be changed in Digital-Out" = "Volume cannot be changed in Digital-Out";
 
 /* Message : Video */
-"Brightness %.1f" = "Brightness %.1f";
-"Saturation %.1f" = "Saturation %.1f";
-"Contrast %.1f" = "Contrast %.1f";
-"Hue %.1f" = "Hue %.1f";
+"Brightness %.2f" = "Brightness %.2f";
+"Saturation %.2f" = "Saturation %.2f";
+"Contrast %.2f" = "Contrast %.2f";
+"Hue %.2f" = "Hue %.2f";
 
 /* Message: Subtitle */
 "No Subtitle: Reopen with other encodings" = "No Subtitle: Reopen with other encodings";

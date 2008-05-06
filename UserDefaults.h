@@ -60,6 +60,7 @@ extern NSString* MFullScreenUnderScanKey;
 #pragma mark prefs: audio
 extern NSString* MVolumeKey;
 extern NSString* MAutodetectDigitalAudioOutKey;
+extern NSString* MUpdateSystemVolumeKey;
 
 #pragma mark -
 #pragma mark prefs: subtitle

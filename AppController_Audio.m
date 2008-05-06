@@ -25,16 +25,134 @@
 
 #import "MMovie.h"
 
+#import <CoreAudio/CoreAudio.h>
+
 @implementation AppController (Audio)
 
-- (float)preferredVolume:(float)volume
+- (float)systemVolume
 {
-    return [self isCurrentlyDigitalAudioOut] ? DIGITAL_VOLUME :   // always for digital-audio
-                normalizedVolume(MIN(MAX(MIN_VOLUME, volume), MAX_VOLUME));
+    // get device
+    AudioDeviceID device;
+    UInt32 size = sizeof(device);
+    if (noErr != AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+                                          &size, &device)) {
+        TRACE(@"audio-volume error get device");
+        return MIN_SYSTEM_VOLUME;
+    }
+
+    // try set master volume (channel 0)
+    float volume;
+    size = sizeof(volume);
+    if (noErr == AudioDeviceGetProperty(device, 0, 0,
+                                        kAudioDevicePropertyVolumeScalar,
+                                        &size, &volume)) {  //kAudioDevicePropertyVolumeScalarToDecibels
+        return volume;
+    }
+
+    // otherwise, try seperate channels
+    UInt32 channels[2];
+    size = sizeof(channels);
+    if (noErr != AudioDeviceGetProperty(device, 0, 0,
+                                        kAudioDevicePropertyPreferredChannelsForStereo,
+                                        &size, &channels)) {
+        TRACE(@"error getting channel-numbers");
+        return MIN_SYSTEM_VOLUME;
+    }
+
+    float volumes[2];
+    size = sizeof(float);
+    if (noErr != AudioDeviceGetProperty(device, channels[0], 0,
+                                        kAudioDevicePropertyVolumeScalar,
+                                        &size, &volumes[0])) {
+        TRACE(@"error getting volume of channel %d", channels[0]);
+        return MIN_SYSTEM_VOLUME;
+    }
+    if (noErr != AudioDeviceGetProperty(device, channels[1], 0,
+                                        kAudioDevicePropertyVolumeScalar,
+                                        &size, &volumes[1])) {
+        TRACE(@"error getting volume of channel %d", channels[1]);
+        return MIN_SYSTEM_VOLUME;
+    }
+    return (volumes[0] + volumes[1]) / 2.00;
 }
 
-- (void)volumeUp   { [self setVolume:[_volumeSlider floatValue] + 0.1]; }
-- (void)volumeDown { [self setVolume:[_volumeSlider floatValue] - 0.1]; }
+- (void)setSystemVolume:(float)volume
+{
+    // get default device
+    AudioDeviceID device;
+    UInt32 size = sizeof(device);
+    if (noErr != AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+                                          &size, &device)) {
+        TRACE(@"audio-volume error get device");
+        return;
+    }
+
+    // try set master-channel (0) volume
+    Boolean canset = false;
+    size = sizeof(canset);
+    if (noErr == AudioDeviceGetPropertyInfo(device, 0, false,
+                                            kAudioDevicePropertyVolumeScalar,
+                                            &size, &canset) && canset) {
+        size = sizeof(volume);
+        AudioDeviceSetProperty(device, 0, 0, false,
+                               kAudioDevicePropertyVolumeScalar,
+                               size, &volume);
+        return;
+    }
+
+    // else, try seperate channes
+    UInt32 channels[2];
+    size = sizeof(channels);
+    if (noErr != AudioDeviceGetProperty(device, 0, false,
+                                        kAudioDevicePropertyPreferredChannelsForStereo,
+                                        &size,&channels)) {
+        TRACE(@"error getting channel-numbers");
+        return;
+    }
+
+    // set volume
+    size = sizeof(float);
+    if (noErr != AudioDeviceSetProperty(device, 0, channels[0], false,
+                                        kAudioDevicePropertyVolumeScalar,
+                                        size, &volume)) {
+        TRACE(@"error setting volume of channel %d", channels[0]);
+    }
+    if (noErr != AudioDeviceSetProperty(device, 0, channels[1], false,
+                                        kAudioDevicePropertyVolumeScalar,
+                                        size, &volume)) {
+        TRACE(@"error setting volume of channel %d", channels[1]);
+    }
+}
+
+- (int)isUpdateSystemVolume
+{
+    BOOL updateSystemVolume = [_defaults boolForKey:MUpdateSystemVolumeKey];
+    return ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) ?
+                                    !updateSystemVolume : updateSystemVolume;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+- (void)volumeUp
+{
+    if ([self isUpdateSystemVolume]) {
+        [self setVolume:[self systemVolume] + 0.05];
+    }
+    else {
+        [self setVolume:[_volumeSlider floatValue] + 0.1];
+    }
+}
+
+- (void)volumeDown
+{
+    if ([self isUpdateSystemVolume]) {
+        [self setVolume:[self systemVolume] - 0.05];
+    }
+    else {
+        [self setVolume:[_volumeSlider floatValue] - 0.1];
+    }
+}
 
 - (void)setVolume:(float)volume
 {
@@ -42,13 +160,21 @@
     if ([_muteButton state] == NSOnState) {
         [self setMuted:FALSE];
     }
-    volume = [self preferredVolume:volume];
-    [_movie setVolume:volume];
+
     if ([self isCurrentlyDigitalAudioOut]) {
+        [_movie setVolume:DIGITAL_VOLUME];  // always for digital-audio
         [_movieView setMessage:NSLocalizedString(
                                 @"Volume cannot be changed in Digital-Out", nil)];
     }
-    else {
+    else if ([self isUpdateSystemVolume]) {
+        volume = normalizedFloat2(valueInRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
+        [self setSystemVolume:volume];
+        [_movieView setMessage:[NSString stringWithFormat:
+                                NSLocalizedString(@"System Volume %.2f", nil), volume]];
+    }
+    else {  // movie volume
+        volume = normalizedFloat1(valueInRange(volume, MIN_VOLUME, MAX_VOLUME));
+        [_movie setVolume:volume];
         [_movieView setMessage:[NSString stringWithFormat:
                                 NSLocalizedString(@"Volume %.1f", nil), volume]];
         [_defaults setFloat:volume forKey:MVolumeKey];
@@ -59,18 +185,38 @@
 - (void)setMuted:(BOOL)muted
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, muted);
-    [_movie setMuted:muted];
-    [_movieView setMessage:(muted) ? NSLocalizedString(@"Mute", nil) :
-                                     NSLocalizedString(@"Unmute", nil)];
+    if ([self isUpdateSystemVolume]) {
+        [self setSystemVolume:MIN_SYSTEM_VOLUME];
+    }
+    else {
+        [_movie setMuted:muted];
+        [_movieView setMessage:(muted) ? NSLocalizedString(@"Mute", nil) :
+                                         NSLocalizedString(@"Unmute", nil)];
+    }
     [self updateVolumeUI];
 }
 
 - (void)updateVolumeUI
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    float volume = [self preferredVolume:
-                 (_movie) ? [_movie volume] : [_defaults floatForKey:MVolumeKey]];
-    BOOL muted = (_movie) ? [_movie muted] : FALSE;
+    float volume;
+    BOOL muted;
+    if ([self isUpdateSystemVolume]) {
+        volume = [self systemVolume];
+        muted = (volume == MIN_SYSTEM_VOLUME);
+
+        // adjust for using same slider min/max range
+        volume = MIN_VOLUME + volume *
+            (MAX_VOLUME - MIN_VOLUME) / (MAX_SYSTEM_VOLUME - MIN_SYSTEM_VOLUME);
+    }
+    else if (_movie) {
+        volume = [_movie volume];
+        muted  = [_movie muted];
+    }
+    else {
+        volume = [_defaults floatForKey:MVolumeKey];
+        muted = FALSE;
+    }
 
     int state = (muted) ? NSOnState : NSOffState;
     if ([_muteMenuItem state] != state) {
@@ -279,6 +425,22 @@
     [_movieMenu update];
 }
 
+- (void)updateVolumeMenuItems
+{
+    if ([_defaults boolForKey:MUpdateSystemVolumeKey]) {
+        [_volumeUpMenuItem setTitle:NSLocalizedString(@"System Volume Up", nil)];
+        [_volumeDownMenuItem setTitle:NSLocalizedString(@"System Volume Down", nil)];
+        [_altVolumeUpMenuItem setTitle:NSLocalizedString(@"Volume Up", nil)];
+        [_altVolumeDownMenuItem setTitle:NSLocalizedString(@"Volume Down", nil)];
+    }
+    else {
+        [_volumeUpMenuItem setTitle:NSLocalizedString(@"Volume Up", nil)];
+        [_volumeDownMenuItem setTitle:NSLocalizedString(@"Volume Down", nil)];
+        [_altVolumeUpMenuItem setTitle:NSLocalizedString(@"System Volume Up", nil)];
+        [_altVolumeDownMenuItem setTitle:NSLocalizedString(@"System Volume Down", nil)];
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark IB actions
@@ -294,9 +456,6 @@
     }
     else {  // volume slider
         [self setVolume:[sender floatValue]];
-
-        [_volumeSlider setFloatValue:[sender floatValue]];
-        [_fsVolumeSlider setFloatValue:[sender floatValue]];
     }
 }
 

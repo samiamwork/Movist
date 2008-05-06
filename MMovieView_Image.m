@@ -361,6 +361,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
     [self lockDraw];
 
+    brightness = normalizedFloat2(valueInRange(brightness, MIN_BRIGHTNESS, MAX_BRIGHTNESS));
     [_colorFilter setValue:[NSNumber numberWithFloat:brightness] forKey:@"inputBrightness"];
     _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
     [self redisplay];
@@ -373,6 +374,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, saturation);
     [self lockDraw];
 
+    saturation = normalizedFloat2(valueInRange(saturation, MIN_SATURATION, MAX_SATURATION));
     [_colorFilter setValue:[NSNumber numberWithFloat:saturation] forKey:@"inputSaturation"];
     _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
     [self redisplay];
@@ -385,6 +387,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, contrast);
     [self lockDraw];
 
+    contrast = normalizedFloat2(valueInRange(contrast, MIN_CONTRAST, MAX_CONTRAST));
     [_colorFilter setValue:[NSNumber numberWithFloat:contrast] forKey:@"inputContrast"];
     _contrastValue = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
     [self redisplay];
@@ -397,6 +400,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, hue);
     [self lockDraw];
 
+    hue = normalizedFloat2(valueInRange(hue, MIN_HUE, MAX_HUE));
     [_hueFilter setValue:[NSNumber numberWithFloat:hue] forKey:@"inputAngle"];
     _hueValue = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
     [self redisplay];

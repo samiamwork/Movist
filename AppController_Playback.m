@@ -71,14 +71,19 @@
     }
 }
 
+- (NSString*)stringByGotoTime:(float)time
+{
+    float duration = [_movie duration];
+    return [NSString stringWithFormat:@"%@/%@ (%d%%)",
+            NSStringFromMovieTime(time), NSStringFromMovieTime(duration),
+            (int)(time * 100 / duration)];
+}
+
 - (void)gotoTime:(float)time
 {
     //TRACE(@"%s %f sec", __PRETTY_FUNCTION__, time);
     if (_movie) {
-        float duration = [_movie duration];
-        [_movieView setMessage:[NSString stringWithFormat:@"%@/%@ (%d%%)",
-            NSStringFromMovieTime(time), NSStringFromMovieTime(duration),
-            (int)(time * 100 / duration)]];
+        [_movieView setMessage:[self stringByGotoTime:time]];
         [_movie gotoTime:time];
     }
 }
@@ -86,13 +91,25 @@
 - (void)seekPrevSubtitle
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self gotoTime:[_movieView prevSubtitleTime]];
+    if (_movie) {
+        float time = [_movieView prevSubtitleTime];
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@",
+                                NSLocalizedString(@"Previous Subtitle", nil),
+                                [self stringByGotoTime:time]]];
+        [_movie gotoTime:time];
+    }
 }
 
 - (void)seekNextSubtitle
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self gotoTime:[_movieView nextSubtitleTime]];
+    if (_movie) {
+        float time = [_movieView nextSubtitleTime];
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@",
+                                NSLocalizedString(@"Next Subtitle", nil),
+                                [self stringByGotoTime:time]]];
+        [_movie gotoTime:time];
+    }
 }
 
 - (void)seekBackward:(unsigned int)indexOfValue
@@ -100,12 +117,12 @@
     //TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
-        float duration = [_movie duration];
         float t = MAX(0, [_movie currentTime] - dt);
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@",
+                                [NSString stringWithFormat:
+                                 NSLocalizedString(@"Backward %d sec.", nil), (int)dt],
+                                [self stringByGotoTime:t]]];
         [_movie seekByTime:-dt];
-        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@ (%d%%)",
-            [NSString stringWithFormat:NSLocalizedString(@"Backward %d sec.", nil), (int)dt],
-            NSStringFromMovieTime(t), NSStringFromMovieTime(duration), (int)(t * 100 / duration)]];
     }
 }
 
@@ -114,12 +131,12 @@
     //TRACE(@"%s %.1f sec.", __PRETTY_FUNCTION__, _seekInterval[indexOfValue]);
     if (_movie) {
         float dt = _seekInterval[indexOfValue];
-        float duration = [_movie duration];
-        float t = MIN([_movie currentTime] + dt, duration);
+        float t = MIN([_movie currentTime] + dt, [_movie duration]);
+        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@",
+                                [NSString stringWithFormat:
+                                 NSLocalizedString(@"Forward %d sec.", nil), (int)dt],
+                                [self stringByGotoTime:t]]];
         [_movie seekByTime:+dt];
-        [_movieView setMessage:[NSString stringWithFormat:@"%@ %@/%@ (%d%%)",
-            [NSString stringWithFormat:NSLocalizedString(@"Forward %d sec.", nil), (int)dt],
-            NSStringFromMovieTime(t), NSStringFromMovieTime(duration), (int)(t * 100 / duration)]];
     }
 }
 
@@ -163,10 +180,7 @@
 - (void)setPlayRate:(float)rate
 {
     //TRACE(@"%s %.1f", __PRETTY_FUNCTION__, rate);
-    rate = MAX(MIN_PLAY_RATE, rate);
-    rate = MIN(rate, MAX_PLAY_RATE);
-    
-    _playRate = rate;
+    _playRate = normalizedFloat1(valueInRange(rate, MIN_PLAY_RATE, MAX_PLAY_RATE));
     [_movieView setMessage:[NSString stringWithFormat:
         NSLocalizedString(@"Play Rate %.1fx", nil), _playRate]];
     [_controlPanel updatePlaybackRateSlider:_playRate];

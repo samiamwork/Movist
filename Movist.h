@@ -247,6 +247,8 @@ enum {
 #define MIN_VOLUME          0.0
 #define MAX_VOLUME          4.0
 #define DEFAULT_VOLUME      1.0
+#define MIN_SYSTEM_VOLUME   0.0
+#define MAX_SYSTEM_VOLUME   1.0
 #define DIGITAL_VOLUME      1.0
 
 #define MIN_PLAY_RATE       0.5
@@ -322,7 +324,9 @@ BOOL isSystemLeopard();
 
 NSArray* movistDragTypes();
 
-float normalizedVolume(float volume);
+float valueInRange(float value, float minValue, float maxValue);
+float normalizedFloat1(float value);
+float normalizedFloat2(float value);
 
 NSString* NSStringFromMovieTime(float time);
 NSString* NSStringFromSubtitlePosition(int position);

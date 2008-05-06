@@ -23,12 +23,15 @@
 #import "PreferenceController.h"
 #import "UserDefaults.h"
 
+#import "AppController.h"
+
 @implementation PreferenceController (Audio)
 
 - (void)initAudioPane
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_autodetectDigitalAudioOutButton setState:[_defaults boolForKey:MAutodetectDigitalAudioOutKey]];
+    [_updateSystemVolumeButton setState:[_defaults boolForKey:MUpdateSystemVolumeKey]];
 }
 
 - (IBAction)autodetectDigitalAudioOutAction:(id)sender
@@ -36,6 +39,14 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL autodetect = [_autodetectDigitalAudioOutButton state];
     [_defaults setBool:autodetect forKey:MAutodetectDigitalAudioOutKey];
+}
+
+- (IBAction)updateSystemVolumeAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL updateSystemVolume = [_updateSystemVolumeButton state];
+    [_defaults setBool:updateSystemVolume forKey:MUpdateSystemVolumeKey];
+    [_appController updateVolumeMenuItems];
 }
 
 @end

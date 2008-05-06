@@ -172,24 +172,24 @@
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, sender);
     if (sender == _videoBrightnessSlider) {
-        [_movieView setBrightness:[sender floatValue]];
+        [_movieView setBrightness:normalizedFloat2([sender floatValue])];
         [_movieView setMessage:[NSString localizedStringWithFormat:
-            NSLocalizedString(@"Brightness %.1f", nil), [_movieView brightness]]];
+            NSLocalizedString(@"Brightness %.2f", nil), [_movieView brightness]]];
     }
     else if (sender == _videoSaturationSlider) {
-        [_movieView setSaturation:[sender floatValue]];
+        [_movieView setSaturation:normalizedFloat2([sender floatValue])];
         [_movieView setMessage:[NSString localizedStringWithFormat:
-            NSLocalizedString(@"Saturation %.1f", nil), [_movieView saturation]]];
+            NSLocalizedString(@"Saturation %.2f", nil), [_movieView saturation]]];
     }
     else if (sender == _videoContrastSlider) {
-        [_movieView setContrast:[sender floatValue]];
+        [_movieView setContrast:normalizedFloat2([sender floatValue])];
         [_movieView setMessage:[NSString localizedStringWithFormat:
-            NSLocalizedString(@"Contrast %.1f", nil), [_movieView contrast]]];
+            NSLocalizedString(@"Contrast %.2f", nil), [_movieView contrast]]];
     }
     else if (sender == _videoHueSlider) {
-        [_movieView setHue:[sender floatValue]];
+        [_movieView setHue:normalizedFloat2([sender floatValue])];
         [_movieView setMessage:[NSString localizedStringWithFormat:
-            NSLocalizedString(@"Hue %.1f", nil), [_movieView hue]]];
+            NSLocalizedString(@"Hue %.2f", nil), [_movieView hue]]];
     }
 }
 

@@ -14,19 +14,19 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>MainLCDView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSView</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>FSSeekSlider</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>SeekSlider</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainLCDView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -132,14 +132,6 @@
 			<string>NSView</string>
 		</dict>
 		<dict>
-			<key>CLASS</key>
-			<string>MainSeekSlider</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>SeekSlider</string>
-		</dict>
-		<dict>
 			<key>ACTIONS</key>
 			<dict>
 				<key></key>
@@ -151,6 +143,14 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainSeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>SeekSlider</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -350,6 +350,10 @@
 				<string>NSMenuItem</string>
 				<key>_altSaveImageMenuItem</key>
 				<string>NSMenuItem</string>
+				<key>_altVolumeDownMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_altVolumeUpMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_aspectRatioMenu</key>
 				<string>NSMenu</string>
 				<key>_audioDeviceTextField</key>
@@ -482,8 +486,12 @@
 				<string>NSMenuItem</string>
 				<key>_syncLaterMenuItem</key>
 				<string>NSMenuItem</string>
+				<key>_volumeDownMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_volumeSlider</key>
 				<string>NSSlider</string>
+				<key>_volumeUpMenuItem</key>
+				<string>NSMenuItem</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>

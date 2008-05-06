@@ -60,6 +60,7 @@
     // audio
     IBOutlet NSView* _audioPane;
     IBOutlet NSButton* _autodetectDigitalAudioOutButton;
+    IBOutlet NSButton* _updateSystemVolumeButton;
 
     // subtitle
     IBOutlet NSView* _subtitlePane;
@@ -166,6 +167,7 @@
 
 - (void)initAudioPane;
 - (IBAction)autodetectDigitalAudioOutAction:(id)sender;
+- (IBAction)updateSystemVolumeAction:(id)sender;
 
 @end
 

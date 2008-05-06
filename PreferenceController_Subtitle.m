@@ -220,8 +220,6 @@
                                size:[_defaults floatForKey:MSubtitleFontSizeKey]];
 }
 
-#define normalizedFloat     normalizedVolume
-
 - (IBAction)subtitleAttributesAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -264,7 +262,7 @@
             break;
         }
         case SUBTITLE_STROKE_WIDTH : {
-            float strokeWidth = normalizedFloat([_subtitleStrokeWidthSlider floatValue]);
+            float strokeWidth = normalizedFloat1([_subtitleStrokeWidthSlider floatValue]);
             [_subtitleStrokeWidthTextField setFloatValue:strokeWidth];
             [_defaults setFloat:strokeWidth forKey:MSubtitleStrokeWidthKey];
             [_movieView setSubtitleStrokeWidth:strokeWidth];
@@ -283,14 +281,14 @@
             break;
         }
         case SUBTITLE_SHADOW_BLUR : {
-            float shadowBlur = normalizedFloat([_subtitleShadowBlurSlider floatValue]);
+            float shadowBlur = normalizedFloat1([_subtitleShadowBlurSlider floatValue]);
             [_subtitleShadowBlurTextField setFloatValue:shadowBlur];
             [_defaults setFloat:shadowBlur forKey:MSubtitleShadowBlurKey];
             [_movieView setSubtitleShadowBlur:shadowBlur];
             break;
         }
         case SUBTITLE_SHADOW_OFFSET : {
-            float shadowOffset = normalizedFloat([_subtitleShadowOffsetSlider floatValue]);
+            float shadowOffset = normalizedFloat1([_subtitleShadowOffsetSlider floatValue]);
             [_subtitleShadowOffsetTextField setFloatValue:shadowOffset];
             [_defaults setFloat:shadowOffset forKey:MSubtitleShadowOffsetKey];
             [_movieView setSubtitleShadowOffset:shadowOffset];

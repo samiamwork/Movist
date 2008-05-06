@@ -61,6 +61,8 @@
 				<string>id</string>
 				<key>updateCheckIntervalAction</key>
 				<string>id</string>
+				<key>updateSystemVolumeAction</key>
+				<string>id</string>
 			</dict>
 			<key>CLASS</key>
 			<string>PreferenceController</string>
@@ -200,6 +202,8 @@
 				<string>NSButton</string>
 				<key>_updateCheckIntervalPopUpButton</key>
 				<string>NSPopUpButton</string>
+				<key>_updateSystemVolumeButton</key>
+				<string>NSButton</string>
 				<key>_videoPane</key>
 				<string>NSView</string>
 			</dict>

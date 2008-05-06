@@ -351,6 +351,7 @@ NSString* videoCodecName(int codecId);
     [self updateAspectRatioMenu];
     [self updateFullScreenFillMenu];
     [self updateAudioTrackMenuItems];
+    [self updateVolumeMenuItems];
     [self updateSubtitleLanguageMenuItems];
     [self updateSubtitlePositionMenuItems];
     [self updateRepeatUI];

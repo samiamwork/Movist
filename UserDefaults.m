@@ -60,6 +60,7 @@ NSString* MFullScreenUnderScanKey           = @"FullScreenUnderScan";
 #pragma mark prefs: audio
 NSString* MVolumeKey                        = @"Volume";
 NSString* MAutodetectDigitalAudioOutKey     = @"AutodetectDigitalAudioOut";
+NSString* MUpdateSystemVolumeKey            = @"UpdateSystemVolume";
 
 #pragma mark -
 #pragma mark prefs: subtitle
@@ -150,6 +151,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     // prefs: audio
     [dict setObject:[NSNumber numberWithFloat:DEFAULT_VOLUME] forKey:MVolumeKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectDigitalAudioOutKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MUpdateSystemVolumeKey];
 
     // prefs: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleEnableKey];

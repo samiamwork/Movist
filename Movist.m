@@ -68,9 +68,21 @@ NSArray* movistDragTypes()
             NSFilenamesPboardType, NSURLPboardType, MPlaylistItemDataType, nil];
 }
 
-float normalizedVolume(float volume)
+float valueInRange(float value, float minValue, float maxValue)
 {
-    return (float)(int)((volume + 0.05f) * 10) / 10;  // make "x.x"
+    return MIN(MAX(minValue, value), maxValue);
+}
+
+float normalizedFloat1(float value)
+{
+    float f = (0 <= value) ? 0.05f : -0.05f;
+    return (float)(int)((value + f) * 10) / 10;     // make "x.x"
+}
+
+float normalizedFloat2(float value)
+{
+    float f = (0 <= value) ? 0.005f : -0.005f;
+    return (float)(int)((value + f) * 100) / 100;   // make "x.xx"
 }
 
 NSString* NSStringFromMovieTime(float time)

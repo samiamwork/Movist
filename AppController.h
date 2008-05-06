@@ -98,6 +98,10 @@
     IBOutlet NSMenuItem* _rateSlowerMenuItem;
     IBOutlet NSMenuItem* _rateFasterMenuItem;
     IBOutlet NSMenuItem* _rateDefaultMenuItem;
+    IBOutlet NSMenuItem* _volumeUpMenuItem;
+    IBOutlet NSMenuItem* _altVolumeUpMenuItem;
+    IBOutlet NSMenuItem* _volumeDownMenuItem;
+    IBOutlet NSMenuItem* _altVolumeDownMenuItem;
     IBOutlet NSMenuItem* _muteMenuItem;
     IBOutlet NSMenu* _subtitleMenu;
     IBOutlet NSMenu* _subtitleEncodingMenu;
@@ -303,7 +307,6 @@
 
 @interface AppController (Audio)
 
-- (float)preferredVolume:(float)volume;
 - (void)volumeUp;
 - (void)volumeDown;
 - (void)setVolume:(float)volume;
@@ -315,6 +318,7 @@
 - (void)autoenableAudioTracks;
 - (void)changeAudioTrack:(int)tag;
 - (void)updateAudioTrackMenuItems;
+- (void)updateVolumeMenuItems;
 
 - (IBAction)volumeAction:(id)sender;
 - (IBAction)muteAction:(id)sender;
