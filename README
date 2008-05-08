@@ -2,19 +2,36 @@ Movist README
 
 1) Licensing
 
-* Read the file COPYING.
-  Movist is licensed under the GNU General Public License Version 3.
+* Movist is licensed under the GNU General Public License Version 3.
+  Read the file COPYING.
+
+* FFmpeg is imported as external library.
+  FFmpeg is licensed under the GNU Lesser General Public License (LGPL).
+  See http://ffmpeg.mplayerhq.hu/index.html.
 
 * AppleRemote is created by Martin Kahr and distributed under the
   MIT-style license. Read the file AppleRemote/license.txt.
 
-* Ogg ...
+* Some useful implementations are copied & modified from lots of
+  open source projects such as VLC and MPlayer,
+  deverloper forums such as cocoabuilder.com and cocoadev.com,
+  and many private deverlopers' home pages or blogs.
 
 
-2) Contact
+2) How to Build
+
+$ svn checkout http://movist.googlecode.com/svn/trunk/ movist
+$ cd movist
+$ sh build_extlib.sh
+$ open Movist.xcodeproj
+and build it.
+
+
+3) Contact
 
 * Official Site:
-  http://cocoable.tistory.com/      (Korean Only)
+  Project Home:   http://code.google.com/p/movist/
+  Blog (Korean):  http://cocoable.tistory.com/
 
 * Developers:
   Yong-Hoe Kim   Mail: cocoable@gmail.com, iChat: dckim2@mac.com

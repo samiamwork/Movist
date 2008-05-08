@@ -29,6 +29,9 @@
 
 @implementation AppController (Audio)
 
+// system volume setter/getter implementations are copied & modified
+// from http://www.cocoadev.com/index.pl?SoundVolume
+
 - (float)systemVolume
 {
     // get device
