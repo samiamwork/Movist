@@ -430,7 +430,7 @@
     [_detailsOutlineView reloadData];
     [_detailsOutlineView setAction:@selector(detailsOutlineViewAction:)];
     
-    if (!isSystemLeopard()) {
+    if (isSystemLeopard()) {
         [_detailsOutlineView expandItem:nil expandChildren:TRUE];
     }
     else {

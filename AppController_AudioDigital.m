@@ -26,7 +26,7 @@
 
 #import "AppController.h"
 #import "UserDefaults.h"
-#import "MMovie_FFmpeg.h"
+#import "MMovie_QuickTime.h"
 
 #import <CoreAudio/CoreAudio.h>
 
@@ -69,59 +69,48 @@ static AudioStreamID _audioStreamID;
             (currentlyDigitalOut) ? NSLocalizedString(@"Digital", nil) :
                                     NSLocalizedString(@"Analog", nil)];
 
-    if (!currentlyDigitalOut) {
-        if (sender) {
-            [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
+    if (currentlyDigitalOut) {
+        if (_movie && [_movie isMemberOfClass:[MMovie_QuickTime class]]) {
+            // get current format
+            OSStatus err;
+            UInt32 paramSize = sizeof(AudioStreamBasicDescription);
+            AudioStreamBasicDescription format;
+            err = AudioStreamGetProperty(_audioStreamID, 0,
+                                         kAudioStreamPropertyPhysicalFormat,
+                                         &paramSize, &format);
+            if (err != noErr) {
+                TRACE(@"could not get the stream format: [%4.4s]\n", (char*)&err);
+                return FALSE;
+            }
+            // change sample-rate
+            format.mSampleRate = 48000.000000;    // 48.000 kHz by default
+            MTrack* track;
+            NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
+            while (track = [enumerator nextObject]) {
+                // use sample-rate of first enabled audio track
+                if ([track isEnabled] && [track audioSampleRate] != 0) {
+                    format.mSampleRate = [track audioSampleRate];
+                    break;
+                }
+            }
+            // set as current format
+            err = AudioStreamSetProperty(_audioStreamID, 0, 0,
+                                         kAudioStreamPropertyPhysicalFormat,
+                                         sizeof(AudioStreamBasicDescription),
+                                         &format);
+            if (err != noErr) {
+                TRACE(@"could not set the stream format: [%4.4s]\n", (char *)&err);
+                return FALSE;
+            }
         }
-        return TRUE;
-    }
-    if (_movie && [_movie isMemberOfClass:[MMovie_FFmpeg class]]) {
         if (sender) {
             [self setVolume:DIGITAL_VOLUME];   // always
         }
-        return TRUE;
     }
-    
-    OSStatus err;
-    
-    // get current format
-    UInt32 paramSize = sizeof(AudioStreamBasicDescription);
-    AudioStreamBasicDescription format;
-    err = AudioStreamGetProperty(_audioStreamID, 0,
-                                 kAudioStreamPropertyPhysicalFormat,
-                                 &paramSize, &format);
-    if (err != noErr) {
-        TRACE(@"could not get the stream format: [%4.4s]\n", (char*)&err);
-        return FALSE;
-    }
-
-    // change sample-rate
-    float sampleRate = 48000.000000;    // 48.000 kHz by default
-    if (_movie) {
-        MTrack* track;
-        NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
-        while (track = [enumerator nextObject]) {
-            if ([track isEnabled]) {    // first enabled audio track
-                sampleRate = [track audioSampleRate];
-                break;
-            }
+    else {
+        if (sender) {
+            [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
         }
-    }
-    if (sampleRate && sampleRate != format.mSampleRate) {
-        format.mSampleRate = sampleRate;
-    }
-
-    // set as current format
-    err = AudioStreamSetProperty(_audioStreamID, 0, 0,
-                                 kAudioStreamPropertyPhysicalFormat,
-                                 sizeof(AudioStreamBasicDescription),
-                                 &format);
-    if (err != noErr) {
-        TRACE(@"could not set the stream format: [%4.4s]\n", (char *)&err);
-        return FALSE;
-    }
-    if (sender) {
-        [self setVolume:DIGITAL_VOLUME];   // always
     }
     return TRUE;
 }

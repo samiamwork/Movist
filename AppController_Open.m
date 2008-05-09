@@ -278,8 +278,12 @@
 
     // update movie
     [self updateDigitalAudioOut:self];
+    // -[autoenableAudioTracks] should be sent after -[updateDigitalAudioOut:]
+    // for selecting only one audio track in digital-out.
     [self autoenableAudioTracks];
-    [_movie setVolume:[_defaults floatForKey:MVolumeKey]];
+    // movie volume should be set again for changed audio tracks.
+    [_movie setVolume:[self isCurrentlyDigitalAudioOut] ?
+                        DIGITAL_VOLUME : [_defaults floatForKey:MVolumeKey]];
     [_movie setMuted:([_muteButton state] == NSOnState)];
     if (!_lastPlayedMovieURL || ![_lastPlayedMovieURL isEqualTo:movieURL]) {
         [_lastPlayedMovieURL release];

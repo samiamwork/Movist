@@ -59,7 +59,7 @@
                                         kAudioDevicePropertyPreferredChannelsForStereo,
                                         &size, &channels)) {
         TRACE(@"error getting channel-numbers");
-        return MIN_SYSTEM_VOLUME;
+        return -1;
     }
 
     float volumes[2];
@@ -68,13 +68,13 @@
                                         kAudioDevicePropertyVolumeScalar,
                                         &size, &volumes[0])) {
         TRACE(@"error getting volume of channel %d", channels[0]);
-        return MIN_SYSTEM_VOLUME;
+        return -1;
     }
     if (noErr != AudioDeviceGetProperty(device, channels[1], 0,
                                         kAudioDevicePropertyVolumeScalar,
                                         &size, &volumes[1])) {
         TRACE(@"error getting volume of channel %d", channels[1]);
-        return MIN_SYSTEM_VOLUME;
+        return -1;
     }
     return (volumes[0] + volumes[1]) / 2.00;
 }
@@ -143,7 +143,7 @@
         [self setVolume:[self systemVolume] + 0.05];
     }
     else {
-        [self setVolume:[_volumeSlider floatValue] + 0.1];
+        [self setVolume:[_defaults floatForKey:MVolumeKey] + 0.1];
     }
 }
 
@@ -153,7 +153,7 @@
         [self setVolume:[self systemVolume] - 0.05];
     }
     else {
-        [self setVolume:[_volumeSlider floatValue] - 0.1];
+        [self setVolume:[_defaults floatForKey:MVolumeKey] - 0.1];
     }
 }
 
@@ -164,23 +164,36 @@
         [self setMuted:FALSE];
     }
 
-    if ([self isCurrentlyDigitalAudioOut]) {
-        [_movie setVolume:DIGITAL_VOLUME];  // always for digital-audio
-        [_movieView setMessage:NSLocalizedString(
-                                @"Volume cannot be changed in Digital-Out", nil)];
+    if (_audioDeviceSupportsDigital) {
+        if ([self isCurrentlyDigitalAudioOut]) {
+            [_movie setVolume:DIGITAL_VOLUME];  // always DIGITAL_VOLUME for digital-audio
+            [_movieView setMessage:NSLocalizedString(@"Volume cannot be changed in Digital-Out", nil)];
+        }
+        else if ([self isUpdateSystemVolume]) {
+            [_movieView setMessage:NSLocalizedString(@"System Volume cannot be changed in Digital-Out Device", nil)];
+        }
+        else {  // movie volume
+            volume = normalizedFloat1(valueInRange(volume, MIN_VOLUME, MAX_VOLUME));
+            [_movie setVolume:volume];
+            [_defaults setFloat:volume forKey:MVolumeKey];
+            [_movieView setMessage:[NSString stringWithFormat:
+                                    NSLocalizedString(@"Volume %.1f", nil), volume]];
+        }
     }
-    else if ([self isUpdateSystemVolume]) {
-        volume = normalizedFloat2(valueInRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
-        [self setSystemVolume:volume];
-        [_movieView setMessage:[NSString stringWithFormat:
-                                NSLocalizedString(@"System Volume %.2f", nil), volume]];
-    }
-    else {  // movie volume
-        volume = normalizedFloat1(valueInRange(volume, MIN_VOLUME, MAX_VOLUME));
-        [_movie setVolume:volume];
-        [_movieView setMessage:[NSString stringWithFormat:
-                                NSLocalizedString(@"Volume %.1f", nil), volume]];
-        [_defaults setFloat:volume forKey:MVolumeKey];
+    else {
+        if ([self isUpdateSystemVolume]) {
+            volume = normalizedFloat2(valueInRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
+            [self setSystemVolume:volume];
+            [_movieView setMessage:[NSString stringWithFormat:
+                                    NSLocalizedString(@"System Volume %.2f", nil), volume]];
+        }
+        else {  // movie volume
+            volume = normalizedFloat1(valueInRange(volume, MIN_VOLUME, MAX_VOLUME));
+            [_movie setVolume:volume];
+            [_defaults setFloat:volume forKey:MVolumeKey];
+            [_movieView setMessage:[NSString stringWithFormat:
+                                    NSLocalizedString(@"Volume %.1f", nil), volume]];
+        }
     }
     [self updateVolumeUI];
 }
@@ -188,13 +201,11 @@
 - (void)setMuted:(BOOL)muted
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, muted);
-    if ([self isUpdateSystemVolume]) {
+    [_movie setMuted:muted];
+    [_movieView setMessage:(muted) ? NSLocalizedString(@"Mute", nil) :
+                                     NSLocalizedString(@"Unmute", nil)];
+    if (![self isCurrentlyDigitalAudioOut] && [self isUpdateSystemVolume]) {
         [self setSystemVolume:MIN_SYSTEM_VOLUME];
-    }
-    else {
-        [_movie setMuted:muted];
-        [_movieView setMessage:(muted) ? NSLocalizedString(@"Mute", nil) :
-                                         NSLocalizedString(@"Unmute", nil)];
     }
     [self updateVolumeUI];
 }
@@ -204,13 +215,13 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     float volume;
     BOOL muted;
-    if ([self isUpdateSystemVolume]) {
-        volume = [self systemVolume];
+    if (!_audioDeviceSupportsDigital && [self isUpdateSystemVolume]) {
+        volume = normalizedFloat2([self systemVolume]);
         muted = (volume == MIN_SYSTEM_VOLUME);
 
         // adjust for using same slider min/max range
-        volume = MIN_VOLUME + volume *
-            (MAX_VOLUME - MIN_VOLUME) / (MAX_SYSTEM_VOLUME - MIN_SYSTEM_VOLUME);
+        volume = normalizedFloat2(MIN_VOLUME + volume *
+            (MAX_VOLUME - MIN_VOLUME) / (MAX_SYSTEM_VOLUME - MIN_SYSTEM_VOLUME));
     }
     else if (_movie) {
         volume = [_movie volume];
@@ -264,7 +275,7 @@
         [_volumeSlider setFloatValue:volume];
         [_fsVolumeSlider setFloatValue:volume];
     }
-    BOOL enabled = !(muted || [self isCurrentlyDigitalAudioOut]);
+    BOOL enabled = !muted && ![self isCurrentlyDigitalAudioOut];
     if ([_volumeSlider isEnabled] != enabled) {
         [_volumeSlider setEnabled:enabled];
         [_fsVolumeSlider setEnabled:enabled];
