@@ -55,6 +55,7 @@ NSString* MFullScreenEffectKey              = @"FullScreenEffect";
 NSString* MFullScreenFillForWideMovieKey    = @"FullScreenFillForWideMovie";
 NSString* MFullScreenFillForStdMovieKey     = @"FullScreenFillForStdMovie";
 NSString* MFullScreenUnderScanKey           = @"FullScreenUnderScan";
+NSString* MBlackoutSecondaryScreenKey	    = @"BlackoutSecondaryScreen";
 
 #pragma mark -
 #pragma mark prefs: audio
@@ -148,6 +149,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithInt:FS_FILL_NEVER] forKey:MFullScreenFillForWideMovieKey];
     [dict setObject:[NSNumber numberWithInt:FS_FILL_NEVER] forKey:MFullScreenFillForStdMovieKey];
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MFullScreenUnderScanKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MBlackoutSecondaryScreenKey];
 
     // prefs: audio
     [dict setObject:[NSNumber numberWithFloat:DEFAULT_VOLUME] forKey:MVolumeKey];

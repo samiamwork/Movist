@@ -68,6 +68,13 @@
     _effect = effect;
 }
 
+- (void)setBlackoutSecondaryScreens:(BOOL)blackout
+{
+    if (blackout && 1 < [[NSScreen screens] count]) {
+        _blackoutWindows = [[NSMutableArray alloc] initWithCapacity:1];
+    }
+}
+
 - (void)setMovieURL:(NSURL*)movieURL
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [movieURL absoluteString]);
@@ -77,6 +84,46 @@
 
     if ([self isNavigatable]) {
         [_fullWindow selectMovie:movieURL];
+    }
+}
+
+- (void)blackoutSecondaryScreens
+{
+    assert(_blackoutWindows != nil);
+    
+    NSScreen* screen;
+    NSWindow* window;
+    NSEnumerator* enumerator = [[NSScreen screens] objectEnumerator];
+    while (screen = [enumerator nextObject]) {
+        if ([_mainWindow screen] == screen) {
+            continue;
+        }
+        NSRect screenRect = [screen frame];
+        screenRect.origin.x = screenRect.origin.y = 0;
+        
+        window = [[[NSWindow alloc] initWithContentRect:screenRect
+                                              styleMask:NSBorderlessWindowMask
+                                                backing:NSBackingStoreBuffered
+                                                  defer:FALSE
+                                                 screen:screen] autorelease];
+        [window setBackgroundColor:[NSColor blackColor]];
+        [window setLevel:NSFloatingWindowLevel];
+        [window displayIfNeeded];
+        [window orderFront:self];
+        
+        [_blackoutWindows addObject:window];
+    }
+}
+
+- (void)unblackoutSecondaryScreens
+{
+    assert(_blackoutWindows != nil);
+    
+    NSWindow* window;
+    NSEnumerator* enumerator = [_blackoutWindows objectEnumerator];
+    while (window = [enumerator nextObject]) {
+        [window orderOut:self];
+		[window release];
     }
 }
 
@@ -123,6 +170,10 @@
 - (void)beginFullScreen
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (_blackoutWindows) {
+        [self blackoutSecondaryScreens];
+    }
+
     BOOL forNavigation = (_movieURL == nil);
 
     float rate;         // for FS_EFFECT_FADE
@@ -253,6 +304,12 @@
         [_mainWindow flushWindow];
         [fader fadeIn:fadeDuration];
         [[_movieView movie] setRate:rate];
+    }
+
+    if (_blackoutWindows) {
+        [self unblackoutSecondaryScreens];
+        [_blackoutWindows release];
+        _blackoutWindows = nil;
     }
 }
 

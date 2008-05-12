@@ -17,6 +17,8 @@
 				<string>id</string>
 				<key>autodetectMovieSeriesAction</key>
 				<string>id</string>
+				<key>blackoutSecondaryScreensAction</key>
+				<string>id</string>
 				<key>checkUpdateNowAction</key>
 				<string>id</string>
 				<key>codecBindingAction</key>
@@ -83,6 +85,8 @@
 				<key>_autodetectDigitalAudioOutButton</key>
 				<string>NSButton</string>
 				<key>_autodetectMovieSeriesButton</key>
+				<string>NSButton</string>
+				<key>_blackoutSecondaryScreensButton</key>
 				<string>NSButton</string>
 				<key>_codecBindingTableView</key>
 				<string>NSTableView</string>

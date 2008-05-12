@@ -110,6 +110,7 @@
             }
         }
 
+        BOOL blackout = [_defaults boolForKey:MBlackoutSecondaryScreenKey];
         int effect = [_defaults integerForKey:MFullScreenEffectKey];
         #if defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
         if ([_mainWindow userSpaceScaleFactor] != 1.0 &&
@@ -119,6 +120,7 @@
         #endif
         _fullScreener = [FullScreener alloc];
         [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
+        [_fullScreener setBlackoutSecondaryScreens:blackout];
         [_fullScreener setEffect:effect];
         [_fullScreener setMovieURL:[self movieURL]];
         [_fullScreener beginFullScreen];

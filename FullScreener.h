@@ -47,12 +47,16 @@
     NSRect _restoreRect;
     NSRect _maxMainRect;
     NSRect _fullMovieRect;
+
+    // for black-out effect
+    NSMutableArray* _blackoutWindows;
 }
 
 - (id)initWithMainWindow:(MainWindow*)mainWindow playPanel:(PlayPanel*)playPanel;
 
 - (FullWindow*)fullWindow;
 - (void)setEffect:(int)effect;
+- (void)setBlackoutSecondaryScreens:(BOOL)blackout;
 - (void)setMovieURL:(NSURL*)movieURL;
 
 - (void)beginFullScreen;

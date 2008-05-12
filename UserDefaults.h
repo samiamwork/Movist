@@ -55,6 +55,7 @@ extern NSString* MFullScreenEffectKey;
 extern NSString* MFullScreenFillForWideMovieKey;
 extern NSString* MFullScreenFillForStdMovieKey;
 extern NSString* MFullScreenUnderScanKey;
+extern NSString* MBlackoutSecondaryScreenKey;
 
 #pragma mark -
 #pragma mark prefs: audio
