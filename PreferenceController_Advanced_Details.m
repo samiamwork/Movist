@@ -24,6 +24,7 @@
 #import "UserDefaults.h"
 
 #import "AppController.h"
+#import "MainWindow.h"
 #import "MMovieView.h"
 
 @interface DetailsNode : NSObject
@@ -70,6 +71,32 @@
 
 @end
 
+@interface CategoryCell : NSTextFieldCell {} @end
+
+@implementation CategoryCell
+
+- (void)drawWithFrame:(NSRect)cellFrame inView:(NSView*)controlView
+{
+    NSImage* image = [NSImage imageNamed:@"OutlineCategoryMid"];
+    NSRect bgRect = cellFrame;
+    bgRect.origin.x -= 17, bgRect.size.width  += 17 + 3;
+    bgRect.origin.y -= 1,  bgRect.size.height += 2;
+    [image setFlipped:TRUE];
+    [image drawInRect:bgRect fromRect:NSZeroRect
+            operation:NSCompositeSourceOver fraction:1.0];
+
+    float fontSize = [NSFont smallSystemFontSize];
+    cellFrame.origin.x += 2, cellFrame.size.width  -= 2;
+    cellFrame.origin.y += 1, cellFrame.size.height -= 2;
+    NSDictionary* attrs = [NSDictionary dictionaryWithObjectsAndKeys:
+                           [NSFont boldSystemFontOfSize:fontSize], NSFontAttributeName,
+                           [NSColor grayColor], NSForegroundColorAttributeName,
+                           nil];
+    [[self stringValue] drawInRect:cellFrame withAttributes:attrs];
+}
+
+@end
+
 @implementation CategoryNode
 
 + (id)categoryNodeWithName:(NSString*)name children:(NSArray*)children
@@ -94,12 +121,17 @@
 - (NSArray*)children { return _children; }
 - (NSString*)value { return @""; }
 
-- (NSCell*)dataCell
+- (NSCell*)settingCell
 {
-    NSTextFieldCell* cell = [[NSTextFieldCell alloc] initTextCell:@""];
+    CategoryCell* cell = [[CategoryCell alloc] initTextCell:@""];
     [cell setControlSize:NSSmallControlSize];
     [cell setEditable:FALSE];
     return [cell autorelease];
+}
+
+- (NSCell*)valueCell
+{
+    return [self settingCell];
 }
 
 @end
@@ -134,6 +166,14 @@
 
 - (NSString*)key { return _key; }
 
+- (NSCell*)settingCell
+{
+    NSTextFieldCell* cell = [[NSTextFieldCell alloc] initTextCell:@""];
+    [cell setControlSize:NSSmallControlSize];
+    [cell setEditable:FALSE];
+    return [cell autorelease];
+}
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -146,7 +186,6 @@
 
 - (NSNumber*)value;
 - (void)setValue:(NSNumber*)boolNumber;
-- (NSCell*)dataCell;
 
 @end
 
@@ -169,7 +208,7 @@
     [defaults setBool:[boolNumber boolValue] forKey:_key];
 }
 
-- (NSCell*)dataCell
+- (NSCell*)valueCell
 {
     NSButtonCell* cell = [[NSButtonCell alloc] initTextCell:@""];
     [cell setControlSize:NSSmallControlSize];
@@ -193,7 +232,6 @@
           minValue:(int)minValue maxValue:(int)maxValue;
 - (NSNumber*)value;
 - (void)setValue:(NSNumber*)intNumber;
-- (NSCell*)dataCell;
 
 @end
 
@@ -228,7 +266,7 @@
     [defaults setInteger:[intNumber intValue] forKey:_key];
 }
 
-- (NSCell*)dataCell
+- (NSCell*)valueCell
 {
     NSNumberFormatter* formatter = [[NSNumberFormatter alloc] init];
     [formatter setFormat:@"0"];
@@ -256,7 +294,6 @@
 
 - (NSString*)value;
 - (void)setValue:(NSString*)string;
-- (NSCell*)dataCell;
 
 @end
 
@@ -279,7 +316,7 @@
     [defaults setObject:string forKey:_key];
 }
 
-- (NSCell*)dataCell
+- (NSCell*)valueCell
 {
     NSTextFieldCell* cell = [[NSTextFieldCell alloc] initTextCell:@""];
     [cell setControlSize:NSSmallControlSize];
@@ -300,7 +337,6 @@
 - (id)initWithName:(NSString*)name key:(NSString*)key titles:(NSArray*)titles;
 - (NSNumber*)value;
 - (void)setValue:(NSNumber*)index;
-- (NSCell*)dataCell;
 
 @end
 
@@ -337,11 +373,11 @@
     [defaults setInteger:[intNumber intValue] forKey:_key];
 }
 
-- (NSCell*)dataCell
+- (NSCell*)valueCell
 {
     NSPopUpButtonCell* cell = [[NSPopUpButtonCell alloc] initTextCell:@""];
-    [cell addItemsWithTitles:_titles];
     [cell setControlSize:NSSmallControlSize];
+    [cell addItemsWithTitles:_titles];
     [cell setBordered:FALSE];
     return [cell autorelease];
 }
@@ -373,6 +409,13 @@
                                        NSLocalizedString(@"Title Center", nil),
                                        NSLocalizedString(@"Bottom Center", nil),
                                        NSLocalizedString(@"Bottom Right", nil),
+                                       nil]],
+       [SelectNode selectNodeWithName:LABEL(@"Window Resize")
+                                  key:MWindowResizeKey
+                               titles:[NSArray arrayWithObjects:
+                                       NSLocalizedString(@"Free", nil),
+                                       NSLocalizedString(@"Adjust to Size", nil),
+                                       NSLocalizedString(@"Adjust to Width", nil),
                                        nil]],
        [SelectNode selectNodeWithName:LABEL(@"Dragging Action on Movie Area")
                                   key:MDraggingActionKey
@@ -429,7 +472,7 @@
     _detailsCategories = categories;
     [_detailsOutlineView reloadData];
     [_detailsOutlineView setAction:@selector(detailsOutlineViewAction:)];
-    
+
     if (isSystemLeopard()) {
         [_detailsOutlineView expandItem:nil expandChildren:TRUE];
     }
@@ -483,6 +526,9 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
     else if ([key isEqualToString:MDraggingActionKey]) {
         [_movieView setDraggingAction:[object intValue]];
     }
+    else if ([key isEqualToString:MWindowResizeKey]) {
+        [_mainWindow setResizeMode:[object intValue]];
+    }
     // video
     else if ([key isEqualToString:MCaptureFormatKey]) {
         [_movieView setCaptureFormat:[object intValue]];
@@ -525,8 +571,14 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
 - (id)dataCellForRow:(int)rowIndex
 {
     NSOutlineView* outlineView = (NSOutlineView*)[self tableView];
-    id cell = [[outlineView itemAtRow:rowIndex] dataCell];
-    return (cell) ? cell : [super dataCellForRow:rowIndex];
+    if ([[self identifier] isEqualToString:@"setting"]) {
+        id cell = [[outlineView itemAtRow:rowIndex] settingCell];
+        return (cell) ? cell : [super dataCellForRow:rowIndex];
+    }
+    else {
+        id cell = [[outlineView itemAtRow:rowIndex] valueCell];
+        return (cell) ? cell : [super dataCellForRow:rowIndex];
+    }
 }
 
 @end

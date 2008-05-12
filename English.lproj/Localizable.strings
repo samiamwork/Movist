@@ -129,6 +129,10 @@
 "Title Center" = "Title Center";
 "Bottom Center" = "Bottom Center";
 "Bottom Right" = "Bottom Right";
+"Window Resize" = "Window Resize";
+"Free" = "Free";
+"Adjust to Size" = "Adjust to Size";
+"Adjust to Width" = "Adjust to Width";
 "Dragging Action on Movie Area" = "Dragging Action on Movie Area";
 "Move Window" = "Move Window";
 "Capture Movie" = "Capture Movie";

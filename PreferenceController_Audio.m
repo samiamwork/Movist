@@ -47,6 +47,7 @@
     BOOL updateSystemVolume = [_updateSystemVolumeButton state];
     [_defaults setBool:updateSystemVolume forKey:MUpdateSystemVolumeKey];
     [_appController updateVolumeMenuItems];
+    [_appController updateVolumeUI];
 }
 
 @end

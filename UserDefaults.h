@@ -94,6 +94,7 @@ extern NSString* MLastUpdateCheckTimeKey;
 // General
 extern NSString* MActivateOnDraggingKey;
 extern NSString* MOpeningResizeKey;
+extern NSString* MWindowResizeKey;
 extern NSString* MDraggingActionKey;
 // Video
 extern NSString* MCaptureFormatKey;

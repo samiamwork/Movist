@@ -57,6 +57,8 @@
     NSUserDefaults* _defaults;
     BOOL _quitWhenWindowClose;
     NSTimer* _updateSystemActivityTimer;
+    BOOL _audioDeviceSupportsDigital;
+    float _systemVolume;
 
     // movie & subtitle
     IBOutlet NSMenu* _movieMenu;
@@ -75,9 +77,6 @@
     NSURL* _lastPlayedMovieURL;
     float _lastPlayedMovieTime;
     NSRange _lastPlayedMovieRepeatRange;
-
-    // digital-audio-out
-    BOOL _audioDeviceSupportsDigital;
 
     // main-menu
     IBOutlet NSMenuItem* _reopenWithMenuItem;

@@ -40,10 +40,10 @@
     if (noErr != AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
                                           &size, &device)) {
         TRACE(@"audio-volume error get device");
-        return MIN_SYSTEM_VOLUME;
+        return -1;
     }
 
-    // try set master volume (channel 0)
+    // try get master volume (channel 0)
     float volume;
     size = sizeof(volume);
     if (noErr == AudioDeviceGetProperty(device, 0, 0,
@@ -81,6 +81,8 @@
 
 - (void)setSystemVolume:(float)volume
 {
+    volume = normalizedFloat2(adjustToRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
+
     // get default device
     AudioDeviceID device;
     UInt32 size = sizeof(device);
@@ -140,7 +142,7 @@
 - (void)volumeUp
 {
     if ([self isUpdateSystemVolume]) {
-        [self setVolume:[self systemVolume] + 0.05];
+        [self setVolume:_systemVolume + 0.05];
     }
     else {
         [self setVolume:[_defaults floatForKey:MVolumeKey] + 0.1];
@@ -150,7 +152,7 @@
 - (void)volumeDown
 {
     if ([self isUpdateSystemVolume]) {
-        [self setVolume:[self systemVolume] - 0.05];
+        [self setVolume:_systemVolume - 0.05];
     }
     else {
         [self setVolume:[_defaults floatForKey:MVolumeKey] - 0.1];
@@ -173,7 +175,7 @@
             [_movieView setMessage:NSLocalizedString(@"System Volume cannot be changed in Digital-Out Device", nil)];
         }
         else {  // movie volume
-            volume = normalizedFloat1(valueInRange(volume, MIN_VOLUME, MAX_VOLUME));
+            volume = normalizedFloat1(adjustToRange(volume, MIN_VOLUME, MAX_VOLUME));
             [_movie setVolume:volume];
             [_defaults setFloat:volume forKey:MVolumeKey];
             [_movieView setMessage:[NSString stringWithFormat:
@@ -182,13 +184,13 @@
     }
     else {
         if ([self isUpdateSystemVolume]) {
-            volume = normalizedFloat2(valueInRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
-            [self setSystemVolume:volume];
+            _systemVolume = normalizedFloat2(adjustToRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
+            [self setSystemVolume:_systemVolume];
             [_movieView setMessage:[NSString stringWithFormat:
                                     NSLocalizedString(@"System Volume %.2f", nil), volume]];
         }
         else {  // movie volume
-            volume = normalizedFloat1(valueInRange(volume, MIN_VOLUME, MAX_VOLUME));
+            volume = normalizedFloat1(adjustToRange(volume, MIN_VOLUME, MAX_VOLUME));
             [_movie setVolume:volume];
             [_defaults setFloat:volume forKey:MVolumeKey];
             [_movieView setMessage:[NSString stringWithFormat:
@@ -205,7 +207,12 @@
     [_movieView setMessage:(muted) ? NSLocalizedString(@"Mute", nil) :
                                      NSLocalizedString(@"Unmute", nil)];
     if (![self isCurrentlyDigitalAudioOut] && [self isUpdateSystemVolume]) {
-        [self setSystemVolume:MIN_SYSTEM_VOLUME];
+        if (muted) {
+            [self setSystemVolume:MIN_SYSTEM_VOLUME];
+        }
+        else if (valueInRange(_systemVolume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME)) {
+            [self setSystemVolume:_systemVolume];
+        }
     }
     [self updateVolumeUI];
 }
@@ -216,12 +223,19 @@
     float volume;
     BOOL muted;
     if (!_audioDeviceSupportsDigital && [self isUpdateSystemVolume]) {
-        volume = normalizedFloat2([self systemVolume]);
-        muted = (volume == MIN_SYSTEM_VOLUME);
-
+        if (_systemVolume < 0) {
+            _systemVolume = [self systemVolume];
+            if (_systemVolume < 0) {
+                return;
+            }
+            _systemVolume = normalizedFloat2(
+                adjustToRange(_systemVolume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
+        }
         // adjust for using same slider min/max range
-        volume = normalizedFloat2(MIN_VOLUME + volume *
-            (MAX_VOLUME - MIN_VOLUME) / (MAX_SYSTEM_VOLUME - MIN_SYSTEM_VOLUME));
+        volume = normalizedFloat2(MIN_VOLUME +
+                                  _systemVolume * (MAX_VOLUME - MIN_VOLUME) /
+                                  (MAX_SYSTEM_VOLUME - MIN_SYSTEM_VOLUME));
+        muted  = [_movie muted];
     }
     else if (_movie) {
         volume = [_movie volume];

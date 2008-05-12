@@ -108,7 +108,7 @@ static AudioStreamID _audioStreamID;
         }
     }
     else {
-        if (sender) {
+        if (sender && ![_defaults boolForKey:MUpdateSystemVolumeKey]) {
             [self setVolume:[_defaults floatForKey:MVolumeKey]];    // restore analog volume
         }
     }

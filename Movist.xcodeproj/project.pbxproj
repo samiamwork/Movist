@@ -52,6 +52,7 @@
 		AF0C512B0C5CDB5800199932 /* MultiClickRemoteBehavior.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51220C5CDB5800199932 /* MultiClickRemoteBehavior.m */; };
 		AF0C512C0C5CDB5800199932 /* RemoteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51240C5CDB5800199932 /* RemoteControl.m */; };
 		AF0C512D0C5CDB5800199932 /* RemoteControlContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */; };
+		AF166D2C0DD882FA0066166E /* OutlineCategoryMid.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF166D2B0DD882FA0066166E /* OutlineCategoryMid.tiff */; };
 		AF16C7F90C296F7400AC0A4B /* ControlPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = AF16C7F80C296F7400AC0A4B /* ControlPanel.m */; };
 		AF1852B20D83FC180017D0A5 /* MSubtitleParser.m in Sources */ = {isa = PBXBuildFile; fileRef = AF1852B00D83FC180017D0A5 /* MSubtitleParser.m */; };
 		AF18535E0D8422A30017D0A5 /* MovistExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = AF18535C0D8422A30017D0A5 /* MovistExtensions.m */; };
@@ -302,6 +303,7 @@
 		AF0C51240C5CDB5800199932 /* RemoteControl.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControl.m; path = AppleRemote/RemoteControl.m; sourceTree = "<group>"; };
 		AF0C51250C5CDB5800199932 /* RemoteControlContainer.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = RemoteControlContainer.h; path = AppleRemote/RemoteControlContainer.h; sourceTree = "<group>"; };
 		AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControlContainer.m; path = AppleRemote/RemoteControlContainer.m; sourceTree = "<group>"; };
+		AF166D2B0DD882FA0066166E /* OutlineCategoryMid.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = OutlineCategoryMid.tiff; path = Images/OutlineCategoryMid.tiff; sourceTree = "<group>"; };
 		AF16C7F70C296F7400AC0A4B /* ControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = ControlPanel.h; sourceTree = "<group>"; };
 		AF16C7F80C296F7400AC0A4B /* ControlPanel.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = ControlPanel.m; sourceTree = "<group>"; };
 		AF1852B00D83FC180017D0A5 /* MSubtitleParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser.m; sourceTree = "<group>"; };
@@ -958,6 +960,7 @@
 				AF1AF9EA0C7F5E4900B89068 /* FFMPEG16.tiff */,
 				AF25C26D0D93EF6000AE9226 /* Action.tiff */,
 				AF25C26E0D93EF6000AE9226 /* ActionPressed.tiff */,
+				AF166D2B0DD882FA0066166E /* OutlineCategoryMid.tiff */,
 			);
 			name = Preferences;
 			sourceTree = "<group>";
@@ -1187,6 +1190,7 @@
 				AF71A61E0DC7775A00CD4037 /* FSPrevMoviePressed.tiff in Resources */,
 				AF71A61F0DC7775A00CD4037 /* FSPrevSeekPressed.tiff in Resources */,
 				AF71A6280DC7781900CD4037 /* FSPlaylistPressed.tiff in Resources */,
+				AF166D2C0DD882FA0066166E /* OutlineCategoryMid.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

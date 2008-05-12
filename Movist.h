@@ -46,6 +46,13 @@ enum {
     OPENING_RESIZE_BOTTOM_RIGHT,
 };
 
+#pragma mark window-resize
+enum {
+    WINDOW_RESIZE_FREE,
+    WINDOW_RESIZE_ADJUST_TO_SIZE,
+    WINDOW_RESIZE_ADJUST_TO_WIDTH,
+};
+
 #pragma mark full-scren transition
 enum {
     FS_EFFECT_NONE,
@@ -94,6 +101,18 @@ enum {
     CAPTURE_FORMAT_PNG,
     CAPTURE_FORMAT_BMP,
     CAPTURE_FORMAT_GIF,
+};
+
+#pragma mark drag & drop
+enum {
+    DRAG_ACTION_NONE,
+    DRAG_ACTION_PLAY_FILES,
+    DRAG_ACTION_PLAY_URL,
+    DRAG_ACTION_ADD_FILES,
+    DRAG_ACTION_ADD_URL,
+    DRAG_ACTION_REPLACE_SUBTITLE_FILE,
+    DRAG_ACTION_REPLACE_SUBTITLE_URL,
+    DRAG_ACTION_REORDER_PLAYLIST,
 };
 
 #pragma mark error-codes
@@ -299,18 +318,7 @@ extern NSString* MMovieEndNotification;
 extern NSString* MPlaylistUpdatedNotification;
 
 #pragma mark -
-#pragma mark drag & drop
-enum {
-    DRAG_ACTION_NONE,
-    DRAG_ACTION_PLAY_FILES,
-    DRAG_ACTION_PLAY_URL,
-    DRAG_ACTION_ADD_FILES,
-    DRAG_ACTION_ADD_URL,
-    DRAG_ACTION_REPLACE_SUBTITLE_FILE,
-    DRAG_ACTION_REPLACE_SUBTITLE_URL,
-    DRAG_ACTION_REORDER_PLAYLIST,
-};
-
+#pragma mark notifications: drag & drop
 extern NSString* MPlaylistItemDataType;
 
 #define MOVIST_DRAG_TYPES   movistDragTypes()
@@ -325,6 +333,7 @@ BOOL isSystemLeopard();
 NSArray* movistDragTypes();
 
 float valueInRange(float value, float minValue, float maxValue);
+float adjustToRange(float value, float minValue, float maxValue);
 float normalizedFloat1(float value);
 float normalizedFloat2(float value);
 

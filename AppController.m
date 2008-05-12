@@ -76,8 +76,8 @@ NSString* videoCodecName(int codecId);
     [_playPanel setControlPanel:_controlPanel];
     [self updatePlayUI];
 
-    [_volumeSlider      setMinValue:MIN_VOLUME];
-    [_volumeSlider      setMaxValue:MAX_VOLUME];
+    [_volumeSlider setMinValue:MIN_VOLUME];
+    [_volumeSlider setMaxValue:MAX_VOLUME];
     [_volumeSlider replaceCell:[CustomSliderCell class]];
     CustomSliderCell* cell = [_volumeSlider cell];
     [cell setImageName:@"MainVolume" backColor:nil trackOffset:5.0 knobOffset:2.0];
@@ -87,6 +87,8 @@ NSString* videoCodecName(int codecId);
     [_fsVolumeSlider replaceCell:[CustomSliderCell class]];
     cell = [_fsVolumeSlider cell];
     [cell setImageName:@"FSVolume" backColor:HUDBackgroundColor trackOffset:0.0 knobOffset:2.0];
+
+    _systemVolume = -1;
     [self updateVolumeUI];
 
     _playRate = DEFAULT_PLAY_RATE;
@@ -203,6 +205,7 @@ NSString* videoCodecName(int codecId);
 
     // initial update preferences: advanced - details : general
     [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
+    [_mainWindow setResizeMode:[_defaults integerForKey:MWindowResizeKey]];
     [_movieView setDraggingAction:[_defaults integerForKey:MDraggingActionKey]];
 
     // initial update preferences: advanced - details : video
@@ -538,6 +541,9 @@ NSString* videoCodecName(int codecId);
     }
     if ([menuItem action] == @selector(reopenMovieAction:)) {
         return (_movie != nil);
+    }
+    if ([menuItem action] == @selector(fullNavigationAction:)) {
+        return [_defaults boolForKey:MFullNavUseKey];
     }
 
     // Controls

@@ -36,11 +36,15 @@
     NSRect _zoomRestoreRect;
     NSPoint _initialDragPoint;
 
+    int _resizeMode;
     BOOL _alwaysOnTop;
 }
 
 - (NSButton*)createDecoderButton;
 - (MMovieView*)movieView;
+
+- (int)resizeMode;
+- (void)setResizeMode:(int)resizeMode;
 
 - (BOOL)alwaysOnTop;
 - (void)setAlwaysOnTop:(BOOL)alwaysOnTop;

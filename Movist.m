@@ -70,6 +70,11 @@ NSArray* movistDragTypes()
 
 float valueInRange(float value, float minValue, float maxValue)
 {
+    return (minValue <= value && value <= maxValue);
+}
+
+float adjustToRange(float value, float minValue, float maxValue)
+{
     return MIN(MAX(minValue, value), maxValue);
 }
 

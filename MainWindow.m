@@ -99,6 +99,9 @@
 
 - (MMovieView*)movieView { return _movieView; }
 
+- (int)resizeMode { return _resizeMode; }
+- (void)setResizeMode:(int)resizeMode { _resizeMode = resizeMode; }
+
 - (BOOL)alwaysOnTop { return _alwaysOnTop; }
 
 #define TopMostWindowLevel  kCGUtilityWindowLevel
@@ -241,6 +244,49 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark resize
+
+- (NSSize)windowWillResize:(NSWindow*)window toSize:(NSSize)proposedFrameSize
+{
+    if ([_movieView movie] != nil &&        // movie should be opened
+        [_movieView window] == window &&    // not to applied for full-screen animation
+        _resizeMode != WINDOW_RESIZE_FREE) {
+        NSSize windowSize = [window frame].size;
+        NSSize contentSize = [[window contentView] frame].size;
+        float hMargin = windowSize.width - contentSize.width;
+        float vMargin = windowSize.height- contentSize.height;
+        hMargin += _movieViewMarginSize.width;
+        vMargin += _movieViewMarginSize.height;
+
+        NSSize pmSize;
+        pmSize.width  = proposedFrameSize.width  - hMargin;
+        pmSize.height = proposedFrameSize.height - vMargin;
+
+        NSSize minWindowSize = [window minSize];
+        NSSize mSize = [[_movieView movie] adjustedSizeByAspectRatio];
+
+        assert(_resizeMode == WINDOW_RESIZE_ADJUST_TO_SIZE ||
+               _resizeMode == WINDOW_RESIZE_ADJUST_TO_WIDTH);
+        float maxWidth = pmSize.height * mSize.width / mSize.height;
+        if (maxWidth < pmSize.width) {
+            pmSize.width = maxWidth;
+            proposedFrameSize.width  = pmSize.width + hMargin;
+            if (proposedFrameSize.width < minWindowSize.width) {
+                proposedFrameSize.width = minWindowSize.width;
+            }
+        }
+        if (_resizeMode == WINDOW_RESIZE_ADJUST_TO_SIZE) {
+            float maxHeight = pmSize.width * mSize.height / mSize.width;
+            if (maxHeight < pmSize.height) {
+                pmSize.height = maxHeight;
+                proposedFrameSize.height = pmSize.height + vMargin;
+                if (proposedFrameSize.height < minWindowSize.height) {
+                    proposedFrameSize.height = minWindowSize.height;
+                }
+            }
+        }
+    }
+    return proposedFrameSize;
+}
 
 //- (void)windowDidResize:(NSNotification*)aNotification {}
 

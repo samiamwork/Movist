@@ -62,6 +62,9 @@
             (resize == OPENING_RESIZE_BOTTOM_RIGHT)  ? ALIGN_WINDOW_BOTTOM_RIGHT :
                                                        ALIGN_WINDOW_TITLE_CENTER;
         NSRect frame = [_mainWindow frameRectForMovieSize:size align:align];
+        if ([[_mainWindow screen] visibleFrame].size.height < frame.size.height) {
+            frame = [_mainWindow frameRectForScreen];
+        }
         [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
         [_movieView setSubtitleVisible:TRUE];
