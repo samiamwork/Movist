@@ -75,6 +75,7 @@
 "Volume %.1f" = "Volume %.1f";
 "System Volume %.2f" = "System Volume %.2f";
 "Volume cannot be changed in Digital-Out" = "Volume cannot be changed in Digital-Out";
+"System Volume cannot be changed in Digital-Out Device" = "System Volume cannot be changed in Digital-Out Device";
 
 /* Message : Video */
 "Brightness %.2f" = "Brightness %.2f";
