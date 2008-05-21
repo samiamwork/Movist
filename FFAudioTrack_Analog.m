@@ -261,24 +261,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 - (BOOL)initAnalogAudio:(int*)errorCode
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
-    AVCodecContext* context = _stream->codec;
-    // FIXME: hack for DTS;
-    if (context->codec_id == CODEC_ID_DTS && context->channels == 5) {
-        TRACE(@"dts audio channel is 5? maybe 6...");
-        context->channels = 6;
-    }  
-    /*
-     if (context->codec_id == CODEC_ID_DTS && 2 < context->channels && 
-     _speakerCount == 2) {
-     TRACE(@"dts audio downmix to 2");
-     context->channels = 2;
-     }
-     */
-    
-    if (![super initTrack:errorCode]) {
-        return FALSE;
-    }
-    
     // create audio unit
     if (![self initAudioUnit]) {
         *errorCode = ERROR_FFMPEG_AUDIO_UNIT_CREATE_FAILED;
@@ -291,6 +273,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     // init playback
     unsigned int queueCapacity = AVCODEC_MAX_AUDIO_FRAME_SIZE * 20 * 5;
     _dataQueue = [[AudioDataQueue alloc] initWithCapacity:queueCapacity];
+    AVCodecContext* context = _stream->codec;
     [_dataQueue setBitRate:sizeof(int16_t) * context->sample_rate * context->channels];
     _nextDecodedTime = 0;
     _nextAudioPts = 0;
@@ -315,8 +298,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     [_dataQueue release];
     _dataQueue = 0;
     _running = FALSE;
-
-    [super cleanupTrack];
 }
 
 - (void)startAnalogAudio
@@ -354,6 +335,8 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     int dataSize, decodedSize, pts, nextPts;
     double decodedTime;
     BOOL newPacket = true;
+
+    //TRACE(@"dts = %lld * %lf = %lf", packet->dts, PTS_TO_SEC, 1. * packet->dts * PTS_TO_SEC);
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
         decodedSize = avcodec_decode_audio2(context,

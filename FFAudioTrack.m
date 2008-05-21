@@ -32,14 +32,21 @@
 
 - (BOOL)initTrack:(int*)errorCode passThrough:(BOOL)passThrough
 {
-    // don't send [super initTrack:].
-    // -[startAudio] will send [super initTrack:]
-    // and performs real initialization.
-
     PTS_TO_SEC = av_q2d(_stream->time_base);
 	_passThrough = passThrough;
     _enabled = FALSE;
     _running = FALSE;
+    
+    AVCodecContext* context = _stream->codec;
+    // FIXME: hack for DTS;
+    if (context->codec_id == CODEC_ID_DTS && context->channels == 5) {
+        TRACE(@"dts audio channel is 5? maybe 6...");
+        context->channels = 6;
+    }  
+
+    if (![super initTrack:errorCode]) {
+        return FALSE;
+    }
     return TRUE;
 }
 
@@ -47,10 +54,8 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     assert(!_running);
-
-    // don't [super cleanupTrack].
-    // -[stopAudio] already sent [super cleanupTrack]
-    // and performed real cleanup.
+    
+    [super cleanupTrack];
 }
 
 - (void)quit

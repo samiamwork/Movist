@@ -1347,7 +1347,10 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/contrib/lib\"";
-				OTHER_LDFLAGS = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib";
+				OTHER_LDFLAGS = (
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libbz2.dylib",
+				);
 				PRODUCT_NAME = Movist;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
@@ -1372,7 +1375,10 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/contrib/lib\"";
-				OTHER_LDFLAGS = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib";
+				OTHER_LDFLAGS = (
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libbz2.dylib",
+				);
 				PRODUCT_NAME = Movist;
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;

@@ -410,16 +410,17 @@ static BOOL s_first = TRUE;
         buffer[i] = 0;
     }
     double decodedAudioTime = (double)1. * packet->dts * PTS_TO_SEC;
-    [_rawDataQueue putData:buffer size:6144 time:decodedAudioTime];
+    [_rawDataQueue putData:buffer size:6144 time:decodedAudioTime];    
 }
 
 - (void)enqueueDtsData:(AVPacket*)packet
 {
+    //TRACE(@"audio time %lld * %lf = %lf", packet->dts, PTS_TO_SEC, 1. * packet->dts * PTS_TO_SEC);
     static const uint8_t HEADER_LE[6] = { 0x72, 0xF8, 0x1F, 0x4E, 0x00, 0x00 };
     static const uint8_t HEADER_BE[6] = { 0xF8, 0x72, 0x4E, 0x1F, 0x00, 0x00 };
     uint32_t i_ac5_spdif_type = 0x0B; // FIXME what is it?
     UInt8 buffer[6144];
-    UInt8* packetPtr = packet->data;
+    const UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
     
     if (_bigEndian) {
@@ -443,19 +444,47 @@ static BOOL s_first = TRUE;
     }
     double decodedAudioTime = (double)1. * packet->dts * PTS_TO_SEC;
 	assert(packetSize + 8 <= 6144/3);
+    //TRACE(@"audio time %lld * %lf = %lf", packet->dts, PTS_TO_SEC, decodedAudioTime);
     [_rawDataQueue putData:buffer size:6144/3 time:decodedAudioTime];        
 }
 
 - (void)putDigitalAudioPacket:(AVPacket*)packet
 {
+    AVCodecContext* context = _stream->codec;
     if (packet->data == s_flushPacket.data) {
+        avcodec_flush_buffers(context);
         return;
-    }    
+    }        
+    
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];    
+    
     if (_stream->codec->codec_id == CODEC_ID_DTS) {
         [self enqueueDtsData:packet];
-        return;
     }
-    [self enqueueAc3Data:packet];
+    else {
+        [self enqueueAc3Data:packet];
+    }
+    // ?????? mkv ????????? ?????? ????????? decoding ??? ????????? ?????? packet ??? dts ?????? ????????? ??????.
+    UInt8* packetPtr = packet->data;
+    int packetSize = packet->size;
+    int16_t audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+    int dataSize, decodedSize;
+    while (0 < packetSize) {
+        dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+        decodedSize = avcodec_decode_audio2(context,
+                                            audioBuf, &dataSize,
+                                            packetPtr, packetSize);
+        if (decodedSize < 0) { 
+            TRACE(@"decodedSize < 0");
+            break;
+        }
+        packetPtr  += decodedSize;
+        packetSize -= decodedSize;
+    }
+    if (packet->data) {
+        av_free_packet(packet);
+    }
+    [pool release];
 }
 
 - (void)nextDigitalAudio:(AudioBuffer)audioBuf

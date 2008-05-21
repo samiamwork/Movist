@@ -97,7 +97,7 @@ typedef struct {
 {
     AVPacket packet;
     int i;
-    for (i = 0; i < 10; i++) {
+    for (i = 0; i < 30;) {
         if ([_movie quitRequested]) {
             break;
         }
@@ -115,11 +115,13 @@ typedef struct {
                            packet.pos - 8, packet.dts, packet.size, 0,
                            (packet.flags & PKT_FLAG_KEY) ? AVINDEX_KEYFRAME : 0);
         [_frameReadMutex unlock];
-        if (packet.stream_index == [self streamIndex] &&
-            (packet.flags & PKT_FLAG_KEY)) {
-            AVStream* stream = _formatContext->streams[packet.stream_index];
-            _indexingTime = packet.dts * av_q2d(stream->time_base);
-            TRACE(@"current %f", packet.dts * av_q2d(stream->time_base));
+        if (packet.stream_index == [self streamIndex]) {
+            if (packet.flags & PKT_FLAG_KEY) {
+                AVStream* stream = _formatContext->streams[packet.stream_index];
+                _indexingTime = packet.dts * av_q2d(stream->time_base);
+                TRACE(@"current %f", packet.dts * av_q2d(stream->time_base));
+            }
+            i++;
         }
         if (_maxFrameSize < packet.size) {
             _maxFrameSize = packet.size;
@@ -169,7 +171,7 @@ typedef struct {
         const NSTimeInterval SKIP_INTERVAL = 0.01;
         int skipCount = 0;
         int tmpCount = 0; // FIXME
-        while (![_movie quitRequested] && !_finished) {
+        while (![_movie quitRequested]) {
             if (skipCount * SKIP_INTERVAL < INDEXING_INTERVAL) {
                 [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:SKIP_INTERVAL]];
                 skipCount++;
