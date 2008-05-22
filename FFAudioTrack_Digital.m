@@ -20,6 +20,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+// The S/PDIF part of the code is based on the auhal audio output
+// module from VideoLAN:
+// Copyright (C) 2005 the VideoLAN team
+// Authors: Derk-Jan Hartman <hartman at videolan dot org>
+
 #import "FFTrack.h"
 #import "MMovie_FFmpeg.h"
 
