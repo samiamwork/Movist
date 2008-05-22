@@ -123,7 +123,6 @@
     NSEnumerator* enumerator = [_blackoutWindows objectEnumerator];
     while (window = [enumerator nextObject]) {
         [window orderOut:self];
-		[window release];
     }
 }
 
@@ -142,7 +141,8 @@
 
     // if currently in menu-bar-screen, hide system UI elements(main-menu, dock)
     NSScreen* menuBarScreen = [[NSScreen screens] objectAtIndex:0];
-    if ([[_mainWindow screen] isEqualTo:menuBarScreen]) {
+    if (_blackoutWindows ||
+        [[_mainWindow screen] isEqualTo:menuBarScreen]) {
         // if cursor is in dock, move cursor out of dock area to hide dock.
         NSRect rc = [menuBarScreen visibleFrame];
         NSPoint p = [NSEvent mouseLocation];
