@@ -60,6 +60,7 @@ enum {
     BOOL _dispatchPacket;
     BOOL _seekComplete;
     BOOL _fileEnded;
+    BOOL _movieEndNotificationPosted;
 
     // playback: play
     float _rate;

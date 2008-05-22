@@ -34,6 +34,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _quitRequested = FALSE;
     _fileEnded = FALSE;
+    _movieEndNotificationPosted = FALSE;
     _dispatchPacket = FALSE;
     _command = COMMAND_NONE;
     _reservedCommand = COMMAND_NONE;
@@ -412,11 +413,13 @@
             }
             else if (DEFAULT_FUNC_CONDITION) {
                 _currentTime = [self duration];
+                _movieEndNotificationPosted = TRUE;
                 [nc postNotificationName:MMovieCurrentTimeNotification object:self];
                 [nc postNotificationName:MMovieEndNotification object:self];
             }
         }
-        if (_fileEnded) {
+        if (_fileEnded && !_movieEndNotificationPosted) {
+            _movieEndNotificationPosted = TRUE;
             [nc postNotificationName:MMovieEndNotification object:self];
         }
 
