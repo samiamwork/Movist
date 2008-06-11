@@ -56,18 +56,24 @@
             size.width  *= magnification;
             size.height *= magnification;
         }
+        int align = ALIGN_WINDOW_TITLE_CENTER;
         int resize = [_defaults integerForKey:MOpeningResizeKey];
-        int align =
-            (resize == OPENING_RESIZE_BOTTOM_CENTER) ? ALIGN_WINDOW_BOTTOM_CENTER :
-            (resize == OPENING_RESIZE_BOTTOM_RIGHT)  ? ALIGN_WINDOW_BOTTOM_RIGHT :
-                                                       ALIGN_WINDOW_TITLE_CENTER;
+        switch (resize) {
+            case OPENING_RESIZE_TITLE_CENTER  : align = ALIGN_WINDOW_TITLE_CENTER;  break;
+            case OPENING_RESIZE_TITLE_LEFT    : align = ALIGN_WINDOW_TITLE_LEFT;    break;
+            case OPENING_RESIZE_TITLE_RIGHT   : align = ALIGN_WINDOW_TITLE_RIGHT;   break;
+            case OPENING_RESIZE_BOTTOM_CENTER : align = ALIGN_WINDOW_BOTTOM_CENTER; break;
+            case OPENING_RESIZE_BOTTOM_LEFT   : align = ALIGN_WINDOW_BOTTOM_LEFT;   break;
+            case OPENING_RESIZE_BOTTOM_RIGHT  : align = ALIGN_WINDOW_BOTTOM_RIGHT;  break;
+        }
         NSRect frame = [_mainWindow frameRectForMovieSize:size align:align];
         if ([[_mainWindow screen] visibleFrame].size.height < frame.size.height) {
             frame = [_mainWindow frameRectForScreen];
         }
+        BOOL subtitleVisible = [_movieView subtitleVisible];
         [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
-        [_movieView setSubtitleVisible:TRUE];
+        [_movieView setSubtitleVisible:subtitleVisible];
     }
 }
 
@@ -76,9 +82,11 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isFullScreen]) {
         NSRect frame = [_mainWindow frameRectForScreen];
+
+        BOOL subtitleVisible = [_movieView subtitleVisible];
         [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
-        [_movieView setSubtitleVisible:TRUE];
+        [_movieView setSubtitleVisible:subtitleVisible];
     }
 }
 
@@ -110,7 +118,7 @@
             }
         }
 
-        BOOL blackout = [_defaults boolForKey:MBlackoutSecondaryScreenKey];
+        BOOL blackScreens = [_defaults boolForKey:MFullScreenBlackScreensKey];
         int effect = [_defaults integerForKey:MFullScreenEffectKey];
         #if defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
         if ([_mainWindow userSpaceScaleFactor] != 1.0 &&
@@ -119,8 +127,8 @@
         }
         #endif
         _fullScreener = [FullScreener alloc];
-        [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
-        [_fullScreener setBlackoutSecondaryScreens:blackout];
+        [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel
+                             blackScreens:blackScreens];
         [_fullScreener setEffect:effect];
         [_fullScreener setMovieURL:[self movieURL]];
         [_fullScreener beginFullScreen];
@@ -155,8 +163,10 @@
     }
     else {
         // enter from window-mode with no-movie
+        BOOL blackScreens = [_defaults boolForKey:MFullScreenBlackScreensKey];
         _fullScreener = [FullScreener alloc];
-        [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
+        [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel
+                          blackScreens:blackScreens];
         [_fullScreener setMovieURL:nil];
         [_fullScreener beginFullScreen];
     }

@@ -55,7 +55,7 @@ NSString* MFullScreenEffectKey              = @"FullScreenEffect";
 NSString* MFullScreenFillForWideMovieKey    = @"FullScreenFillForWideMovie";
 NSString* MFullScreenFillForStdMovieKey     = @"FullScreenFillForStdMovie";
 NSString* MFullScreenUnderScanKey           = @"FullScreenUnderScan";
-NSString* MBlackoutSecondaryScreenKey	    = @"BlackoutSecondaryScreen";
+NSString* MFullScreenBlackScreensKey	    = @"FullScreenBlackScreens";
 
 #pragma mark -
 #pragma mark prefs: audio
@@ -86,28 +86,32 @@ NSString* MSubtitleLineSpacingKey           = @"SubtitleLineSpacing";
 
 #pragma mark -
 #pragma mark prefs: advanced
-NSString* MDefaultCodecBindingKey           = @"DefaultCodecBinding";
+NSString* MPrefsAdvancedTabKey              = @"PrefsAdvancedTab";
+
+#pragma mark prefs: advanced - general
 NSString* MUpdateCheckIntervalKey           = @"UpdateCheckInterval";
 NSString* MLastUpdateCheckTimeKey           = @"LastUpdateCheckTime";
 
-#pragma mark -
-#pragma mark prefs: advanced - details
-// General
+#pragma mark prefs: advanced - codec-binding
+NSString* MDefaultCodecBindingKey           = @"DefaultCodecBinding";
+
+#pragma mark prefs: advanced - details: general
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
 NSString* MOpeningResizeKey                 = @"OpeningResize";
 NSString* MWindowResizeKey                  = @"WindowResize";
-NSString* MDraggingActionKey                = @"DraggingAction";
-// Video
+NSString* MViewDragActionKey                = @"ViewDragAction";
+NSString* MFloatingPlaylistKey              = @"FloatingPlaylist";
+#pragma mark prefs: advanced - details: video
 NSString* MCaptureFormatKey                 = @"CaptureFormat";
 NSString* MIncludeLetterBoxOnCaptureKey     = @"IncludeLetterBoxOnCapture";
 NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
-// Audio
-// Subtitle
+#pragma mark prefs: advanced - details: audio
+#pragma mark prefs: advanced - details: subtitle
 NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
 NSString* MAutoSubtitlePositionMaxLinesKey  = @"AutoSubtitlePositionMaxLines";
-// Full Navigation
+#pragma mark prefs: advanced - details: full-nav
 NSString* MFullNavPathKey                   = @"FullNavPath";
 NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 
@@ -149,7 +153,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithInt:FS_FILL_NEVER] forKey:MFullScreenFillForWideMovieKey];
     [dict setObject:[NSNumber numberWithInt:FS_FILL_NEVER] forKey:MFullScreenFillForStdMovieKey];
     [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MFullScreenUnderScanKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MBlackoutSecondaryScreenKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MFullScreenBlackScreensKey];
 
     // prefs: audio
     [dict setObject:[NSNumber numberWithFloat:DEFAULT_VOLUME] forKey:MVolumeKey];
@@ -158,7 +162,11 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 
     // prefs: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleEnableKey];
-    [dict setObject:[NSNumber numberWithInt:kCFStringEncodingDOSKorean] forKey:MSubtitleEncodingKey];
+    CFStringEncoding defaultStringEncoding = CFStringGetSystemEncoding();
+    if (defaultStringEncoding == kCFStringEncodingMacKorean) {  // if Mac/Korean,
+        defaultStringEncoding = kCFStringEncodingDOSKorean;     // then convert to Windows/Korean.
+    }
+    [dict setObject:[NSNumber numberWithInt:defaultStringEncoding] forKey:MSubtitleEncodingKey];
     [dict setObject:[[NSFont boldSystemFontOfSize:1.0] fontName] forKey:MSubtitleFontNameKey];
     [dict setObject:[NSNumber numberWithFloat:24.0] forKey:MSubtitleFontSizeKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleAutoFontSizeKey];
@@ -179,6 +187,8 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_SCREEN_MARGIN] forKey:MSubtitleScreenMarginKey];
     [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_LINE_SPACING] forKey:MSubtitleLineSpacingKey];
 
+    // prefs: advanced
+    [dict setObject:@"" forKey:MPrefsAdvancedTabKey];     // for first tab
     // prefs: advanced - general
     [dict setObject:[NSNumber numberWithInt:CHECK_UPDATE_WEEKLY] forKey:MUpdateCheckIntervalKey];
     [dict setObject:[NSDate dateWithTimeIntervalSince1970:0] forKey:MLastUpdateCheckTimeKey];
@@ -188,7 +198,8 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
     [dict setObject:[NSNumber numberWithInt:OPENING_RESIZE_TITLE_CENTER] forKey:MOpeningResizeKey];
     [dict setObject:[NSNumber numberWithInt:WINDOW_RESIZE_ADJUST_TO_SIZE] forKey:MWindowResizeKey];
-    [dict setObject:[NSNumber numberWithInt:DRAGGING_ACTION_NONE] forKey:MDraggingActionKey];
+    [dict setObject:[NSNumber numberWithInt:VIEW_DRAG_ACTION_NONE] forKey:MViewDragActionKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MFloatingPlaylistKey];
     // prefs: advanced - details: video
     [dict setObject:[NSNumber numberWithInt:CAPTURE_FORMAT_PNG] forKey:MCaptureFormatKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MIncludeLetterBoxOnCaptureKey];

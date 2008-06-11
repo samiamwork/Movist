@@ -31,6 +31,8 @@
 				<string>id</string>
 				<key>fullNavUseAction</key>
 				<string>id</string>
+				<key>fullScreenBlackScreensAction</key>
+				<string>id</string>
 				<key>fullScreenEffectAction</key>
 				<string>id</string>
 				<key>fullScreenFillAction</key>
@@ -99,6 +101,8 @@
 				<key>_fullNavOnStartupButton</key>
 				<string>NSButton</string>
 				<key>_fullNavUseButton</key>
+				<string>NSButton</string>
+				<key>_fullScreenBlackScreensButton</key>
 				<string>NSButton</string>
 				<key>_fullScreenEffectPopUpButton</key>
 				<string>NSPopUpButton</string>

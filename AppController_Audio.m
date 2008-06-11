@@ -49,7 +49,7 @@
     if (noErr == AudioDeviceGetProperty(device, 0, 0,
                                         kAudioDevicePropertyVolumeScalar,
                                         &size, &volume)) {  //kAudioDevicePropertyVolumeScalarToDecibels
-        return volume;
+        return normalizedFloat2(adjustToRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
     }
 
     // otherwise, try seperate channels
@@ -76,7 +76,8 @@
         TRACE(@"error getting volume of channel %d", channels[1]);
         return -1;
     }
-    return (volumes[0] + volumes[1]) / 2.00;
+    volume = (volumes[0] + volumes[1]) / 2.00;
+    return normalizedFloat2(adjustToRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
 }
 
 - (void)setSystemVolume:(float)volume
@@ -129,11 +130,13 @@
     }
 }
 
-- (int)isUpdateSystemVolume
+- (BOOL)isUpdateSystemVolume
 {
-    BOOL updateSystemVolume = [_defaults boolForKey:MUpdateSystemVolumeKey];
-    return ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) ?
-                                    !updateSystemVolume : updateSystemVolume;
+    if (_checkForAltVolumeChange &&
+        ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask)) {
+        return ![_defaults boolForKey:MUpdateSystemVolumeKey];
+    }
+    return [_defaults boolForKey:MUpdateSystemVolumeKey];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -187,7 +190,7 @@
             _systemVolume = normalizedFloat2(adjustToRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
             [self setSystemVolume:_systemVolume];
             [_movieView setMessage:[NSString stringWithFormat:
-                                    NSLocalizedString(@"System Volume %.2f", nil), volume]];
+                                    NSLocalizedString(@"System Volume %.2f", nil), _systemVolume]];
         }
         else {  // movie volume
             volume = normalizedFloat1(adjustToRange(volume, MIN_VOLUME, MAX_VOLUME));
@@ -228,8 +231,6 @@
             if (_systemVolume < 0) {
                 return;
             }
-            _systemVolume = normalizedFloat2(
-                adjustToRange(_systemVolume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
         }
         // adjust for using same slider min/max range
         volume = normalizedFloat2(MIN_VOLUME +
@@ -483,14 +484,22 @@
         [self volumeUp];
     }
     else {  // volume slider
-        [self setVolume:[sender floatValue]];
+        float volume = [sender floatValue];
+        if ([self isUpdateSystemVolume]) {
+            volume = (volume - MIN_VOLUME) *
+                        (MAX_SYSTEM_VOLUME - MIN_SYSTEM_VOLUME) /
+                        (MAX_VOLUME - MIN_VOLUME);
+        }
+        [self setVolume:volume];
     }
 }
 
 - (IBAction)muteAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    _checkForAltVolumeChange = FALSE;
     [self setMuted:([_muteMenuItem state] == NSOffState)];
+    _checkForAltVolumeChange = TRUE;
 }
 
 - (IBAction)audioTrackAction:(id)sender

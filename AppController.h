@@ -59,6 +59,7 @@
     NSTimer* _updateSystemActivityTimer;
     BOOL _audioDeviceSupportsDigital;
     float _systemVolume;
+    BOOL _checkForAltVolumeChange;
 
     // movie & subtitle
     IBOutlet NSMenu* _movieMenu;

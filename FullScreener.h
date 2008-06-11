@@ -48,15 +48,16 @@
     NSRect _maxMainRect;
     NSRect _fullMovieRect;
 
-    // for black-out effect
-    NSMutableArray* _blackoutWindows;
+    // for black-screens effect
+    NSMutableArray* _screenFaders;
 }
 
-- (id)initWithMainWindow:(MainWindow*)mainWindow playPanel:(PlayPanel*)playPanel;
+- (id)initWithMainWindow:(MainWindow*)mainWindow
+               playPanel:(PlayPanel*)playPanel
+            blackScreens:(BOOL)blackScreens;
 
 - (FullWindow*)fullWindow;
 - (void)setEffect:(int)effect;
-- (void)setBlackoutSecondaryScreens:(BOOL)blackout;
 - (void)setMovieURL:(NSURL*)movieURL;
 
 - (void)beginFullScreen;

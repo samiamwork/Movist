@@ -185,7 +185,11 @@
                                 initWithAppController:self playlist:_playlist];
     }
     if (![self playlistWindowVisible]) {
-        if ([self isFullScreen]) {
+        BOOL floating = [_defaults boolForKey:MFloatingPlaylistKey];
+        if (([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask)) {
+            floating = !floating;
+        }
+        if ([self isFullScreen] || floating) {
             [_playlistController showWindow:self];
             [[_playlistController window] setDelegate:self];
             [[_playlistController window] makeKeyWindow];

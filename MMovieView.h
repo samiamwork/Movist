@@ -71,7 +71,7 @@
     // etc. options
     int _fullScreenFill;
     float _fullScreenUnderScan;
-    int _draggingAction;
+    int _viewDragAction;
     int _captureFormat;
     BOOL _includeLetterBoxOnCapture;
     //BOOL _removeGreenBoxByUser;
@@ -227,8 +227,8 @@
 
 @interface MMovieView (Capture)
 
-- (int)draggingActionWithModifierFlags:(unsigned int)flags;
-- (void)setDraggingAction:(int)action;
+- (int)viewDragActionWithModifierFlags:(unsigned int)flags;
+- (void)setViewDragAction:(int)action;
 - (void)setCaptureFormat:(int)format;
 - (void)setIncludeLetterBoxOnCapture:(BOOL)include;
 

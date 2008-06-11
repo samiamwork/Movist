@@ -402,12 +402,17 @@
       [NSArray arrayWithObjects:
        [BoolNode boolNodeWithName:LABEL(@"Activate on Dragging over Main Window")
                               key:MActivateOnDraggingKey],
+       [BoolNode boolNodeWithName:LABEL(@"Floating Playlist")
+                              key:MFloatingPlaylistKey],
        [SelectNode selectNodeWithName:LABEL(@"Window Resize on Opening Movie")
                                   key:MOpeningResizeKey
                                titles:[NSArray arrayWithObjects:
                                        NSLocalizedString(@"Never", nil),
                                        NSLocalizedString(@"Title Center", nil),
+                                       NSLocalizedString(@"Title Left", nil),
+                                       NSLocalizedString(@"Title Right", nil),
                                        NSLocalizedString(@"Bottom Center", nil),
+                                       NSLocalizedString(@"Bottom Left", nil),
                                        NSLocalizedString(@"Bottom Right", nil),
                                        nil]],
        [SelectNode selectNodeWithName:LABEL(@"Window Resize")
@@ -418,7 +423,7 @@
                                        NSLocalizedString(@"Adjust to Width", nil),
                                        nil]],
        [SelectNode selectNodeWithName:LABEL(@"Dragging Action on Movie Area")
-                                  key:MDraggingActionKey
+                                  key:MViewDragActionKey
                                titles:[NSArray arrayWithObjects:
                                        NSLocalizedString(@"None", nil),
                                        NSLocalizedString(@"Move Window", nil),
@@ -523,8 +528,8 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
     if ([key isEqualToString:MActivateOnDraggingKey]) {
         [_movieView setActivateOnDragging:[object boolValue]];
     }
-    else if ([key isEqualToString:MDraggingActionKey]) {
-        [_movieView setDraggingAction:[object intValue]];
+    else if ([key isEqualToString:MViewDragActionKey]) {
+        [_movieView setViewDragAction:[object intValue]];
     }
     else if ([key isEqualToString:MWindowResizeKey]) {
         [_mainWindow setResizeMode:[object intValue]];

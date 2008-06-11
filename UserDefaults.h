@@ -55,7 +55,7 @@ extern NSString* MFullScreenEffectKey;
 extern NSString* MFullScreenFillForWideMovieKey;
 extern NSString* MFullScreenFillForStdMovieKey;
 extern NSString* MFullScreenUnderScanKey;
-extern NSString* MBlackoutSecondaryScreenKey;
+extern NSString* MFullScreenBlackScreensKey;
 
 #pragma mark -
 #pragma mark prefs: audio
@@ -86,28 +86,35 @@ extern NSString* MSubtitleLineSpacingKey;
 
 #pragma mark -
 #pragma mark prefs: advanced
-extern NSString* MDefaultCodecBindingKey;
+extern NSString* MPrefsAdvancedTabKey;
+
+#pragma mark -
+#pragma mark prefs: advanced - general
 extern NSString* MUpdateCheckIntervalKey;
 extern NSString* MLastUpdateCheckTimeKey;
 
 #pragma mark -
-#pragma mark prefs: advanced - details
-// General
+#pragma mark prefs: advanced - codec-binding
+extern NSString* MDefaultCodecBindingKey;
+
+#pragma mark -
+#pragma mark prefs: advanced - details: general
 extern NSString* MActivateOnDraggingKey;
 extern NSString* MOpeningResizeKey;
 extern NSString* MWindowResizeKey;
-extern NSString* MDraggingActionKey;
-// Video
+extern NSString* MViewDragActionKey;
+extern NSString* MFloatingPlaylistKey;
+#pragma mark prefs: advanced - details: video
 extern NSString* MCaptureFormatKey;
 extern NSString* MIncludeLetterBoxOnCaptureKey;
 extern NSString* MRemoveGreenBoxKey;
-// Audio
-// Subtitle
+#pragma mark prefs: advanced - details: audio
+#pragma mark prefs: advanced - details: subtitle
 extern NSString* MDisablePerianSubtitleKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultLanguageIdentifiersKey;
 extern NSString* MAutoSubtitlePositionMaxLinesKey;
-// Full Navigation
+#pragma mark prefs: advanced - details: full-nav
 extern NSString* MFullNavPathKey;
 extern NSString* MShowActualPathForLinkKey;
 

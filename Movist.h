@@ -42,7 +42,10 @@ enum {
 enum {
     OPENING_RESIZE_NEVER,
     OPENING_RESIZE_TITLE_CENTER,
+    OPENING_RESIZE_TITLE_LEFT,
+    OPENING_RESIZE_TITLE_RIGHT,
     OPENING_RESIZE_BOTTOM_CENTER,
+    OPENING_RESIZE_BOTTOM_LEFT,
     OPENING_RESIZE_BOTTOM_RIGHT,
 };
 
@@ -87,11 +90,11 @@ enum {
     SUBTITLE_POSITION_AUTO                  = 100,
 };
 
-#pragma mark dragging-action on movie-area
+#pragma mark view-drag-action
 enum {
-    DRAGGING_ACTION_NONE,
-    DRAGGING_ACTION_MOVE_WINDOW,
-    DRAGGING_ACTION_CAPTURE_MOVIE,
+    VIEW_DRAG_ACTION_NONE,
+    VIEW_DRAG_ACTION_MOVE_WINDOW,
+    VIEW_DRAG_ACTION_CAPTURE_MOVIE,
 };
 
 #pragma mark movie-capture format

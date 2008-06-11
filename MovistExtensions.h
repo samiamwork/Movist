@@ -159,6 +159,8 @@
 - (id)initWithScreen:(NSScreen*)screen;
 
 - (void)fadeOut:(float)duration;
+- (void)fadeOutAsync:(float)duration;
 - (void)fadeIn:(float)duration;
+- (void)fadeInAsync:(float)duration;
 
 @end

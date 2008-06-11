@@ -300,6 +300,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([_movieView movie]) {
+        BOOL subtitleVisible = [_movieView subtitleVisible];
         [_movieView setSubtitleVisible:FALSE];
         if ([self isZoomed]) {
             [self setFrame:_zoomRestoreRect display:TRUE animate:TRUE];
@@ -308,7 +309,7 @@
             _zoomRestoreRect = [self frame];
             [self setFrame:[self frameRectForScreen] display:TRUE animate:TRUE];
         }
-        [_movieView setSubtitleVisible:TRUE];
+        [_movieView setSubtitleVisible:subtitleVisible];
     }
 }
 
@@ -337,27 +338,30 @@
 {
     //TRACE(@"%s %@ (%d)", __PRETTY_FUNCTION__, NSStringFromSize(movieSize), align);
     NSRect sr = [[self screen] visibleFrame];
+    NSRect frame = [self frame];
     NSSize frameSize = [self frameSizeForMovieSize:movieSize];
-    NSRect frame;
-    if (align == ALIGN_WINDOW_TITLE_CENTER) {
-        frame = [self frame];
-        frame.origin.x -= (frameSize.width - frame.size.width) / 2;
-        frame.origin.y -= frameSize.height - frame.size.height;
-    }
-    else if (align == ALIGN_WINDOW_BOTTOM_CENTER) {
-        frame = [self frame];
-        frame.origin.x -= (frameSize.width - frame.size.width) / 2;
-    }
-    else if (align == ALIGN_WINDOW_BOTTOM_RIGHT) {
-        frame = [self frame];
-        frame.origin.x -= frameSize.width - frame.size.width;
-    }
-    else if (align == ALIGN_SCREEN_CENTER) {
+    if (align == ALIGN_SCREEN_CENTER) {
         frame.origin.x = sr.origin.x + (sr.size.width - frameSize.width) / 2;
         frame.origin.y = sr.origin.y + (sr.size.height- frameSize.height)/ 2;
+        frame.size = frameSize;
     }
-    frame.size = frameSize;
-    
+    else {
+        if (align == ALIGN_WINDOW_TITLE_CENTER ||
+            align == ALIGN_WINDOW_BOTTOM_CENTER) {
+            frame.origin.x -= (frameSize.width - frame.size.width) / 2;
+        }
+        else if (align == ALIGN_WINDOW_TITLE_RIGHT ||
+                 align == ALIGN_WINDOW_BOTTOM_RIGHT) {
+            frame.origin.x -= frameSize.width - frame.size.width;
+        }
+        if (align == ALIGN_WINDOW_TITLE_CENTER ||
+            align == ALIGN_WINDOW_TITLE_RIGHT ||
+            align == ALIGN_WINDOW_TITLE_LEFT) {
+            frame.origin.y -= frameSize.height - frame.size.height;
+        }
+        frame.size = frameSize;
+    }
+
     if (NSMinX(frame) < NSMinX(sr)) {
         frame.origin.x += NSMinX(sr) - NSMinX(frame);
     }

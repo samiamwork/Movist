@@ -56,7 +56,7 @@
     IBOutlet NSPopUpButton* _fullScreenFillForWideMoviePopUpButton;
     IBOutlet NSPopUpButton* _fullScreenFillForStdMoviePopUpButton;
     IBOutlet NSSlider* _fullScreenUnderScanSlider;
-    IBOutlet NSButton* _blackoutSecondaryScreensButton;
+    IBOutlet NSButton* _fullScreenBlackScreensButton;
 
     // audio
     IBOutlet NSView* _audioPane;
@@ -157,7 +157,7 @@
 - (IBAction)fullScreenEffectAction:(id)sender;
 - (IBAction)fullScreenFillAction:(id)sender;
 - (IBAction)fullScreenUnderScanAction:(id)sender;
-- (IBAction)blackoutSecondaryScreensAction:(id)sender;
+- (IBAction)fullScreenBlackScreensAction:(id)sender;
 
 @end
 

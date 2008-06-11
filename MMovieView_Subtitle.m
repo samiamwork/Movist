@@ -74,11 +74,13 @@
 - (void)setSubtitleVisible:(BOOL)visible
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    _subtitleVisible = visible;
-    if (_subtitleVisible) {
-        [self updateSubtitle];
+    if (_subtitleVisible != visible) {
+        _subtitleVisible = visible;
+        if (_subtitleVisible) {
+            [self updateSubtitle];
+        }
+        [self redisplay];
     }
-    [self redisplay];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

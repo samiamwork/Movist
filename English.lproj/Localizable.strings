@@ -128,7 +128,10 @@
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
 "Window Resize on Opening Movie" = "Window Resize on Opening Movie";
 "Title Center" = "Title Center";
+"Title Left" = "Title Left";
+"Title Right" = "Title Right";
 "Bottom Center" = "Bottom Center";
+"Bottom Left" = "Bottom Left";
 "Bottom Right" = "Bottom Right";
 "Window Resize" = "Window Resize";
 "Free" = "Free";
@@ -137,6 +140,7 @@
 "Dragging Action on Movie Area" = "Dragging Action on Movie Area";
 "Move Window" = "Move Window";
 "Capture Movie" = "Capture Movie";
+"Floating Playlist" = "Floating Playlist";
 
 /* Preferences: advanced - details: video */
 "Capture Format" = "Capture Format";

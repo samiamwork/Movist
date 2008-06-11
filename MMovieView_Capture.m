@@ -158,15 +158,15 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma dragging action
+#pragma view drag action
 
-- (void)setDraggingAction:(int)action { _draggingAction = action; }
+- (void)setViewDragAction:(int)action { _viewDragAction = action; }
 
-- (int)draggingActionWithModifierFlags:(unsigned int)flags
+- (int)viewDragActionWithModifierFlags:(unsigned int)flags
 {
-    return (flags & NSControlKeyMask)   ? DRAGGING_ACTION_MOVE_WINDOW :
-           (flags & NSAlternateKeyMask) ? DRAGGING_ACTION_CAPTURE_MOVIE :
-                                          _draggingAction;
+    return (flags & NSControlKeyMask)   ? VIEW_DRAG_ACTION_MOVE_WINDOW :
+           (flags & NSAlternateKeyMask) ? VIEW_DRAG_ACTION_CAPTURE_MOVIE :
+                                          _viewDragAction;
 }
 
 - (NSSize)thumbnailSizeForImageSize:(NSSize)imageSize
@@ -179,13 +179,13 @@
 
 - (void)mouseDragged:(NSEvent*)event
 {
-    int action = [self draggingActionWithModifierFlags:[event modifierFlags]];
-    if (action == DRAGGING_ACTION_MOVE_WINDOW) {
+    int action = [self viewDragActionWithModifierFlags:[event modifierFlags]];
+    if (action == VIEW_DRAG_ACTION_MOVE_WINDOW) {
         if (![[NSApp delegate] isFullScreen]) {
             [[self window] mouseDragged:event];
         }
     }
-    else if (action == DRAGGING_ACTION_CAPTURE_MOVIE) {
+    else if (action == VIEW_DRAG_ACTION_CAPTURE_MOVIE) {
         BOOL alt = ([event modifierFlags] & NSShiftKeyMask) ? TRUE : FALSE;
         _captureImage = [[self captureRect:[self rectForCapture:alt]] retain];
 

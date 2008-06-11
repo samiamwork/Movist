@@ -38,8 +38,8 @@
                         [_defaults integerForKey:MFullScreenFillForStdMovieKey]];
     [_fullScreenUnderScanSlider setFloatValue:
                         [_defaults floatForKey:MFullScreenUnderScanKey]];
-    [_blackoutSecondaryScreensButton setState:
-                        [_defaults boolForKey:MBlackoutSecondaryScreenKey]];
+    [_fullScreenBlackScreensButton setState:
+                        [_defaults boolForKey:MFullScreenBlackScreensKey]];
 }
 
 - (IBAction)fullScreenEffectAction:(id)sender
@@ -71,11 +71,11 @@
     [_appController setFullScreenUnderScan:underScan];
 }
 
-- (IBAction)blackoutSecondaryScreensAction:(id)sender
+- (IBAction)fullScreenBlackScreensAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL blackoutSecondaryScreens = [_blackoutSecondaryScreensButton state];
-    [_defaults setBool:blackoutSecondaryScreens forKey:MBlackoutSecondaryScreenKey];
+    BOOL blackScreens = [_fullScreenBlackScreensButton state];
+    [_defaults setBool:blackScreens forKey:MFullScreenBlackScreensKey];
 }
 
 @end

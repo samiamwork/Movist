@@ -88,6 +88,7 @@ NSString* videoCodecName(int codecId);
     cell = [_fsVolumeSlider cell];
     [cell setImageName:@"FSVolume" backColor:HUDBackgroundColor trackOffset:0.0 knobOffset:2.0];
 
+    _checkForAltVolumeChange = TRUE;
     _systemVolume = -1;
     [self updateVolumeUI];
 
@@ -206,7 +207,7 @@ NSString* videoCodecName(int codecId);
     // initial update preferences: advanced - details : general
     [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
     [_mainWindow setResizeMode:[_defaults integerForKey:MWindowResizeKey]];
-    [_movieView setDraggingAction:[_defaults integerForKey:MDraggingActionKey]];
+    [_movieView setViewDragAction:[_defaults integerForKey:MViewDragActionKey]];
 
     // initial update preferences: advanced - details : video
     [_movieView setCaptureFormat:[_defaults integerForKey:MCaptureFormatKey]];

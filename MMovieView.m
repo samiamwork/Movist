@@ -54,7 +54,7 @@
     // etc. options
     _fullScreenFill = FS_FILL_NEVER;
     _fullScreenUnderScan = 0.0;
-    _draggingAction = DRAGGING_ACTION_NONE;
+    _viewDragAction = VIEW_DRAG_ACTION_NONE;
     _captureFormat = CAPTURE_FORMAT_PNG;
     _includeLetterBoxOnCapture = TRUE;
     _removeGreenBox = FALSE;
@@ -140,6 +140,9 @@
 - (void)lockDraw   { [_drawLock lock]; }
 - (void)unlockDraw { [_drawLock unlock]; }
 - (void)redisplay { [self setNeedsDisplay:TRUE]; }
+
+- (BOOL)isOpaque { return TRUE; }
+- (BOOL)wantsDefaultClipping { return FALSE; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -250,8 +253,8 @@
         [[NSApp delegate] fullScreenAction:self];
     }
     else {
-        int action = [self draggingActionWithModifierFlags:[event modifierFlags]];
-        if (action == DRAGGING_ACTION_MOVE_WINDOW) {
+        int action = [self viewDragActionWithModifierFlags:[event modifierFlags]];
+        if (action == VIEW_DRAG_ACTION_MOVE_WINDOW) {
             if (![[NSApp delegate] isFullScreen]) {
                 [[self window] mouseDown:event];
             }

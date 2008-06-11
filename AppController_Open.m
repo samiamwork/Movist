@@ -276,6 +276,9 @@
     [nc addObserver:self selector:@selector(playlistUpdated:)
                name:MPlaylistUpdatedNotification object:_playlist];
 
+    // don't check for alt-volume-change while opening movie
+    _checkForAltVolumeChange = FALSE;
+
     // update movie
     [self updateDigitalAudioOut:self];
     // -[autoenableAudioTracks] should be sent after -[updateDigitalAudioOut:]
@@ -310,6 +313,7 @@
     }
 
     [self updateUIForOpenedMovieAndSubtitle];
+    _checkForAltVolumeChange = TRUE;
 
     [_movie setRate:_playRate];  // auto play
 

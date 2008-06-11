@@ -29,7 +29,9 @@
 
 @implementation FullScreener
 
-- (id)initWithMainWindow:(MainWindow*)mainWindow playPanel:(PlayPanel*)playPanel
+- (id)initWithMainWindow:(MainWindow*)mainWindow
+               playPanel:(PlayPanel*)playPanel
+            blackScreens:(BOOL)blackScreens
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
@@ -43,6 +45,11 @@
 
         // for animation effect
         [self initAnimation];
+
+        // for black-screens effect
+        if (blackScreens && 1 < [[NSScreen screens] count]) {
+            _screenFaders = [[NSMutableArray alloc] initWithCapacity:1];
+        }
     }
     return self;
 }
@@ -50,6 +57,7 @@
 - (void)dealloc
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_screenFaders release];
     [_fullWindow release];
     [_mainWindow release];
     [_movieView release];
@@ -68,13 +76,6 @@
     _effect = effect;
 }
 
-- (void)setBlackoutSecondaryScreens:(BOOL)blackout
-{
-    if (blackout && 1 < [[NSScreen screens] count]) {
-        _blackoutWindows = [[NSMutableArray alloc] initWithCapacity:1];
-    }
-}
-
 - (void)setMovieURL:(NSURL*)movieURL
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [movieURL absoluteString]);
@@ -87,43 +88,39 @@
     }
 }
 
-- (void)blackoutSecondaryScreens
+// black-screens effect
+// based on patch of Min-Jun Park <pmjpmj@gmail.com>.
+
+#define SCREEN_FADE_DURATION    0.25
+
+- (void)beginBlackScreens
 {
-    assert(_blackoutWindows != nil);
-    
+    assert(_screenFaders != nil);
+
     NSScreen* screen;
-    NSWindow* window;
+    ScreenFader* fader;
     NSEnumerator* enumerator = [[NSScreen screens] objectEnumerator];
     while (screen = [enumerator nextObject]) {
         if ([_mainWindow screen] == screen) {
             continue;
         }
-        NSRect screenRect = [screen frame];
-        screenRect.origin.x = screenRect.origin.y = 0;
-        
-        window = [[[NSWindow alloc] initWithContentRect:screenRect
-                                              styleMask:NSBorderlessWindowMask
-                                                backing:NSBackingStoreBuffered
-                                                  defer:FALSE
-                                                 screen:screen] autorelease];
-        [window setBackgroundColor:[NSColor blackColor]];
-        [window setLevel:NSFloatingWindowLevel];
-        [window displayIfNeeded];
-        [window orderFront:self];
-        
-        [_blackoutWindows addObject:window];
+        fader = [ScreenFader screenFaderWithScreen:screen];
+        [fader fadeOutAsync:SCREEN_FADE_DURATION];
+
+        [_screenFaders addObject:fader];
     }
 }
 
-- (void)unblackoutSecondaryScreens
+- (void)endBlackScreens
 {
-    assert(_blackoutWindows != nil);
+    assert(_screenFaders != nil);
     
-    NSWindow* window;
-    NSEnumerator* enumerator = [_blackoutWindows objectEnumerator];
-    while (window = [enumerator nextObject]) {
-        [window orderOut:self];
+    ScreenFader* fader;
+    NSEnumerator* enumerator = [_screenFaders objectEnumerator];
+    while (fader = [enumerator nextObject]) {
+        [fader fadeInAsync:SCREEN_FADE_DURATION];
     }
+    [_screenFaders removeAllObjects];
 }
 
 - (void)showMainMenuAndDock
@@ -141,7 +138,7 @@
 
     // if currently in menu-bar-screen, hide system UI elements(main-menu, dock)
     NSScreen* menuBarScreen = [[NSScreen screens] objectAtIndex:0];
-    if (_blackoutWindows ||
+    if (_screenFaders ||
         [[_mainWindow screen] isEqualTo:menuBarScreen]) {
         // if cursor is in dock, move cursor out of dock area to hide dock.
         NSRect rc = [menuBarScreen visibleFrame];
@@ -170,8 +167,8 @@
 - (void)beginFullScreen
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_blackoutWindows) {
-        [self blackoutSecondaryScreens];
+    if (_screenFaders) {
+        [self beginBlackScreens];
     }
 
     BOOL forNavigation = (_movieURL == nil);
@@ -204,9 +201,8 @@
     }
 
     BOOL subtitleVisible = [_movieView subtitleVisible];
-    if (subtitleVisible) {
-        [_movieView setSubtitleVisible:FALSE];
-    }
+    [_movieView setSubtitleVisible:FALSE];
+
     // move _movieView to _fullWindow from _mainWindow
     [_mainWindow setHasShadow:FALSE];
     [_mainWindow disableScreenUpdatesUntilFlush];
@@ -232,11 +228,8 @@
             [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
             break;
     }
-    if (subtitleVisible) {
-        [_movieView updateSubtitle];
-        [_movieView setSubtitleVisible:TRUE];
-    }
 
+    [_movieView setSubtitleVisible:subtitleVisible];
     [_fullWindow setAcceptsMouseMovedEvents:TRUE];
 }
 
@@ -247,9 +240,8 @@
     [_playPanel orderOut:self];     // immediately without fade-effect
 
     BOOL subtitleVisible = [_movieView subtitleVisible];
-    if (subtitleVisible) {
-        [_movieView setSubtitleVisible:FALSE];
-    }
+    [_movieView setSubtitleVisible:FALSE];
+
     float rate;         // for FS_EFFECT_FADE
     ScreenFader* fader; // for FS_EFFECT_FADE
     int effect = ([self isNavigatable]) ? FS_EFFECT_FADE : _effect;
@@ -288,10 +280,7 @@
     [_mainWindow enableFlushWindow];
     [_mainWindow flushWindowIfNeeded];
 
-    if (subtitleVisible) {
-        [_movieView updateSubtitle];
-        [_movieView setSubtitleVisible:TRUE];
-    }
+    [_movieView setSubtitleVisible:subtitleVisible];
 
     // restore system UI elements(main-menu, dock)
     [self showMainMenuAndDock];
@@ -306,10 +295,8 @@
         [[_movieView movie] setRate:rate];
     }
 
-    if (_blackoutWindows) {
-        [self unblackoutSecondaryScreens];
-        [_blackoutWindows release];
-        _blackoutWindows = nil;
+    if (_screenFaders) {
+        [self endBlackScreens];
     }
 }
 

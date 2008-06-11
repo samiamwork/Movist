@@ -703,7 +703,7 @@
     [super dealloc];
 }
 
-- (void)fadeOut:(float)duration
+- (void)fadeOut:(float)duration async:(BOOL)async
 {
     if (_fadeWindow) {
         return;
@@ -723,7 +723,7 @@
     [_fadeWindow orderFront:self];
     if (0 < duration) {
         [_fadeWindow fadeWithEffect:NSViewAnimationFadeInEffect
-                       blockingMode:NSAnimationBlocking
+                       blockingMode:(async) ? NSAnimationBlocking : NSAnimationNonblocking
                            duration:duration];
     }
     else {
@@ -731,7 +731,7 @@
     }
 }
 
-- (void)fadeIn:(float)duration
+- (void)fadeIn:(float)duration async:(BOOL)async
 {
     if (!_fadeWindow) {
         return;
@@ -739,12 +739,18 @@
     
     if (0 < duration) {
         [_fadeWindow fadeWithEffect:NSViewAnimationFadeOutEffect
-                       blockingMode:NSAnimationBlocking
+                       blockingMode:(async) ? NSAnimationBlocking : NSAnimationNonblocking
                            duration:duration];
     }
     [_fadeWindow orderOut:self];
     [_fadeWindow release];
     _fadeWindow = nil;
 }
+
+- (void)fadeOut:(float)duration      { [self fadeOut:duration async:FALSE]; }
+- (void)fadeOutAsync:(float)duration { [self fadeOut:duration async:TRUE]; }
+
+- (void)fadeIn:(float)duration       { [self fadeIn:duration async:FALSE]; }
+- (void)fadeInAsync:(float)duration  { [self fadeIn:duration async:TRUE]; }
 
 @end
