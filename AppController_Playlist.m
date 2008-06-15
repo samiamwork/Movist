@@ -83,20 +83,21 @@
 
 - (void)playlistEnded
 {
-    if ([self isFullScreen]) {
+    if ([self isFullNavigation]) {
         if ([_fullScreener isNavigating]) {
             // preview is over => do nothing
         }
-        else if ([_fullScreener isNavigatable]) {
-            [_fullScreener closeCurrent];
-        }
         else {
-            [self endFullScreen];
-            [_movieView setMessage:@""];
-            [_movieView showLogo];
+            [_fullScreener closeCurrent];
         }
     }
     else {
+        if ([self isFullScreen]) {
+            [self endFullScreen];
+        }
+        else if ([self isDesktopBackground]) {
+            [self endDesktopBackground];
+        }
         [_movieView setMessage:@""];
         [_movieView showLogo];
     }
@@ -189,7 +190,7 @@
         if (([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask)) {
             floating = !floating;
         }
-        if ([self isFullScreen] || floating) {
+        if ([self isFullScreen] || [self isDesktopBackground] || floating) {
             [_playlistController showWindow:self];
             [[_playlistController window] setDelegate:self];
             [[_playlistController window] makeKeyWindow];

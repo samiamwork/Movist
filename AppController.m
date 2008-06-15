@@ -161,7 +161,7 @@ NSString* videoCodecName(int codecId);
 
     // initial update preferences: general
     [_mainWindow setAlwaysOnTop:[_defaults boolForKey:MAlwaysOnTopKey]];
-    [self setQuitWhenWindowClose:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
+    // don't set as-desktop-background. it will be set when movie is opened.
     [self setSeekInterval:[_defaults floatForKey:MSeekInterval0Key] atIndex:0];
     [self setSeekInterval:[_defaults floatForKey:MSeekInterval1Key] atIndex:1];
     [self setSeekInterval:[_defaults floatForKey:MSeekInterval2Key] atIndex:2];
@@ -206,7 +206,6 @@ NSString* videoCodecName(int codecId);
 
     // initial update preferences: advanced - details : general
     [_movieView setActivateOnDragging:[_defaults boolForKey:MActivateOnDraggingKey]];
-    [_mainWindow setResizeMode:[_defaults integerForKey:MWindowResizeKey]];
     [_movieView setViewDragAction:[_defaults integerForKey:MViewDragActionKey]];
 
     // initial update preferences: advanced - details : video
@@ -261,7 +260,7 @@ NSString* videoCodecName(int codecId);
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)theApplication
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    return _quitWhenWindowClose;
+    return [_defaults boolForKey:MQuitWhenWindowCloseKey];
 }
 
 - (BOOL)applicationShouldHandleReopen:(NSApplication*)theApplication
@@ -307,7 +306,7 @@ NSString* videoCodecName(int codecId);
 {
     //TRACE(@"%s:\"%@\"", __PRETTY_FUNCTION__, filename);
     [self checkProcessArguments];
-    if ([self isFullScreen] && [_fullScreener isNavigating]) {
+    if ([self isFullNavigation] && [_fullScreener isNavigating]) {
         return FALSE;
     }
     return [self openFile:filename];
@@ -317,7 +316,7 @@ NSString* videoCodecName(int codecId);
 {
     //TRACE(@"%s:{%@}", __PRETTY_FUNCTION__, filenames);
     [self checkProcessArguments];
-    if ([self isFullScreen] && [_fullScreener isNavigating]) {
+    if ([self isFullNavigation] && [_fullScreener isNavigating]) {
         return;
     }
     if ([self openFiles:filenames]) {
@@ -365,12 +364,6 @@ NSString* videoCodecName(int codecId);
     [self updateDecoderUI];
     [self updateDataSizeBpsUI];
     [_playlistController updateUI];
-}
-
-- (void)setQuitWhenWindowClose:(BOOL)quitWhenWindowClose
-{
-    //TRACE(@"%s %d", __PRETTY_FUNCTION__, quitWhenWindowClose);
-    _quitWhenWindowClose = quitWhenWindowClose;
 }
 
 - (void)setIncludeLetterBoxOnCapture:(BOOL)includeLetterBox

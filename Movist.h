@@ -309,6 +309,9 @@ enum {
 #define MAX_SUBTITLE_LINE_SPACING       10.0
 #define DEFAULT_SUBTITLE_LINE_SPACING    0.0
 
+#define TopMostWindowLevel  kCGUtilityWindowLevel
+#define DesktopWindowLevel  kCGDesktopWindowLevel
+
 #pragma mark -
 #pragma mark notifications: movie
 extern NSString* MMovieIndexedDurationNotification;

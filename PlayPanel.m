@@ -22,6 +22,7 @@
 
 #import "PlayPanel.h"
 #import "SeekSlider.h"
+#import "AppController.h"   // NSApp's delegate
 
 @implementation PlayPanel
 
@@ -81,17 +82,13 @@
 {
     [self setAlphaValue:0.0];
     [self orderFront:sender];
-    [self fadeWithEffect:NSViewAnimationFadeInEffect
-            blockingMode:NSAnimationBlocking
-                duration:PLAY_PANEL_FADE_DURATION];
+    [self fadeIn:PLAY_PANEL_FADE_DURATION];
 }
 
 - (void)orderOutWithFadeOut:(id)sender
 {
     if ([self isVisible]) {
-        [self fadeWithEffect:NSViewAnimationFadeOutEffect
-                blockingMode:NSAnimationBlocking
-                    duration:PLAY_PANEL_FADE_DURATION];
+        [self fadeOut:PLAY_PANEL_FADE_DURATION];
     }
     [self orderOut:sender];
 }
@@ -170,7 +167,7 @@
 {
     //TRACE(@"%s (%g,%g,%g)", __PRETTY_FUNCTION__,
     //      [event deltaX], [event deltaY], [event deltaZ]);
-    [[NSApp mainWindow] scrollWheel:event];
+    [[NSApp delegate] scrollWheelAction:event];
 }
 
 @end

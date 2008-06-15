@@ -36,6 +36,7 @@ extern NSString* MAutodetectMovieSeriesKey;
 extern NSString* MAutoFullScreenKey;
 extern NSString* MAutoPlayOnFullScreenKey;
 extern NSString* MAlwaysOnTopKey;
+extern NSString* MDesktopBackgroundKey;
 extern NSString* MDeactivateScreenSaverKey;
 extern NSString* MQuitWhenWindowCloseKey;
 extern NSString* MRememberLastPlayKey;

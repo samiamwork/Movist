@@ -31,6 +31,7 @@
 #import "MSubtitleParser_SRT.h"
 #import "MSubtitleParser_SUB.h"
 
+#import "MainWindow.h"
 #import "MMovieView.h"
 #import "FullScreener.h"
 #import "CustomControls.h"  // for SeekSlider
@@ -106,7 +107,7 @@
 
     // find parser for subtitle's path extension
     NSString* path = [subtitleURL path];
-    NSString* ext = [path pathExtension];
+    NSString* ext = [[path pathExtension] lowercaseString];
     Class parserClass = ([ext isEqualToString:@"smi"]) ? [MSubtitleParser_SMI class] :
                         ([ext isEqualToString:@"srt"]) ? [MSubtitleParser_SRT class] :
                         ([ext isEqualToString:@"idx"] ||
@@ -201,6 +202,9 @@
         if ([_defaults boolForKey:MAutoFullScreenKey]) {
             [self beginFullScreen];
         }
+        else if ([_defaults boolForKey:MDesktopBackgroundKey]) {
+            [self beginDesktopBackground];
+        }
     }
     // subtitles should be set after resizing window.
     [_movieView setSubtitles:_subtitles];
@@ -241,6 +245,9 @@
     // -[closeMovie] should be called after opening new-movie not to display black screen.
     if (!movieURL) {
         [self closeMovie];
+        if ([self isDesktopBackground]) {
+            [self endDesktopBackground];
+        }
         return FALSE;
     }
 
@@ -255,6 +262,9 @@
             [_movieView setError:error info:[s lastPathComponent]];
         }
         else {
+            if ([self isDesktopBackground]) {
+                [self endDesktopBackground];
+            }
             runAlertPanelForOpenError(error, movieURL);
         }
         return FALSE;

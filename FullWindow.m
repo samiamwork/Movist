@@ -76,9 +76,9 @@
                                   backing:NSBackingStoreBuffered
                                     defer:FALSE
                                    screen:screen]) {
+        [self setAutorecalculatesKeyViewLoop:TRUE];
         [self useOptimizedDrawing:TRUE];
         [self setHasShadow:FALSE];
-        [self setAutorecalculatesKeyViewLoop:TRUE];
         [self setContentView:[[[FullView alloc] initWithFrame:NSZeroRect] autorelease]];
 
         _playPanel = [playPanel retain];
@@ -152,15 +152,15 @@
 
 @implementation FullWindow (Navigation)
 
-- (BOOL)isNavigatable   { return (nil != _navView); }
-- (BOOL)isNavigating    { return (_navView && ![_navView isHidden]); }
-- (BOOL)isPreviewing    { return ([self isNavigating] && ![_movieView isHidden]); }
+- (BOOL)isNavigation { return (_navView != nil); }
+- (BOOL)isNavigating { return ([self isNavigation] && ![_navView isHidden]); }
+- (BOOL)isPreviewing { return ([self isNavigating] && ![_movieView isHidden]); }
 
-- (void)selectUpper     { [_navView selectUpper]; }
-- (void)selectLower     { [_navView selectLower]; }
+- (void)selectUpper  { [_navView selectUpper]; }
+- (void)selectLower  { [_navView selectLower]; }
 - (void)selectMovie:(NSURL*)movieURL { [_navView selectMovie:movieURL]; }
 
-- (void)openCurrent     { [_navView openCurrent]; }
+- (void)openCurrent  { [_navView openCurrent]; }
 - (BOOL)closeCurrent
 {
     if ([_playPanel isVisible]) {

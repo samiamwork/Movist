@@ -55,7 +55,6 @@
     PreferenceController* _preferenceController;
     PlaylistController* _playlistController;
     NSUserDefaults* _defaults;
-    BOOL _quitWhenWindowClose;
     NSTimer* _updateSystemActivityTimer;
     BOOL _audioDeviceSupportsDigital;
     float _systemVolume;
@@ -168,7 +167,6 @@
 - (NSURL*)movieURL;
 
 - (void)updateUI;
-- (void)setQuitWhenWindowClose:(BOOL)quitWhenClose;
 - (void)setIncludeLetterBoxOnCapture:(BOOL)includeLetterBox;
 - (void)checkForUpdatesOnStartup;
 - (void)checkForUpdates:(BOOL)manual;
@@ -283,11 +281,17 @@
 - (void)updateAspectRatioMenu;
 
 - (BOOL)isFullScreen;
-- (BOOL)isFullNavigating;
 - (void)beginFullScreen;
 - (void)endFullScreen;
+
+- (BOOL)isDesktopBackground;
+- (void)beginDesktopBackground;
+- (void)endDesktopBackground;
+
+- (BOOL)isFullNavigation;
 - (void)beginFullNavigation;
 - (void)endFullNavigation;
+
 - (void)setFullScreenFill:(int)fill forWideMovie:(BOOL)forWideMovie;
 - (void)setFullScreenFill:(int)fill;
 - (void)setFullScreenUnderScan:(float)underScan;
@@ -320,6 +324,7 @@
 - (void)updateAudioTrackMenuItems;
 - (void)updateVolumeMenuItems;
 
+- (void)scrollWheelAction:(NSEvent*)event;
 - (IBAction)volumeAction:(id)sender;
 - (IBAction)muteAction:(id)sender;
 - (IBAction)audioTrackAction:(id)sender;

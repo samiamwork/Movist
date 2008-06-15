@@ -40,11 +40,25 @@
 - (void)initGeneralPane
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_defaults boolForKey:MAutoFullScreenKey]) {
+        [_defaults setBool:FALSE forKey:MDesktopBackgroundKey];
+    }
     [_autodetectMovieSeriesButton setState:[_defaults boolForKey:MAutodetectMovieSeriesKey]];
     [_autoFullScreenButton setState:[_defaults boolForKey:MAutoFullScreenKey]];
+    [_desktopBackgroundButton setState:[_defaults boolForKey:MDesktopBackgroundKey]];
     [_autoPlayOnFullScreenButton setState:[_defaults boolForKey:MAutoPlayOnFullScreenKey]];
+    if ([_defaults boolForKey:MAutoFullScreenKey]) {
+        [_desktopBackgroundButton setState:NSOffState];
+        [_desktopBackgroundButton setEnabled:FALSE];
+    }
+    if ([_defaults boolForKey:MDesktopBackgroundKey]) {
+        [_autoFullScreenButton setState:NSOffState];
+        [_autoFullScreenButton setEnabled:FALSE];
+    }
+
     [_alwaysOnTopButton setState:[_defaults boolForKey:MAlwaysOnTopKey]];
     [_deactivateScreenSaverButton setState:[_defaults boolForKey:MDeactivateScreenSaverKey]];
+
     [_quitWhenWindowCloseButton setState:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
     [_rememberLastPlayButton setState:[_defaults boolForKey:MRememberLastPlayKey]];
 
@@ -74,9 +88,37 @@
 - (IBAction)autoFullScreenAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_defaults setBool:[_autoFullScreenButton state] forKey:MAutoFullScreenKey];
+    BOOL autoFullScreen = [_autoFullScreenButton state];
+    [_defaults setBool:autoFullScreen forKey:MAutoFullScreenKey];
+
+    [_desktopBackgroundButton setEnabled:!autoFullScreen];
+    if (autoFullScreen) {
+        if ([_defaults boolForKey:MDesktopBackgroundKey]) {
+            [_desktopBackgroundButton setState:NSOffState];
+            [self desktopBackgroundAction:self];
+        }
+    }
 }
 
+- (IBAction)desktopBackgroundAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL desktopBackground = [_desktopBackgroundButton state];
+    [_defaults setBool:desktopBackground forKey:MDesktopBackgroundKey];
+
+    [_autoFullScreenButton setEnabled:!desktopBackground];
+    if (desktopBackground) {
+        if ([_defaults boolForKey:MAutoFullScreenKey]) {
+            [_autoFullScreenButton setState:NSOffState];
+            [self autoFullScreenAction:self];
+        }
+        [_appController beginDesktopBackground];
+    }
+    else {
+        [_appController endDesktopBackground];
+    }
+}
+             
 - (IBAction)autoPlayOnFullScreenAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -105,8 +147,6 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL quitWhenWindowClose = [_quitWhenWindowCloseButton state];
     [_defaults setBool:quitWhenWindowClose forKey:MQuitWhenWindowCloseKey];
-    
-    [_appController setQuitWhenWindowClose:quitWhenWindowClose];
 }
 
 - (IBAction)rememberLastPlayAction:(id)sender

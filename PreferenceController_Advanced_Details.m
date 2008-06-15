@@ -531,9 +531,6 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
     else if ([key isEqualToString:MViewDragActionKey]) {
         [_movieView setViewDragAction:[object intValue]];
     }
-    else if ([key isEqualToString:MWindowResizeKey]) {
-        [_mainWindow setResizeMode:[object intValue]];
-    }
     // video
     else if ([key isEqualToString:MCaptureFormatKey]) {
         [_movieView setCaptureFormat:[object intValue]];

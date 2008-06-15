@@ -54,6 +54,8 @@
 - (void)addString:(NSMutableAttributedString*)string time:(float)time;
 - (void)addString:(NSMutableAttributedString*)string
         beginTime:(float)beginTime endTime:(float)endTime;
+- (void)addImage:(NSImage*)string
+        beginTime:(float)beginTime endTime:(float)endTime;
 - (void)checkEndTimes;
 
 - (NSMutableAttributedString*)stringAtTime:(float)time;

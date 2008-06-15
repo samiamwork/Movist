@@ -265,7 +265,7 @@
 - (void)scrollWheel:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSApp mainWindow] scrollWheel:event];
+    [[NSApp delegate] scrollWheelAction:event];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

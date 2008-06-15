@@ -72,7 +72,6 @@
 		AF30E2A70C2EB114009DB59C /* MMovieView_Message.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */; };
 		AF30E2CE0C2EB3EA009DB59C /* MMovieView_DragDrop.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E2CD0C2EB3EA009DB59C /* MMovieView_DragDrop.m */; };
 		AF30E2EE0C2EB5A2009DB59C /* MainControlPanel.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF30E2ED0C2EB5A2009DB59C /* MainControlPanel.tiff */; };
-		AF30E33A0C2EC195009DB59C /* FullScreener_Animation.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E3380C2EC195009DB59C /* FullScreener_Animation.m */; };
 		AF30E3450C2EC453009DB59C /* MMovie_FFMPEG_Playback.m in Sources */ = {isa = PBXBuildFile; fileRef = AF30E3440C2EC453009DB59C /* MMovie_FFMPEG_Playback.m */; };
 		AF31CED70B7EE40100676AC6 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = AF31CED60B7EE40100676AC6 /* AppController.m */; };
 		AF31CEDD0B7EE42F00676AC6 /* MMovieView.m in Sources */ = {isa = PBXBuildFile; fileRef = AF31CEDC0B7EE42F00676AC6 /* MMovieView.m */; };
@@ -218,6 +217,7 @@
 		AFCD05F90DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFCD05F50DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff */; };
 		AFCD05FA0DBB000200348AB0 /* HUDCheckBoxOn.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFCD05F60DBB000200348AB0 /* HUDCheckBoxOn.tiff */; };
 		AFCD05FB0DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFCD05F70DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff */; };
+		AFCD39520E0454AA00963D8E /* FullScreener_Transition.m in Sources */ = {isa = PBXBuildFile; fileRef = AFCD39510E0454AA00963D8E /* FullScreener_Transition.m */; };
 		AFEE863D0C0C807D00EABE1D /* Movist.icns in Resources */ = {isa = PBXBuildFile; fileRef = AFEE863C0C0C807D00EABE1D /* Movist.icns */; };
 		AFEE91F70CFC706800DB5C7A /* SubtitleRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = AFEE91F50CFC706800DB5C7A /* SubtitleRenderer.m */; };
 		AFEF1EBC0BF8A5160047D887 /* Playlist.m in Sources */ = {isa = PBXBuildFile; fileRef = AFEF1EBB0BF8A5160047D887 /* Playlist.m */; };
@@ -329,7 +329,6 @@
 		AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovieView_Message.m; sourceTree = "<group>"; };
 		AF30E2CD0C2EB3EA009DB59C /* MMovieView_DragDrop.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovieView_DragDrop.m; sourceTree = "<group>"; };
 		AF30E2ED0C2EB5A2009DB59C /* MainControlPanel.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainControlPanel.tiff; path = Images/MainControlPanel.tiff; sourceTree = "<group>"; };
-		AF30E3380C2EC195009DB59C /* FullScreener_Animation.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = FullScreener_Animation.m; sourceTree = "<group>"; };
 		AF30E3440C2EC453009DB59C /* MMovie_FFMPEG_Playback.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovie_FFMPEG_Playback.m; sourceTree = "<group>"; };
 		AF31CED50B7EE40100676AC6 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		AF31CED60B7EE40100676AC6 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
@@ -498,6 +497,7 @@
 		AFCD05F50DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOffPressed.tiff; path = Images/HUDCheckBoxOffPressed.tiff; sourceTree = "<group>"; };
 		AFCD05F60DBB000200348AB0 /* HUDCheckBoxOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOn.tiff; path = Images/HUDCheckBoxOn.tiff; sourceTree = "<group>"; };
 		AFCD05F70DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOnPressed.tiff; path = Images/HUDCheckBoxOnPressed.tiff; sourceTree = "<group>"; };
+		AFCD39510E0454AA00963D8E /* FullScreener_Transition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullScreener_Transition.m; sourceTree = "<group>"; };
 		AFEE863C0C0C807D00EABE1D /* Movist.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Movist.icns; sourceTree = "<group>"; };
 		AFEE91F50CFC706800DB5C7A /* SubtitleRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubtitleRenderer.m; sourceTree = "<group>"; };
 		AFEE91F60CFC706800DB5C7A /* SubtitleRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubtitleRenderer.h; sourceTree = "<group>"; };
@@ -690,7 +690,7 @@
 			children = (
 				AF05D7340C0E022700773A47 /* FullScreener.h */,
 				AF05D7350C0E022700773A47 /* FullScreener.m */,
-				AF30E3380C2EC195009DB59C /* FullScreener_Animation.m */,
+				AFCD39510E0454AA00963D8E /* FullScreener_Transition.m */,
 				AF4B47970BECD17300BCAF81 /* FullWindow.h */,
 				AF4B47980BECD17300BCAF81 /* FullWindow.m */,
 				AF3568F20CF1D6AB00C0621A /* FullNavItems.h */,
@@ -1230,7 +1230,6 @@
 				AF30E2A60C2EB114009DB59C /* MMovieView_Subtitle.m in Sources */,
 				AF30E2A70C2EB114009DB59C /* MMovieView_Message.m in Sources */,
 				AF30E2CE0C2EB3EA009DB59C /* MMovieView_DragDrop.m in Sources */,
-				AF30E33A0C2EC195009DB59C /* FullScreener_Animation.m in Sources */,
 				AF30E3450C2EC453009DB59C /* MMovie_FFMPEG_Playback.m in Sources */,
 				AF51415A0C3BDBE600BDACB7 /* CustomControls.m in Sources */,
 				AF34929D0C48851700CBDA34 /* PreferenceController_Advanced.m in Sources */,
@@ -1275,6 +1274,7 @@
 				AF08532E0DC62B910061B8CD /* MMovieView_Image.m in Sources */,
 				AF0853560DC6307B0061B8CD /* MMovieView_OSD.m in Sources */,
 				AF0853680DC635440061B8CD /* MMovieView_Capture.m in Sources */,
+				AFCD39520E0454AA00963D8E /* FullScreener_Transition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -386,9 +386,7 @@
     }
 }
 
-- (void)fadeWithEffect:(NSString*)effect
-          blockingMode:(NSAnimationBlockingMode)blockingMode
-              duration:(float)duration
+- (void)fadeWithEffect:(NSString*)effect duration:(float)duration
 {
     NSArray* array = [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:
@@ -397,11 +395,15 @@
             nil],
         nil];
     NSViewAnimation* animation = [[NSViewAnimation alloc] initWithViewAnimations:array];
-    [animation setAnimationBlockingMode:blockingMode];
+    [animation setAnimationBlockingMode:NSAnimationBlocking];
     [animation setDuration:duration];
+    [animation setDelegate:self];
     [animation startAnimation];
     [animation release];
 }
+
+- (void)fadeIn:(float)duration  { [self fadeWithEffect:NSViewAnimationFadeInEffect duration:duration]; }
+- (void)fadeOut:(float)duration { [self fadeWithEffect:NSViewAnimationFadeOutEffect duration:duration]; }
 
 @end
 
@@ -683,74 +685,125 @@
 
 @implementation ScreenFader
 
++ (id)screenFaderWithScreens:(NSArray*)screens
+{
+    return [[[ScreenFader alloc] initWithScreens:screens] autorelease];
+}
+
 + (id)screenFaderWithScreen:(NSScreen*)screen
 {
     return [[[ScreenFader alloc] initWithScreen:screen] autorelease];
 }
 
-- (id)initWithScreen:(NSScreen*)screen
+- (id)initWithScreens:(NSArray*)screens
 {
     if (self = [super init]) {
-        _screen = [screen retain];
+        _screens = [screens retain];
     }
     return self;
 }
 
+- (id)initWithScreen:(NSScreen*)screen
+{
+    return [self initWithScreens:[NSArray arrayWithObject:screen]];
+}
+
 - (void)dealloc
 {
-    [_fadeWindow release];
-    [_screen release];
+    [_fadeWindows release];
+    [_screens release];
     [super dealloc];
 }
 
-- (void)fadeOut:(float)duration async:(BOOL)async
+- (void)fadeOut:(float)duration
 {
-    if (_fadeWindow) {
+    if (_fadeWindows) {
         return;
     }
-    
-    _fadeWindow = [[NSWindow alloc] initWithContentRect:[_screen frame]
-                                              styleMask:NSBorderlessWindowMask
-                                                backing:NSBackingStoreBuffered
-                                                  defer:FALSE screen:_screen];
-    [_fadeWindow setBackgroundColor:[NSColor blackColor]];
-    [_fadeWindow setLevel:NSScreenSaverWindowLevel];
-    [_fadeWindow useOptimizedDrawing:TRUE];
-    [_fadeWindow setHasShadow:FALSE];
-    [_fadeWindow setOpaque:FALSE];
-    [_fadeWindow setAlphaValue:0.0];
-    
-    [_fadeWindow orderFront:self];
+
+    _fadeWindows = [[NSMutableArray alloc] initWithCapacity:[_screens count]];
+    NSMutableArray* animations = nil;
     if (0 < duration) {
-        [_fadeWindow fadeWithEffect:NSViewAnimationFadeInEffect
-                       blockingMode:(async) ? NSAnimationBlocking : NSAnimationNonblocking
-                           duration:duration];
+        animations = [NSMutableArray arrayWithCapacity:[_fadeWindows count]];
+    }
+
+    NSScreen* screen;
+    NSWindow* window;
+    NSEnumerator* enumerator = [_screens objectEnumerator];
+    while (screen = [enumerator nextObject]) {
+        window = [[NSWindow alloc] initWithContentRect:[screen frame]
+                                             styleMask:NSBorderlessWindowMask
+                                               backing:NSBackingStoreBuffered
+                                                 defer:FALSE screen:screen];
+        [window setBackgroundColor:[NSColor blackColor]];
+        [window setLevel:NSScreenSaverWindowLevel];
+        [window useOptimizedDrawing:TRUE];
+        [window setHasShadow:FALSE];
+        [window setOpaque:FALSE];
+        [window setAlphaValue:0.0];
+        [window orderFront:self];
+
+        if (animations) {
+            [animations addObject:
+             [NSDictionary dictionaryWithObjectsAndKeys:
+                            window, NSViewAnimationTargetKey,
+                            NSViewAnimationFadeInEffect, NSViewAnimationEffectKey,
+                            nil]];
+        }
+        [_fadeWindows addObject:window];
+        [window release];
+    }
+
+    if (animations) {
+        NSViewAnimation* animation = [NSViewAnimation alloc];
+        [animation initWithViewAnimations:animations];
+        [animation setAnimationBlockingMode:NSAnimationBlocking];
+        [animation setDuration:duration];
+        [animation startAnimation];
+        [animation release];
     }
     else {
-        [_fadeWindow setAlphaValue:1.0];
+        NSWindow* window;
+        NSEnumerator* enumerator = [_fadeWindows objectEnumerator];
+        while (window = [enumerator nextObject]) {
+            [window setAlphaValue:1.0];
+        }
     }
 }
 
-- (void)fadeIn:(float)duration async:(BOOL)async
+- (void)fadeIn:(float)duration
 {
-    if (!_fadeWindow) {
+    if (!_fadeWindows) {
         return;
     }
-    
+
     if (0 < duration) {
-        [_fadeWindow fadeWithEffect:NSViewAnimationFadeOutEffect
-                       blockingMode:(async) ? NSAnimationBlocking : NSAnimationNonblocking
-                           duration:duration];
+        NSMutableArray* animations;
+        animations = [NSMutableArray arrayWithCapacity:[_fadeWindows count]];
+
+        NSWindow* window;
+        NSEnumerator* enumerator = [_fadeWindows objectEnumerator];
+        while (window = [enumerator nextObject]) {
+            [animations addObject:
+             [NSDictionary dictionaryWithObjectsAndKeys:
+                            window, NSViewAnimationTargetKey,
+                            NSViewAnimationFadeOutEffect, NSViewAnimationEffectKey,
+                            nil]];
+        }
+
+        NSViewAnimation* animation = [NSViewAnimation alloc];
+        [animation initWithViewAnimations:animations];
+        [animation setAnimationBlockingMode:NSAnimationBlocking];
+        [animation setDuration:duration];
+        [animation startAnimation];
+        [animation release];
     }
-    [_fadeWindow orderOut:self];
-    [_fadeWindow release];
-    _fadeWindow = nil;
+
+    NSWindow* window;
+    NSEnumerator* enumerator = [_fadeWindows objectEnumerator];
+    while (window = [enumerator nextObject]) {
+        [window orderOut:self];
+    }
 }
-
-- (void)fadeOut:(float)duration      { [self fadeOut:duration async:FALSE]; }
-- (void)fadeOutAsync:(float)duration { [self fadeOut:duration async:TRUE]; }
-
-- (void)fadeIn:(float)duration       { [self fadeIn:duration async:FALSE]; }
-- (void)fadeInAsync:(float)duration  { [self fadeIn:duration async:TRUE]; }
 
 @end

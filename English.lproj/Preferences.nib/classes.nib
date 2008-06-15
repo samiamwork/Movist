@@ -9,6 +9,8 @@
 			<dict>
 				<key>alwaysOnTopAction</key>
 				<string>id</string>
+				<key>asDesktopBackgroundAction</key>
+				<string>id</string>
 				<key>autoFullScreenAction</key>
 				<string>id</string>
 				<key>autoPlayOnFullScreenAction</key>
@@ -24,6 +26,8 @@
 				<key>codecBindingAction</key>
 				<string>id</string>
 				<key>deactivateScreenSaverAction</key>
+				<string>id</string>
+				<key>desktopBackgroundAction</key>
 				<string>id</string>
 				<key>fileBindingAction</key>
 				<string>id</string>
@@ -78,6 +82,8 @@
 				<string>NSView</string>
 				<key>_alwaysOnTopButton</key>
 				<string>NSButton</string>
+				<key>_asDesktopBackgroundButton</key>
+				<string>NSButton</string>
 				<key>_audioPane</key>
 				<string>NSView</string>
 				<key>_autoFullScreenButton</key>
@@ -93,6 +99,8 @@
 				<key>_codecBindingTableView</key>
 				<string>NSTableView</string>
 				<key>_deactivateScreenSaverButton</key>
+				<string>NSButton</string>
+				<key>_desktopBackgroundButton</key>
 				<string>NSButton</string>
 				<key>_detailsOutlineView</key>
 				<string>NSOutlineView</string>

@@ -37,6 +37,8 @@
 - (float)beginTime;
 - (float)endTime;
 - (void)setString:(NSMutableAttributedString*)string;
+- (void)appendString:(NSMutableAttributedString*)string;
+- (void)appendNewLine;
 - (void)setBeginTime:(float)time;
 - (void)setEndTime:(float)time;
 
@@ -70,6 +72,17 @@
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [string string]);
     [string retain], [_string release], _string = string;
+}
+
+- (void)appendString:(NSMutableAttributedString*)string
+{
+    [_string appendAttributedString:string];
+}
+
+- (void)appendNewLine
+{
+    [_string appendAttributedString:
+     [[[NSAttributedString alloc] initWithString:@"\n"] autorelease]];
 }
 
 - (void)setBeginTime:(float)time
@@ -131,7 +144,6 @@
 - (void)dealloc
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_strings removeAllObjects];
     [_strings release];
     [_name release];
     [_type release];
@@ -175,7 +187,7 @@
             break;
         }
         else if ([ss beginTime] == time) {
-            [[ss string] appendAttributedString:string];
+            [ss appendString:string];
             return;
         }
     }
@@ -202,9 +214,8 @@
         if (0 < [_strings count]) {
             ss = [_strings objectAtIndex:0];
             if ([ss beginTime] < endTime) {
-                NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
-                [[ss string] appendAttributedString:[as autorelease]];
-                [[ss string] appendAttributedString:string];
+                [ss appendNewLine];
+                [ss appendString:string];
                 endTime = [ss beginTime];
             }
         }
@@ -219,37 +230,38 @@
     }
     else if ([ss beginTime] == beginTime) {
         if (endTime == [ss endTime]) {
-            NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
-            [[ss string] appendAttributedString:[as autorelease]];
-            [[ss string] appendAttributedString:string];
+            [ss appendNewLine];
+            [ss appendString:string];
         }
         else if (endTime < [ss endTime]) {
             [ss setBeginTime:endTime];
 
-            NSMutableAttributedString* mas = [[[ss string] mutableCopy] autorelease];
-            NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
-            [mas appendAttributedString:[as autorelease]];
-            [mas appendAttributedString:string];
-            ss = [[MSubtitleString alloc] initWithString:mas
-                                               beginTime:beginTime endTime:endTime];
+            ss = [[MSubtitleString alloc] initWithString:[[ss string] copy]
+                                                 beginTime:beginTime endTime:endTime];
+            [ss appendNewLine];
+            [ss appendString:string];
             [_strings insertObject:ss atIndex:index];
         }
         else {
-            NSAttributedString* as = [[NSAttributedString alloc] initWithString:@"\n"];
-            [[ss string] appendAttributedString:[as autorelease]];
-            [[ss string] appendAttributedString:string];
+            [ss appendNewLine];
+            [ss appendString:string];
             [self addString:string beginTime:[ss endTime] endTime:endTime];
         }
     }
     else if ([ss beginTime] < beginTime) {
         float bt = [ss beginTime];
         [ss setBeginTime:beginTime];
-        NSMutableAttributedString* mas = [[ss string] copy];
-        ss = [[MSubtitleString alloc] initWithString:mas
-                                           beginTime:bt endTime:beginTime];
+        ss = [[MSubtitleString alloc] initWithString:[[ss string] copy]
+                                             beginTime:bt endTime:beginTime];
         [_strings insertObject:ss atIndex:index];
         [self addString:string beginTime:beginTime endTime:endTime];
     }
+}
+
+- (void)addImage:(NSImage*)string
+       beginTime:(float)beginTime endTime:(float)endTime
+{
+    // FIXME
 }
 
 - (void)checkEndTimes

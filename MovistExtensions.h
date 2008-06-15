@@ -66,9 +66,8 @@
 - (void)updateHUDBackground;
 
 - (void)setMovieURL:(NSURL*)movieURL;
-- (void)fadeWithEffect:(NSString*)effect
-          blockingMode:(NSAnimationBlockingMode)blockingMode
-              duration:(float)duration;
+- (void)fadeIn:(float)duration;
+- (void)fadeOut:(float)duration;
 
 @end
 
@@ -151,16 +150,17 @@
 
 @interface ScreenFader : NSObject
 {
-    NSScreen* _screen;
-    NSWindow* _fadeWindow;
+    NSArray* _screens;
+    NSMutableArray* _fadeWindows;
 }
 
++ (id)screenFaderWithScreens:(NSArray*)screens;
 + (id)screenFaderWithScreen:(NSScreen*)screen;
+
+- (id)initWithScreens:(NSArray*)screens;
 - (id)initWithScreen:(NSScreen*)screen;
 
 - (void)fadeOut:(float)duration;
-- (void)fadeOutAsync:(float)duration;
 - (void)fadeIn:(float)duration;
-- (void)fadeInAsync:(float)duration;
 
 @end

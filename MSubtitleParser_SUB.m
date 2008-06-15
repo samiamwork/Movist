@@ -22,6 +22,20 @@
 
 #import "MSubtitleParser_SUB.h"
 
+@interface MSubtitleParser_SUB (Private)
+
+- (int)subtitlesCount;
+
+- (void)addSubtitleClass:(NSString*)class atIndex:(int)index;
+- (void)classIndex:(int)classIndex
+      addTimeStamp:(float)time fileOffset:(int)fileOffset;
+
+- (void)idxLoadEnded;
+- (BOOL)classIndex:(int)classIndex
+           setData:(void*)data dataSize:(int)dataSize atFileOffset:(int)fileOffset;
+
+@end
+
 ////////////////////////////////////////////////////////////////////////////////
 // copied & modified from vobsub.c in MPlayer.
 
@@ -509,6 +523,9 @@ typedef struct {
     packet_queue_t *spu_streams;
     unsigned int spu_streams_size;
     unsigned int spu_streams_current;
+#else
+    MSubtitleParser_SUB* _parser;
+    int _classIndex;
 #endif
 } vobsub_t;
 
@@ -539,6 +556,8 @@ vobsub_ensure_spu_stream(vobsub_t *vob, unsigned int index)
             ++vob->spu_streams_size;
         }
     }
+#else
+    return (index < [vob->_parser subtitlesCount]);
 #endif
     return 0;
 }
@@ -546,6 +565,7 @@ vobsub_ensure_spu_stream(vobsub_t *vob, unsigned int index)
 static int
 vobsub_add_id(vobsub_t *vob, const char *id, size_t idlen, const unsigned int index)
 {
+    TRACE(@"%s(id=\"%s\", len=%d, index=%u)", __PRETTY_FUNCTION__, id, idlen, index);
     if (vobsub_ensure_spu_stream(vob, index) < 0)
         return -1;
 #if 0000
@@ -566,6 +586,15 @@ vobsub_add_id(vobsub_t *vob, const char *id, size_t idlen, const unsigned int in
         mp_msg(MSGT_IDENTIFY, MSGL_INFO, "ID_VSID_%d_LANG=%s\n", index, vob->spu_streams[index].id);
     mp_msg(MSGT_VOBSUB,MSGL_V,"[vobsub] subtitle (vobsubid): %d language %s\n",
            index, vob->spu_streams[index].id);
+#else
+    if (id && idlen) {
+        char name[256];
+        strncpy(name, id, MIN(idlen, sizeof(name)));
+        name[idlen] = '\0';
+        NSString* class = [NSString stringWithCString:name encoding:NSASCIIStringEncoding];
+        [vob->_parser addSubtitleClass:class atIndex:index];
+        vob->_classIndex = index;
+    }
 #endif
     return 0;
 }
@@ -587,8 +616,13 @@ vobsub_add_timestamp(vobsub_t *vob, off_t filepos, int ms)
         pkt->pts100 = ms < 0 ? UINT_MAX : (unsigned int)ms * 90;
         return 0;
     }
-#endif
     return -1;
+#else
+    float time = ms / 1000.f;
+    [vob->_parser classIndex:vob->_classIndex
+                addTimeStamp:time fileOffset:filepos];
+    return 0;
+#endif
 }
 
 static int
@@ -963,7 +997,8 @@ vobsub_parse_ifo(void* this, const char *const name, unsigned int *palette, unsi
 }
 
 void *
-vobsub_open(const char *const name,const char *const ifo,const int force,void** spu)
+vobsub_open(const char *const name,const char *const ifo,const int force,void** spu,
+            MSubtitleParser_SUB* parser)
 {
     vobsub_t *vob = malloc(sizeof(vobsub_t));
     if (spu) {
@@ -979,6 +1014,9 @@ vobsub_open(const char *const name,const char *const ifo,const int force,void** 
         vob->spu_streams = NULL;
         vob->spu_streams_size = 0;
         vob->spu_streams_current = 0;
+#else
+        vob->_parser = parser;
+        vob->_classIndex = 0;
 #endif
         vob->delay = 0;
         vob->forced_subs=0;
@@ -1022,7 +1060,10 @@ vobsub_open(const char *const name,const char *const ifo,const int force,void** 
                 // FIXME: 0000
                 //*spu = spudec_new_scaled_vobsub(vob->palette, vob->cuspal, vob->custom, vob->orig_frame_width, vob->orig_frame_height);
             }
-            
+#if 0000
+#else
+            [vob->_parser idxLoadEnded];
+#endif
             /* read the indexed mpeg_stream */
             strcpy(buf, name);
             strcat(buf, ".sub");
@@ -1038,7 +1079,9 @@ vobsub_open(const char *const name,const char *const ifo,const int force,void** 
                 }
             }
             else {
+#if 0000
                 long last_pts_diff = 0;
+#endif
                 while (!mpeg_eof(mpg)) {
                     off_t pos = mpeg_tell(mpg);
                     if (mpeg_run(mpg) < 0) {
@@ -1084,6 +1127,15 @@ vobsub_open(const char *const name,const char *const ifo,const int force,void** 
                                         mpg->packet_reserve = 0;
                                         mpg->packet_size = 0;
                                     }
+                                }
+#else
+                                if ([vob->_parser classIndex:sid
+                                                     setData:mpg->packet
+                                                    dataSize:mpg->packet_size
+                                                atFileOffset:pos]) {
+                                    mpg->packet = NULL;
+                                    mpg->packet_reserve = 0;
+                                    mpg->packet_size = 0;
                                 }
 #endif
                             }
@@ -1242,6 +1294,8 @@ vobsub_reset(void *vobhandle)
 - (id)initWithURL:(NSURL*)subtitleURL
 {
     if (self = [super initWithURL:subtitleURL]) {
+        _subtitles = [NSMutableArray arrayWithCapacity:2];
+        _fileOffsets = [NSMutableArray arrayWithCapacity:2];
     }
     return self;
 }
@@ -1254,7 +1308,7 @@ vobsub_reset(void *vobhandle)
     const char* spudec_ifo = 0;
     int force = 0;
     void* vo_spudec = 0;
-    vobsub_t* vob = vobsub_open(path, spudec_ifo, force, &vo_spudec);
+    vobsub_t* vob = vobsub_open(path, spudec_ifo, force, &vo_spudec, self);
     if (vob) {
         /*
         inited_flags|=INITED_VOBSUB;
@@ -1265,13 +1319,85 @@ vobsub_reset(void *vobhandle)
         // setup global sub numbering
         global_sub_indices[SUB_SOURCE_VOBSUB] = global_sub_size; // the global # of the first vobsub.
         global_sub_size += vobsub_get_indexes_count(vob);
-         */
         if (vo_spudec) {
-            //spudec_free(vo_spudec);
+            spudec_free(vo_spudec);
         }
+         */
         vobsub_close(vob);
+        return _subtitles;
     }
     return nil;
+}
+
+@end
+
+@implementation MSubtitleParser_SUB (Private)
+
+- (int)subtitlesCount { return [_fileOffsets count]; }
+
+- (void)addSubtitleClass:(NSString*)class atIndex:(int)index
+{
+    TRACE(@"%s class=%@ index=%d", __PRETTY_FUNCTION__, class, index);
+    MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL type:@"SUB"] autorelease];
+    [subtitle setName:class];
+    [_subtitles addObject:subtitle];
+    [_fileOffsets addObject:[NSMutableDictionary dictionaryWithCapacity:1024]];
+}
+
+- (void)classIndex:(int)classIndex
+      addTimeStamp:(float)time fileOffset:(int)fileOffset
+{
+    //TRACE(@"%s class=%@ time=%g, offset=%d", __PRETTY_FUNCTION__,
+    //      [[_subtitles objectAtIndex:classIndex] name], time, fileOffset);
+    NSMutableDictionary* offsetDict = [_fileOffsets objectAtIndex:classIndex];
+    [offsetDict setObject:[NSNumber numberWithFloat:time]
+                   forKey:[NSNumber numberWithInt:fileOffset]];
+}
+
+- (void)idxLoadEnded
+{
+    _sortedOffsets = [NSMutableArray arrayWithCapacity:[_fileOffsets count]];
+
+    NSDictionary* offsetDict;
+    NSMutableArray* offsets;
+    int i, count = [_fileOffsets count];
+    for (i = 0; i < count; i++) {
+        offsetDict = [_fileOffsets objectAtIndex:i];
+        offsets = [NSMutableArray arrayWithArray:[offsetDict allKeys]];
+        [offsets sortUsingSelector:@selector(compare:)];
+        [_sortedOffsets addObject:offsets];
+        _lastSearchedIndex[i] = 0;
+    }
+}
+
+- (BOOL)classIndex:(int)classIndex
+           setData:(void*)data dataSize:(int)dataSize atFileOffset:(int)fileOffset
+{
+    NSArray* offsets = [_sortedOffsets objectAtIndex:classIndex];
+
+    int i, count = [offsets count];
+    NSNumber* offset, *nextOffset = nil;
+    for (i = _lastSearchedIndex[classIndex]; i < count; i++) {
+        offset = [offsets objectAtIndex:i];
+        nextOffset = (i < count - 1) ? [offsets objectAtIndex:i + 1] : nil;
+        if (!nextOffset || fileOffset < [nextOffset intValue]) {
+            _lastSearchedIndex[classIndex] = i;
+            break;
+        }
+    }
+    if (0 <= i) {
+        NSData* data = [NSData dataWithBytes:data length:dataSize];
+        NSImage* image = [[[NSImage alloc] initWithData:data] autorelease];
+
+        NSDictionary* offsetDict = [_fileOffsets objectAtIndex:classIndex];
+        float beginTime = [[offsetDict objectForKey:offset] floatValue];
+        float endTime   = (nextOffset == nil) ? (beginTime + 5) :
+                          [[offsetDict objectForKey:nextOffset] floatValue];
+        MSubtitle* subtitle = [_subtitles objectAtIndex:classIndex];
+        [subtitle addImage:image beginTime:beginTime endTime:endTime];
+        return TRUE;
+    }
+    return FALSE;
 }
 
 @end

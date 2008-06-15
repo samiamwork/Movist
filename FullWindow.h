@@ -43,7 +43,7 @@
 
 @interface FullWindow (Navigation)
 
-- (BOOL)isNavigatable;
+- (BOOL)isNavigation;
 - (BOOL)isNavigating;
 - (BOOL)isPreviewing;
 

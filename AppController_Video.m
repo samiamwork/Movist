@@ -94,13 +94,7 @@
 #pragma mark -
 #pragma mark full-screen
 
-- (BOOL)isFullScreen { return (_fullScreener != nil); }
-
-- (BOOL)isFullNavigating
-{
-    return [self isFullScreen] &&
-           [_fullScreener isNavigating];
-}
+- (BOOL)isFullScreen { return _fullScreener && [_fullScreener isFullScreen]; }
 
 - (void)beginFullScreen
 {
@@ -118,19 +112,11 @@
             }
         }
 
-        BOOL blackScreens = [_defaults boolForKey:MFullScreenBlackScreensKey];
-        int effect = [_defaults integerForKey:MFullScreenEffectKey];
-        #if defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
-        if ([_mainWindow userSpaceScaleFactor] != 1.0 &&
-            effect == FS_EFFECT_ANIMATION) {
-            effect = FS_EFFECT_NONE;
+        if (!_fullScreener) {
+            _fullScreener = [FullScreener alloc];
+            [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
+            [_fullScreener setMovieURL:[self movieURL]];
         }
-        #endif
-        _fullScreener = [FullScreener alloc];
-        [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel
-                             blackScreens:blackScreens];
-        [_fullScreener setEffect:effect];
-        [_fullScreener setMovieURL:[self movieURL]];
         [_fullScreener beginFullScreen];
     }
     [_fullScreenLock unlock];
@@ -142,12 +128,54 @@
     [_fullScreenLock lock];
     if ([self isFullScreen]) {
         [_fullScreener endFullScreen];
+        if (![self isDesktopBackground]) {
+            [_fullScreener release];
+            _fullScreener = nil;
+        }
+        [_movieView updateMovieRect:TRUE];
+    }
+    [_fullScreenLock unlock];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark desktop-background
+
+- (BOOL)isDesktopBackground { return _fullScreener && [_fullScreener isDesktopBackground]; }
+
+- (void)beginDesktopBackground
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_fullScreenLock lock];
+    if (_movie && ![self isDesktopBackground]) {
+        if (!_fullScreener) {
+            _fullScreener = [FullScreener alloc];
+            [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
+            [_fullScreener setMovieURL:[self movieURL]];
+        }
+        [_fullScreener beginDesktopBackground];
+    }
+    [_fullScreenLock unlock];
+}
+
+- (void)endDesktopBackground
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_fullScreenLock lock];
+    if ([self isDesktopBackground]) {
+        [_fullScreener endDesktopBackground];
         [_fullScreener release];
         _fullScreener = nil;
         [_movieView updateMovieRect:TRUE];
     }
     [_fullScreenLock unlock];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark full-navigation
+
+- (BOOL)isFullNavigation { return _fullScreener && [_fullScreener isNavigation]; }
 
 - (void)beginFullNavigation
 {
@@ -161,14 +189,17 @@
         // enter from full-screen-mode with playing movie
         [_fullScreener setMovieURL:nil];
     }
+    else if ([self isDesktopBackground]) {
+        // enter from desktop-background with playing movie
+        [_fullScreener setMovieURL:nil];
+        [_fullScreener beginNavigation];
+    }
     else {
         // enter from window-mode with no-movie
-        BOOL blackScreens = [_defaults boolForKey:MFullScreenBlackScreensKey];
         _fullScreener = [FullScreener alloc];
-        [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel
-                          blackScreens:blackScreens];
+        [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
         [_fullScreener setMovieURL:nil];
-        [_fullScreener beginFullScreen];
+        [_fullScreener beginNavigation];
     }
     [_fullScreenLock unlock];
 }
@@ -177,9 +208,9 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullScreenLock lock];
-    if ([self isFullScreen]) {
+    if ([self isFullNavigation]) {
         [_movieView showLogo];
-        [_fullScreener endFullScreen];
+        [_fullScreener endNavigation];
         [_fullScreener release];
         _fullScreener = nil;
         [_movieView updateMovieRect:TRUE];
@@ -282,13 +313,11 @@
         [_movie setAspectRatio:aspectRatio];
         [_movieView setMessage:[NSString stringWithFormat:
                             @"%@: %@", [_aspectRatioMenu title], [item title]]];
-        if ([self isFullScreen]) {
-            [_movieView updateSubtitlePosition];
-            [_movieView updateMovieRect:TRUE];
-        }
-        else {
+        if (![self isFullScreen] && ![self isDesktopBackground]) {
             [self resizeWithMagnification:1.0];
         }
+        [_movieView updateSubtitlePosition];
+        [_movieView updateMovieRect:TRUE];
         [self updateAspectRatioMenu];
         [self updateSubtitlePositionMenuItems];
     }
@@ -323,26 +352,44 @@
 - (IBAction)fullScreenAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self isFullScreen]) {
-        if (!_movie) {
+    if (!_movie) {
+        if (!_fullScreener) {
             [self beginFullNavigation];
         }
         else {
-            [self beginFullScreen];
-            if ([_defaults boolForKey:MAutoPlayOnFullScreenKey]) {
-                [_movie setRate:_playRate];  // auto play
-            }
+            // this may be in full-navigation without preview
+            // do nothing.
         }
     }
+    else if ([self isFullNavigation]) {
+        if (![_fullScreener closeCurrent]) {
+            [self endFullNavigation];
+        }
+    }
+    else if ([self isFullScreen]) {
+        [self endFullScreen];
+    }
     else {
-        if ([_fullScreener isNavigatable]) {
-            if (![_fullScreener closeCurrent]) {
-                [self endFullNavigation];
+        [self beginFullScreen];
+        if ([_defaults boolForKey:MAutoPlayOnFullScreenKey]) {
+            [_movie setRate:_playRate];  // auto play
+        }
+    }
+}
+
+- (IBAction)fullNavigationAction:(id)sender
+{
+    if ([self isFullNavigation]) {
+        [self endFullNavigation];
+    }
+    else {
+        if (_movie) {
+            if ([self isFullScreen]) {
+                [self endFullScreen];
             }
+            [self closeMovie];
         }
-        else {
-            [self endFullScreen];
-        }
+        [self beginFullNavigation];
     }
 }
 
@@ -367,23 +414,6 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self setAspectRatio:[sender tag]];
-}
-
-- (IBAction)fullNavigationAction:(id)sender
-{
-    if (_movie) {
-        if ([self isFullScreen] && ![_fullScreener isNavigating]) {    // full play mode
-            [self endFullScreen];
-        }
-        [self closeMovie];
-    }
-
-    if (![_fullScreener isNavigating]) {
-        [self beginFullNavigation];
-    }
-    else {
-        [self endFullNavigation];
-    }
 }
 
 - (IBAction)saveCurrentImage:(id)sender

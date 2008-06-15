@@ -343,7 +343,7 @@ extern NSString* MFontBoldAttributeName;
     mset = [_delimSet mutableCopy];
     [mset addCharactersInString:@"='\""];
     _syncDelimSet = _pDelimSet = _fontDelimSet = mset;
-    
+
     _classes = [NSMutableDictionary dictionaryWithCapacity:2];
 }
 

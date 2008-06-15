@@ -99,14 +99,12 @@
 
 - (MMovieView*)movieView { return _movieView; }
 
-- (int)resizeMode { return _resizeMode; }
-- (void)setResizeMode:(int)resizeMode { _resizeMode = resizeMode; }
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 
 - (BOOL)alwaysOnTop { return _alwaysOnTop; }
 
-#define TopMostWindowLevel  kCGUtilityWindowLevel
-
-- (void)setAlwaysOnTop:(BOOL)alwaysOnTop
+- (IBAction)setAlwaysOnTop:(BOOL)alwaysOnTop
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, alwaysOnTop);
     _alwaysOnTop = alwaysOnTop;
@@ -143,7 +141,7 @@
 - (void)orderFrontRegardless
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (!_alwaysOnTop) {
+    if (!_alwaysOnTop && ![[NSApp delegate] isDesktopBackground]) {
         [super orderFrontRegardless];
     }
 }
@@ -151,6 +149,9 @@
 - (void)setLevel:(int)newLevel
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
+    if ([[NSApp delegate] isDesktopBackground]) {
+        newLevel = MIN(DesktopWindowLevel, newLevel);
+    }
     [super setLevel:MIN(TopMostWindowLevel, newLevel)];
 }
 
@@ -219,7 +220,9 @@
 
 - (void)mouseMoved:(NSEvent*)event
 {
-    [_seekSlider mouseMoved:[event locationInWindow]];
+    if ([self isKeyWindow]) {
+        [_seekSlider mouseMoved:[event locationInWindow]];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -229,16 +232,7 @@
 - (void)scrollWheel:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([[NSApp delegate] isFullNavigating]) {
-        return;     // volume-change-by-wheel doesn't work in preview of full-navigation.
-    }
-
-    if ([event deltaY] < 0.0) {
-        [[NSApp delegate] volumeDown];
-    }
-    else if (0.0 < [event deltaY]) {
-        [[NSApp delegate] volumeUp];
-    }
+    [[NSApp delegate] scrollWheelAction:event];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -247,9 +241,11 @@
 
 - (NSSize)windowWillResize:(NSWindow*)window toSize:(NSSize)proposedFrameSize
 {
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    int resizeMode = [defaults integerForKey:MWindowResizeKey];
     if ([_movieView movie] != nil &&        // movie should be opened
         [_movieView window] == window &&    // not to applied for full-screen animation
-        _resizeMode != WINDOW_RESIZE_FREE) {
+        resizeMode != WINDOW_RESIZE_FREE) {
         NSSize windowSize = [window frame].size;
         NSSize contentSize = [[window contentView] frame].size;
         float hMargin = windowSize.width - contentSize.width;
@@ -264,8 +260,8 @@
         NSSize minWindowSize = [window minSize];
         NSSize mSize = [[_movieView movie] adjustedSizeByAspectRatio];
 
-        assert(_resizeMode == WINDOW_RESIZE_ADJUST_TO_SIZE ||
-               _resizeMode == WINDOW_RESIZE_ADJUST_TO_WIDTH);
+        assert(resizeMode == WINDOW_RESIZE_ADJUST_TO_SIZE ||
+               resizeMode == WINDOW_RESIZE_ADJUST_TO_WIDTH);
         float maxWidth = pmSize.height * mSize.width / mSize.height;
         if (maxWidth < pmSize.width) {
             pmSize.width = maxWidth;
@@ -274,7 +270,7 @@
                 proposedFrameSize.width = minWindowSize.width;
             }
         }
-        if (_resizeMode == WINDOW_RESIZE_ADJUST_TO_SIZE) {
+        if (resizeMode == WINDOW_RESIZE_ADJUST_TO_SIZE) {
             float maxHeight = pmSize.width * mSize.height / mSize.width;
             if (maxHeight < pmSize.height) {
                 pmSize.height = maxHeight;

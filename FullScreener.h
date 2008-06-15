@@ -49,24 +49,29 @@
     NSRect _fullMovieRect;
 
     // for black-screens effect
-    NSMutableArray* _screenFaders;
+    ScreenFader* _screenFader;
 }
 
 - (id)initWithMainWindow:(MainWindow*)mainWindow
-               playPanel:(PlayPanel*)playPanel
-            blackScreens:(BOOL)blackScreens;
+               playPanel:(PlayPanel*)playPanel;
 
 - (FullWindow*)fullWindow;
-- (void)setEffect:(int)effect;
 - (void)setMovieURL:(NSURL*)movieURL;
 
+- (BOOL)isFullScreen;
 - (void)beginFullScreen;
 - (void)endFullScreen;
 - (void)autoHidePlayPanel;
 
-- (BOOL)isNavigatable;
+- (BOOL)isDesktopBackground;
+- (void)beginDesktopBackground;
+- (void)endDesktopBackground;
+
+- (BOOL)isNavigation;
 - (BOOL)isNavigating;
 - (BOOL)isPreviewing;
+- (void)beginNavigation;
+- (void)endNavigation;
 
 - (void)selectUpper;
 - (void)selectLower;
@@ -81,10 +86,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-@interface FullScreener (Animation)
+@interface FullScreener (Transition)
 
-- (void)initAnimation;
-- (void)runBeginAnimation;
-- (void)runEndAnimation;
+- (void)showMainMenuAndDock;
+- (void)hideMainMenuAndDock;
+
+- (void)attachMovieViewToFullWindow;
+- (void)detachMovieViewFromFullWindow;
+
+- (void)beginFullScreenFromDesktopBackground;
+- (void)endFullScreenToDesktopBackground;
 
 @end

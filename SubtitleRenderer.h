@@ -34,7 +34,7 @@
     float _subtitlesEndTime;
     NSLock* _subtitlesLock;
     MSubtitleOSD* _subtitleOSD;
-    NSMutableArray* _subtitleImages;    // for MSubtitleStringImage
+    NSMutableArray* _subtitleImages;    // for MSubtitleImage
     NSConditionLock* _conditionLock;
     float _maxRenderInterval;
     float _renderInterval;

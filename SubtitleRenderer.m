@@ -27,7 +27,7 @@
 #import "MSubtitle.h"
 #import "MSubtitleOSD.h"
 
-@interface MSubtitleStringImage : NSObject
+@interface MSubtitleImage : NSObject
 {
 #if defined(DEBUG)
     NSString* _string;
@@ -37,7 +37,7 @@
     float _endTime;
 }
 
-- (id)initWithStringImage:(NSImage*)image;
+- (id)initWithTexImage:(NSImage*)image;
 
 #if defined(DEBUG)
 - (NSString*)string;
@@ -54,9 +54,9 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-@implementation MSubtitleStringImage
+@implementation MSubtitleImage
 
-- (id)initWithStringImage:(NSImage*)image
+- (id)initWithTexImage:(NSImage*)image
 {
     assert(image != nil);
     if (self = [super init]) {
@@ -366,7 +366,7 @@
             if ([subtitle isEnabled]) {
                 string = [subtitle stringAtTime:time];
                 if (!string) {
-                    string = @"";
+                    string = [[[NSMutableAttributedString alloc] initWithString:@""] autorelease];
                 }
                 if ([_subtitleOSD setString:string forName:[subtitle name]]) {
                     result |= STRING_UPDATED;
@@ -424,7 +424,7 @@
     }
 
     [_conditionLock lock];
-    MSubtitleStringImage* image;
+    MSubtitleImage* image;
     int i, count = [_subtitleImages count];
     for (i = 0; i < count; i++) {
         image = [_subtitleImages objectAtIndex:i];
@@ -485,7 +485,7 @@
         //TRACE(@"%s all removed", __PRETTY_FUNCTION__);
     }
     else if (0 < _removeCount) {
-        MSubtitleStringImage* image;
+        MSubtitleImage* image;
         while (0 < _removeCount) {
             image = [_subtitleImages objectAtIndex:0];
             if ([image image] != _emptyImage) {
@@ -499,14 +499,12 @@
     }
 }
 
-- (MSubtitleStringImage*)newSubtitleStringImage:(NSImage*)texImage
-                                      beginTime:(float)beginTime
+- (MSubtitleImage*)newSubtitleImage:(NSImage*)texImage beginTime:(float)beginTime
 {
     if (!texImage) {
         texImage = [[_emptyImage retain] autorelease];
     }
-    MSubtitleStringImage* image = [[MSubtitleStringImage alloc]
-                                        initWithStringImage:texImage];
+    MSubtitleImage* image = [[MSubtitleImage alloc] initWithTexImage:texImage];
 #if defined(DEBUG)
     [image setString:(texImage == _emptyImage) ?
                      @"" : [[_subtitleOSD string] string]];
@@ -516,8 +514,7 @@
     return [image autorelease];
 }
 
-- (void)completeSubtitleStringImage:(MSubtitleStringImage*)image
-                            endTime:(float)endTime
+- (void)completeSubtitleImage:(MSubtitleImage*)image endTime:(float)endTime
 {
     [_conditionLock lock];
 
@@ -547,7 +544,7 @@
     float time;
     NSAutoreleasePool* outerPool;
     NSAutoreleasePool* innerPool;
-    MSubtitleStringImage* image = nil;
+    MSubtitleImage* image = nil;
     while (!_quitRequested) {
         //TRACE(@"%s waiting for resume", __PRETTY_FUNCTION__);
         outerPool = [[NSAutoreleasePool alloc] init];
@@ -576,11 +573,11 @@
                 [_subtitlesLock lock];
                 if ([self updateSubtitleOSD:time] & STRING_UPDATED) {
                     if (image) {
-                        [self completeSubtitleStringImage:image endTime:time];
+                        [self completeSubtitleImage:image endTime:time];
                         [image release], image = nil;
                     }
-                    image = [[self newSubtitleStringImage:[_subtitleOSD makeTexImage]
-                                               beginTime:time] retain];
+                    image = [[self newSubtitleImage:[_subtitleOSD makeTexImage]
+                                          beginTime:time] retain];
                 }
                 [_subtitlesLock unlock];
                 [innerPool release];
@@ -591,13 +588,13 @@
                 BOOL lastEmptyImageNeeded = ([_subtitleImages count] == 0) ||
                                             (image && [image image] != _emptyImage);
                 if (image) {
-                    [self completeSubtitleStringImage:image endTime:time];
+                    [self completeSubtitleImage:image endTime:time];
                     [image release], image = nil;
                 }
                 if (lastEmptyImageNeeded) {
-                    image = [[self newSubtitleStringImage:nil beginTime:time] retain];
-                    [self completeSubtitleStringImage:image
-                                              endTime:[[_movieView movie] duration]];
+                    image = [[self newSubtitleImage:nil beginTime:time] retain];
+                    [self completeSubtitleImage:image
+                                        endTime:[[_movieView movie] duration]];
                     [image release], image = nil;
                 }
             }

@@ -32,6 +32,7 @@
     IBOutlet NSView* _generalPane;
     IBOutlet NSButton* _autodetectMovieSeriesButton;
     IBOutlet NSButton* _autoFullScreenButton;
+    IBOutlet NSButton* _desktopBackgroundButton;
     IBOutlet NSButton* _autoPlayOnFullScreenButton;
     IBOutlet NSButton* _alwaysOnTopButton;
     IBOutlet NSButton* _deactivateScreenSaverButton;
@@ -134,6 +135,7 @@
 - (void)initGeneralPane;
 - (IBAction)autodetectMovieSeriesAction:(id)sender;
 - (IBAction)autoFullScreenAction:(id)sender;
+- (IBAction)desktopBackgroundAction:(id)sender;
 - (IBAction)autoPlayOnFullScreenAction:(id)sender;
 - (IBAction)alwaysOnTopAction:(id)sender;
 - (IBAction)deactivateScreenSaverAction:(id)sender;

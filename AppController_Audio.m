@@ -24,6 +24,7 @@
 #import "UserDefaults.h"
 
 #import "MMovie.h"
+#import "FullScreener.h"
 
 #import <CoreAudio/CoreAudio.h>
 
@@ -473,6 +474,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark IB actions
+
+- (void)scrollWheelAction:(NSEvent*)event
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([self isFullNavigation] && [_fullScreener isPreviewing]) {
+        return;     // volume-by-scroll-wheel doesn't work in preview of full-navigation.
+    }
+
+    if ([event deltaY] < 0.0) {
+        [self volumeDown];
+    }
+    else if (0.0 < [event deltaY]) {
+        [self volumeUp];
+    }
+}
 
 - (IBAction)volumeAction:(id)sender
 {
