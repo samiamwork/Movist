@@ -209,13 +209,6 @@
     [_subtitlesLock unlock];
 }
 
-- (void)setMovieSize:(NSSize)size
-{
-    [_subtitlesLock lock];
-    [_subtitleOSD setMovieSize:size];
-    [_subtitlesLock unlock];
-}
-
 - (void)clearSubtitleContent
 {
     [_subtitlesLock lock];

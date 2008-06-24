@@ -46,7 +46,6 @@ enum {  // for _updateMask
 
 @interface MMovieOSD : NSObject
 {
-    NSSize _movieSize;          // real movie size
     NSRect _movieRect;          // display movie size
     unsigned int _updateMask;   // bit-mask of UPDATE_*
 
@@ -71,7 +70,6 @@ enum {  // for _updateMask
     GLuint _texName;
 }
 
-- (void)setMovieSize:(NSSize)size;
 - (void)setMovieRect:(NSRect)rect;
 - (float)autoSize:(float)defaultSize;
 

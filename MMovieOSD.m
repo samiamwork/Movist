@@ -74,13 +74,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (void)setMovieSize:(NSSize)size
-{
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromSize(size));
-    _movieSize = size;
-    _updateMask |= UPDATE_TEXTURE;
-}
-
 - (void)setMovieRect:(NSRect)rect
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(rect));

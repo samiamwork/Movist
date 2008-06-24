@@ -507,7 +507,10 @@ SMITag MMakeSMITag(int type, int location, int length, NSString* attr)
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, string);
     unsigned int red = 0xFF, green = 0xFF, blue = 0xFF;
 
-    if ([string characterAtIndex:0] == '#') {   // ex: #ABCDEF
+    if ([string length] == 0) {
+        // empty string => make white using default red, green and blue.
+    }
+    else if ([string characterAtIndex:0] == '#') {   // ex: #ABCDEF
         sscanf([string UTF8String] + 1, "%2x%2x%2x", &red, &green, &blue);
     }
     else {

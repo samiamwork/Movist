@@ -57,7 +57,6 @@
 - (void)setSubtitles:(NSArray*)subtitles;
 
 - (void)setMovieRect:(NSRect)rect;
-- (void)setMovieSize:(NSSize)size;
 - (void)clearSubtitleContent;
 
 - (NSString*)fontName;

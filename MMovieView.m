@@ -169,11 +169,6 @@
                             Z:es.width - 2.0 W:es.height - 2.0];
         [_cropFilter setValue:vector forKey:@"inputRectangle"];
         //[self updateRemoveGreenBox];
-
-        NSSize movieSize = [_movie adjustedSizeByAspectRatio];
-        [_messageOSD setMovieSize:movieSize];
-        [_subtitleImageOSD setMovieSize:movieSize];
-        [_subtitleRenderer setMovieSize:movieSize];
     }
     [self clearOSD];
     [self updateSubtitlePosition];
