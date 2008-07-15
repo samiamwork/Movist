@@ -30,20 +30,17 @@
 
 - (void)showMainMenuAndDock
 {
-    SystemUIMode systemUIMode;
-    GetSystemUIMode(&systemUIMode, 0);
-    if (systemUIMode == kUIModeAllSuppressed) {
+    if (_mainMenuAndDockIsHidden) {
         SetSystemUIMode(_normalSystemUIMode, _normalSystemUIOptions);
+        _mainMenuAndDockIsHidden = FALSE;
     }
 }
 
 - (void)hideMainMenuAndDock
 {
-    GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
-    
     // if currently in menu-bar-screen, hide system UI elements(main-menu, dock)
     NSScreen* menuBarScreen = [[NSScreen screens] objectAtIndex:0];
-    if (_screenFader || [[_mainWindow screen] isEqualTo:menuBarScreen]) {
+    if (_blackScreenFader || [[_mainWindow screen] isEqualTo:menuBarScreen]) {
         // if cursor is in dock, move cursor out of dock area to hide dock.
         NSRect rc = [menuBarScreen visibleFrame];
         NSPoint p = [NSEvent mouseLocation];
@@ -61,7 +58,14 @@
             CGDisplayMoveCursorToPoint([_movieView displayID],
                                        CGPointMake(p.x, NSMaxY(rc) - p.y));
         }
-        SetSystemUIMode(kUIModeAllSuppressed, 0);
+        GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
+        if (_autoShowDock) {
+            SetSystemUIMode(kUIModeAllSuppressed, 0);
+        }
+        else {
+            SetSystemUIMode(kUIModeAllHidden, kUIOptionAutoShowMenuBar);
+        }
+        _mainMenuAndDockIsHidden = TRUE;
     }
 }
 

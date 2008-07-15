@@ -299,6 +299,7 @@
 
 - (IBAction)movieSizeAction:(id)sender;
 - (IBAction)fullScreenAction:(id)sender;
+- (IBAction)desktopBackgroundAction:(id)sender;
 - (IBAction)fullScreenFillAction:(id)sender;
 - (IBAction)fullScreenUnderScanAction:(id)sender;
 - (IBAction)aspectRatioAction:(id)sender;

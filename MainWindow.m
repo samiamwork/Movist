@@ -242,7 +242,7 @@
 - (NSSize)windowWillResize:(NSWindow*)window toSize:(NSSize)proposedFrameSize
 {
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    int resizeMode = [defaults integerForKey:MWindowResizeKey];
+    int resizeMode = [defaults integerForKey:MWindowResizeModeKey];
     if ([_movieView movie] != nil &&        // movie should be opened
         [_movieView window] == window &&    // not to applied for full-screen animation
         resizeMode != WINDOW_RESIZE_FREE) {

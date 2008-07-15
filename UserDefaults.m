@@ -32,11 +32,10 @@ NSString* MLastPlayedMovieRepeatRangeKey    = @"LastPlayedMovieRepeatRange";
 
 #pragma mark -
 #pragma mark prefs: general
+NSString* MOpeningViewKey                   = @"OpeningView";
 NSString* MAutodetectMovieSeriesKey         = @"AutodetectMovieSeries";
-NSString* MAutoFullScreenKey                = @"AutoFullScreen";
 NSString* MAutoPlayOnFullScreenKey          = @"AutoPlayOnFullScreen";
 NSString* MAlwaysOnTopKey                   = @"AlwaysOnTop";
-NSString* MDesktopBackgroundKey             = @"DesktopBackground";
 NSString* MDeactivateScreenSaverKey         = @"DeactivateScreenSaver";
 NSString* MQuitWhenWindowCloseKey           = @"QuitWhenWindowClose";
 NSString* MRememberLastPlayKey              = @"RememberLastPlay";
@@ -98,10 +97,11 @@ NSString* MDefaultCodecBindingKey           = @"DefaultCodecBinding";
 
 #pragma mark prefs: advanced - details: general
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
-NSString* MOpeningResizeKey                 = @"OpeningResize";
-NSString* MWindowResizeKey                  = @"WindowResize";
-NSString* MViewDragActionKey                = @"ViewDragAction";
 NSString* MFloatingPlaylistKey              = @"FloatingPlaylist";
+NSString* MAutoShowDockKey                  = @"AutoShowDock";
+NSString* MMovieResizeCenterKey             = @"MovieResizeCenter";
+NSString* MWindowResizeModeKey              = @"WindowResizeMode";
+NSString* MViewDragActionKey                = @"ViewDragAction";
 #pragma mark prefs: advanced - details: video
 NSString* MCaptureFormatKey                 = @"CaptureFormat";
 NSString* MIncludeLetterBoxOnCaptureKey     = @"IncludeLetterBoxOnCapture";
@@ -132,11 +132,10 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MViewDurationKey];
 
     // prefs: general
+    [dict setObject:[NSNumber numberWithInt:OPENING_VIEW_REAL_SIZE] forKey:MOpeningViewKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutodetectMovieSeriesKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAutoFullScreenKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoPlayOnFullScreenKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MAlwaysOnTopKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MDesktopBackgroundKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MDeactivateScreenSaverKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MQuitWhenWindowCloseKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MRememberLastPlayKey];
@@ -198,10 +197,11 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[self defaultCodecBinding] forKey:MDefaultCodecBindingKey];
     // prefs: advanced - details: general
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
-    [dict setObject:[NSNumber numberWithInt:OPENING_RESIZE_TITLE_CENTER] forKey:MOpeningResizeKey];
-    [dict setObject:[NSNumber numberWithInt:WINDOW_RESIZE_ADJUST_TO_SIZE] forKey:MWindowResizeKey];
-    [dict setObject:[NSNumber numberWithInt:VIEW_DRAG_ACTION_NONE] forKey:MViewDragActionKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MFloatingPlaylistKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoShowDockKey];
+    [dict setObject:[NSNumber numberWithInt:MOVIE_RESIZE_CENTER_TM] forKey:MMovieResizeCenterKey];
+    [dict setObject:[NSNumber numberWithInt:WINDOW_RESIZE_ADJUST_TO_SIZE] forKey:MWindowResizeModeKey];
+    [dict setObject:[NSNumber numberWithInt:VIEW_DRAG_ACTION_NONE] forKey:MViewDragActionKey];
     // prefs: advanced - details: video
     [dict setObject:[NSNumber numberWithInt:CAPTURE_FORMAT_PNG] forKey:MCaptureFormatKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MIncludeLetterBoxOnCaptureKey];

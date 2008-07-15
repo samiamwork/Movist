@@ -43,6 +43,8 @@
 				<string>id</string>
 				<key>fullScreenUnderScanAction</key>
 				<string>id</string>
+				<key>openingViewAction</key>
+				<string>id</string>
 				<key>quitWhenWindowCloseAction</key>
 				<string>id</string>
 				<key>rememberLastPlayAction</key>
@@ -124,6 +126,8 @@
 				<string>NSView</string>
 				<key>_lastUpdateCheckTimeTextField</key>
 				<string>NSTextField</string>
+				<key>_openingViewPopUpButton</key>
+				<string>NSPopUpButton</string>
 				<key>_quitWhenWindowCloseButton</key>
 				<string>NSButton</string>
 				<key>_rememberLastPlayButton</key>

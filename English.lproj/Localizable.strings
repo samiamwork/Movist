@@ -126,21 +126,22 @@
 
 /* Preferences: advanced - details: general */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
-"Window Resize on Opening Movie" = "Window Resize on Opening Movie";
+"Floating Playlist" = "Floating Playlist";
+"Auto Show Dock in Full Screen" = "Auto Show Dock in Full Screen";
+"Movie Resize Center" = "Movie Resize Center";
 "Title Center" = "Title Center";
 "Title Left" = "Title Left";
 "Title Right" = "Title Right";
 "Bottom Center" = "Bottom Center";
 "Bottom Left" = "Bottom Left";
 "Bottom Right" = "Bottom Right";
-"Window Resize" = "Window Resize";
+"Window Resize Mode" = "Window Resize Mode";
 "Free" = "Free";
 "Adjust to Size" = "Adjust to Size";
 "Adjust to Width" = "Adjust to Width";
 "Dragging Action on Movie Area" = "Dragging Action on Movie Area";
 "Move Window" = "Move Window";
 "Capture Movie" = "Capture Movie";
-"Floating Playlist" = "Floating Playlist";
 
 /* Preferences: advanced - details: video */
 "Capture Format" = "Capture Format";

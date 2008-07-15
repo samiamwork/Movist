@@ -57,14 +57,13 @@
             size.height *= magnification;
         }
         int align = ALIGN_WINDOW_TITLE_CENTER;
-        int resize = [_defaults integerForKey:MOpeningResizeKey];
-        switch (resize) {
-            case OPENING_RESIZE_TITLE_CENTER  : align = ALIGN_WINDOW_TITLE_CENTER;  break;
-            case OPENING_RESIZE_TITLE_LEFT    : align = ALIGN_WINDOW_TITLE_LEFT;    break;
-            case OPENING_RESIZE_TITLE_RIGHT   : align = ALIGN_WINDOW_TITLE_RIGHT;   break;
-            case OPENING_RESIZE_BOTTOM_CENTER : align = ALIGN_WINDOW_BOTTOM_CENTER; break;
-            case OPENING_RESIZE_BOTTOM_LEFT   : align = ALIGN_WINDOW_BOTTOM_LEFT;   break;
-            case OPENING_RESIZE_BOTTOM_RIGHT  : align = ALIGN_WINDOW_BOTTOM_RIGHT;  break;
+        switch ([_defaults integerForKey:MMovieResizeCenterKey]) {
+            case MOVIE_RESIZE_CENTER_TM : align = ALIGN_WINDOW_TITLE_CENTER;  break;
+            case MOVIE_RESIZE_CENTER_TL : align = ALIGN_WINDOW_TITLE_LEFT;    break;
+            case MOVIE_RESIZE_CENTER_TR : align = ALIGN_WINDOW_TITLE_RIGHT;   break;
+            case MOVIE_RESIZE_CENTER_BM : align = ALIGN_WINDOW_BOTTOM_CENTER; break;
+            case MOVIE_RESIZE_CENTER_BL : align = ALIGN_WINDOW_BOTTOM_LEFT;   break;
+            case MOVIE_RESIZE_CENTER_BR : align = ALIGN_WINDOW_BOTTOM_RIGHT;  break;
         }
         NSRect frame = [_mainWindow frameRectForMovieSize:size align:align];
         if ([[_mainWindow screen] visibleFrame].size.height < frame.size.height) {
@@ -116,6 +115,7 @@
             _fullScreener = [FullScreener alloc];
             [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
             [_fullScreener setMovieURL:[self movieURL]];
+            [_fullScreener setAutoShowDock:[_defaults boolForKey:MAutoShowDockKey]];
         }
         [_fullScreener beginFullScreen];
     }
@@ -374,6 +374,16 @@
         if ([_defaults boolForKey:MAutoPlayOnFullScreenKey]) {
             [_movie setRate:_playRate];  // auto play
         }
+    }
+}
+
+- (IBAction)desktopBackgroundAction:(id)sender
+{
+    if ([self isDesktopBackground]) {
+        [self endDesktopBackground];
+    }
+    else if (_movie && ![self isFullNavigation]) {
+        [self beginDesktopBackground];
     }
 }
 

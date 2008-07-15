@@ -32,11 +32,10 @@ extern NSString* MLastPlayedMovieRepeatRangeKey;
 
 #pragma mark -
 #pragma mark prefs: general
+extern NSString* MOpeningViewKey;
 extern NSString* MAutodetectMovieSeriesKey;
-extern NSString* MAutoFullScreenKey;
 extern NSString* MAutoPlayOnFullScreenKey;
 extern NSString* MAlwaysOnTopKey;
-extern NSString* MDesktopBackgroundKey;
 extern NSString* MDeactivateScreenSaverKey;
 extern NSString* MQuitWhenWindowCloseKey;
 extern NSString* MRememberLastPlayKey;
@@ -101,10 +100,11 @@ extern NSString* MDefaultCodecBindingKey;
 #pragma mark -
 #pragma mark prefs: advanced - details: general
 extern NSString* MActivateOnDraggingKey;
-extern NSString* MOpeningResizeKey;
-extern NSString* MWindowResizeKey;
-extern NSString* MViewDragActionKey;
 extern NSString* MFloatingPlaylistKey;
+extern NSString* MAutoShowDockKey;
+extern NSString* MMovieResizeCenterKey;
+extern NSString* MWindowResizeModeKey;
+extern NSString* MViewDragActionKey;
 #pragma mark prefs: advanced - details: video
 extern NSString* MCaptureFormatKey;
 extern NSString* MIncludeLetterBoxOnCaptureKey;

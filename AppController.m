@@ -558,11 +558,14 @@ NSString* videoCodecName(int codecId);
     
     // Movie
     if ([menuItem action] == @selector(movieSizeAction:)) {
-        return _movie && ![self isFullScreen];
+        return _movie && ![self isFullScreen] && ![self isDesktopBackground];
     }
     if ([menuItem action] == @selector(fullScreenAction:) ||
         [menuItem action] == @selector(fullScreenFillAction:)) {
         return (_movie != nil);
+    }
+    if ([menuItem action] == @selector(desktopBackgroundAction:)) {
+        return _movie && ![self isFullScreen];
     }
     if ([menuItem action] == @selector(aspectRatioAction:)) {
         if ([menuItem tag] == ASPECT_RATIO_SAR) {

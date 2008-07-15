@@ -404,10 +404,11 @@
                               key:MActivateOnDraggingKey],
        [BoolNode boolNodeWithName:LABEL(@"Floating Playlist")
                               key:MFloatingPlaylistKey],
-       [SelectNode selectNodeWithName:LABEL(@"Window Resize on Opening Movie")
-                                  key:MOpeningResizeKey
+       [BoolNode boolNodeWithName:LABEL(@"Auto Show Dock in Full Screen")
+                              key:MAutoShowDockKey],
+       [SelectNode selectNodeWithName:LABEL(@"Movie Resize Center")
+                                  key:MMovieResizeCenterKey
                                titles:[NSArray arrayWithObjects:
-                                       NSLocalizedString(@"Never", nil),
                                        NSLocalizedString(@"Title Center", nil),
                                        NSLocalizedString(@"Title Left", nil),
                                        NSLocalizedString(@"Title Right", nil),
@@ -415,8 +416,8 @@
                                        NSLocalizedString(@"Bottom Left", nil),
                                        NSLocalizedString(@"Bottom Right", nil),
                                        nil]],
-       [SelectNode selectNodeWithName:LABEL(@"Window Resize")
-                                  key:MWindowResizeKey
+       [SelectNode selectNodeWithName:LABEL(@"Window Resize Mode")
+                                  key:MWindowResizeModeKey
                                titles:[NSArray arrayWithObjects:
                                        NSLocalizedString(@"Free", nil),
                                        NSLocalizedString(@"Adjust to Size", nil),

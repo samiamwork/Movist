@@ -39,6 +39,11 @@
 
     NSURL* _movieURL;
     NSRect _movieViewRect;  // in _mainWindow
+    BOOL _fullScreenFromDesktopBackground;
+
+    // hide main-menu & dock
+    BOOL _autoShowDock;
+    BOOL _mainMenuAndDockIsHidden;
     SystemUIMode _normalSystemUIMode;
     SystemUIOptions _normalSystemUIOptions;
 
@@ -49,7 +54,7 @@
     NSRect _fullMovieRect;
 
     // for black-screens effect
-    ScreenFader* _screenFader;
+    ScreenFader* _blackScreenFader;
 }
 
 - (id)initWithMainWindow:(MainWindow*)mainWindow
@@ -57,6 +62,7 @@
 
 - (FullWindow*)fullWindow;
 - (void)setMovieURL:(NSURL*)movieURL;
+- (void)setAutoShowDock:(BOOL)autoShow;
 
 - (BOOL)isFullScreen;
 - (void)beginFullScreen;

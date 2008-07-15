@@ -67,6 +67,8 @@
                                                playPanel:_playPanel];
 
         _movieViewRect = [_movieView frame];
+        _autoShowDock = TRUE;
+        _mainMenuAndDockIsHidden = FALSE;
 
         NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
         _effect = [defaults integerForKey:MFullScreenEffectKey];
@@ -82,7 +84,7 @@
             1 < [[NSScreen screens] count]) {
             NSMutableArray* screens = [NSMutableArray arrayWithArray:[NSScreen screens]];
             [screens removeObject:[_mainWindow screen]];    // except current screen
-            _screenFader = [[ScreenFader alloc] initWithScreens:screens];
+            _blackScreenFader = [[ScreenFader alloc] initWithScreens:screens];
         }
     }
     return self;
@@ -91,7 +93,7 @@
 - (void)dealloc
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_screenFader release];
+    [_blackScreenFader release];
     [_fullWindow release];
     [_mainWindow release];
     [_movieView release];
@@ -116,12 +118,17 @@
     }
 }
 
+- (void)setAutoShowDock:(BOOL)autoShow
+{
+    _autoShowDock = autoShow;
+}
+
 #define SCREEN_FADE_DURATION    0.25
 #define FADE_EFFECT_DURATION    0.5
 #define NAV_FADE_DURATION       1.0
 
-- (void)beginBlackScreens { [_screenFader fadeOut:SCREEN_FADE_DURATION]; }
-- (void)endBlackScreens   { [_screenFader fadeIn:SCREEN_FADE_DURATION]; }
+- (void)beginBlackScreens { [_blackScreenFader fadeOut:SCREEN_FADE_DURATION]; }
+- (void)endBlackScreens   { [_blackScreenFader fadeIn:SCREEN_FADE_DURATION]; }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -132,11 +139,12 @@
 - (void)beginFullScreen
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (_screenFader) {
+    if (_blackScreenFader) {
         [self beginBlackScreens];
     }
 
-    if ([self isDesktopBackground]) {
+    _fullScreenFromDesktopBackground = [self isDesktopBackground];
+    if (_fullScreenFromDesktopBackground) {
         [self beginFullScreenFromDesktopBackground];
     }
     else {
@@ -161,7 +169,7 @@
     [_fullWindow setAcceptsMouseMovedEvents:FALSE];
     [_playPanel orderOut:self];     // immediately without fade-effect
 
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:MDesktopBackgroundKey]) {
+    if (_fullScreenFromDesktopBackground) {
         [self endFullScreenToDesktopBackground];
     }
     else {
@@ -177,7 +185,7 @@
                 break;
         }
     }
-    if (_screenFader) {
+    if (_blackScreenFader) {
         [self endBlackScreens];
     }
 }
@@ -216,7 +224,7 @@
 
 - (void)beginNavigation
 {
-    if (_screenFader) {
+    if (_blackScreenFader) {
         [self beginBlackScreens];
     }
     
@@ -231,7 +239,7 @@
     
     [self endFadeTransition:NAV_FADE_DURATION];
     
-    if (_screenFader) {
+    if (_blackScreenFader) {
         [self endBlackScreens];
     }
 }

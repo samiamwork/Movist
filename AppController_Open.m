@@ -183,7 +183,8 @@
                         [_defaults integerForKey:MFullScreenFillForStdMovieKey]];
     [_movieView hideLogo];
     [_movieView setMovie:_movie];
-    [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
+    [_movieView setSubtitleSync:0];
+    [_movieView updateSubtitlePosition];
     [_movieView updateMovieRect:TRUE];
 
     if (_subtitles) {
@@ -195,15 +196,14 @@
         [_movieView setMessageWithURL:[self movieURL] info:[[_movie class] name]];
     }
     
-    if (![self isFullScreen]) {
-        if ([_defaults integerForKey:MOpeningResizeKey] != OPENING_RESIZE_NEVER) {
-            [self resizeWithMagnification:1.0];
-        }
-        if ([_defaults boolForKey:MAutoFullScreenKey]) {
-            [self beginFullScreen];
-        }
-        else if ([_defaults boolForKey:MDesktopBackgroundKey]) {
-            [self beginDesktopBackground];
+    if (![self isFullScreen] && ![self isDesktopBackground]) {
+        switch ([_defaults integerForKey:MOpeningViewKey]) {
+            case OPENING_VIEW_HALF_SIZE         : [self resizeWithMagnification:0.5];   break;
+            case OPENING_VIEW_REAL_SIZE         : [self resizeWithMagnification:1.0];   break;
+            case OPENING_VIEW_DOUBLE_SIZE       : [self resizeWithMagnification:2.0];   break;
+            case OPENING_VIEW_FIT_TO_SCREEN     : [self resizeToScreen];                break;
+            case OPENING_VIEW_DESKTOP_BACKGROUND: [self beginDesktopBackground];        break;
+            case OPENING_VIEW_FULL_SCREEN       : [self beginFullScreen];               break;
         }
     }
     // subtitles should be set after resizing window.
