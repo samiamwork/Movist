@@ -46,7 +46,6 @@
 "Show Subtitle" = "Show Subtitle";
 "Hide Subtitle" = "Hide Subtitle";
 "No Subtitle" = "No Subtitle";
-"Subtitle %@" = "Subtitle %@";
 "Subtitle Rotation" = "Subtitle Rotation";
 "Unnamed Subtitle" = "Unnamed Subtitle";
 
@@ -85,20 +84,17 @@
 
 /* Message: Subtitle */
 "No Subtitle: Reopen with other encodings" = "No Subtitle: Reopen with other encodings";
-"Auto Subtitle Position" = "Auto Subtitle Position";
-"Subtitle on Movie" = "Subtitle on Movie";
-"Subtitle on Letter Box" = "Subtitle on Letter Box";
-"Subtitle on Letter Box (1 Line)" = "Subtitle on Letter Box (1 Line)";
-"Subtitle on Letter Box (%d Lines)" = "Subtitle on Letter Box (%d Lines)";
-"Subtitle Size %.1f" = "Subtitle Size %.1f";
-"Subtitle HMargin %.1f %%" = "Subtitle HMargin %.1f %%";
-"Subtitle VMargin %.1f %%" = "Subtitle VMargin %.1f %%";
-"Subtitle Screen Margin %.1f" = "Subtitle Screen Margin %.1f";
-"Subtitle Line Spacing %.1f" = "Subtitle Line Spacing %.1f";
-"Subtitle Sync %.1f sec." = "Subtitle Sync %.1f sec";
+"Letter Box Height : Auto" = "Letter Box Height : Auto";
+"Subtitle %@ : Size %.1f" = "Subtitle %@ : Size %.1f";
+"Subtitle %@ : HMargin %.1f %%" = "Subtitle %@ : HMargin %.1f %%";
+"Subtitle %@ : VMargin %.1f %%" = "Subtitle %@ : VMargin %.1f %%";
+"Subtitle %@ : Line Spacing %.1f" = "Subtitle %@ : Line Spacing %.1f";
+"Subtitle %@ : Sync %.1f sec." = "Subtitle %@ : Sync %.1f sec";
 "Subtitle %@ selected" = "Subtitle %@ selected";
 "Subtitle %@ enabled" = "Subtitle %@ enabled";
 "Subtitle %@ disabled" = "Subtitle %@ disabled";
+"Subtitle Screen Margin %.1f" = "Subtitle Screen Margin %.1f";
+"Controlling Subtitle %@ (%@)" = "Controlling Subtitle %@ (%@)";
 
 /* Control Panel */
 "Video Track" = "Video Track";
@@ -135,7 +131,7 @@
 "Bottom Center" = "Bottom Center";
 "Bottom Left" = "Bottom Left";
 "Bottom Right" = "Bottom Right";
-"Window Resize Mode" = "Window Resize Mode";
+"Window Resize Type" = "Window Resize Type";
 "Free" = "Free";
 "Adjust to Size" = "Adjust to Size";
 "Adjust to Width" = "Adjust to Width";
@@ -152,7 +148,7 @@
 "Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
 "Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
 "Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
-"Auto Subtitle Position Max Lines (1~3)" = "Auto Subtitle Position Max Lines (1~3)";
+"Auto Letter Box Height Max Lines (1~3)" = "Auto Letter Box Height Max Lines (1~3)";
 
 /* Preferences: advanced - details: full-nav */
 "Full Screen Navigation" = "Full Screen Navigation";

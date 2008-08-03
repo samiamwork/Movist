@@ -105,11 +105,16 @@
     IBOutlet NSMenu* _subtitleMenu;
     IBOutlet NSMenu* _subtitleEncodingMenu;
     IBOutlet NSMenuItem* _subtitleVisibleMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionOnMovieMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionOnLetterBoxMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionOnLetterBox1LineMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionOnLetterBox2LinesMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionOnLetterBox3LinesMenuItem;
+    IBOutlet NSMenuItem* _subtitleControlMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionUBoxMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionTopMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionCenterMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionBottomMenuItem;
+    IBOutlet NSMenuItem* _subtitlePositionLBoxMenuItem;
+    IBOutlet NSMenuItem* _letterBoxHeightSameMenuItem;
+    IBOutlet NSMenuItem* _letterBoxHeight1LineMenuItem;
+    IBOutlet NSMenuItem* _letterBoxHeight2LinesMenuItem;
+    IBOutlet NSMenuItem* _letterBoxHeight3LinesMenuItem;
     IBOutlet NSMenuItem* _syncLaterMenuItem;
     IBOutlet NSMenuItem* _syncEarlierMenuItem;
     IBOutlet NSMenuItem* _syncDefaultMenuItem;
@@ -137,8 +142,12 @@
     IBOutlet ControlPanel* _controlPanel;
     IBOutlet NSTextField* _audioDeviceTextField;
     IBOutlet NSTextField* _audioOutTextField;
+    IBOutlet NSSegmentedControl* _subtitleLanguageSegmentedControl;
+    IBOutlet NSTextField* _subtitleNameTextField;
     IBOutlet NSPopUpButton* _subtitlePositionPopUpButton;
     IBOutlet NSButton* _subtitlePositionDefaultButton;
+    IBOutlet NSPopUpButton* _letterBoxHeightPopUpButton;
+    IBOutlet NSButton* _letterBoxHeightDefaultButton;
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
     IBOutlet NSButton* _cpDecoderButton;
@@ -347,23 +356,28 @@
 - (void)setSubtitleEnable:(BOOL)enable;
 - (void)changeSubtitleVisible;
 
-- (void)setSubtitleFontSize:(float)size;
-- (void)changeSubtitleFontSize:(int)tag;
-- (void)setSubtitlePosition:(int)position;
-- (void)changeSubtitlePosition:(int)tag;
-- (void)setSubtitleHMargin:(float)hMargin;
-- (void)setSubtitleVMargin:(float)vMargin;
-- (void)changeSubtitleVMargin:(int)tag;
+- (void)setSubtitleFontSize:(float)size atIndex:(int)index;
+- (void)changeSubtitleFontSize:(int)tag atIndex:(int)index;
+- (void)setSubtitlePosition:(int)position atIndex:(int)index;
+- (void)changeSubtitlePositionAtIndex:(int)index;
+- (void)setSubtitleHMargin:(float)hMargin atIndex:(int)index;
+- (void)setSubtitleVMargin:(float)vMargin atIndex:(int)index;
+- (void)changeSubtitleVMargin:(int)tag atIndex:(int)index;
+- (void)setSubtitleLineSpacing:(float)spacing atIndex:(int)index;
+- (void)setSubtitleSync:(float)sync atIndex:(int)index;
+- (void)changeSubtitleSync:(int)tag atIndex:(int)index;
+
+- (void)setLetterBoxHeight:(int)height;
+- (void)changeLetterBoxHeight;
 - (void)setSubtitleScreenMargin:(float)screenMargin;
-- (void)setSubtitleLineSpacing:(float)spacing;
 
 - (void)setSubtitle:(MSubtitle*)subtitle enabled:(BOOL)enabled;
 - (void)autoenableSubtitles;
 - (void)changeSubtitleLanguage:(int)tag;
-- (void)setSubtitleSync:(float)sync;
-- (void)changeSubtitleSync:(int)tag;
+- (void)updateMovieViewSubtitles;
 - (void)updateSubtitleLanguageMenuItems;
 - (void)updateSubtitlePositionMenuItems;
+- (void)updateLetterBoxHeightMenuItems;
 
 - (IBAction)subtitleVisibleAction:(id)sender;
 - (IBAction)subtitleLanguageAction:(id)sender;
@@ -371,6 +385,7 @@
 - (IBAction)subtitleVMarginAction:(id)sender;
 - (IBAction)subtitlePositionAction:(id)sender;
 - (IBAction)subtitleSyncAction:(id)sender;
+- (IBAction)letterBoxHeightAction:(id)sender;
 
 @end
 

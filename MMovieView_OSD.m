@@ -22,43 +22,54 @@
 
 #import "MMovieView.h"
 
-#import "MTextOSD.h"
-#import "MImageOSD.h"
-#import "SubtitleRenderer.h"
+#import "MMovieOSD.h"
 #import "AppController.h"   // for NSApp's delegate
 
 @implementation MMovieView (OSD)
 
 - (BOOL)initOSD
 {
-    _subtitleRenderer = [[SubtitleRenderer alloc] initWithMovieView:self];
+    NSRect bounds = [self bounds];
+    int i;
+    NSColor* subtitleMessageTextColor, *subtitleMessageStrokeColor;
+    subtitleMessageTextColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:0.5];
+    subtitleMessageStrokeColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:0.5];
+    for (i = 0; i < 3; i++) {
+        _subtitleOSD[i] = [[MMovieOSD alloc] init];
+        [_subtitleOSD[i] initTextRendering];
+        [_subtitleOSD[i] setViewBounds:bounds movieRect:bounds];
 
-    NSRect rect = [self bounds];
-    _subtitleImageOSD = [[MTextImageOSD alloc] init];
-    [_subtitleImageOSD setMovieRect:rect];
-    [_subtitleImageOSD setHAlign:OSD_HALIGN_CENTER];
-    [_subtitleImageOSD setVAlign:OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM];
+        _auxSubtitleOSD[i] = [[MMovieOSD alloc] init];
+        [_auxSubtitleOSD[i] initTextRendering];
+        [_auxSubtitleOSD[i] setShadowBlur:0];   // no shadow
+        [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:bounds];
+
+        // h/v-position will be updated later
+    }
     _subtitleVisible = TRUE;
-    _autoSubtitlePositionMaxLines = 3;
-    _subtitlePosition = SUBTITLE_POSITION_AUTO; // for initial update
+    _indexOfSubtitleInLBOX = -1;
+    _autoLetterBoxHeightMaxLines = 3;
 
-    _messageOSD = [[MTextOSD alloc] init];
-    [_messageOSD setMovieRect:rect];
-    [_messageOSD setHAlign:OSD_HALIGN_LEFT];
-    [_messageOSD setVAlign:OSD_VALIGN_UPPER_FROM_MOVIE_TOP];
+    _messageOSD = [[MMovieOSD alloc] init];
+    [_messageOSD initTextRendering];
+    [_messageOSD setViewBounds:bounds movieRect:bounds];
+    [_messageOSD setHPosition:OSD_HPOSITION_LEFT];
+    [_messageOSD setVPosition:OSD_VPOSITION_UBOX];
+    [_messageOSD setTextAlignment:NSLeftTextAlignment];
     _messageHideInterval = 2.0;
 
-    _errorOSD = [[MTextOSD alloc] init];
-    [_errorOSD setMovieRect:rect];
+    _errorOSD = [[MMovieOSD alloc] init];
+    [_errorOSD initTextRendering];
+    [_errorOSD setViewBounds:bounds movieRect:bounds];
+    [_errorOSD setHPosition:OSD_HPOSITION_CENTER];
+    [_errorOSD setVPosition:OSD_VPOSITION_CENTER];
     [_errorOSD setTextAlignment:NSCenterTextAlignment];
-    [_errorOSD setHAlign:OSD_HALIGN_CENTER];
-    [_errorOSD setVAlign:OSD_VALIGN_CENTER];
 
-    _iconOSD = [[MImageOSD alloc] init];
-    [_iconOSD setMovieRect:rect];
+    _iconOSD = [[MMovieOSD alloc] init];
+    [_iconOSD setViewBounds:bounds movieRect:bounds];
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
-    [_iconOSD setHAlign:OSD_HALIGN_CENTER];
-    [_iconOSD setVAlign:OSD_VALIGN_CENTER];
+    [_iconOSD setHPosition:OSD_HPOSITION_CENTER];
+    [_iconOSD setVPosition:OSD_VPOSITION_CENTER];
     return TRUE;
 }
 
@@ -68,8 +79,12 @@
     [_iconOSD release];
     [_errorOSD release];
     [_messageOSD release];
-    [_subtitleImageOSD release];
-    [_subtitleRenderer release];
+    [_subtitleOSD[0] release];
+    [_subtitleOSD[1] release];
+    [_subtitleOSD[2] release];
+    [_auxSubtitleOSD[0] release];
+    [_auxSubtitleOSD[1] release];
+    [_auxSubtitleOSD[2] release];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,16 +114,24 @@
     }
 
     if ([_iconOSD hasContent]) {
-        [_iconOSD drawInViewBounds:bounds];
+        [_iconOSD drawOnScreen];
     }
-    if (_subtitleVisible && [_subtitleImageOSD hasContent]) {
-        [_subtitleImageOSD drawInViewBounds:bounds];
+    if (_subtitleVisible) {
+        int i;
+        for (i = 2; 0 <= i; i--) {
+            if ([_subtitleOSD[i] hasContent]) {
+                [_subtitleOSD[i] drawOnScreen];
+            }
+            else if ([_auxSubtitleOSD[i] hasContent]) {
+                [_auxSubtitleOSD[i] drawOnScreen];
+            }
+        }
     }
     if ([_messageOSD hasContent]) {
-        [_messageOSD drawInViewBounds:bounds];
+        [_messageOSD drawOnScreen];
     }
     if ([_errorOSD hasContent]) {
-        [_errorOSD drawInViewBounds:bounds];
+        [_errorOSD drawOnScreen];
     }
 
     // restore OpenGL status
@@ -153,8 +176,9 @@
 
 - (void)clearOSD
 {
-    [_subtitleRenderer clearSubtitleContent];
-    [_subtitleImageOSD clearContent];
+    [_subtitleOSD[0] setSubtitleSync:0], [_subtitleOSD[0] clearContent];
+    [_subtitleOSD[1] setSubtitleSync:0], [_subtitleOSD[1] clearContent];
+    [_subtitleOSD[2] setSubtitleSync:0], [_subtitleOSD[2] clearContent];
     [_messageOSD clearContent];
     [_errorOSD clearContent];
 }
@@ -162,21 +186,21 @@
 - (void)showLogo
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self lockDraw];
+    [_drawLock lock];
 
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 - (void)hideLogo
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self lockDraw];
+    [_drawLock lock];
 
-    [_iconOSD clearContent];
+    [_iconOSD setImage:nil];
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 @end

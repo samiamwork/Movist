@@ -25,11 +25,8 @@
 #import <QuartzCore/QuartzCore.h>
 
 @class MMovie;
-
-@class MTextOSD;
-@class MImageOSD;
-@class MTextImageOSD;
-@class SubtitleRenderer;
+@class MSubtitle;
+@class MMovieOSD;
 
 @interface MMovieView : NSOpenGLView
 {
@@ -50,21 +47,23 @@
     float _hueValue;
 
     MMovie* _movie;
-    NSArray* _subtitles;
 
     // subtitle
-    SubtitleRenderer* _subtitleRenderer;
-    MTextImageOSD* _subtitleImageOSD;
+    MSubtitle* _subtitle[3];
+    MMovieOSD* _subtitleOSD[3];
+    MMovieOSD* _auxSubtitleOSD[3];
+    BOOL _needsSubtitleUpdate[3];
     BOOL _subtitleVisible;
-    int _autoSubtitlePositionMaxLines;
-    int _subtitlePositionByUser;
-    int _subtitlePosition;
-    float _subtitleSync;
+    int _indexOfSubtitleInLBOX;
+    int _autoLetterBoxHeightMaxLines;
+    int _letterBoxHeightPrefs;
+    int _letterBoxHeight;
+    float _subtitleScreenMargin;        // pixels
 
     // icon, error, message
-    MImageOSD* _iconOSD;
-    MTextOSD* _errorOSD;
-    MTextOSD* _messageOSD;
+    MMovieOSD* _iconOSD;
+    MMovieOSD* _errorOSD;
+    MMovieOSD* _messageOSD;
     float _messageHideInterval;
     NSTimer* _messageHideTimer;
     
@@ -123,7 +122,6 @@
 
 - (NSRect)movieRect;
 - (void)updateMovieRect:(BOOL)display;
-- (float)subtitleLineHeightForMovieWidth:(float)movieWidth;
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect;
 
 - (int)fullScreenFill;
@@ -182,41 +180,24 @@
 
 @interface MMovieView (Subtitle)
 
-- (NSArray*)subtitles;
-- (void)setSubtitles:(NSArray*)subtitles;
-- (void)updateSubtitleString;
-- (void)updateSubtitle;
+- (MSubtitle*)subtitleAtIndex:(int)index;
+- (void)setSubtitle:(MSubtitle*)subtitle atIndex:(int)index;
+- (BOOL)updateSubtitleOSDAtIndex:(int)index sync:(BOOL)sync;
 
 - (BOOL)subtitleVisible;
 - (void)setSubtitleVisible:(BOOL)visible;
 
-- (NSString*)subtitleFontName;
-- (float)subtitleFontSize;
-- (void)setSubtitleFontName:(NSString*)fontName size:(float)size;
-- (void)setSubtitleTextColor:(NSColor*)textColor;
-- (void)setSubtitleStrokeColor:(NSColor*)strokeColor;
-- (void)setSubtitleStrokeWidth:(float)strokeWidth;
-- (void)setSubtitleShadowColor:(NSColor*)shadowColor;
-- (void)setSubtitleShadowBlur:(float)shadowBlur;
-- (void)setSubtitleShadowOffset:(float)shadowOffset;
-- (void)setSubtitleShadowDarkness:(int)shadowDarkness;
+- (void)getSubtitleAttributes:(SubtitleAttributes*)attrs atIndex:(int)index;
+- (void)setSubtitleAttributes:(const SubtitleAttributes*)attrs atIndex:(int)index;
+- (void)updateIndexOfSubtitleInLBOX;
 
-- (int)subtitlePosition;
-- (float)subtitleHMargin;
-- (float)subtitleVMargin;
+- (int)letterBoxHeight;
 - (float)subtitleScreenMargin;
-- (void)updateSubtitlePosition;
-- (void)setAutoSubtitlePositionMaxLines:(int)lines;
-- (void)setSubtitlePosition:(int)position;
-- (void)setSubtitleHMargin:(float)hMargin;
-- (void)setSubtitleVMargin:(float)vMargin;
+- (void)setAutoLetterBoxHeightMaxLines:(int)lines;
+- (void)setLetterBoxHeight:(int)height;
+- (void)updateLetterBoxHeight;
 - (void)setSubtitleScreenMargin:(float)screenMargin;
-- (void)setSubtitleLineSpacing:(float)lineSpacing;
 
-- (float)subtitleSync;
-- (void)setSubtitleSync:(float)sync;
-
-- (float)currentSubtitleTime;
 - (float)prevSubtitleTime;
 - (float)nextSubtitleTime;
 

@@ -537,6 +537,83 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+@implementation NSMutableAttributedString (Movist)
+
+NSString* const MFontBoldAttributeName   = @"MFontBoldAttributeName";
+NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
+
+- (void)applyFont:(NSFont*)font
+        fontTrait:(NSFontTraitMask)fontTrait
+    attributeName:(NSString*)attributeName
+{
+    //TRACE(@"%s \"%@\" %d", __PRETTY_FUNCTION__, attributeName, fontTrait);
+    NSString* attrName = NSFontAttributeName;
+    id attrValue = [[NSFontManager sharedFontManager] convertFont:font
+                                                      toHaveTrait:fontTrait];
+    if (attrValue == font) {    // no available font for fontTrait
+        if (fontTrait != NSItalicFontMask || [font italicAngle] != 0.0) {
+            return;
+        }
+        // use alternative attribute NSObliqnessAttributeName for italic
+        attrName = NSObliquenessAttributeName;
+        attrValue = [NSNumber numberWithFloat:0.3];
+    }
+
+    NSNumber* n;
+    NSRange attrRange;
+    NSRange range = NSMakeRange(0, [self length]);
+    while (0 < range.length) {
+        n = [self attribute:attributeName atIndex:range.location
+      longestEffectiveRange:&attrRange inRange:range];
+        if (n) {
+            [self addAttribute:attrName value:attrValue range:attrRange];
+            range = NSMakeRange(NSMaxRange(attrRange),
+                                NSMaxRange(range) - NSMaxRange(attrRange));
+        }
+        else {
+            range.location++;
+            range.length--;
+        }
+    }
+}
+
+- (void)applyFont:(NSFont*)font textColor:(NSColor*)textColor
+      strokeColor:(NSColor*)strokeColor strokeWidth:(NSNumber*)strokeWidth
+   paragraphStyle:(NSParagraphStyle*)paragraphStyle
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSRange range = NSMakeRange(0, [self length]);
+    [self addAttribute:NSFontAttributeName value:font range:range];
+
+    NSColor* c;
+    NSRange r;  r.length = 1;
+    for (r.location = 0; r.location < range.length; r.location++) {
+        c = [self attribute:NSForegroundColorAttributeName atIndex:r.location effectiveRange:nil];
+        c = (!c) ? textColor : [NSColor colorWithCalibratedRed:[c redComponent]
+                                                         green:[c greenComponent]
+                                                          blue:[c blueComponent]
+                                                         alpha:[textColor alphaComponent]];
+        [self addAttribute:NSForegroundColorAttributeName value:c range:r];
+    }
+    [self applyFont:font fontTrait:NSItalicFontMask attributeName:MFontItalicAttributeName];
+    [self applyFont:font fontTrait:NSBoldFontMask attributeName:MFontBoldAttributeName];
+
+    [self addAttribute:NSStrokeColorAttributeName value:strokeColor range:range];
+    if ([strokeWidth floatValue] != 0.0) {
+        [self addAttribute:NSStrokeWidthAttributeName value:strokeWidth range:range];
+    }
+
+    [self addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:range];
+    //[self addAttribute:NSKernAttributeName value:kern range:range];
+
+    [self fixAttributesInRange:range];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @implementation NSIndexSet (Movist)
 
 + (id)indexSetWithIndexes:(int)index, ...
@@ -636,14 +713,13 @@
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, key);
     NSData* data = [self dataForKey:key];
-    return (!data) ? nil : (NSColor*)[NSUnarchiver unarchiveObjectWithData:data];
+    return (data) ? (NSColor*)[NSUnarchiver unarchiveObjectWithData:data] : nil;
 }
 
 - (void)setColor:(NSColor*)color forKey:(NSString*)key
 {
     //TRACE(@"%s %@ for \"%@\"", __PRETTY_FUNCTION__, color, key);
-    NSData* data = [NSArchiver archivedDataWithRootObject:color];
-    [self setObject:data forKey:key];
+    [self setObject:[NSArchiver archivedDataWithRootObject:color] forKey:key];
 }
 
 @end

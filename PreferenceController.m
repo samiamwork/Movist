@@ -197,4 +197,18 @@ NSString* PANE_ID[] = {
     [_defaults setObject:identifier forKey:MPreferencePaneKey];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)tabView:(NSTabView*)tabView didSelectTabViewItem:(NSTabViewItem*)tabViewItem
+{
+    if (tabView == _subtitleTabView) {
+        _subtitleIndex = [_subtitleTabView indexOfTabViewItem:tabViewItem];
+        [_defaults setObject:[NSNumber numberWithInt:_subtitleIndex] forKey:MPrefsSubtitleTabKey];
+        [self updateSubtitleDataView];
+    }
+    else if (tabView == _advancedTabView) {
+        [_defaults setObject:[tabViewItem identifier] forKey:MPrefsAdvancedTabKey];
+    }
+}
+
 @end

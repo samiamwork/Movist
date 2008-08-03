@@ -132,7 +132,6 @@
             [_fullScreener release];
             _fullScreener = nil;
         }
-        [_movieView updateMovieRect:TRUE];
     }
     [_fullScreenLock unlock];
 }
@@ -316,10 +315,10 @@
         if (![self isFullScreen] && ![self isDesktopBackground]) {
             [self resizeWithMagnification:1.0];
         }
-        [_movieView updateSubtitlePosition];
+        [_movieView updateLetterBoxHeight];
         [_movieView updateMovieRect:TRUE];
         [self updateAspectRatioMenu];
-        [self updateSubtitlePositionMenuItems];
+        [self updateLetterBoxHeightMenuItems];
     }
 }
 
@@ -406,7 +405,14 @@
 - (IBAction)fullScreenFillAction:(id)sender
 {
     if ([sender tag] < 0) {
-        [self setFullScreenFill:([_movieView fullScreenFill] + 1) % 3];
+        int fill = [_movieView fullScreenFill];
+        switch (fill) {
+            case FS_FILL_NEVER   : fill = FS_FILL_STRETCH;  break;
+            case FS_FILL_STRETCH : fill = FS_FILL_CROP;     break;
+            case FS_FILL_CROP    : fill = FS_FILL_NEVER;    break;
+            default              : fill = FS_FILL_NEVER;    break;
+        }
+        [self setFullScreenFill:fill];
     }
     else {
         [self setFullScreenFill:[sender tag]];

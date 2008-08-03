@@ -22,17 +22,35 @@
 
 #import "Movist.h"
 
+@class MSubtitleItem;
+@class MMovieOSD;
+
 @interface MSubtitle : NSObject
 {
     NSURL* _url;
     NSString* _type;
     NSString* _name;
     BOOL _enabled;
-    NSMutableArray* _strings;   // for MSubtitleString
+    NSMutableArray* _items; // of MSubtitleItem
+    int _indexCache;        // for performance of -indexAtTime:
 
-    // for performance of -stringAtTime:
-    int _lastSearchedIndex;
-    NSMutableAttributedString* _emptyString;
+    // for render-threading
+    MMovieOSD* _movieOSD;
+    float _forwardRenderInterval;
+    float _backwardRenderInterval;
+    int _releaseBeginIndex;
+    int _releaseEndIndex;
+    float _lastPlayTime;
+    int _seekIndex;
+    int _playIndex;
+    int _renderStamp;
+    int _lastSeekIndex;
+    int _lastPlayIndex;
+    int _lastRenderStamp;
+    BOOL _renderThreadRunning;
+    BOOL _quitRenderThreadRequested;
+    BOOL _renderingEnabled;
+    NSConditionLock* _renderConditionLock;
 }
 
 + (NSArray*)fileExtensions;
@@ -51,6 +69,7 @@
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
 
+#pragma mark loading
 - (void)addString:(NSMutableAttributedString*)string time:(float)time;
 - (void)addString:(NSMutableAttributedString*)string
         beginTime:(float)beginTime endTime:(float)endTime;
@@ -58,10 +77,29 @@
         beginTime:(float)beginTime endTime:(float)endTime;
 - (void)checkEndTimes;
 
-- (NSMutableAttributedString*)stringAtTime:(float)time;
-- (void)clearCache;
-
+#pragma mark seeking
+- (MSubtitleItem*)itemAtTime:(float)time direction:(int)direction;
+- (int)indexAtTime:(float)time direction:(int)direction;
 - (float)prevSubtitleTime:(float)time;
 - (float)nextSubtitleTime:(float)time;
+
+@end
+
+@interface MSubtitle (Render)
+
+- (MMovieOSD*)movieOSD;
+- (float)forwardRenderInterval;
+- (float)backwardRenderInterval;
+- (BOOL)renderingEnabled;
+- (void)setMovieOSD:(MMovieOSD*)movieOSD;
+- (void)setForwardRenderInterval:(float)interval;
+- (void)setBackwardRenderInterval:(float)interval;
+- (void)initRenderInfo;
+- (void)setRenderingEnabled:(BOOL)enabled;
+- (void)startRenderThread;
+- (void)quitRenderThread;
+- (void)setNeedsRemakeTexImages;
+- (NSImage*)texImageAtTime:(float)time direction:(int)direction
+                renderFlag:(BOOL*)renderFlag;
 
 @end

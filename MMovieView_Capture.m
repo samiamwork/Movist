@@ -48,13 +48,13 @@
         colorSpaceName:NSCalibratedRGBColorSpace
         bytesPerRow:width * 4 bitsPerPixel:0] autorelease];
 
-    [self lockDraw];
+    [_drawLock lock];
     [[self openGLContext] makeCurrentContext];
     glReadPixels((int)rect.origin.x, (int)rect.origin.y,
                  (int)rect.size.width, (int)rect.size.height,
                  GL_RGBA, GL_UNSIGNED_BYTE, [imageRep bitmapData]);
     [NSOpenGLContext clearCurrentContext];
-    [self unlockDraw];
+    [_drawLock unlock];
 
     NSImage* image = [[NSImage alloc] initWithSize:rect.size];
     [image addRepresentation:imageRep];

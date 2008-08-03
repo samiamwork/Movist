@@ -9,25 +9,17 @@
 			<dict>
 				<key>alwaysOnTopAction</key>
 				<string>id</string>
-				<key>asDesktopBackgroundAction</key>
-				<string>id</string>
-				<key>autoFullScreenAction</key>
-				<string>id</string>
 				<key>autoPlayOnFullScreenAction</key>
 				<string>id</string>
 				<key>autodetectDigitalAudioOutAction</key>
 				<string>id</string>
 				<key>autodetectMovieSeriesAction</key>
 				<string>id</string>
-				<key>blackoutSecondaryScreensAction</key>
-				<string>id</string>
 				<key>checkUpdateNowAction</key>
 				<string>id</string>
 				<key>codecBindingAction</key>
 				<string>id</string>
 				<key>deactivateScreenSaverAction</key>
-				<string>id</string>
-				<key>desktopBackgroundAction</key>
 				<string>id</string>
 				<key>fileBindingAction</key>
 				<string>id</string>
@@ -42,6 +34,8 @@
 				<key>fullScreenFillAction</key>
 				<string>id</string>
 				<key>fullScreenUnderScanAction</key>
+				<string>id</string>
+				<key>letterBoxHeightAction</key>
 				<string>id</string>
 				<key>openingViewAction</key>
 				<string>id</string>
@@ -67,6 +61,8 @@
 				<string>id</string>
 				<key>subtitlePositionAction</key>
 				<string>id</string>
+				<key>subtitleScreenMarginAction</key>
+				<string>id</string>
 				<key>supportAppleRemoteAction</key>
 				<string>id</string>
 				<key>updateCheckIntervalAction</key>
@@ -82,27 +78,21 @@
 			<dict>
 				<key>_advancedPane</key>
 				<string>NSView</string>
+				<key>_advancedTabView</key>
+				<string>NSTabView</string>
 				<key>_alwaysOnTopButton</key>
-				<string>NSButton</string>
-				<key>_asDesktopBackgroundButton</key>
 				<string>NSButton</string>
 				<key>_audioPane</key>
 				<string>NSView</string>
-				<key>_autoFullScreenButton</key>
-				<string>NSButton</string>
 				<key>_autoPlayOnFullScreenButton</key>
 				<string>NSButton</string>
 				<key>_autodetectDigitalAudioOutButton</key>
 				<string>NSButton</string>
 				<key>_autodetectMovieSeriesButton</key>
 				<string>NSButton</string>
-				<key>_blackoutSecondaryScreensButton</key>
-				<string>NSButton</string>
 				<key>_codecBindingTableView</key>
 				<string>NSTableView</string>
 				<key>_deactivateScreenSaverButton</key>
-				<string>NSButton</string>
-				<key>_desktopBackgroundButton</key>
 				<string>NSButton</string>
 				<key>_detailsOutlineView</key>
 				<string>NSOutlineView</string>
@@ -126,6 +116,8 @@
 				<string>NSView</string>
 				<key>_lastUpdateCheckTimeTextField</key>
 				<string>NSTextField</string>
+				<key>_letterBoxHeightPopUpButton</key>
+				<string>NSPopUpButton</string>
 				<key>_openingViewPopUpButton</key>
 				<string>NSPopUpButton</string>
 				<key>_quitWhenWindowCloseButton</key>
@@ -158,6 +150,8 @@
 				<string>NSStepper</string>
 				<key>_subtitleAutoFontSizeTextField</key>
 				<string>NSTextField</string>
+				<key>_subtitleDataView</key>
+				<string>NSView</string>
 				<key>_subtitleEnableButton</key>
 				<string>NSButton</string>
 				<key>_subtitleEncodingPopUpButton</key>
@@ -208,6 +202,8 @@
 				<string>NSSlider</string>
 				<key>_subtitleStrokeWidthTextField</key>
 				<string>NSTextField</string>
+				<key>_subtitleTabView</key>
+				<string>NSTabView</string>
 				<key>_subtitleTextColorWell</key>
 				<string>NSColorWell</string>
 				<key>_subtitleTextOpacitySlider</key>

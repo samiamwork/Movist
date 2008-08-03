@@ -24,31 +24,9 @@
 
 #import <QuartzCore/QuartzCore.h>
 
-enum {  // horizontal : exclusive
-    OSD_HALIGN_LEFT                      = 1 << 0,
-    OSD_HALIGN_CENTER                    = 1 << 1,
-    OSD_HALIGN_RIGHT                     = 1 << 2,
-};
-
-enum {  // vertical : exclusive
-    OSD_VALIGN_CENTER                    = 1 << 3,
-    OSD_VALIGN_UPPER_FROM_MOVIE_TOP      = 1 << 4,
-    OSD_VALIGN_LOWER_FROM_MOVIE_TOP      = 1 << 5,
-    OSD_VALIGN_UPPER_FROM_MOVIE_BOTTOM   = 1 << 6,
-    OSD_VALIGN_LOWER_FROM_MOVIE_BOTTOM   = 1 << 7,
-};
-
-enum {  // for _updateMask
-    UPDATE_CONTENT  = 1,
-    UPDATE_SHADOW   = 1 << 1,
-    UPDATE_TEXTURE  = 1 << 2,
-};
-
 @interface MMovieOSD : NSObject
 {
-    NSRect _movieRect;          // display movie size
-    unsigned int _updateMask;   // bit-mask of UPDATE_*
-
+    // shadow
     NSShadow* _shadow;
     NSShadow* _shadowNone;
     NSColor* _shadowColor;
@@ -56,55 +34,97 @@ enum {  // for _updateMask
     float _shadowOffset;        // for 640-width-of-movie
     int _shadowDarkness;
 
-    NSSize _contentSize;
-    float _contentLeftMargin;   // pure content margins in content size
-    float _contentRightMargin;
-    float _contentTopMargin;
-    float _contentBottomMargin;
-    unsigned int _hAlign;       // bit-mask of OSD_HALIGN_*
-    unsigned int _vAlign;       // bit-mask of OSD_VALIGN_*
+    // text rendering
+    NSFont* _font;
+    NSString* _fontName;
+    float _fontSize;            // for 640-width-of-movie
+    NSColor* _textColor;
+    NSColor* _strokeColor;
+    NSNumber* _strokeWidth;     // for 640-width-of-movie
+    NSNumber* _strokeWidth2;    // for redraw
+    NSMutableParagraphStyle* _paragraphStyle;
+    float _lineSpacing;
+
+    // position & margin
+    int _hPosition;             // OSD_HPOSITION_*
+    int _vPosition;             // OSD_VPOSITION_*
+    int _vPositionPrefs;        // OSD_VPOSITION_*
     float _hMargin;             // percentage of width
     float _vMargin;             // percentage of height
-    float _screenMargin;        // pixels
+    float _subtitleSync;        // for subtitle only
 
-    GLuint _texName;
+    // texture rendering
+    NSRect _viewBounds;
+    NSRect _movieRect;
+    NSRect _drawingRect;
+    unsigned int _updateMask;   // bit-mask of UPDATE_*
+    NSImage* _texImage;         // final rendered image for texture
+    GLuint _texName;            // OpenGL texture name for _texImage
+
+    // for convenience
+    NSAttributedString* _string;
+    NSImage* _image;
+
+    NSRecursiveLock* _lock;
 }
 
-- (void)setMovieRect:(NSRect)rect;
-- (float)autoSize:(float)defaultSize;
+#pragma mark shadow
+- (NSColor*)shadowColor;
+- (float)shadowBlur;
+- (float)shadowOffset;
+- (int)shadowDarkness;
+- (BOOL)setShadowColor:(NSColor*)shadowColor;
+- (BOOL)setShadowBlur:(float)shadowBlur;
+- (BOOL)setShadowOffset:(float)shadowOffset;
+- (BOOL)setShadowDarkness:(int)darkness;
 
-#pragma mark -
-- (unsigned int)hAlign;
-- (unsigned int)vAlign;
+#pragma mark text
+- (void)initTextRendering;
+- (NSString*)fontName;
+- (float)fontSize;
+- (NSTextAlignment)textAlignment;
+- (NSColor*)textColor;
+- (NSColor*)strokeColor;
+- (float)strokeWidth;
+- (float)lineSpacing;
+- (BOOL)setFontName:(NSString*)name size:(float)size;
+- (BOOL)setTextAlignment:(NSTextAlignment)alignment;
+- (BOOL)setTextColor:(NSColor*)textColor;
+- (BOOL)setStrokeColor:(NSColor*)strokeColor;
+- (BOOL)setStrokeWidth:(float)strokeWidth;
+- (BOOL)setLineSpacing:(float)lineSpacing;
+
+#pragma mark position
+- (unsigned int)hPosition;
+- (unsigned int)vPosition;
+- (BOOL)setHPosition:(unsigned int)hPosition;
+- (BOOL)setVPosition:(unsigned int)vPosition;
+- (void)updateVPosition:(BOOL)displayOnLetterBox;
+
+#pragma mark margin
 - (float)hMargin;
 - (float)vMargin;
-- (float)screenMargin;
-- (void)setHAlign:(unsigned int)hAlign;
-- (void)setVAlign:(unsigned int)vAlign;
-- (void)updateVAlign:(BOOL)displayOnLetterBox;
-- (void)setHMargin:(float)hMargin;
-- (void)setVMargin:(float)vMargin;
-- (void)setScreenMargin:(float)screenMargin;
+- (BOOL)setHMargin:(float)hMargin;
+- (BOOL)setVMargin:(float)vMargin;
 
-#pragma mark -
-- (BOOL)hasContent;
+#pragma mark subtitle-sync
+- (float)subtitleSync;
+- (void)setSubtitleSync:(float)sync;
+
+#pragma mark making tex-image
+- (float)adjustedLineHeight:(float)movieWidth;
+- (float)adjustedLineSpacing:(float)movieWidth;
+- (NSImage*)makeTexImageForString:(NSAttributedString*)string;
+- (NSImage*)makeTexImageForImage:(NSImage*)image;
+- (BOOL)setString:(NSAttributedString*)string;
+- (BOOL)setImage:(NSImage*)image;
 - (void)clearContent;
-- (void)updateContent;
 
-#pragma mark -
-- (int)shadowDarkness;
-- (void)setShadowColor:(NSColor*)shadowColor;
-- (void)setShadowBlur:(float)shadowBlur;
-- (void)setShadowOffset:(float)shadowOffset;
-- (void)setShadowDarkness:(int)darkness;
-- (void)updateShadow;
-
-#pragma mark -
-- (void)drawContent:(NSRect)rect;
-- (NSImage*)makeTexImage;
-- (void)makeTexture:(CGLContextObj)glContext;
-- (void)drawTexture:(NSRect)rect;
-- (NSRect)drawingRectForViewBounds:(NSRect)viewBounds;
-- (void)drawInViewBounds:(NSRect)viewBounds;
+#pragma mark drawing
+- (BOOL)hasContent;
+- (NSImage*)texImage;
+- (BOOL)setTexImage:(NSImage*)texImage;
+- (BOOL)setViewBounds:(NSRect)viewBounds movieRect:(NSRect)movieRect;
+- (void)drawOnScreen;
 
 @end

@@ -120,7 +120,7 @@
     }
 
     if (cfEncoding == kCFStringEncodingInvalidId) {
-        cfEncoding = [_defaults integerForKey:MSubtitleEncodingKey];
+        cfEncoding = [_defaults integerForKey:MSubtitleEncodingKey[0]];
     }
 
     // parse subtitles
@@ -183,8 +183,7 @@
                         [_defaults integerForKey:MFullScreenFillForStdMovieKey]];
     [_movieView hideLogo];
     [_movieView setMovie:_movie];
-    [_movieView setSubtitleSync:0];
-    [_movieView updateSubtitlePosition];
+    [_movieView updateLetterBoxHeight];
     [_movieView updateMovieRect:TRUE];
 
     if (_subtitles) {
@@ -207,7 +206,7 @@
         }
     }
     // subtitles should be set after resizing window.
-    [_movieView setSubtitles:_subtitles];
+    [self updateMovieViewSubtitles];
 
     // update etc. UI
     [_seekSlider setDuration:[_movie duration]];
@@ -398,24 +397,31 @@
     NSArray* subtitles = [self subtitleFromURL:subtitleURL withEncoding:encoding error:&error];
     if (!subtitles) {
         runAlertPanelForOpenError(error, subtitleURL);
-        [self setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
+        [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
         return FALSE;
     }
 
     [_subtitles release];
     _subtitles = [subtitles retain];
 
+    if (0 < [_subtitles count]) {
+        // enable 1st subtitle only by default.
+        NSEnumerator* enumerator = [_subtitles objectEnumerator];
+        MSubtitle* subtitle = [enumerator nextObject];
+        [subtitle setEnabled:TRUE];
+        subtitle = [enumerator nextObject];
+        while (subtitle) {
+            [subtitle setEnabled:FALSE];
+            subtitle = [enumerator nextObject];
+        }
+    }
+
     [[_playlist currentItem] setSubtitleURL:subtitleURL];
-    if (0 < [_subtitles count]) {   // select first language by default
-        [_movieView setSubtitles:[NSArray arrayWithObject:[_subtitles objectAtIndex:0]]];
-    }
-    else {
-        [_movieView setSubtitles:nil];
-    }
+    [self updateMovieViewSubtitles];
 
     [self autoenableSubtitles];
     [self updateSubtitleLanguageMenuItems];
-    [self setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
+    [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
     [_propertiesView reloadData];
 
     [_movie gotoBeginning];
@@ -486,7 +492,6 @@
         [nc removeObserver:self name:nil object:_playlist];
 
         [_movieView setMovie:nil];
-        [_movieView setSubtitles:nil];
         [_movieView setMessage:@""];
         [_movie cleanup], _movie = nil;
 

@@ -22,8 +22,8 @@
 
 #import "MMovieView.h"
 #import "MMovie_QuickTime.h"
-#import "MTextOSD.h"
-#import "MImageOSD.h"
+#import "MMovieOSD.h"
+#import "MSubtitle.h"
 #import "AppController.h"   // for NSApp's delegate
 
 static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
@@ -85,11 +85,26 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                     CVOpenGLTextureRelease(_image);
                 }
                 _image = image;
-                [self updateSubtitleString];
+                if (_subtitleVisible) {
+                    [self updateSubtitleOSDAtIndex:0 sync:FALSE];
+                    [self updateSubtitleOSDAtIndex:1 sync:FALSE];
+                    [self updateSubtitleOSDAtIndex:2 sync:FALSE];
+                }
                 if ([self canDraw]) {
                     [self drawImage];
                 }
                 _fpsFrameCount++;
+            }
+            else if (_image && _subtitleVisible &&
+                     (_needsSubtitleUpdate[0] ||
+                      _needsSubtitleUpdate[1] ||
+                      _needsSubtitleUpdate[2])) {
+                [self updateSubtitleOSDAtIndex:0 sync:FALSE];
+                [self updateSubtitleOSDAtIndex:1 sync:FALSE];
+                [self updateSubtitleOSDAtIndex:2 sync:FALSE];
+                if ([self canDraw]) {
+                    [self drawImage];
+                }
             }
             // calc. fps
             double ct = (double)timeStamp->videoTime / timeStamp->videoTimeScale;
@@ -166,7 +181,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
     if ([_iconOSD hasContent] ||
         [_messageOSD hasContent] || [_errorOSD hasContent] ||
-        (_subtitleVisible && [_subtitleImageOSD hasContent])) {
+        (_subtitleVisible && ([_subtitleOSD[0] hasContent] || [_auxSubtitleOSD[0] hasContent] ||
+                              [_subtitleOSD[1] hasContent] || [_auxSubtitleOSD[1] hasContent] ||
+                              [_subtitleOSD[2] hasContent] || [_auxSubtitleOSD[2] hasContent]))) {
         [self drawOSD];
     }
 
@@ -223,12 +240,19 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)updateMovieRect:(BOOL)display
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, display ? @"display" : @"no-display");
-    [self lockDraw];
+    [_drawLock lock];
+
+    NSRect bounds = [self bounds];
+    if (_subtitleScreenMargin) {
+        //bounds.origin.x += _subtitleScreenMargin;
+        bounds.origin.y += _subtitleScreenMargin;
+        //bounds.size.width -= _subtitleScreenMargin * 2;
+        bounds.size.height-= _subtitleScreenMargin * 2;
+    }
 
     if (!_movie) {
-        NSRect mr = [self bounds];
-        [_iconOSD setMovieRect:mr];
-        [_messageOSD setMovieRect:mr];
+        [_iconOSD setViewBounds:bounds movieRect:bounds];
+        [_messageOSD setViewBounds:bounds movieRect:bounds];
     }
     else {
         // make invalid to update later
@@ -237,48 +261,41 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         // update _movieRect
         NSRect mr = [self calcMovieRectForBoundingRect:[self bounds]];
         _movieRect = *(CGRect*)&mr;
-        [_iconOSD setMovieRect:mr];
-        [_messageOSD setMovieRect:mr];
-        [_subtitleImageOSD setMovieRect:mr];
-        [_subtitleRenderer setMovieRect:mr];
+
+        [_iconOSD setViewBounds:bounds movieRect:mr];
+        [_messageOSD setViewBounds:bounds movieRect:mr];
+        int i;
+        for (i = 0; i < 3; i++) {
+            if ([_subtitleOSD[i] setViewBounds:bounds movieRect:mr]) {
+                if (_subtitle[i] && [_subtitle[i] isEnabled]) {
+                    [_subtitle[i] setNeedsRemakeTexImages];
+                    [self updateSubtitleOSDAtIndex:i sync:FALSE];
+                }
+            }
+            [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:mr];
+        }
     }
-    [_errorOSD setMovieRect:NSInsetRect([self bounds], 50, 0)];
+    [_errorOSD setViewBounds:bounds movieRect:NSInsetRect(bounds, 50, 0)];
+
     if (display) {
         [self redisplay];
     }
-    
-    [self unlockDraw];
-}
 
-- (float)subtitleLineHeightForMovieWidth:(float)movieWidth
-{
-    float fontSize = [_subtitleRenderer fontSize] * movieWidth / 640.0;
-    //fontSize = MAX(15.0, fontSize);
-    NSFont* font = [NSFont fontWithName:[_subtitleRenderer fontName] size:fontSize];
-    
-    NSMutableAttributedString* s = [[[NSMutableAttributedString alloc]
-                                     initWithString:NSLocalizedString(@"SubtitleTestChar", nil)] autorelease];
-    [s addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, 1)];
-    
-    NSSize maxSize = NSMakeSize(1000, 1000);
-    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
-    NSStringDrawingUsesFontLeading |
-    NSStringDrawingUsesDeviceMetrics;
-    return [s boundingRectWithSize:maxSize options:options].size.height;
+    [_drawLock unlock];
 }
 
 - (float)calcLetterBoxHeight:(NSRect)movieRect
 {
-    if (_subtitlePosition == SUBTITLE_POSITION_ON_MOVIE ||
-        _subtitlePosition == SUBTITLE_POSITION_ON_LETTER_BOX) {
+    if (_letterBoxHeight == LETTER_BOX_HEIGHT_SAME || _indexOfSubtitleInLBOX < 0) {
         return 0.0;
     }
-    
-    float lineHeight = [self subtitleLineHeightForMovieWidth:movieRect.size.width];
-    float lineSpacing = [_subtitleRenderer lineSpacing] * movieRect.size.width / 640.0;
-    int lines = _subtitlePosition - SUBTITLE_POSITION_ON_LETTER_BOX;
+
+    MMovieOSD* subtitleOSD = _subtitleOSD[_indexOfSubtitleInLBOX];
+    float lineHeight = [subtitleOSD adjustedLineHeight:movieRect.size.width];
+    float lineSpacing = [subtitleOSD adjustedLineSpacing:movieRect.size.width];
+    int lines = _letterBoxHeight - LETTER_BOX_HEIGHT_1_LINE + 1;
     // FIXME: how to apply line-spacing for line-height?  it's estimated roughly...
-    return lines * (lineHeight + lineSpacing / 2) + [self subtitleScreenMargin];
+    return lines * (lineHeight + lineSpacing / 2) + _subtitleScreenMargin;
 }
 
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect
@@ -359,53 +376,53 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)setBrightness:(float)brightness
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
-    [self lockDraw];
+    [_drawLock lock];
 
     brightness = normalizedFloat2(adjustToRange(brightness, MIN_BRIGHTNESS, MAX_BRIGHTNESS));
     [_colorFilter setValue:[NSNumber numberWithFloat:brightness] forKey:@"inputBrightness"];
     _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
     [self redisplay];
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 - (void)setSaturation:(float)saturation
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, saturation);
-    [self lockDraw];
+    [_drawLock lock];
 
     saturation = normalizedFloat2(adjustToRange(saturation, MIN_SATURATION, MAX_SATURATION));
     [_colorFilter setValue:[NSNumber numberWithFloat:saturation] forKey:@"inputSaturation"];
     _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
     [self redisplay];
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 - (void)setContrast:(float)contrast
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, contrast);
-    [self lockDraw];
+    [_drawLock lock];
 
     contrast = normalizedFloat2(adjustToRange(contrast, MIN_CONTRAST, MAX_CONTRAST));
     [_colorFilter setValue:[NSNumber numberWithFloat:contrast] forKey:@"inputContrast"];
     _contrastValue = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
     [self redisplay];
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 - (void)setHue:(float)hue
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, hue);
-    [self lockDraw];
+    [_drawLock lock];
 
     hue = normalizedFloat2(adjustToRange(hue, MIN_HUE, MAX_HUE));
     [_hueFilter setValue:[NSNumber numberWithFloat:hue] forKey:@"inputAngle"];
     _hueValue = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
     [self redisplay];
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 - (void)setRemoveGreenBox:(BOOL)remove

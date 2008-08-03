@@ -174,32 +174,46 @@ NSString* videoCodecName(int codecId);
 
     // initial update preferences: subtitle
     // check if subtitle font exist. if not, then restore to default.
-    NSString* fontName = [_defaults stringForKey:MSubtitleFontNameKey];
-    NSFont* font = [NSFont fontWithName:fontName size:10.0];
-    if (!font) {
-        NSRunAlertPanel(NSLocalizedString(@"Subtitle Font Not Found", nil),
-                        [NSString stringWithFormat:NSLocalizedString(
-                         @"Subtitle font not found: \"%@\"\n"
-                          "Subtitle font setting will be restored to default.", nil),
-                         fontName],
-                        NSLocalizedString(@"OK", nil), nil, nil);
-        [_defaults setObject:[[NSFont boldSystemFontOfSize:1.0] fontName]
-                      forKey:MSubtitleFontNameKey];
+    SubtitleAttributes attrs;
+    attrs.mask = SUBTITLE_ATTRIBUTE_FONT          | SUBTITLE_ATTRIBUTE_TEXT_COLOR |
+                 SUBTITLE_ATTRIBUTE_STROKE_COLOR  | SUBTITLE_ATTRIBUTE_STROKE_WIDTH |
+                 SUBTITLE_ATTRIBUTE_SHADOW_COLOR  | SUBTITLE_ATTRIBUTE_SHADOW_BLUR |
+                 SUBTITLE_ATTRIBUTE_SHADOW_OFFSET | SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS |
+                 SUBTITLE_ATTRIBUTE_LINE_SPACING  | SUBTITLE_ATTRIBUTE_V_POSITION |
+                 SUBTITLE_ATTRIBUTE_H_MARGIN      | SUBTITLE_ATTRIBUTE_V_MARGIN;
+    int i;
+    NSFont* font;
+    NSString* fontName;
+    for (i = 0; i < 3; i++) {
+        fontName = [_defaults stringForKey:MSubtitleFontNameKey[i]];
+        font = [NSFont fontWithName:fontName size:10.0];
+        if (!font) {
+            NSRunAlertPanel(NSLocalizedString(@"Subtitle Font Not Found", nil),
+                            [NSString stringWithFormat:NSLocalizedString(
+                             @"Subtitle font not found: \"%@\"\n"
+                              "Subtitle font setting will be restored to default.", nil),
+                             fontName],
+                            NSLocalizedString(@"OK", nil), nil, nil);
+            [_defaults setObject:[[NSFont boldSystemFontOfSize:1.0] fontName]
+                          forKey:MSubtitleFontNameKey[i]];
+        }
+        attrs.fontName      = [_defaults stringForKey:MSubtitleFontNameKey[i]];
+        attrs.fontSize      = [_defaults floatForKey:MSubtitleFontSizeKey[i]];
+        attrs.textColor     = [_defaults colorForKey:MSubtitleTextColorKey[i]];
+        attrs.strokeColor   = [_defaults colorForKey:MSubtitleStrokeColorKey[i]];
+        attrs.strokeWidth   = [_defaults floatForKey:MSubtitleStrokeWidthKey[i]];
+        attrs.shadowColor   = [_defaults colorForKey:MSubtitleShadowColorKey[i]];
+        attrs.shadowBlur    = [_defaults floatForKey:MSubtitleShadowBlurKey[i]];
+        attrs.shadowOffset  = [_defaults floatForKey:MSubtitleShadowOffsetKey[i]];
+        attrs.shadowDarkness= [_defaults integerForKey:MSubtitleShadowDarknessKey[i]];
+        attrs.vPosition     = [_defaults integerForKey:MSubtitleVPositionKey[i]];
+        attrs.hMargin       = [_defaults floatForKey:MSubtitleHMarginKey[i]];
+        attrs.vMargin       = [_defaults floatForKey:MSubtitleVMarginKey[i]];
+        attrs.lineSpacing   = [_defaults floatForKey:MSubtitleLineSpacingKey[i]];
+        [_movieView setSubtitleAttributes:&attrs atIndex:i];
     }
-    [_movieView setSubtitleFontName:[_defaults stringForKey:MSubtitleFontNameKey]
-                               size:[_defaults floatForKey:MSubtitleFontSizeKey]];
-    [_movieView setSubtitleTextColor:[_defaults colorForKey:MSubtitleTextColorKey]];
-    [_movieView setSubtitleStrokeColor:[_defaults colorForKey:MSubtitleStrokeColorKey]];
-    [_movieView setSubtitleStrokeWidth:[_defaults floatForKey:MSubtitleStrokeWidthKey]];
-    [_movieView setSubtitleShadowColor:[_defaults colorForKey:MSubtitleShadowColorKey]];
-    [_movieView setSubtitleShadowBlur:[_defaults floatForKey:MSubtitleShadowBlurKey]];
-    [_movieView setSubtitleShadowOffset:[_defaults floatForKey:MSubtitleShadowOffsetKey]];
-    [_movieView setSubtitleShadowDarkness:[_defaults integerForKey:MSubtitleShadowDarknessKey]];
-    [_movieView setSubtitlePosition:[_defaults integerForKey:MSubtitlePositionKey]];
-    [_movieView setSubtitleHMargin:[_defaults floatForKey:MSubtitleHMarginKey]];
-    [_movieView setSubtitleVMargin:[_defaults floatForKey:MSubtitleVMarginKey]];
+    [_movieView setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
     [_movieView setSubtitleScreenMargin:[_defaults floatForKey:MSubtitleScreenMarginKey]];
-    [_movieView setSubtitleLineSpacing:[_defaults floatForKey:MSubtitleLineSpacingKey]];
 
     // initial update preferences: advanced
     // ...
@@ -214,7 +228,7 @@ NSString* videoCodecName(int codecId);
     [_movieView setRemoveGreenBox:[_defaults boolForKey:MRemoveGreenBoxKey]];
 
     // initial update preferences: advanced - details : subtitle
-    [_movieView setAutoSubtitlePositionMaxLines:[_defaults integerForKey:MAutoSubtitlePositionMaxLinesKey]];
+    [_movieView setAutoLetterBoxHeightMaxLines:[_defaults integerForKey:MAutoLetterBoxHeightMaxLinesKey]];
 
     // initial update preferences: advanced - details : full-nav
     // ...
@@ -357,6 +371,7 @@ NSString* videoCodecName(int codecId);
     [self updateVolumeMenuItems];
     [self updateSubtitleLanguageMenuItems];
     [self updateSubtitlePositionMenuItems];
+    [self updateLetterBoxHeightMenuItems];
     [self updateRepeatUI];
     [self updateVolumeUI];
     [self updateTimeUI];
@@ -507,7 +522,8 @@ NSString* videoCodecName(int codecId);
                 return ![_fullScreener isNavigating] && (0 < [_playlist count]);
             }
             if ([menuItem action] == @selector(seekAction:)) {
-                if ([menuItem tag] == 40 || [menuItem tag] == -40) {
+                if ([menuItem tag] == SEEK_TAG_PREV_SUBTITLE ||
+                    [menuItem tag] == SEEK_TAG_NEXT_SUBTITLE) {
                     return (_movie != nil && _subtitles != nil);
                 }
                 else {

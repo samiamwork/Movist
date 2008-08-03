@@ -6,11 +6,11 @@
 	<array>
 		<dict>
 			<key>CLASS</key>
-			<string>NSSegmentedControl</string>
+			<string>FSSeekSlider</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>NSControl</string>
+			<string>SeekSlider</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -22,11 +22,11 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>FSSeekSlider</string>
+			<string>NSSegmentedControl</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
-			<string>SeekSlider</string>
+			<string>NSControl</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -267,6 +267,8 @@
 				<string>id</string>
 				<key>fullScreenUnderScanAction</key>
 				<string>id</string>
+				<key>letterBoxHeightAction</key>
+				<string>id</string>
 				<key>moviePropertyAction</key>
 				<string>id</string>
 				<key>movieSizeAction</key>
@@ -396,6 +398,18 @@
 				<string>NSMenu</string>
 				<key>_lTimeTextField</key>
 				<string>TimeTextField</string>
+				<key>_letterBoxHeight1LineMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_letterBoxHeight2LinesMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_letterBoxHeight3LinesMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_letterBoxHeightDefaultButton</key>
+				<string>NSButton</string>
+				<key>_letterBoxHeightPopUpButton</key>
+				<string>NSPopUpButton</string>
+				<key>_letterBoxHeightSameMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_mainWindow</key>
 				<string>MainWindow</string>
 				<key>_movieMenu</key>
@@ -462,12 +476,24 @@
 				<string>NSMenuItem</string>
 				<key>_seekSlider</key>
 				<string>MainSeekSlider</string>
+				<key>_subtitleControlMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_subtitleEncodingMenu</key>
 				<string>NSMenu</string>
+				<key>_subtitleLanguageSegmentedControl</key>
+				<string>NSSegmentedControl</string>
 				<key>_subtitleMenu</key>
 				<string>NSMenu</string>
+				<key>_subtitleNameTextField</key>
+				<string>NSTextField</string>
+				<key>_subtitlePositionBottomMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitlePositionCenterMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_subtitlePositionDefaultButton</key>
 				<string>NSButton</string>
+				<key>_subtitlePositionLBoxMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_subtitlePositionOnLetterBox1LineMenuItem</key>
 				<string>NSMenuItem</string>
 				<key>_subtitlePositionOnLetterBox2LinesMenuItem</key>
@@ -480,6 +506,10 @@
 				<string>NSMenuItem</string>
 				<key>_subtitlePositionPopUpButton</key>
 				<string>NSPopUpButton</string>
+				<key>_subtitlePositionTopMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitlePositionUBoxMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_subtitleVisibleMenuItem</key>
 				<string>NSMenuItem</string>
 				<key>_syncDefaultMenuItem</key>

@@ -25,8 +25,7 @@
 #import "MMovie.h"
 #import "MSubtitle.h"
 
-#import "MTextOSD.h"
-#import "MImageOSD.h"
+#import "MMovieOSD.h"
 
 #import "AppController.h"   // for NSApp's delegate
 
@@ -79,7 +78,9 @@
     [_drawLock release];
 
     [self cleanupOSD];
-    [_subtitles release];
+    [_subtitle[0] release];
+    [_subtitle[1] release];
+    [_subtitle[2] release];
     [_movie release];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -103,17 +104,17 @@
 - (void)update
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self lockDraw];
+    [_drawLock lock];
 
     [super update];
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 - (void)reshape
 { 
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self lockDraw];
+    [_drawLock lock];
 
     NSRect bounds = [self bounds];
     glViewport(0, 0, bounds.size.width, bounds.size.height);
@@ -125,7 +126,7 @@
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 - (void)drawRect:(NSRect)rect
@@ -154,10 +155,12 @@
 - (void)setMovie:(MMovie*)movie
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
-    [self lockDraw];
+    [_drawLock lock];
 
     [movie retain], [_movie release], _movie = movie;
-    [_subtitles release], _subtitles = nil;
+    [self setSubtitle:nil atIndex:0];
+    [self setSubtitle:nil atIndex:1];
+    [self setSubtitle:nil atIndex:2];
     if (_image) {
         CVOpenGLTextureRelease(_image);
         _image = nil;
@@ -171,13 +174,13 @@
         //[self updateRemoveGreenBox];
     }
     [self clearOSD];
-    [self updateSubtitlePosition];
+    [self updateLetterBoxHeight];
     [self updateMovieRect:TRUE];
     _lastFpsCheckTime = 0.0;
     _fpsElapsedTime = 0.0;
     _fpsFrameCount = 0;
 
-    [self unlockDraw];
+    [_drawLock unlock];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -215,29 +218,28 @@
             }
             break;
 
-        case 'n' : case 'N' : [[NSApp delegate] fullNavigationAction:self]; break;
+        case 'n' : case 'N' : [[NSApp delegate] fullNavigationAction:self];         break;
 
-        case '[' : case '{' : [[NSApp delegate] stepBackward];              break;
-        case ']' : case '}' : [[NSApp delegate] stepForward];               break;
+        case '[' : case '{' : [[NSApp delegate] stepBackward];                      break;
+        case ']' : case '}' : [[NSApp delegate] stepForward];                       break;
 
-        case 'c' : case 'C' : [[NSApp delegate] changePlayRate:+1];         break;
-        case 'x' : case 'X' : [[NSApp delegate] changePlayRate:-1];         break;
-        case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];         break;
+        case 'c' : case 'C' : [[NSApp delegate] changePlayRate:+1];                 break;
+        case 'x' : case 'X' : [[NSApp delegate] changePlayRate:-1];                 break;
+        case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];                 break;
 
-        case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible];     break;
-        case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1]; break;
+        case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible];             break;
+        case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1];         break;
 
-        case 'h' : case 'H' : [[NSApp delegate] changeSubtitlePosition: 0]; break;
-        case 'j' : case 'J' : [[NSApp delegate] changeSubtitlePosition:-1]; break;
-        case 'k' : case 'K' : [[NSApp delegate] changeSubtitlePosition:+1]; break;
+        case 'l' : case 'L' : [[NSApp delegate] changeLetterBoxHeight];             break;
+        case 'p' : case 'P' : [[NSApp delegate] changeSubtitlePositionAtIndex:0];   break;
+            
+        case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1 atIndex:0];   break;
+        case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1 atIndex:0];   break;
+        case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0 atIndex:0];   break;
 
-        case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1];     break;
-        case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1];     break;
-        case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0];     break;
+        case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];          break;
 
-        case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];  break;
-
-        case 'i' : case 'I' : [self saveCurrentImage:shiftPressed];         break;
+        case 'i' : case 'I' : [self saveCurrentImage:shiftPressed];                 break;
     }
 }
 
@@ -277,8 +279,8 @@
         CVDisplayLinkSetCurrentCGDisplay(_displayLink, displayID);
         _displayID = displayID;
         TRACE(@"main window moved: display changed");
-        [self updateSubtitlePosition];
-        [[NSApp delegate] updateSubtitlePositionMenuItems];
+        [self updateLetterBoxHeight];
+        [[NSApp delegate] updateLetterBoxHeightMenuItems];
     }
 }
 
@@ -286,9 +288,6 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self updateMovieRect:FALSE];
-    if ([self subtitleVisible]) {
-        [self updateSubtitle];
-    }
 }
 
 @end

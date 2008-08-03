@@ -59,7 +59,7 @@ enum {
     MOVIE_RESIZE_CENTER_BR,
 };
 
-#pragma mark window resize mode
+#pragma mark window resize type
 enum {
     WINDOW_RESIZE_FREE,
     WINDOW_RESIZE_ADJUST_TO_SIZE,
@@ -77,7 +77,7 @@ enum {
 enum {
     FS_FILL_NEVER,
     FS_FILL_STRETCH,
-    FS_FILL_CROP
+    FS_FILL_CROP,
 };
 
 #pragma mark aspect-ratio
@@ -90,14 +90,81 @@ enum {
     ASPECT_RATIO_2_35,  // 2.35 : 1 (Screen)
 };
 
-#pragma mark subtitle-position
+#pragma mark letter-box height
 enum {
-    SUBTITLE_POSITION_ON_MOVIE              =  -1,
-    SUBTITLE_POSITION_ON_LETTER_BOX         =   0,
-    SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE  =   1,
-    SUBTITLE_POSITION_ON_LETTER_BOX_2_LINES =   2,
-    SUBTITLE_POSITION_ON_LETTER_BOX_3_LINES =   3,
-    SUBTITLE_POSITION_AUTO                  = 100,
+    LETTER_BOX_HEIGHT_SAME      =   0,
+    LETTER_BOX_HEIGHT_1_LINE    =   1,
+    LETTER_BOX_HEIGHT_2_LINES   =   2,
+    LETTER_BOX_HEIGHT_3_LINES   =   3,
+    LETTER_BOX_HEIGHT_AUTO      = 100,
+};
+
+#pragma mark OSD position
+enum {
+    OSD_HPOSITION_LEFT          = 0,
+    OSD_HPOSITION_CENTER        = 1,
+    OSD_HPOSITION_RIGHT         = 2,
+
+    OSD_VPOSITION_UBOX          = 0,
+    OSD_VPOSITION_TOP           = 1,
+    OSD_VPOSITION_CENTER        = 2,
+    OSD_VPOSITION_BOTTOM        = 3,
+    OSD_VPOSITION_LBOX          = 4,
+};
+
+#pragma mark seek tag
+enum {
+    SEEK_TAG_BEGINNING          = -100,
+    SEEK_TAG_PREV_SUBTITLE      =  -40,
+    SEEK_TAG_BACKWARD_3         =  -30,
+    SEEK_TAG_BACKWARD_2         =  -20,
+    SEEK_TAG_BACKWARD_1         =  -10,
+    SEEK_TAG_BACKWARD_STEP      =   -1,
+    SEEK_TAG_TIME               =    0,
+    SEEK_TAG_FORWARD_STEP       =   +1,
+    SEEK_TAG_FORWARD_1          =  +10,
+    SEEK_TAG_FORWARD_2          =  +20,
+    SEEK_TAG_FORWARD_3          =  +30,
+    SEEK_TAG_NEXT_SUBTITLE      =  +40,
+    SEEK_TAG_END                = +100,
+};
+
+#pragma mark subtitle-attributes
+typedef struct {
+    unsigned int mask;
+    NSString* fontName;
+    float     fontSize;
+    NSColor*  textColor;
+    NSColor*  strokeColor;
+    float     strokeWidth;
+    NSColor*  shadowColor;
+    float     shadowBlur;
+    float     shadowOffset;
+    int       shadowDarkness;
+    float     lineSpacing;
+    int       hPosition;
+    int       vPosition;
+    float     hMargin;
+    float     vMargin;
+    float     sync;
+    
+} SubtitleAttributes;
+
+enum {  // for SubtitleAttributes.mask
+    SUBTITLE_ATTRIBUTE_FONT             = 1 << 0,
+    SUBTITLE_ATTRIBUTE_TEXT_COLOR       = 1 << 1,
+    SUBTITLE_ATTRIBUTE_STROKE_COLOR     = 1 << 2,
+    SUBTITLE_ATTRIBUTE_STROKE_WIDTH     = 1 << 3,
+    SUBTITLE_ATTRIBUTE_SHADOW_COLOR     = 1 << 4,
+    SUBTITLE_ATTRIBUTE_SHADOW_BLUR      = 1 << 5,
+    SUBTITLE_ATTRIBUTE_SHADOW_OFFSET    = 1 << 6,
+    SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS  = 1 << 7,
+    SUBTITLE_ATTRIBUTE_LINE_SPACING     = 1 << 8,
+    SUBTITLE_ATTRIBUTE_H_POSITION       = 1 << 9,
+    SUBTITLE_ATTRIBUTE_V_POSITION       = 1 << 10,
+    SUBTITLE_ATTRIBUTE_H_MARGIN         = 1 << 11,
+    SUBTITLE_ATTRIBUTE_V_MARGIN         = 1 << 12,
+    SUBTITLE_ATTRIBUTE_SYNC             = 1 << 13,
 };
 
 #pragma mark view-drag-action
@@ -330,6 +397,10 @@ extern NSString* MMovieCurrentTimeNotification;
 extern NSString* MMovieEndNotification;
 
 #pragma mark -
+#pragma mark notifications: subtitle
+extern NSString* MSubtitleEnableChangeNotification;
+
+#pragma mark -
 #pragma mark notifications: etc
 extern NSString* MPlaylistUpdatedNotification;
 
@@ -348,13 +419,13 @@ BOOL isSystemLeopard();
 
 NSArray* movistDragTypes();
 
-float valueInRange(float value, float minValue, float maxValue);
-float adjustToRange(float value, float minValue, float maxValue);
+#define valueInRange(value, minValue, maxValue)     ((minValue) <= (value) && (value) <= (maxValue))
+#define adjustToRange(value, minValue, maxValue)    MIN(MAX((minValue), (value)), (maxValue))
+
 float normalizedFloat1(float value);
 float normalizedFloat2(float value);
 
 NSString* NSStringFromMovieTime(float time);
-NSString* NSStringFromSubtitlePosition(int position);
 NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding);
 
 NSString* codecName(int codecId);

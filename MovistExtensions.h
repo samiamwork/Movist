@@ -107,6 +107,20 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+extern NSString* const MFontBoldAttributeName;
+extern NSString* const MFontItalicAttributeName;
+
+@interface NSMutableAttributedString (Movist)
+
+- (void)applyFont:(NSFont*)font textColor:(NSColor*)textColor
+      strokeColor:(NSColor*)strokeColor strokeWidth:(NSNumber*)strokeWidth
+   paragraphStyle:(NSParagraphStyle*)paragraphStyle;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
 @interface NSIndexSet (Movist)
 
 + (id)indexSetWithIndexes:(int)firstIndex, ...;     // -1 must be append for ending

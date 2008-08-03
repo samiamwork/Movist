@@ -143,6 +143,9 @@
         [self beginBlackScreens];
     }
 
+    BOOL subtitleVisible = [_movieView subtitleVisible];
+    [_movieView setSubtitleVisible:FALSE];
+
     _fullScreenFromDesktopBackground = [self isDesktopBackground];
     if (_fullScreenFromDesktopBackground) {
         [self beginFullScreenFromDesktopBackground];
@@ -160,6 +163,9 @@
                 break;
         }
     }
+
+    [_movieView setSubtitleVisible:subtitleVisible];
+
     [_fullWindow setAcceptsMouseMovedEvents:TRUE];
 }
 
@@ -168,6 +174,9 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullWindow setAcceptsMouseMovedEvents:FALSE];
     [_playPanel orderOut:self];     // immediately without fade-effect
+
+    BOOL subtitleVisible = [_movieView subtitleVisible];
+    [_movieView setSubtitleVisible:FALSE];
 
     if (_fullScreenFromDesktopBackground) {
         [self endFullScreenToDesktopBackground];
@@ -185,6 +194,9 @@
                 break;
         }
     }
+
+    [_movieView setSubtitleVisible:subtitleVisible];
+
     if (_blackScreenFader) {
         [self endBlackScreens];
     }

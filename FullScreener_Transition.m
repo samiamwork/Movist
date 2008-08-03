@@ -288,8 +288,6 @@
     [_fullWindow addChildWindow:_blackWindow ordered:NSWindowBelow];
     [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
 
-    BOOL subtitleVisible = [_movieView subtitleVisible];
-    [_movieView setSubtitleVisible:FALSE];
     [_mainWindow setHasShadow:FALSE];
 
     // resizing-animation from movie-view-rect to full-movie-rect
@@ -300,14 +298,11 @@
     [_fullWindow setFrame:screenRect display:TRUE];
 
     [_mainWindow setHasShadow:TRUE];
-    [_movieView setSubtitleVisible:subtitleVisible];
 }
 
 - (void)runEndAnimation
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    BOOL subtitleVisible = [_movieView subtitleVisible];
-    [_movieView setSubtitleVisible:FALSE];
     [_mainWindow setHasShadow:FALSE];
 
     // resize to full-movie-rect
@@ -317,7 +312,6 @@
     [self animatedResizeForBegin:FALSE];
 
     [_mainWindow setHasShadow:TRUE];
-    [_movieView setSubtitleVisible:subtitleVisible];
 
     [_fullWindow removeChildWindow:_blackWindow];
     [_fullWindow removeChildWindow:_mainWindow];

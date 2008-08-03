@@ -24,45 +24,107 @@
 
 #import "MMovie.h"
 #import "MSubtitle.h"
-
-#import "MTextOSD.h"
-#import "MImageOSD.h"
-#import "SubtitleRenderer.h"
+#import "MSubtitleItem.h"
+#import "MMovieOSD.h"
 
 #import "AppController.h"   // for NSApp's delegate
 
 @implementation MMovieView (Subtitle)
 
-- (NSArray*)subtitles { return _subtitles; }
+- (MSubtitle*)subtitleAtIndex:(int)index { return _subtitle[index]; }
 
-- (void)setSubtitles:(NSArray*)subtitles
+- (void)setSubtitle:(MSubtitle*)subtitle atIndex:(int)index;
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, subtitles);
-    [subtitles retain], [_subtitles release], _subtitles = subtitles;
-    MSubtitle* subtitle;
-    NSEnumerator* enumerator = [_subtitles objectEnumerator];
-    while (subtitle = [enumerator nextObject]) {
-        [subtitle clearCache];
+    assert(0 <= index && index < 3);
+    if (_subtitle[index] != subtitle) {
+        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+
+        if (_subtitle[index]) {
+            [nc removeObserver:self
+             name:MSubtitleEnableChangeNotification object:_subtitle[index]];
+            [_subtitle[index] quitRenderThread];
+            [_subtitle[index] release];
+            _subtitle[index] = nil;
+        }
+        _subtitle[index] = [subtitle retain];
+        TRACE(@"%s [%d]:%@", __PRETTY_FUNCTION__, index, subtitle ? [subtitle name] : @"nil");
+        if (_subtitle[index]) {
+            [_subtitle[index] setMovieOSD:_subtitleOSD[index]];
+            [nc addObserver:self selector:@selector(subtitleEnableChanged:)
+                       name:MSubtitleEnableChangeNotification object:_subtitle[index]];
+            if ([_subtitle[index] isEnabled]) {
+                [self updateSubtitleOSDAtIndex:index sync:TRUE];   // for optimized rendering
+                [_subtitle[index] startRenderThread];
+            }
+        }
+
+        [self updateIndexOfSubtitleInLBOX];
+        [self updateLetterBoxHeight];
+        [self updateMovieRect:TRUE];
     }
-    [_subtitleRenderer setSubtitles:_subtitles];
-    [self updateSubtitlePosition];
-    [self updateMovieRect:TRUE];
-    [self updateSubtitle];
 }
 
-- (void)updateSubtitleString
+- (void)subtitleEnableChanged:(NSNotification*)notification
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleImageOSD setImage:
-        [_subtitleRenderer imageAtTime:[self currentSubtitleTime]]];
-}
+    MSubtitle* subtitle = [notification object];
+    TRACE(@"%s subtitle[%@] is %@", __PRETTY_FUNCTION__,
+          [subtitle name], [subtitle isEnabled] ? @"enabled" : @"disabled");
 
-- (void)updateSubtitle
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer clearImages];
-    [self updateSubtitleString];
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (_subtitle[i] == subtitle) {
+            break;
+        }
+    }
+    if (i == 3) {   // not specified to movie-view
+        return;
+    }
+
+    if ([_subtitle[i] isEnabled]) {
+        [self updateSubtitleOSDAtIndex:i sync:TRUE];    // for optimized rendering
+        [_subtitle[i] startRenderThread];
+    }
+    else {
+        [_subtitle[i] quitRenderThread];
+        [self updateSubtitleOSDAtIndex:i sync:TRUE];
+    }
     [self redisplay];
+}
+
+- (BOOL)updateSubtitleOSDAtIndex:(int)index sync:(BOOL)sync
+{
+    BOOL ret = TRUE;
+    [_drawLock lock];
+    if (!_subtitle[index] || ![_subtitle[index] isEnabled]) {
+        [_subtitleOSD[index] setTexImage:nil];
+        _needsSubtitleUpdate[index] = FALSE;
+        [_auxSubtitleOSD[index] clearContent];
+    }
+    else {
+        BOOL renderFlag = sync && ([_movie rate] == 0.0);
+        float time = [_movie currentTime] + [_subtitleOSD[index] subtitleSync];
+        NSImage* texImage = [_subtitle[index] texImageAtTime:time direction:0
+                                                  renderFlag:&renderFlag];
+        [_subtitleOSD[index] setTexImage:texImage];
+
+        if (texImage || !renderFlag) {
+            _needsSubtitleUpdate[index] = FALSE;
+            [_auxSubtitleOSD[index] clearContent];
+        }
+        else {
+            MSubtitleItem* item = [_subtitle[index] itemAtTime:time direction:0];
+            if (item && [item string]) {
+                [_auxSubtitleOSD[index] setString:[item string]];
+            }
+            if ([_movie rate] == 0.0) {
+                _needsSubtitleUpdate[index] = TRUE;
+                ret = FALSE;
+            }
+        }
+    }
+    [_drawLock unlock];
+    return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,8 +138,13 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_subtitleVisible != visible) {
         _subtitleVisible = visible;
+        [_subtitle[0] setRenderingEnabled:_subtitleVisible];
+        [_subtitle[1] setRenderingEnabled:_subtitleVisible];
+        [_subtitle[2] setRenderingEnabled:_subtitleVisible];
         if (_subtitleVisible) {
-            [self updateSubtitle];
+            [self updateSubtitleOSDAtIndex:0 sync:TRUE];
+            [self updateSubtitleOSDAtIndex:1 sync:TRUE];
+            [self updateSubtitleOSDAtIndex:2 sync:TRUE];
         }
         [self redisplay];
     }
@@ -85,105 +152,197 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark subtitle font & attributes
+#pragma mark subtitle attributes
 
-- (NSString*)subtitleFontName { return [_subtitleRenderer fontName]; }
-- (float)subtitleFontSize { return [_subtitleRenderer fontSize]; }
-
-- (void)setSubtitleFontName:(NSString*)fontName size:(float)size
+- (void)getSubtitleAttributes:(SubtitleAttributes*)attrs atIndex:(int)index
 {
-    //TRACE(@"%s \"%@\" %g", __PRETTY_FUNCTION__, fontName, size);
-    [_subtitleRenderer setFontName:fontName size:size];
-    [_messageOSD setFontName:fontName size:15.0];
-    [_errorOSD setFontName:fontName size:24.0];
-    [self updateSubtitlePosition];
-    [self updateMovieRect:TRUE];
-    [self updateSubtitle];
+    assert(0 <= index && index < 3);
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_FONT) {
+        attrs->fontName = [_subtitleOSD[index] fontName];
+        attrs->fontSize = [_subtitleOSD[index] fontSize];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_TEXT_COLOR) {
+        attrs->textColor = [_subtitleOSD[index] textColor];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_COLOR) {
+        attrs->strokeColor = [_subtitleOSD[index] strokeColor];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_WIDTH) {
+        attrs->strokeWidth = [_subtitleOSD[index] strokeWidth];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_COLOR) {
+        attrs->shadowColor = [_subtitleOSD[index] shadowColor];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_BLUR) {
+        attrs->shadowBlur = [_subtitleOSD[index] shadowBlur];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_OFFSET) {
+        attrs->shadowOffset = [_subtitleOSD[index] shadowOffset];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS) {
+        attrs->shadowDarkness = [_subtitleOSD[index] shadowDarkness];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_LINE_SPACING) {
+        attrs->lineSpacing = [_subtitleOSD[index] lineSpacing];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_H_POSITION) {
+        attrs->hPosition = [_subtitleOSD[index] hPosition];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_V_POSITION) {
+        attrs->vPosition = [_subtitleOSD[index] vPosition];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_H_MARGIN) {
+        attrs->hMargin = [_subtitleOSD[index] hMargin];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_V_MARGIN) {
+        attrs->vMargin = [_subtitleOSD[index] vMargin];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SYNC) {
+        attrs->sync = [_subtitleOSD[index] subtitleSync];
+    }
 }
 
-- (void)setSubtitleTextColor:(NSColor*)textColor
+- (void)setSubtitleAttributes:(const SubtitleAttributes*)attrs atIndex:(int)index
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setTextColor:textColor];
-    //[_messageOSD setTextColor:textColor];
-    //[_errorOSD setTextColor:textColor];
-    [self updateSubtitle];
+    assert(0 <= index && index < 3);
+    BOOL remake = FALSE;
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_FONT) {
+        if ([_subtitleOSD[index] setFontName:attrs->fontName size:attrs->fontSize]) {
+            remake = TRUE;
+        }
+        [_auxSubtitleOSD[index] setFontName:attrs->fontName size:attrs->fontSize];
+        if (index == 0) {
+            [_messageOSD setFontName:attrs->fontName size:15.0];
+            [_errorOSD setFontName:attrs->fontName size:24.0];
+        }
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_TEXT_COLOR) {
+        if ([_subtitleOSD[index] setTextColor:attrs->textColor]) {
+            remake = TRUE;
+        }
+        [_auxSubtitleOSD[index] setTextColor:attrs->textColor];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_COLOR) {
+        if ([_subtitleOSD[index] setStrokeColor:attrs->strokeColor]) {
+            remake = TRUE;
+        }
+        [_auxSubtitleOSD[index] setStrokeColor:attrs->strokeColor];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_WIDTH) {
+        if ([_subtitleOSD[index] setStrokeWidth:attrs->strokeWidth]) {
+            remake = TRUE;
+        }
+        // don't change _auxSubtitleOSD's strok-width
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_COLOR) {
+        if ([_subtitleOSD[index] setShadowColor:attrs->shadowColor]) {
+            remake = TRUE;
+        }
+        [_auxSubtitleOSD[index] setShadowColor:attrs->shadowColor];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_BLUR) {
+        if ([_subtitleOSD[index] setShadowBlur:attrs->shadowBlur]) {
+            remake = TRUE;
+        }
+        // don't change _auxSubtitleOSD's shadow-blur
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_OFFSET) {
+        if ([_subtitleOSD[index] setShadowOffset:attrs->shadowOffset]) {
+            remake = TRUE;
+        }
+        // don't change _auxSubtitleOSD's shadow-offset
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS) {
+        if ([_subtitleOSD[index] setShadowDarkness:attrs->shadowDarkness]) {
+            remake = TRUE;
+        }
+        // don't change _auxSubtitleOSD's shadow-darkness
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_LINE_SPACING) {
+        if ([_subtitleOSD[index] setLineSpacing:attrs->lineSpacing]) {
+            [self updateLetterBoxHeight];
+            [self updateMovieRect:FALSE];
+            remake = TRUE;
+        }
+        [_auxSubtitleOSD[index] setLineSpacing:attrs->lineSpacing];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_H_POSITION) {
+        [_subtitleOSD[index] setHPosition:attrs->hPosition];
+        [_auxSubtitleOSD[index] setHPosition:attrs->hPosition];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_V_POSITION) {
+        [_subtitleOSD[index] setVPosition:attrs->vPosition];
+        [_auxSubtitleOSD[index] setVPosition:attrs->vPosition];
+        if (index == _indexOfSubtitleInLBOX ||
+            attrs->vPosition == OSD_VPOSITION_LBOX) {
+            [self updateIndexOfSubtitleInLBOX];
+            [self updateLetterBoxHeight];
+            [self updateMovieRect:FALSE];
+        }
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_H_MARGIN) {
+        if ([_subtitleOSD[index] setHMargin:attrs->hMargin]) {
+            remake = TRUE;
+        }
+        [_auxSubtitleOSD[index] setHMargin:attrs->hMargin];
+        if (index == 0) {
+            [_messageOSD setHMargin:attrs->hMargin];
+        }
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_V_MARGIN) {
+        [_subtitleOSD[index] setVMargin:attrs->vMargin];
+        [_auxSubtitleOSD[index] setVMargin:attrs->vMargin];
+        if (index == 0) {
+            [_messageOSD setVMargin:attrs->vMargin];
+        }
+        [self updateMovieRect:FALSE];
+    }
+    if (attrs->mask & SUBTITLE_ATTRIBUTE_SYNC) {
+        [_subtitleOSD[index] setSubtitleSync:attrs->sync];
+    }
+
+    if (_subtitle[index] && [_subtitle[index] isEnabled]) {
+        if (remake) {
+            [_subtitle[index] setNeedsRemakeTexImages];
+        }
+        [self updateSubtitleOSDAtIndex:index sync:TRUE];
+    }
+    [self redisplay];
 }
 
-- (void)setSubtitleStrokeColor:(NSColor*)strokeColor
+- (void)updateIndexOfSubtitleInLBOX
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setStrokeColor:strokeColor];
-    //[_messageOSD setStrokeColor:strokeColor];
-    //[_errorOSD setStrokeColor:strokeColor];
-    [self updateSubtitle];
-}
-
-- (void)setSubtitleStrokeWidth:(float)strokeWidth
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setStrokeWidth:strokeWidth];
-    //[_messageOSD setStrokeWidth:strokeWidth];
-    //[_errorOSD setStrokeWidth:strokeWidth];
-    [self updateSubtitle];
-}
-
-- (void)setSubtitleShadowColor:(NSColor*)shadowColor
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setShadowColor:shadowColor];
-    //[_messageOSD setShadowColor:shadowColor];
-    //[_errorOSD setShadowColor:shadowColor];
-    [self updateSubtitle];
-}
-
-- (void)setSubtitleShadowBlur:(float)shadowBlur
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setShadowBlur:shadowBlur];
-    //[_messageOSD setShadowBlur:shadowBlur];
-    //[_errorOSD setShadowBlur:shadowBlur];
-    [self updateSubtitle];
-}
-
-- (void)setSubtitleShadowOffset:(float)shadowOffset
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setShadowOffset:shadowOffset];
-    //[_messageOSD setShadowOffset:shadowOffset];
-    //[_errorOSD setShadowOffset:shadowOffset];
-    [self updateSubtitle];
-}
-
-- (void)setSubtitleShadowDarkness:(int)shadowDarkness
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setShadowDarkness:shadowDarkness];
-    //[_messageOSD setShadowDarkness:shadowDarkness];
-    //[_errorOSD setShadowDarkness:shadowDarkness];
-    [self updateSubtitle];
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (_subtitle[i] && [_subtitleOSD[i] vPosition] == OSD_VPOSITION_LBOX) {
+            break;
+        }
+    }
+    _indexOfSubtitleInLBOX = (i < 3) ? i : -1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark subtitle attributes
 
-- (int)subtitlePosition { return _subtitlePosition; }
-- (float)subtitleHMargin { return [_subtitleImageOSD hMargin]; }
-- (float)subtitleVMargin { return [_subtitleImageOSD vMargin]; }
-- (float)subtitleScreenMargin { return [_subtitleImageOSD screenMargin]; }
-- (float)subtitleSync { return _subtitleSync; }
+- (int)letterBoxHeight { return _letterBoxHeight; }
+- (float)subtitleScreenMargin { return _subtitleScreenMargin; }
 
-- (void)updateSubtitlePosition
+- (void)updateLetterBoxHeight
 {
-    int prevPosition = _subtitlePosition;
-
-    if (!_movie || !_subtitles || [_subtitles count] == 0) {
-        _subtitlePosition = SUBTITLE_POSITION_ON_MOVIE;
+    if (!_movie ||
+        ((!_subtitle[0] || ![_subtitle[0] isEnabled]) &&
+         (!_subtitle[1] || ![_subtitle[0] isEnabled]) &&
+         (!_subtitle[2] || ![_subtitle[0] isEnabled]))) {
+        _letterBoxHeight = LETTER_BOX_HEIGHT_SAME;
+    }
+    else if (_letterBoxHeightPrefs != LETTER_BOX_HEIGHT_AUTO) {
+        _letterBoxHeight = _letterBoxHeightPrefs;
     }
     else {
-        _subtitlePosition = _subtitlePositionByUser;
-        if (_subtitlePosition == SUBTITLE_POSITION_AUTO) {
+        int prevHeight = _letterBoxHeight;
+        if (0 <= _indexOfSubtitleInLBOX) {
+            MMovieOSD* subtitleOSD = _subtitleOSD[_indexOfSubtitleInLBOX];
             NSRect rect = [[[self window] screen] frame];
             if (0 < _fullScreenUnderScan) {
                 rect = [self underScannedRect:rect];
@@ -191,109 +350,63 @@
             NSSize bs = rect.size;
             NSSize ms = [_movie adjustedSizeByAspectRatio];
             if (bs.width / bs.height < ms.width / ms.height) {
-                float lineHeight = [self subtitleLineHeightForMovieWidth:bs.width];
+                float lineHeight = [subtitleOSD adjustedLineHeight:bs.width];
                 float letterBoxHeight = bs.height - (bs.width * ms.height / ms.width);
                 int lines = (int)letterBoxHeight / (int)lineHeight;
-                lines = MIN(_autoSubtitlePositionMaxLines, lines);
-                _subtitlePosition = (lines == 0) ? SUBTITLE_POSITION_ON_MOVIE :
-                                    (lines == 1) ? SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE :
-                                    (lines == 2) ? SUBTITLE_POSITION_ON_LETTER_BOX_2_LINES:
-                                                   SUBTITLE_POSITION_ON_LETTER_BOX_3_LINES;
+                lines = MIN(lines, _autoLetterBoxHeightMaxLines);
+                _letterBoxHeight = adjustToRange(lines,
+                                                 LETTER_BOX_HEIGHT_1_LINE,
+                                                 LETTER_BOX_HEIGHT_3_LINES);
             }
-            else {
-                _subtitlePosition = SUBTITLE_POSITION_ON_MOVIE;
+        }
+        else {  // no subtitle in OSD_VPOSITION_LBOX
+            _letterBoxHeight = LETTER_BOX_HEIGHT_SAME;
+        }
+        if (prevHeight != _letterBoxHeight) {
+            BOOL onLetterBox = (_letterBoxHeight != LETTER_BOX_HEIGHT_SAME);
+            if (0 <= _indexOfSubtitleInLBOX) {
+                [_subtitleOSD[_indexOfSubtitleInLBOX] updateVPosition:onLetterBox];
+                [_auxSubtitleOSD[_indexOfSubtitleInLBOX] updateVPosition:onLetterBox];
             }
-            TRACE(@"aspectRatio=%.2f ==> %@", ms.width / ms.height,
-                  NSStringFromSubtitlePosition(_subtitlePosition));
+            [_messageOSD updateVPosition:onLetterBox];
         }
     }
-
-    if (prevPosition != _subtitlePosition) {
-        // need not update _subtitleRenderer.
-        BOOL onLetterBox = (_subtitlePosition != SUBTITLE_POSITION_ON_MOVIE);
-        [_subtitleImageOSD updateVAlign:onLetterBox];
-        [_messageOSD updateVAlign:onLetterBox];
-    }
 }
 
-- (void)setAutoSubtitlePositionMaxLines:(int)lines
+- (void)setAutoLetterBoxHeightMaxLines:(int)lines
 {
-    _autoSubtitlePositionMaxLines = lines;
+    _autoLetterBoxHeightMaxLines = lines;
 
-    [self updateSubtitlePosition];
+    [self updateLetterBoxHeight];
     [self updateMovieRect:TRUE];
 }
 
-- (void)setSubtitlePosition:(int)position
+- (void)setLetterBoxHeight:(int)height
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    _subtitlePositionByUser = position;
+    _letterBoxHeightPrefs = height;
 
-    [self updateSubtitlePosition];
+    [self updateLetterBoxHeight];
     [self updateMovieRect:TRUE];
-}
-
-- (void)setSubtitleHMargin:(float)hMargin
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setHMargin:hMargin];
-    [_subtitleImageOSD setHMargin:hMargin];
-    [_messageOSD setHMargin:hMargin];
-    [self updateSubtitle];
-}
-
-- (void)setSubtitleVMargin:(float)vMargin
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    // need not update _subtitleRenderer.
-    [_subtitleImageOSD setVMargin:vMargin];
-    [_messageOSD setVMargin:vMargin];
-    // need not update subtitle
-    [self redisplay];
 }
 
 - (void)setSubtitleScreenMargin:(float)screenMargin
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    // need not update _subtitleRenderer.
-    [_subtitleImageOSD setScreenMargin:screenMargin];
-    [_messageOSD setScreenMargin:screenMargin];
+    _subtitleScreenMargin = screenMargin;
+    // need not update _subtitleOSDs.
     // need not update subtitle
     [self updateMovieRect:TRUE];
 }
 
-- (void)setSubtitleLineSpacing:(float)lineSpacing
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_subtitleRenderer setLineSpacing:lineSpacing];
-    [_messageOSD setLineSpacing:lineSpacing];
-    [self updateSubtitlePosition];
-    [self updateMovieRect:FALSE];
-    [self updateSubtitle];
-}
-
-- (void)setSubtitleSync:(float)sync
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    _subtitleSync = sync;
-    [self updateSubtitle];
-}
-
-- (float)currentSubtitleTime
-{
-    return [_movie currentTime] + _subtitleSync;
-}
-
 - (float)prevSubtitleTime
 {
-    float ct = [self currentSubtitleTime];
     float t, prevTime = 0;
-
-    MSubtitle* subtitle;
-    NSEnumerator* enumerator = [_subtitles objectEnumerator];
-    while (subtitle = [enumerator nextObject]) {
-        if ([subtitle isEnabled]) {
-            t = [subtitle prevSubtitleTime:ct];
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (_subtitle[i] && [_subtitle[i] isEnabled]) {
+            t = [_subtitle[i] prevSubtitleTime:
+                 [_movie currentTime] + [_subtitleOSD[i] subtitleSync]];
             if (prevTime < t) {
                 prevTime = t;
             }
@@ -304,14 +417,12 @@
 
 - (float)nextSubtitleTime
 {
-    float ct = [self currentSubtitleTime];
     float t, nextTime = [_movie duration];
-    
-    MSubtitle* subtitle;
-    NSEnumerator* enumerator = [_subtitles objectEnumerator];
-    while (subtitle = [enumerator nextObject]) {
-        if ([subtitle isEnabled]) {
-            t = [subtitle nextSubtitleTime:ct];
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (_subtitle[i] && [_subtitle[i] isEnabled]) {
+            t = [_subtitle[i] nextSubtitleTime:
+                 [_movie currentTime] + [_subtitleOSD[i] subtitleSync]];
             if (t < nextTime) {
                 nextTime = t;
             }

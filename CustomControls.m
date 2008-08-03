@@ -165,7 +165,7 @@
         _rImage        = imageNamedWithPostfix(imageName, @"ButtonRoundRight");
         _rImagePressed = imageNamedWithPostfix(imageName, @"ButtonRoundRightPressed");
     }
-    else {  // [self tag] > 0
+    else {  // 0 < [self tag]
         _lImage        = imageNamedWithPostfix(imageName, @"ButtonFlatLeft");
         _lImagePressed = imageNamedWithPostfix(imageName, @"ButtonFlatLeftPressed");
         _rImage        = imageNamedWithPostfix(imageName, @"ButtonRoundRight");
@@ -378,13 +378,27 @@
 - (void)setImageName:(NSString*)imageName titleColor:(NSColor*)titleColor
                                   selectedTitleColor:(NSColor*)selectedTitleColor
 {
-    _lImage         = imageNamedWithPostfix(imageName, @"SegmentedLeft");
-    _lImageSelected = imageNamedWithPostfix(imageName, @"SegmentedLeftSelected");
-    _mImage         = imageNamedWithPostfix(imageName, @"SegmentedMid");
-    _mImageSelected = imageNamedWithPostfix(imageName, @"SegmentedMidSelected");
-    _rImage         = imageNamedWithPostfix(imageName, @"SegmentedRight");
-    _rImageSelected = imageNamedWithPostfix(imageName, @"SegmentedRightSelected");
-    _sepImage       = imageNamedWithPostfix(imageName, @"SegmentedSep");
+    if ([self controlSize] == NSRegularControlSize) {
+        _lImage         = imageNamedWithPostfix(imageName, @"SegmentedLeft");
+        _lImageSelected = imageNamedWithPostfix(imageName, @"SegmentedLeftSelected");
+        _mImage         = imageNamedWithPostfix(imageName, @"SegmentedMid");
+        _mImageSelected = imageNamedWithPostfix(imageName, @"SegmentedMidSelected");
+        _rImage         = imageNamedWithPostfix(imageName, @"SegmentedRight");
+        _rImageSelected = imageNamedWithPostfix(imageName, @"SegmentedRightSelected");
+        _sepImage       = imageNamedWithPostfix(imageName, @"SegmentedSep");
+    }
+    else if ([self controlSize] == NSSmallControlSize) {
+        _lImage         = imageNamedWithPostfix(imageName, @"SegmentedSmallLeft");
+        _lImageSelected = imageNamedWithPostfix(imageName, @"SegmentedSmallLeftSelected");
+        _mImage         = imageNamedWithPostfix(imageName, @"SegmentedSmallMid");
+        _mImageSelected = imageNamedWithPostfix(imageName, @"SegmentedSmallMidSelected");
+        _rImage         = imageNamedWithPostfix(imageName, @"SegmentedSmallRight");
+        _rImageSelected = imageNamedWithPostfix(imageName, @"SegmentedSmallRightSelected");
+        _sepImage       = imageNamedWithPostfix(imageName, @"SegmentedSmallSep");
+    }
+    else {  // NSMiniControlSize
+        // not supported yet
+    }
     _titleColor = [titleColor retain];
     _selectedTitleColor = [selectedTitleColor retain];
 }
@@ -395,8 +409,12 @@
                                             _selectedTitleColor : _titleColor;
     // ugly hack : I don't know how to customize full-drawing...
     NSImage* lImage, *mImage, *rImage;
-    if (segment == 0) {
-        frame.origin.x -= 11, frame.size.width += 19;
+    if (segment == 0) {     // first segment
+        switch ([self controlSize]) {
+            case NSRegularControlSize : frame.origin.x -= 11, frame.size.width += 19;   break;
+            case NSSmallControlSize   : frame.origin.x -=  8, frame.size.width += 14;   break;
+            case NSMiniControlSize    : /* not supported yet */                         break;
+        }
         if ([self selectedSegment] == segment) {
             lImage = _lImageSelected, mImage = rImage = _mImageSelected;
         }
@@ -404,8 +422,12 @@
             lImage = _lImage, mImage = rImage = _mImage;
         }
     }
-    else if (segment < [(NSSegmentedControl*)controlView segmentCount] - 1) {
-        frame.origin.x -= 9, frame.size.width += 18;
+    else if (segment < [(NSSegmentedControl*)controlView segmentCount] - 1) {   // middle segments
+        switch ([self controlSize]) {
+            case NSRegularControlSize : frame.origin.x -= 9, frame.size.width += 18;    break;
+            case NSSmallControlSize   : frame.origin.x -= 7, frame.size.width += 13;    break;
+            case NSMiniControlSize    : /* not supported yet */                         break;
+        }
         if ([self selectedSegment] == segment) {
             lImage = _sepImage, mImage = rImage = _mImageSelected;
         }
@@ -413,8 +435,12 @@
             lImage = _sepImage, mImage = rImage = _mImage;
         }
     }
-    else {
-        frame.origin.x -= 9, frame.size.width += 19;
+    else {  // last segment
+        switch ([self controlSize]) {
+            case NSRegularControlSize : frame.origin.x -= 9, frame.size.width += 19;    break;
+            case NSSmallControlSize   : frame.origin.x -= 7, frame.size.width += 15;    break;
+            case NSMiniControlSize    : /* not supported yet */                         break;
+        }
         if ([self selectedSegment] == segment) {
             lImage = _sepImage, mImage = _mImageSelected, rImage = _rImageSelected;
         }
@@ -432,7 +458,11 @@
                            titleColor, NSForegroundColorAttributeName,
                            paragraphStyle, NSParagraphStyleAttributeName,
                            nil];
-    frame.origin.y += 2, frame.size.height -= 2;
+    switch ([self controlSize]) {
+        case NSRegularControlSize : frame.origin.y += 2, frame.size.height -= 2;    break;
+        case NSSmallControlSize   : frame.origin.y += 1, frame.size.height -= 2;    break;
+        case NSMiniControlSize    : /* not supported yet */                         break;
+    }
     [[self labelForSegment:segment] drawInRect:frame withAttributes:attrs];
 }
 

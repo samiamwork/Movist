@@ -438,7 +438,6 @@
     [_movieView hideLogo];
 
     [_movieView setFrame:[[window contentView] bounds]];
-    [_movieView updateSubtitle];
     [_movieView setHidden:FALSE];
 
     [window makeFirstResponder:_movieView];
@@ -472,7 +471,6 @@
     [self setHidden:FALSE];
     [_movieView setFrame:[self previewRect]];
     [[_movieView superview] display];   // for Tiger
-    [_movieView updateSubtitle];
     [window makeFirstResponder:self];
 
     [window flushWindow];
@@ -555,7 +553,6 @@
         [[_movieView window] disableScreenUpdatesUntilFlush];   // for Tiger
         [_movieView setFrame:[self previewRect]];
         [[_movieView superview] display];   // for Tiger
-        [_movieView updateSubtitle];
         [_movieView setHidden:FALSE];
     }
 }

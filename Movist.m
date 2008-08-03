@@ -29,6 +29,10 @@ NSString* MMovieRateChangeNotification      = @"MMovieRateChangeNotification";
 NSString* MMovieCurrentTimeNotification     = @"MMovieCurrentTimeNotification";
 NSString* MMovieEndNotification             = @"MMovieEndNotification";
 
+#pragma mark -
+#pragma mark notifications: subtitle
+NSString* MSubtitleEnableChangeNotification = @"MSubtitleEnableChangeNotification";
+
 #pragma mark notifications: etc
 NSString* MPlaylistUpdatedNotification      = @"MPlaylistUpdatedNotification";
 
@@ -66,16 +70,6 @@ NSArray* movistDragTypes()
 {
     return [NSArray arrayWithObjects:
             NSFilenamesPboardType, NSURLPboardType, MPlaylistItemDataType, nil];
-}
-
-float valueInRange(float value, float minValue, float maxValue)
-{
-    return (minValue <= value && value <= maxValue);
-}
-
-float adjustToRange(float value, float minValue, float maxValue)
-{
-    return MIN(MAX(minValue, value), maxValue);
 }
 
 float normalizedFloat1(float value)
@@ -198,29 +192,6 @@ NSString* codecDescription(int codecId)
         return NSLocalizedString(s, nil);
     }
     return @"";
-}
-
-NSString* NSStringFromSubtitlePosition(int position)
-{
-    if (position == SUBTITLE_POSITION_AUTO) {
-        return NSLocalizedString(@"Auto Subtitle Position", nil);
-    }
-    else if (position == SUBTITLE_POSITION_ON_MOVIE) {
-        return NSLocalizedString(@"Subtitle on Movie", nil);
-    }
-    else if (position == SUBTITLE_POSITION_ON_LETTER_BOX) {
-        return NSLocalizedString(@"Subtitle on Letter Box", nil);
-    }
-    else if (position == SUBTITLE_POSITION_ON_LETTER_BOX_1_LINE) {
-        return [NSString stringWithFormat:
-                NSLocalizedString(@"Subtitle on Letter Box (1 Line)", nil),
-                position - SUBTITLE_POSITION_ON_LETTER_BOX];
-    }
-    else {
-        return [NSString stringWithFormat:
-                NSLocalizedString(@"Subtitle on Letter Box (%d Lines)", nil),
-                position - SUBTITLE_POSITION_ON_LETTER_BOX];
-    }
 }
 
 NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding)

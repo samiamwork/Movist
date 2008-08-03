@@ -416,7 +416,7 @@
                                        NSLocalizedString(@"Bottom Left", nil),
                                        NSLocalizedString(@"Bottom Right", nil),
                                        nil]],
-       [SelectNode selectNodeWithName:LABEL(@"Window Resize Mode")
+       [SelectNode selectNodeWithName:LABEL(@"Window Resize Type")
                                   key:MWindowResizeModeKey
                                titles:[NSArray arrayWithObjects:
                                        NSLocalizedString(@"Free", nil),
@@ -461,8 +461,8 @@
                               key:MSubtitleReplaceNLWithBRKey],
        [StringNode stringNodeWithName:LABEL(@"Default Subtitle Language Identifiers for SAMI")
                                   key:MDefaultLanguageIdentifiersKey],
-       [IntNode intNodeWithName:LABEL(@"Auto Subtitle Position Max Lines (1~3)")
-                            key:MAutoSubtitlePositionMaxLinesKey minValue:1 maxValue:3],
+       [IntNode intNodeWithName:LABEL(@"Auto Letter Box Height Max Lines (1~3)")
+                            key:MAutoLetterBoxHeightMaxLinesKey minValue:1 maxValue:3],
        nil]]];
     
     // "Full Screen Navigation" category
@@ -546,8 +546,8 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
     else if ([key isEqualToString:MSubtitleReplaceNLWithBRKey]) {
         [_appController reopenSubtitle];
     }
-    else if ([key isEqualToString:MAutoSubtitlePositionMaxLinesKey]) {
-        [_movieView setAutoSubtitlePositionMaxLines:[object intValue]];
+    else if ([key isEqualToString:MAutoLetterBoxHeightMaxLinesKey]) {
+        [_movieView setAutoLetterBoxHeightMaxLines:[object intValue]];
     }
     // full-nav
 }

@@ -470,43 +470,49 @@
     if (flags & NSAlternateKeyMask) {
         if (flags & NSShiftKeyMask) {
             if (flags & NSControlKeyMask) {
-                tag = (tag < 0) ? -40 : +40;
+                tag = (tag < 0) ? SEEK_TAG_PREV_SUBTITLE : SEEK_TAG_NEXT_SUBTITLE;
             }
             else {
-                tag = (tag < 0) ? -30 : +30;
+                tag = (tag < 0) ? SEEK_TAG_BACKWARD_3 : SEEK_TAG_FORWARD_3;
             }
         }
         else {
-            tag = (tag < 0) ? -20 : +20;
+            tag = (tag < 0) ? SEEK_TAG_BACKWARD_2 : SEEK_TAG_FORWARD_2;
         }
     }
     switch (tag) {
-        case -100 : [self gotoBeginning];       break;
-        case  -40 : [self seekPrevSubtitle];    break;
-        case  -30 : [self seekBackward:2];      break;
-        case  -20 : [self seekBackward:1];      break;
-        case  -10 : [self seekBackward:0];      break;
-        case   -1 : [self stepBackward];        break;
-        case    0 :
-            if ([[NSApp currentEvent] type] != NSLeftMouseUp) {
+        case SEEK_TAG_BEGINNING     : [self gotoBeginning];     break;
+        case SEEK_TAG_PREV_SUBTITLE : [self seekPrevSubtitle];  break;
+        case SEEK_TAG_BACKWARD_3    : [self seekBackward:2];    break;
+        case SEEK_TAG_BACKWARD_2    : [self seekBackward:1];    break;
+        case SEEK_TAG_BACKWARD_1    : [self seekBackward:0];    break;
+        case SEEK_TAG_BACKWARD_STEP : [self stepBackward];      break;
+        case SEEK_TAG_TIME : {
+            NSEvent* event = [NSApp currentEvent];
+            if ([event type] != NSLeftMouseUp) {
                 [self gotoTime:[sender floatValue]];
+                // update mouse-time tool-tip : show me the better way...
+                if ([sender isKindOfClass:[SeekSlider class]]) {
+                    [(SeekSlider*)sender mouseMoved:[event locationInWindow]];
+                }
             }
             break;
-        case   +1 : [self stepForward];         break;
-        case  +10 : [self seekForward:0];       break;
-        case  +20 : [self seekForward:1];       break;
-        case  +30 : [self seekForward:2];       break;
-        case  +40 : [self seekNextSubtitle];    break;
-        case +100 : [self gotoEnd];             break;
+        }
+        case SEEK_TAG_FORWARD_STEP  : [self stepForward];       break;
+        case SEEK_TAG_FORWARD_1     : [self seekForward:0];     break;
+        case SEEK_TAG_FORWARD_2     : [self seekForward:1];     break;
+        case SEEK_TAG_FORWARD_3     : [self seekForward:2];     break;
+        case SEEK_TAG_NEXT_SUBTITLE : [self seekNextSubtitle];  break;
+        case SEEK_TAG_END           : [self gotoEnd];           break;
     }
 }
 
 - (IBAction)rangeRepeatAction:(id)sender
 {
-    if ([sender tag] == -1) {
+    if ([sender tag] < 0) {
         [self setRangeRepeatBeginning:[_movie currentTime]];
     }
-    else if ([sender tag] == 1) {
+    else if (0 < [sender tag]) {
         [self setRangeRepeatEnd:[_movie currentTime]];
     }
     else if ([sender tag] == 0) {

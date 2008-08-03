@@ -23,16 +23,16 @@
 #import "MMovieView.h"
 
 #import "MMovie.h"
-#import "MTextOSD.h"
+#import "MMovieOSD.h"
 
 @implementation MMovieView (Message)
 
-- (void)setAttributedMessage:(NSMutableAttributedString*)s
+- (void)setAttributedMessage:(NSAttributedString*)s
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [s string]);
     [_messageOSD setString:s];
     [self redisplay];
-    
+
     [self invalidateMessageHideTimer];
     _messageHideTimer = [NSTimer scheduledTimerWithTimeInterval:_messageHideInterval
                          target:self selector:@selector(hideMessage:)
@@ -49,29 +49,29 @@
     if (cString) {
         s = [NSString stringWithCString:cString encoding:encoding];
     }
-    
-    NSMutableAttributedString* mas;
+
+    NSAttributedString* as;
     if (info) {
         NSString* msg = [NSString stringWithFormat:@"%@ (%@)", s, info];
         NSDictionary* attrs = [NSMutableDictionary dictionaryWithObjectsAndKeys:
             [NSColor colorWithCalibratedRed:0.7 green:0.7 blue:0.7 alpha:1.0],
             NSForegroundColorAttributeName, nil];
-        mas = [[[NSMutableAttributedString alloc] initWithString:msg] autorelease];
+        NSMutableAttributedString* mas;
+        as = mas = [[[NSMutableAttributedString alloc] initWithString:msg] autorelease];
         [mas setAttributes:attrs range:NSMakeRange([s length] + 1, 1 + [info length] + 1)];
         //[mas fixAttributesInRange:NSMakeRange(0, [mas length])];
     }
     else {
-        mas = [[[NSMutableAttributedString alloc] initWithString:s] autorelease];
+        as = [[[NSAttributedString alloc] initWithString:s] autorelease];
     }
-    
-    [self setAttributedMessage:mas];
+
+    [self setAttributedMessage:as];
 }
 
 - (void)setMessage:(NSString*)s
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, s);
-    [self setAttributedMessage:
-     [[[NSMutableAttributedString alloc] initWithString:s] autorelease]];
+    [self setAttributedMessage:[[[NSAttributedString alloc] initWithString:s] autorelease]];
 }
 
 - (void)hideMessage:(NSTimer*)timer
@@ -79,7 +79,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _messageHideTimer = nil;
 
-    [_messageOSD setString:[[NSMutableAttributedString alloc] initWithString:@""]];
+    [_messageOSD setString:[[NSAttributedString alloc] initWithString:@""]];
     [self redisplay];
 }
 
@@ -108,8 +108,7 @@
     //TRACE(@"%s \"%@\", \"%@\"", __PRETTY_FUNCTION__, s, info);
     if (error) {
         NSString* s = [NSString stringWithFormat:@"%@\n\n%@", error, info];
-        NSMutableAttributedString* mas = [[NSMutableAttributedString alloc] initWithString:s];
-        [_errorOSD setString:[mas autorelease]];
+        [_errorOSD setString:[[[NSAttributedString alloc] initWithString:s] autorelease]];
     }
     else {
         [_errorOSD clearContent];

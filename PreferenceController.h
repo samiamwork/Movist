@@ -31,40 +31,43 @@
     // general
     IBOutlet NSView* _generalPane;
     IBOutlet NSPopUpButton* _openingViewPopUpButton;
-    IBOutlet NSButton* _autodetectMovieSeriesButton;
-    IBOutlet NSButton* _autoPlayOnFullScreenButton;
-    IBOutlet NSButton* _alwaysOnTopButton;
-    IBOutlet NSButton* _deactivateScreenSaverButton;
-    IBOutlet NSButton* _quitWhenWindowCloseButton;
-    IBOutlet NSButton* _rememberLastPlayButton;
-    IBOutlet NSButton* _supportAppleRemoteButton;
-    IBOutlet NSButton* _fullNavUseButton;
-    IBOutlet NSButton* _showiTunesMoviesButton;
-    IBOutlet NSButton* _showiTunesPodcastsButton;
-    IBOutlet NSButton* _showiTunesTVShowsButton;
-    IBOutlet NSButton* _fullNavOnStartupButton;
-    IBOutlet NSTextField* _seekInterval0TextField;
-    IBOutlet NSTextField* _seekInterval1TextField;
-    IBOutlet NSTextField* _seekInterval2TextField;
-    IBOutlet NSStepper* _seekInterval0Stepper;
-    IBOutlet NSStepper* _seekInterval1Stepper;
-    IBOutlet NSStepper* _seekInterval2Stepper;
+    IBOutlet NSButton*      _autodetectMovieSeriesButton;
+    IBOutlet NSButton*      _autoPlayOnFullScreenButton;
+    IBOutlet NSButton*      _alwaysOnTopButton;
+    IBOutlet NSButton*      _deactivateScreenSaverButton;
+    IBOutlet NSButton*      _quitWhenWindowCloseButton;
+    IBOutlet NSButton*      _rememberLastPlayButton;
+    IBOutlet NSButton*      _supportAppleRemoteButton;
+    IBOutlet NSButton*      _fullNavUseButton;
+    IBOutlet NSButton*      _showiTunesMoviesButton;
+    IBOutlet NSButton*      _showiTunesPodcastsButton;
+    IBOutlet NSButton*      _showiTunesTVShowsButton;
+    IBOutlet NSButton*      _fullNavOnStartupButton;
+    IBOutlet NSTextField*   _seekInterval0TextField;
+    IBOutlet NSTextField*   _seekInterval1TextField;
+    IBOutlet NSTextField*   _seekInterval2TextField;
+    IBOutlet NSStepper*     _seekInterval0Stepper;
+    IBOutlet NSStepper*     _seekInterval1Stepper;
+    IBOutlet NSStepper*     _seekInterval2Stepper;
     
     // video
     IBOutlet NSView* _videoPane;
     IBOutlet NSPopUpButton* _fullScreenEffectPopUpButton;
     IBOutlet NSPopUpButton* _fullScreenFillForWideMoviePopUpButton;
     IBOutlet NSPopUpButton* _fullScreenFillForStdMoviePopUpButton;
-    IBOutlet NSSlider* _fullScreenUnderScanSlider;
-    IBOutlet NSButton* _fullScreenBlackScreensButton;
+    IBOutlet NSSlider*      _fullScreenUnderScanSlider;
+    IBOutlet NSButton*      _fullScreenBlackScreensButton;
 
     // audio
     IBOutlet NSView* _audioPane;
-    IBOutlet NSButton* _autodetectDigitalAudioOutButton;
-    IBOutlet NSButton* _updateSystemVolumeButton;
+    IBOutlet NSButton*      _autodetectDigitalAudioOutButton;
+    IBOutlet NSButton*      _updateSystemVolumeButton;
 
     // subtitle
     IBOutlet NSView* _subtitlePane;
+    int _subtitleIndex;     // current tab-index of _subtitleTabView
+    IBOutlet NSTabView*     _subtitleTabView;
+    IBOutlet NSView*        _subtitleDataView;
     IBOutlet NSButton*      _subtitleEnableButton;
     IBOutlet NSPopUpButton* _subtitleEncodingPopUpButton;
     IBOutlet NSButton*      _subtitleFontButton;
@@ -94,17 +97,19 @@
     IBOutlet NSTextField*   _subtitleHMarginTextField;
     IBOutlet NSSlider*      _subtitleVMarginSlider;
     IBOutlet NSTextField*   _subtitleVMarginTextField;
-    IBOutlet NSSlider*      _subtitleScreenMarginSlider;
-    IBOutlet NSTextField*   _subtitleScreenMarginTextField;
     IBOutlet NSSlider*      _subtitleLineSpacingSlider;
     IBOutlet NSTextField*   _subtitleLineSpacingTextField;
+    IBOutlet NSPopUpButton* _letterBoxHeightPopUpButton;
+    IBOutlet NSSlider*      _subtitleScreenMarginSlider;
+    IBOutlet NSTextField*   _subtitleScreenMarginTextField;
     
     // advanced
     IBOutlet NSView* _advancedPane;
+    IBOutlet NSTabView*     _advancedTabView;
     IBOutlet NSPopUpButton* _updateCheckIntervalPopUpButton;
     IBOutlet NSTextField*   _lastUpdateCheckTimeTextField;
-    IBOutlet NSTableView* _fileBindingTableView;
-    IBOutlet NSTableView* _codecBindingTableView;
+    IBOutlet NSTableView*   _fileBindingTableView;
+    IBOutlet NSTableView*   _codecBindingTableView;
     IBOutlet NSOutlineView* _detailsOutlineView;
     NSArray* _fileExtensions;
     NSArray* _fileExtensionDescriptions;
@@ -180,6 +185,8 @@
 @interface PreferenceController (Subtitle)
 
 - (void)initSubtitlePane;
+- (void)updateSubtitleDataView;
+- (void)updateSubtitleFontAndSizeUI;
 - (IBAction)subtitleEnbleAction:(id)sender;
 - (IBAction)subtitleEncodingAction:(id)sender;
 - (IBAction)subtitleFontAction:(id)sender;
@@ -187,8 +194,8 @@
 - (IBAction)subtitleAutoFontSizeCharsAction:(id)sender;
 - (IBAction)subtitleAttributesAction:(id)sender;
 - (IBAction)subtitlePositionAction:(id)sender;
-- (void)initSubtitleEncodingPopUpButton;
-- (void)updateSubtitleFontAndSizeUI;
+- (IBAction)letterBoxHeightAction:(id)sender;
+- (IBAction)subtitleScreenMarginAction:(id)sender;
 
 @end
 

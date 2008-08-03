@@ -66,23 +66,26 @@ extern NSString* MUpdateSystemVolumeKey;
 #pragma mark -
 #pragma mark prefs: subtitle
 extern NSString* MSubtitleEnableKey;
-extern NSString* MSubtitleEncodingKey;
-extern NSString* MSubtitleFontNameKey;
-extern NSString* MSubtitleFontSizeKey;
-extern NSString* MSubtitleAutoFontSizeKey;
-extern NSString* MSubtitleAutoFontSizeCharsKey;
-extern NSString* MSubtitleTextColorKey;
-extern NSString* MSubtitleStrokeColorKey;
-extern NSString* MSubtitleStrokeWidthKey;
-extern NSString* MSubtitleShadowColorKey;
-extern NSString* MSubtitleShadowBlurKey;
-extern NSString* MSubtitleShadowOffsetKey;
-extern NSString* MSubtitleShadowDarknessKey;
-extern NSString* MSubtitlePositionKey;
-extern NSString* MSubtitleHMarginKey;
-extern NSString* MSubtitleVMarginKey;
+extern NSString* MPrefsSubtitleTabKey;
+extern NSString* MSubtitleEncodingKey[3];
+extern NSString* MSubtitleFontNameKey[3];
+extern NSString* MSubtitleFontSizeKey[3];
+extern NSString* MSubtitleAutoFontSizeKey[3];
+extern NSString* MSubtitleAutoFontSizeCharsKey[3];
+extern NSString* MSubtitleTextColorKey[3];
+extern NSString* MSubtitleStrokeColorKey[3];
+extern NSString* MSubtitleStrokeWidthKey[3];
+extern NSString* MSubtitleShadowColorKey[3];
+extern NSString* MSubtitleShadowBlurKey[3];
+extern NSString* MSubtitleShadowOffsetKey[3];
+extern NSString* MSubtitleShadowDarknessKey[3];
+//extern NSString* MSubtitleHPositionKey[3];
+extern NSString* MSubtitleVPositionKey[3];
+extern NSString* MSubtitleHMarginKey[3];
+extern NSString* MSubtitleVMarginKey[3];
+extern NSString* MSubtitleLineSpacingKey[3];
+extern NSString* MLetterBoxHeightKey;
 extern NSString* MSubtitleScreenMarginKey;
-extern NSString* MSubtitleLineSpacingKey;
 
 #pragma mark -
 #pragma mark prefs: advanced
@@ -114,7 +117,7 @@ extern NSString* MRemoveGreenBoxKey;
 extern NSString* MDisablePerianSubtitleKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultLanguageIdentifiersKey;
-extern NSString* MAutoSubtitlePositionMaxLinesKey;
+extern NSString* MAutoLetterBoxHeightMaxLinesKey;
 #pragma mark prefs: advanced - details: full-nav
 extern NSString* MFullNavPathKey;
 extern NSString* MShowActualPathForLinkKey;

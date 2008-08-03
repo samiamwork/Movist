@@ -66,23 +66,26 @@ NSString* MUpdateSystemVolumeKey            = @"UpdateSystemVolume";
 #pragma mark -
 #pragma mark prefs: subtitle
 NSString* MSubtitleEnableKey                = @"SubtitleEnable";
-NSString* MSubtitleEncodingKey              = @"SubtitleEncoding";
-NSString* MSubtitleFontNameKey              = @"SubtitleFontName";
-NSString* MSubtitleFontSizeKey              = @"SubtitleFontSize";
-NSString* MSubtitleAutoFontSizeKey          = @"SubtitleAutoFontSize";
-NSString* MSubtitleAutoFontSizeCharsKey     = @"SubtitleAutoFontSizeChars";
-NSString* MSubtitleTextColorKey             = @"SubtitleTextColor";
-NSString* MSubtitleStrokeColorKey           = @"SubtitleStrokeColor";
-NSString* MSubtitleStrokeWidthKey           = @"SubtitleStrokeWidth";
-NSString* MSubtitleShadowColorKey           = @"SubtitleShadowColor";
-NSString* MSubtitleShadowBlurKey            = @"SubtitleShadowBlur";
-NSString* MSubtitleShadowOffsetKey          = @"SubtitleShadowOffset";
-NSString* MSubtitleShadowDarknessKey        = @"SubtitleShadowDarkness";
-NSString* MSubtitlePositionKey              = @"SubtitlePosition";
-NSString* MSubtitleHMarginKey               = @"SubtitleHMargin";
-NSString* MSubtitleVMarginKey               = @"SubtitleVMargin";
+NSString* MPrefsSubtitleTabKey              = @"PrefsSubtitleTab";
+NSString* MSubtitleEncodingKey[3]           = { @"SubtitleEncoding", @"SubtitleEncoding1", @"SubtitleEncoding2" };
+NSString* MSubtitleFontNameKey[3]           = { @"SubtitleFontName", @"SubtitleFontName1", @"SubtitleFontName2" };
+NSString* MSubtitleFontSizeKey[3]           = { @"SubtitleFontSize", @"SubtitleFontSize1", @"SubtitleFontSize2" };
+NSString* MSubtitleAutoFontSizeKey[3]       = { @"SubtitleAutoFontSize", @"SubtitleAutoFontSize1", @"SubtitleAutoFontSize2" };
+NSString* MSubtitleAutoFontSizeCharsKey[3]  = { @"SubtitleAutoFontSizeChars", @"SubtitleAutoFontSizeChars1", @"SubtitleAutoFontSizeChars2" };
+NSString* MSubtitleTextColorKey[3]          = { @"SubtitleTextColor", @"SubtitleTextColor1", @"SubtitleTextColor2" };
+NSString* MSubtitleStrokeColorKey[3]        = { @"SubtitleStrokeColor", @"SubtitleStrokeColor1", @"SubtitleStrokeColor2" };
+NSString* MSubtitleStrokeWidthKey[3]        = { @"SubtitleStrokeWidth", @"SubtitleStrokeWidth1", @"SubtitleStrokeWidth2" };
+NSString* MSubtitleShadowColorKey[3]        = { @"SubtitleShadowColor", @"SubtitleShadowColor1", @"SubtitleShadowColor2" };
+NSString* MSubtitleShadowBlurKey[3]         = { @"SubtitleShadowBlur", @"SubtitleShadowBlur1", @"SubtitleShadowBlur2" };
+NSString* MSubtitleShadowOffsetKey[3]       = { @"SubtitleShadowOffset", @"SubtitleShadowOffset1", @"SubtitleShadowOffset2" };
+NSString* MSubtitleShadowDarknessKey[3]     = { @"SubtitleShadowDarkness", @"SubtitleShadowDarkness1", @"SubtitleShadowDarkness2" };
+//NSString* MSubtitleHPositionKey[3]          = { @"SubtitleHPosition", @"SubtitleHPosition1", @"SubtitleHPosition2" };
+NSString* MSubtitleVPositionKey[3]          = { @"SubtitleVPosition", @"SubtitleVPosition1", @"SubtitleVPosition2" };
+NSString* MSubtitleHMarginKey[3]            = { @"SubtitleHMargin", @"SubtitleHMargin1", @"SubtitleHMargin2" };
+NSString* MSubtitleVMarginKey[3]            = { @"SubtitleVMargin", @"SubtitleVMargin1", @"SubtitleVMargin2" };
+NSString* MSubtitleLineSpacingKey[3]        = { @"SubtitleLineSpacing", @"SubtitleLineSpacing1", @"SubtitleLineSpacing2" };
+NSString* MLetterBoxHeightKey               = @"LetterBoxHeight";
 NSString* MSubtitleScreenMarginKey          = @"SubtitleScreenMargin";
-NSString* MSubtitleLineSpacingKey           = @"SubtitleLineSpacing";
 
 #pragma mark -
 #pragma mark prefs: advanced
@@ -111,7 +114,7 @@ NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
 NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
-NSString* MAutoSubtitlePositionMaxLinesKey  = @"AutoSubtitlePositionMaxLines";
+NSString* MAutoLetterBoxHeightMaxLinesKey   = @"AutoLetterBoxHeightMaxLines";
 #pragma mark prefs: advanced - details: full-nav
 NSString* MFullNavPathKey                   = @"FullNavPath";
 NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
@@ -163,30 +166,38 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
 
     // prefs: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleEnableKey];
-    CFStringEncoding defaultStringEncoding = CFStringGetSystemEncoding();
-    if (defaultStringEncoding == kCFStringEncodingMacKorean) {  // if Mac/Korean,
-        defaultStringEncoding = kCFStringEncodingDOSKorean;     // then convert to Windows/Korean.
+    [dict setObject:@"" forKey:MPrefsSubtitleTabKey];     // for first tab
+    CFStringEncoding defaultStringEncoding[3] = { CFStringGetSystemEncoding(), };
+    defaultStringEncoding[1] = defaultStringEncoding[2] = defaultStringEncoding[0];
+    if (defaultStringEncoding[0] == kCFStringEncodingMacKorean) {  // if Mac/Korean,
+        defaultStringEncoding[0] = kCFStringEncodingDOSKorean;     // then convert to Windows/Korean.
     }
-    [dict setObject:[NSNumber numberWithInt:defaultStringEncoding] forKey:MSubtitleEncodingKey];
-    [dict setObject:[[NSFont boldSystemFontOfSize:1.0] fontName] forKey:MSubtitleFontNameKey];
-    [dict setObject:[NSNumber numberWithFloat:24.0] forKey:MSubtitleFontSizeKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleAutoFontSizeKey];
-    [dict setObject:[NSNumber numberWithInt:26] forKey:MSubtitleAutoFontSizeCharsKey];
-    NSColor* color = [NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:1.0];
-    [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleTextColorKey];
-    color = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
-    [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleStrokeColorKey];
-    [dict setObject:[NSNumber numberWithFloat:2.0] forKey:MSubtitleStrokeWidthKey];
-    color = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
-    [dict setObject:[NSArchiver archivedDataWithRootObject:color] forKey:MSubtitleShadowColorKey];
-    [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleShadowOffsetKey];
-    [dict setObject:[NSNumber numberWithFloat:2.5] forKey:MSubtitleShadowBlurKey];
-    [dict setObject:[NSNumber numberWithInt:5] forKey:MSubtitleShadowDarknessKey];
-    [dict setObject:[NSNumber numberWithInt:SUBTITLE_POSITION_AUTO] forKey:MSubtitlePositionKey];
-    [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_H_MARGIN] forKey:MSubtitleHMarginKey];
-    [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_V_MARGIN] forKey:MSubtitleVMarginKey];
+    int vPosition[3] = { OSD_VPOSITION_LBOX, OSD_VPOSITION_TOP, OSD_VPOSITION_CENTER };
+    NSColor* textColor   = [NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    NSColor* strokeColor = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
+    NSColor* shadowColor = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
+    int i;
+    for (i = 0; i < 3; i++) {
+        [dict setObject:[NSNumber numberWithInt:defaultStringEncoding[i]] forKey:MSubtitleEncodingKey[i]];
+        [dict setObject:[[NSFont boldSystemFontOfSize:1.0] fontName] forKey:MSubtitleFontNameKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:24.0] forKey:MSubtitleFontSizeKey[i]];
+        [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleAutoFontSizeKey[i]];
+        [dict setObject:[NSNumber numberWithInt:26] forKey:MSubtitleAutoFontSizeCharsKey[i]];
+        [dict setObject:[NSArchiver archivedDataWithRootObject:textColor] forKey:MSubtitleTextColorKey[i]];
+        [dict setObject:[NSArchiver archivedDataWithRootObject:strokeColor] forKey:MSubtitleStrokeColorKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:2.0] forKey:MSubtitleStrokeWidthKey[i]];
+        [dict setObject:[NSArchiver archivedDataWithRootObject:shadowColor] forKey:MSubtitleShadowColorKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleShadowOffsetKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:2.5] forKey:MSubtitleShadowBlurKey[i]];
+        [dict setObject:[NSNumber numberWithInt:5] forKey:MSubtitleShadowDarknessKey[i]];
+        //[dict setObject:[NSNumber numberWithInt:OSD_HPOSITION_CENTER] forKey:MSubtitleHPositionKey[i]];
+        [dict setObject:[NSNumber numberWithInt:vPosition[i]] forKey:MSubtitleVPositionKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_H_MARGIN] forKey:MSubtitleHMarginKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_V_MARGIN] forKey:MSubtitleVMarginKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_LINE_SPACING] forKey:MSubtitleLineSpacingKey[i]];
+    }
+    [dict setObject:[NSNumber numberWithInt:LETTER_BOX_HEIGHT_AUTO] forKey:MLetterBoxHeightKey];
     [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_SCREEN_MARGIN] forKey:MSubtitleScreenMarginKey];
-    [dict setObject:[NSNumber numberWithFloat:DEFAULT_SUBTITLE_LINE_SPACING] forKey:MSubtitleLineSpacingKey];
 
     // prefs: advanced
     [dict setObject:@"" forKey:MPrefsAdvancedTabKey];     // for first tab
@@ -211,7 +222,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
     [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
-    [dict setObject:[NSNumber numberWithInt:2] forKey:MAutoSubtitlePositionMaxLinesKey];
+    [dict setObject:[NSNumber numberWithInt:2] forKey:MAutoLetterBoxHeightMaxLinesKey];
     // prefs: advanced - details: full-nav
     [dict setObject:@"~/Movies" forKey:MFullNavPathKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MShowActualPathForLinkKey];

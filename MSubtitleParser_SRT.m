@@ -104,9 +104,6 @@ typedef struct _SRTTag {
     *endTime = (hour * 60 * 60) + (min * 60) + (sec) + (msec / 1000.0);
 }
 
-extern NSString* MFontItalicAttributeName;
-extern NSString* MFontBoldAttributeName;
-
 - (void)mutableAttributedString:(NSMutableAttributedString*)mas
                    appendString:(NSString*)string
                       withColor:(NSColor*)color italic:(BOOL)italic bold:(BOOL)bold

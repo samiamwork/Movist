@@ -178,9 +178,6 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
     return nil;
 }
 
-extern NSString* MFontItalicAttributeName;
-extern NSString* MFontBoldAttributeName;
-
 - (void)mutableAttributedString:(NSMutableAttributedString*)mas
                    appendString:(NSString*)string
                       withColor:(NSColor*)color italic:(BOOL)italic bold:(BOOL)bold

@@ -39,28 +39,22 @@
     [_lastUpdateCheckTimeTextField setFormatter:formatter];
     [self updateLastUpdateCheckTimeTextField];
 
-    NSTabView* tabView = (NSTabView*)[[_advancedPane subviews] objectAtIndex:0];
     NSString* identifier = (NSString*)[_defaults objectForKey:MPrefsAdvancedTabKey];
-    if (NSNotFound == [tabView indexOfTabViewItemWithIdentifier:identifier]) {
-        [tabView selectFirstTabViewItem:self];
+    if (NSNotFound == [_advancedTabView indexOfTabViewItemWithIdentifier:identifier]) {
+        [_advancedTabView selectFirstTabViewItem:self];
     }
     else {
-        [tabView selectTabViewItemWithIdentifier:identifier];
+        [_advancedTabView selectTabViewItemWithIdentifier:identifier];
     }
 
 //#define _SUPPORT_FILE_BINDING
 #if defined(_SUPPORT_FILE_BINDING)
     [self initFileBinding];
 #else
-    [tabView removeTabViewItem:[tabView tabViewItemAtIndex:1]];
+    [_advancedTabView removeTabViewItem:[_advancedTabView tabViewItemAtIndex:1]];
 #endif
     [self initCodecBinding];
     [self initDetails];
-}
-
-- (void)tabView:(NSTabView*)tabView didSelectTabViewItem:(NSTabViewItem*)tabViewItem
-{
-    [_defaults setObject:[tabViewItem identifier] forKey:MPrefsAdvancedTabKey];
 }
 
 - (void)updateLastUpdateCheckTimeTextField
