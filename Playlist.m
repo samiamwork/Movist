@@ -32,6 +32,7 @@
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [movieURL absoluteString]);
     if (self = [super init]) {
         _movieURL = [movieURL retain];
+        _subtitleURLs = [[NSMutableArray alloc] initWithCapacity:1];
     }
     return self;
 }
@@ -41,7 +42,13 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         [self setMovieURL:[coder decodeObjectForKey:@"MovieURL"]];
-        [self setSubtitleURL:[coder decodeObjectForKey:@"SubtitleURL"]];
+        _subtitleURLs = [[NSMutableArray alloc] initWithCapacity:1];
+        // for legacy
+        NSURL* subtitleURL = [coder decodeObjectForKey:@"SubtitleURL"];
+        if (subtitleURL) {
+            [self addSubtitleURL:subtitleURL];
+        }
+        [self addSubtitleURLs:[coder decodeObjectForKey:@"SubtitleURLs"]];
     }
     return self;
 }
@@ -50,16 +57,14 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [coder encodeObject:_movieURL forKey:@"MovieURL"];
-    if (_subtitleURL) {
-        [coder encodeObject:_subtitleURL forKey:@"SubtitleURL"];
-    }
+    [coder encodeObject:_subtitleURLs forKey:@"SubtitleURLs"];
 }
 
 - (void)dealloc
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_movieURL release];
-    [_subtitleURL release];
+    [_subtitleURLs release];
     [super dealloc];
 }
 
@@ -67,15 +72,15 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     PlaylistItem* item = [[PlaylistItem alloc] initWithMovieURL:_movieURL];
-    [item setSubtitleURL:_subtitleURL];
+    [item setSubtitleURLs:_subtitleURLs];
     return item;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (NSURL*)movieURL    { return _movieURL; }
-- (NSURL*)subtitleURL { return _subtitleURL; }
+- (NSURL*)movieURL       { return _movieURL; }
+- (NSArray*)subtitleURLs { return _subtitleURLs; }
 
 - (void)setMovieURL:(NSURL*)movieURL
 {
@@ -83,10 +88,28 @@
     [movieURL retain], [_movieURL release], _movieURL = movieURL;
 }
 
-- (void)setSubtitleURL:(NSURL*)subtitleURL
+- (void)setSubtitleURLs:(NSArray*)subtitleURLs { [_subtitleURLs setArray:subtitleURLs]; }
+- (void)addSubtitleURL:(NSURL*)subtitleURL
 {
-    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [subtitleURL absoluteString]);
-    [subtitleURL retain], [_subtitleURL release], _subtitleURL = subtitleURL;
+    if (![_subtitleURLs containsObject:subtitleURL]) {
+        [_subtitleURLs addObject:subtitleURL];
+    }
+}
+
+- (void)removeSubtitleURL:(NSURL*)subtitleURL
+{
+    if ([_subtitleURLs containsObject:subtitleURL]) {
+        [_subtitleURLs removeObject:subtitleURL];
+    }
+}
+
+- (void)addSubtitleURLs:(NSArray*)subtitleURLs
+{
+    NSURL* subtitleURL;
+    NSEnumerator* e = [subtitleURLs objectEnumerator];
+    while (subtitleURL = [e nextObject]) {
+        [self addSubtitleURL:subtitleURL];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -163,22 +186,41 @@
     return FALSE;
 }
 
-- (NSString*)findSubtitlePathForMoviePath:(NSString*)moviePath
+int compareSubtitleURLs(id url1, id url2, void* context)
+{
+    NSString* path1 = [url1 absoluteString], *ext1 = [path1 pathExtension];
+    NSString* path2 = [url2 absoluteString], *ext2 = [path2 pathExtension];
+    if (NSOrderedSame == [ext1 caseInsensitiveCompare:ext2]) {
+        unsigned int len1 = [path1 length];
+        unsigned int len2 = [path2 length];
+        return (len1 < len2) ? NSOrderedAscending :
+        (len1 > len2) ? NSOrderedDescending : NSOrderedSame;
+    }
+    return [path1 caseInsensitiveCompare:path2];
+}
+
+- (NSArray*)findSubtitleURLsForMoviePath:(NSString*)moviePath
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, moviePath);
     NSFileManager* fileManager = [NSFileManager defaultManager];
-    NSString* path, *ext;
-    NSString* pathWithoutExt = [moviePath stringByDeletingPathExtension];
-    NSArray* extensions = [MSubtitle fileExtensions];
-    NSEnumerator* enumerator = [extensions objectEnumerator];
-    while (ext = [enumerator nextObject]) {
-        path = [pathWithoutExt stringByAppendingPathExtension:ext];
-        if ([fileManager fileExistsAtPath:path] &&
-            [fileManager isReadableFileAtPath:path]) {
-            return path;
+    NSString* directory = [moviePath stringByDeletingLastPathComponent];
+    NSString* movieFilename = [moviePath lastPathComponent];
+    NSString* movieFilenameWithoutExt = [movieFilename stringByDeletingPathExtension];
+    NSArray* fileExtensions = [MSubtitle fileExtensions];
+    
+    NSMutableArray* subtitleURLs = [NSMutableArray arrayWithCapacity:1];
+    NSString* filename, *path;
+    NSArray* contents = [fileManager sortedDirectoryContentsAtPath:directory];
+    NSEnumerator* enumerator = [contents objectEnumerator];
+    while (filename = [enumerator nextObject]) {
+        if ([filename hasPrefix:movieFilenameWithoutExt] &&
+            [filename hasAnyExtension:fileExtensions]) {
+            path = [directory stringByAppendingPathComponent:filename];
+            [subtitleURLs addObject:[NSURL fileURLWithPath:path]];
         }
     }
-    return nil;
+    [subtitleURLs sortUsingFunction:compareSubtitleURLs context:nil];
+    return subtitleURLs;
 }
 
 - (BOOL)checkMovieSeriesFile:(NSString*)path forMovieFile:(NSString*)moviePath
@@ -215,29 +257,29 @@
 
 - (void)addFile:(NSString*)filename option:(int)option
 {
-    TRACE(@"%s \"%@\" %@", __PRETTY_FUNCTION__, filename,
-          (option == OPTION_ONLY) ? @"only" :
-          (option == OPTION_SERIES)  ? @"series" : @"all");
+    //TRACE(@"%s \"%@\" %@", __PRETTY_FUNCTION__, filename,
+    //      (option == OPTION_ONLY) ? @"only" :
+    //      (option == OPTION_SERIES)  ? @"series" : @"all");
     [self insertFile:filename atIndex:[_array count] option:option];
 }
 
 - (void)addFiles:(NSArray*)filenames
 {
-    TRACE(@"%s {%@}", __PRETTY_FUNCTION__, filenames);
+    //TRACE(@"%s {%@}", __PRETTY_FUNCTION__, filenames);
     [self insertFiles:filenames atIndex:[_array count]];
 }
 
 - (void)addURL:(NSURL*)movieURL
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, [movieURL absoluteString]);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, [movieURL absoluteString]);
     [self insertURL:movieURL atIndex:[_array count]];
 }
 
 - (int)insertFile:(NSString*)filename atIndex:(unsigned int)index option:(int)option
 {
-    TRACE(@"%s \"%@\" at %d %@", __PRETTY_FUNCTION__, filename, index,
-          (option == OPTION_ONLY) ? @"only" :
-          (option == OPTION_SERIES)  ? @"series" : @"all");
+    //TRACE(@"%s \"%@\" at %d %@", __PRETTY_FUNCTION__, filename, index,
+    //      (option == OPTION_ONLY) ? @"only" :
+    //      (option == OPTION_SERIES)  ? @"series" : @"all");
     BOOL isDirectory;
     NSFileManager* fileManager = [NSFileManager defaultManager];
     if (![fileManager fileExistsAtPath:filename isDirectory:&isDirectory]) {
@@ -292,7 +334,7 @@
 
 - (void)insertFiles:(NSArray*)filenames atIndex:(unsigned int)index
 {
-    TRACE(@"%s {%@} at %d", __PRETTY_FUNCTION__, filenames, index);
+    //TRACE(@"%s {%@} at %d", __PRETTY_FUNCTION__, filenames, index);
     NSString* filename;
     NSEnumerator* enumerator = [filenames objectEnumerator];
     while (filename = [enumerator nextObject]) {
@@ -307,16 +349,13 @@
         return;     // already contained
     }
     
-    NSURL* subtitleURL = nil;
+    NSArray* subtitleURLs = nil;
     if ([movieURL isFileURL]) {
-        NSString* subtitlePath = [self findSubtitlePathForMoviePath:[movieURL path]];
-        if (subtitlePath) {
-            subtitleURL = [NSURL fileURLWithPath:subtitlePath];
-        }
+        subtitleURLs = [self findSubtitleURLsForMoviePath:[movieURL path]];
     }
-    
+
     PlaylistItem* item = [[PlaylistItem alloc] initWithMovieURL:movieURL];
-    [item setSubtitleURL:subtitleURL];
+    [item setSubtitleURLs:subtitleURLs];
     [_array insertObject:item atIndex:MIN(index, [_array count])];
 
     if (_currentItem == nil) {
@@ -329,7 +368,7 @@
 
 - (unsigned int)moveItemsAtIndexes:(NSIndexSet*)indexes toIndex:(unsigned int)index
 {
-    TRACE(@"%s %@ to %d", __PRETTY_FUNCTION__, indexes, index);
+    //TRACE(@"%s %@ to %d", __PRETTY_FUNCTION__, indexes, index);
     if ([indexes firstIndex] <= index && index <= [indexes lastIndex]) {
         int i, lastIndex = index;
         for (i = [indexes firstIndex]; i <= lastIndex; i++) {
@@ -359,7 +398,7 @@
 
 - (void)removeItemAtIndex:(unsigned int)index
 {
-    TRACE(@"%s at %d", __PRETTY_FUNCTION__, index);
+    //TRACE(@"%s at %d", __PRETTY_FUNCTION__, index);
     if ([_array count] <= index) {
         return;
     }
@@ -378,7 +417,7 @@
 
 - (void)removeItemsAtIndexes:(NSIndexSet*)indexes
 {
-    TRACE(@"%s %@", __PRETTY_FUNCTION__, indexes);
+    //TRACE(@"%s %@", __PRETTY_FUNCTION__, indexes);
     [_array removeObjectsAtIndexes:indexes];
 
     if (![_array containsObject:_currentItem]) {
@@ -391,7 +430,7 @@
 
 - (void)removeAllItems
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
     _currentItem = nil;
     [_array removeAllObjects];
 

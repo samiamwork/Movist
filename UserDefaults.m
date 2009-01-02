@@ -67,7 +67,7 @@ NSString* MUpdateSystemVolumeKey            = @"UpdateSystemVolume";
 #pragma mark prefs: subtitle
 NSString* MSubtitleEnableKey                = @"SubtitleEnable";
 NSString* MPrefsSubtitleTabKey              = @"PrefsSubtitleTab";
-NSString* MSubtitleEncodingKey[3]           = { @"SubtitleEncoding", @"SubtitleEncoding1", @"SubtitleEncoding2" };
+NSString* MSubtitleEncodingKey              = @"SubtitleEncoding";
 NSString* MSubtitleFontNameKey[3]           = { @"SubtitleFontName", @"SubtitleFontName1", @"SubtitleFontName2" };
 NSString* MSubtitleFontSizeKey[3]           = { @"SubtitleFontSize", @"SubtitleFontSize1", @"SubtitleFontSize2" };
 NSString* MSubtitleAutoFontSizeKey[3]       = { @"SubtitleAutoFontSize", @"SubtitleAutoFontSize1", @"SubtitleAutoFontSize2" };
@@ -100,8 +100,10 @@ NSString* MDefaultCodecBindingKey           = @"DefaultCodecBinding";
 
 #pragma mark prefs: advanced - details: general
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
-NSString* MFloatingPlaylistKey              = @"FloatingPlaylist";
 NSString* MAutoShowDockKey                  = @"AutoShowDock";
+NSString* MFloatingPlaylistKey              = @"FloatingPlaylist";
+NSString* MGotoBegginingWhenReopenMovieKey  = @"MGotoBegginingWhenReopenMovieKey";
+NSString* MGotoBegginingWhenOpenSubtitleKey = @"MGotoBegginingWhenOpenSubtitleKey";
 NSString* MMovieResizeCenterKey             = @"MovieResizeCenter";
 NSString* MWindowResizeModeKey              = @"WindowResizeMode";
 NSString* MViewDragActionKey                = @"ViewDragAction";
@@ -167,18 +169,17 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     // prefs: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MSubtitleEnableKey];
     [dict setObject:@"" forKey:MPrefsSubtitleTabKey];     // for first tab
-    CFStringEncoding defaultStringEncoding[3] = { CFStringGetSystemEncoding(), };
-    defaultStringEncoding[1] = defaultStringEncoding[2] = defaultStringEncoding[0];
-    if (defaultStringEncoding[0] == kCFStringEncodingMacKorean) {  // if Mac/Korean,
-        defaultStringEncoding[0] = kCFStringEncodingDOSKorean;     // then convert to Windows/Korean.
+    CFStringEncoding defaultStringEncoding = CFStringGetSystemEncoding();
+    if (defaultStringEncoding == kCFStringEncodingMacKorean) {  // if Mac/Korean,
+        defaultStringEncoding = kCFStringEncodingDOSKorean;     // then convert to Windows/Korean.
     }
+    [dict setObject:[NSNumber numberWithInt:defaultStringEncoding] forKey:MSubtitleEncodingKey];
     int vPosition[3] = { OSD_VPOSITION_LBOX, OSD_VPOSITION_TOP, OSD_VPOSITION_CENTER };
     NSColor* textColor   = [NSColor colorWithCalibratedRed:1.0 green:1.0 blue:1.0 alpha:1.0];
     NSColor* strokeColor = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
     NSColor* shadowColor = [NSColor colorWithCalibratedRed:0.0 green:0.0 blue:0.0 alpha:1.0];
     int i;
     for (i = 0; i < 3; i++) {
-        [dict setObject:[NSNumber numberWithInt:defaultStringEncoding[i]] forKey:MSubtitleEncodingKey[i]];
         [dict setObject:[[NSFont boldSystemFontOfSize:1.0] fontName] forKey:MSubtitleFontNameKey[i]];
         [dict setObject:[NSNumber numberWithFloat:24.0] forKey:MSubtitleFontSizeKey[i]];
         [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleAutoFontSizeKey[i]];
@@ -208,8 +209,10 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[self defaultCodecBinding] forKey:MDefaultCodecBindingKey];
     // prefs: advanced - details: general
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MActivateOnDraggingKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MFloatingPlaylistKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoShowDockKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MFloatingPlaylistKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MGotoBegginingWhenReopenMovieKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MGotoBegginingWhenOpenSubtitleKey];
     [dict setObject:[NSNumber numberWithInt:MOVIE_RESIZE_CENTER_TM] forKey:MMovieResizeCenterKey];
     [dict setObject:[NSNumber numberWithInt:WINDOW_RESIZE_ADJUST_TO_SIZE] forKey:MWindowResizeModeKey];
     [dict setObject:[NSNumber numberWithInt:VIEW_DRAG_ACTION_NONE] forKey:MViewDragActionKey];

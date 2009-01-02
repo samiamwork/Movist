@@ -105,7 +105,9 @@ NSString* videoCodecName(int codecId);
     [self updateDecoderUI];
     [self updateDataSizeBpsUI];
 
-    initSubtitleEncodingMenu(_subtitleEncodingMenu, @selector(reopenSubtitleAction:));
+    initSubtitleEncodingMenu(_subtitle0EncodingMenu, @selector(reopenSubtitleAction:));
+    initSubtitleEncodingMenu(_subtitle1EncodingMenu, @selector(reopenSubtitleAction:));
+    initSubtitleEncodingMenu(_subtitle2EncodingMenu, @selector(reopenSubtitleAction:));
 
     // set modifier keys (I don't know how to set Shift key mask)
     unsigned int mask = NSAlternateKeyMask | NSShiftKeyMask;
@@ -122,9 +124,8 @@ NSString* videoCodecName(int codecId);
     [_rateDefaultMenuItem setKeyEquivalentModifierMask:mask];
 
     mask = NSControlKeyMask | NSShiftKeyMask;
-    [_syncLaterMenuItem setKeyEquivalentModifierMask:mask];
-    [_syncEarlierMenuItem setKeyEquivalentModifierMask:mask];
-    [_syncDefaultMenuItem setKeyEquivalentModifierMask:mask];
+    [_subtitleAllSyncDefaultMenuItem setKeyEquivalent:@"="];
+    [_subtitleAllSyncDefaultMenuItem setKeyEquivalentModifierMask:mask];
 }
 
 - (void)dealloc
@@ -370,7 +371,9 @@ NSString* videoCodecName(int codecId);
     [self updateAudioTrackMenuItems];
     [self updateVolumeMenuItems];
     [self updateSubtitleLanguageMenuItems];
-    [self updateSubtitlePositionMenuItems];
+    [self updateSubtitlePositionMenuItems:0];
+    [self updateSubtitlePositionMenuItems:1];
+    [self updateSubtitlePositionMenuItems:2];
     [self updateLetterBoxHeightMenuItems];
     [self updateRepeatUI];
     [self updateVolumeUI];
@@ -602,7 +605,8 @@ NSString* videoCodecName(int codecId);
     }
 
     // Subtitle
-    if ([menuItem action] == @selector(openSubtitleFileAction:)) {
+    if ([menuItem action] == @selector(openSubtitleFileAction:) ||
+        [menuItem action] == @selector(addSubtitleFileAction:)) {
         return _movie && [_defaults boolForKey:MSubtitleEnableKey];
     }
     if ([menuItem action] == @selector(reopenSubtitleAction:)) {

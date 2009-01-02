@@ -243,12 +243,20 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
             range.location -= tag.range.length;
         }
     }
-    // replace "<BR>" with "\n"
+    // replace "<BR>" with "\n" and remove leading white-spaces in each line
+    set = [NSCharacterSet whitespaceCharacterSet];
     range = NSMakeRange(0, [ms length]);
     while (0 < range.length) {
         tag = [ms smiTagWithRangePtr:&range delimSet:_delimSet];
         if (tag.type == TAG_BR) {
             if (0 < range.length || !_removeLastBR) {
+                // remove leading white-spaces
+                while (0 <= tag.range.location - 1 &&
+                       [set characterIsMember:[ms characterAtIndex:tag.range.location - 1]]) {
+                    tag.range.location--;
+                    tag.range.length++;
+                }
+                // replace "<BR>" with "\n"
                 [ms replaceCharactersInRange:tag.range withString:@"\n"];
                 range.location -= tag.range.length - 1; // - 1 for "\n"
             }
@@ -258,7 +266,7 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
             }
         }
     }
-    
+
     // replace '&'-leading sequences
     [ms replaceOccurrencesOfString:@"&lt;" withString:@"<"];
     [ms replaceOccurrencesOfString:@"&lt"  withString:@"<"];
@@ -305,7 +313,7 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
     }
 
     if (!class) {
-        class = NSLocalizedString(@"Unnamed Subtitle", nil);
+        class = NSLocalizedString(@"Unnamed", nil);
     }
     MSubtitle* subtitle = [_classes objectForKey:class];
     if (!subtitle) {

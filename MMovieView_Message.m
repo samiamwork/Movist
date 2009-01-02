@@ -43,7 +43,7 @@
 {
     //TRACE(@"%s \"%@\", \"%@\"", __PRETTY_FUNCTION__, [url path], info);
     NSString* s = ([url isFileURL]) ? [[url path] lastPathComponent] :
-    [[url absoluteString] lastPathComponent];
+                                      [[url absoluteString] lastPathComponent];
     NSStringEncoding encoding = [NSString defaultCStringEncoding];
     const char* cString = [s cStringUsingEncoding:encoding];
     if (cString) {

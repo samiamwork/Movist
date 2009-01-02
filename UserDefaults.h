@@ -67,7 +67,7 @@ extern NSString* MUpdateSystemVolumeKey;
 #pragma mark prefs: subtitle
 extern NSString* MSubtitleEnableKey;
 extern NSString* MPrefsSubtitleTabKey;
-extern NSString* MSubtitleEncodingKey[3];
+extern NSString* MSubtitleEncodingKey;
 extern NSString* MSubtitleFontNameKey[3];
 extern NSString* MSubtitleFontSizeKey[3];
 extern NSString* MSubtitleAutoFontSizeKey[3];
@@ -103,8 +103,10 @@ extern NSString* MDefaultCodecBindingKey;
 #pragma mark -
 #pragma mark prefs: advanced - details: general
 extern NSString* MActivateOnDraggingKey;
-extern NSString* MFloatingPlaylistKey;
 extern NSString* MAutoShowDockKey;
+extern NSString* MFloatingPlaylistKey;
+extern NSString* MGotoBegginingWhenReopenMovieKey;
+extern NSString* MGotoBegginingWhenOpenSubtitleKey;
 extern NSString* MMovieResizeCenterKey;
 extern NSString* MWindowResizeModeKey;
 extern NSString* MViewDragActionKey;

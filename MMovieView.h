@@ -180,8 +180,11 @@
 
 @interface MMovieView (Subtitle)
 
+- (int)subtitleCount;
 - (MSubtitle*)subtitleAtIndex:(int)index;
-- (void)setSubtitle:(MSubtitle*)subtitle atIndex:(int)index;
+- (void)addSubtitle:(MSubtitle*)subtitle;
+- (void)removeSubtitle:(MSubtitle*)subtitle;
+- (void)removeAllSubtitles;
 - (BOOL)updateSubtitleOSDAtIndex:(int)index sync:(BOOL)sync;
 
 - (BOOL)subtitleVisible;

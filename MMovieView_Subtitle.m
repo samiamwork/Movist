@@ -31,8 +31,98 @@
 
 @implementation MMovieView (Subtitle)
 
-- (MSubtitle*)subtitleAtIndex:(int)index { return _subtitle[index]; }
+- (int)subtitleCount
+{
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (!_subtitle[i]) {
+            break;
+        }
+    }
+    return i;
+}
 
+- (MSubtitle*)subtitleAtIndex:(int)index
+{
+    assert(0 <= index && index < 3);
+    return _subtitle[index];
+}
+
+- (void)addSubtitle:(MSubtitle*)subtitle
+{
+    assert(subtitle != nil && [subtitle isEnabled]);
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (!_subtitle[i]) {
+            break;
+        }
+    }
+    if (i == 3) {
+        return;
+    }
+
+    _subtitle[i] = [subtitle retain];
+    TRACE(@"%s [%d]:%@", __PRETTY_FUNCTION__, i, [subtitle name]);
+    [_subtitle[i] setMovieOSD:_subtitleOSD[i]];
+    [self updateSubtitleOSDAtIndex:i sync:TRUE];   // for optimized rendering
+    [_subtitle[i] startRenderThread];
+
+    [self updateIndexOfSubtitleInLBOX];
+    [self updateLetterBoxHeight];
+    [self updateMovieRect:TRUE];
+    [self redisplay];
+}
+
+- (void)removeSubtitle:(MSubtitle*)subtitle
+{
+    assert(subtitle != nil);
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (_subtitle[i] == subtitle) {
+            break;
+        }
+    }
+    if (i == 3) {
+        return;
+    }
+
+    [_subtitle[i] quitRenderThread];
+    [self updateSubtitleOSDAtIndex:i sync:TRUE];
+    [_subtitle[i] setMovieOSD:nil];
+    [_subtitle[i] release];
+    for (; i < 2; i++) {
+        _subtitle[i] = _subtitle[i + 1];
+        [_subtitle[i] setMovieOSD:_subtitleOSD[i]];
+        [self updateSubtitleOSDAtIndex:i sync:TRUE];   // for optimized rendering
+    }
+    _subtitle[i] = nil;
+
+    [self updateIndexOfSubtitleInLBOX];
+    [self updateLetterBoxHeight];
+    [self updateMovieRect:TRUE];
+    [self redisplay];
+}
+
+- (void)removeAllSubtitles
+{
+    int i;
+    for (i = 0; i < 3; i++) {
+        if (_subtitle[i]) {
+            [_subtitle[i] quitRenderThread];
+            [self updateSubtitleOSDAtIndex:i sync:TRUE];
+            [_subtitle[i] setMovieOSD:nil];
+            [_subtitle[i] release];
+            _subtitle[i] = nil;
+        }
+    }
+
+    [self updateIndexOfSubtitleInLBOX];
+    [self updateLetterBoxHeight];
+    [self updateMovieRect:TRUE];
+    [self redisplay];
+}
+
+/*
 - (void)setSubtitle:(MSubtitle*)subtitle atIndex:(int)index;
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, subtitles);
@@ -91,18 +181,18 @@
     }
     [self redisplay];
 }
-
+*/
 - (BOOL)updateSubtitleOSDAtIndex:(int)index sync:(BOOL)sync
 {
     BOOL ret = TRUE;
     [_drawLock lock];
-    if (!_subtitle[index] || ![_subtitle[index] isEnabled]) {
+    if (!_movie || !_subtitle[index] || ![_subtitle[index] isEnabled]) {
         [_subtitleOSD[index] setTexImage:nil];
         _needsSubtitleUpdate[index] = FALSE;
         [_auxSubtitleOSD[index] clearContent];
     }
     else {
-        BOOL renderFlag = sync && ([_movie rate] == 0.0);
+        BOOL renderFlag = FALSE;//sync && ([_movie rate] == 0.0);
         float time = [_movie currentTime] + [_subtitleOSD[index] subtitleSync];
         NSImage* texImage = [_subtitle[index] texImageAtTime:time direction:0
                                                   renderFlag:&renderFlag];

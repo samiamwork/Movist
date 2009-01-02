@@ -187,7 +187,7 @@
 - (void)initSubtitlePane;
 - (void)updateSubtitleDataView;
 - (void)updateSubtitleFontAndSizeUI;
-- (IBAction)subtitleEnbleAction:(id)sender;
+- (IBAction)subtitleEnableAction:(id)sender;
 - (IBAction)subtitleEncodingAction:(id)sender;
 - (IBAction)subtitleFontAction:(id)sender;
 - (IBAction)subtitleAutoFontSizeAction:(id)sender;

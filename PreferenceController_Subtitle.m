@@ -42,6 +42,10 @@
     _subtitleIndex = [[_defaults objectForKey:MPrefsSubtitleTabKey] intValue];
     _subtitleIndex = adjustToRange(_subtitleIndex, 0, 2);
     [_subtitleTabView selectTabViewItemAtIndex:_subtitleIndex];
+
+    int textEncoding = [_defaults integerForKey:MSubtitleEncodingKey];
+    [_subtitleEncodingPopUpButton selectItemWithTag:textEncoding];
+
     [self updateSubtitleDataView];
 
     int height = [_defaults integerForKey:MLetterBoxHeightKey];
@@ -52,7 +56,7 @@
     [_subtitleScreenMarginTextField setFloatValue:screenMargin];
 }
 
-- (IBAction)subtitleEnbleAction:(id)sender
+- (IBAction)subtitleEnableAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL subtitleEnable = [_subtitleEnableButton state];
@@ -63,9 +67,6 @@
 
 - (void)updateSubtitleDataView
 {
-    [_subtitleEncodingPopUpButton selectItemWithTag:
-     [_defaults integerForKey:MSubtitleEncodingKey[_subtitleIndex]]];
-
     [self updateSubtitleFontAndSizeUI];
 
     NSColor* textColor = [_defaults colorForKey:MSubtitleTextColorKey[_subtitleIndex]];
@@ -154,8 +155,8 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     CFStringEncoding encoding = [[sender selectedItem] tag];
-    [_defaults setInteger:encoding forKey:MSubtitleEncodingKey[_subtitleIndex]];
-    [_appController reopenSubtitle];
+    [_defaults setInteger:encoding forKey:MSubtitleEncodingKey];
+    [_appController reopenSubtitles];
 }
 
 - (IBAction)subtitleFontAction:(id)sender

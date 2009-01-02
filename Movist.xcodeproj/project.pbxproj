@@ -175,6 +175,7 @@
 		AF84B9640E45892B00421D39 /* HUDSegmentedSmallRightSelected.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF84B95D0E45892B00421D39 /* HUDSegmentedSmallRightSelected.tiff */; };
 		AF84B9650E45892B00421D39 /* HUDSegmentedSmallSep.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF84B95E0E45892B00421D39 /* HUDSegmentedSmallSep.tiff */; };
 		AF850C730E3B18B000F73FEB /* MSubtitleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = AF850C710E3B18B000F73FEB /* MSubtitleItem.m */; };
+		AF8DC2B00F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF8DC2AF0F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff */; };
 		AF9569820BFEEABF002A60BE /* Movist.m in Sources */ = {isa = PBXBuildFile; fileRef = AF9569810BFEEABF002A60BE /* Movist.m */; };
 		AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */; };
 		AFA843C90D1DA8D500D4805C /* AppController_AudioDigital.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA843C80D1DA8D500D4805C /* AppController_AudioDigital.m */; };
@@ -450,6 +451,7 @@
 		AF84B95E0E45892B00421D39 /* HUDSegmentedSmallSep.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedSmallSep.tiff; path = Images/HUDSegmentedSmallSep.tiff; sourceTree = "<group>"; };
 		AF850C710E3B18B000F73FEB /* MSubtitleItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitleItem.m; sourceTree = "<group>"; };
 		AF850C720E3B18B000F73FEB /* MSubtitleItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleItem.h; sourceTree = "<group>"; };
+		AF8DC2AF0F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOffDisabled.tiff; path = Images/HUDCheckBoxOffDisabled.tiff; sourceTree = "<group>"; };
 		AF9569810BFEEABF002A60BE /* Movist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = Movist.m; sourceTree = "<group>"; };
 		AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateChecker.h; sourceTree = "<group>"; };
 		AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateChecker.m; sourceTree = "<group>"; };
@@ -801,6 +803,7 @@
 				AF4181010DB0C2EA00C5AE7E /* HUDButtonRoundRight.tiff */,
 				AF4181020DB0C2EA00C5AE7E /* HUDButtonRoundRightPressed.tiff */,
 				AFCD05F40DBB000200348AB0 /* HUDCheckBoxOff.tiff */,
+				AF8DC2AF0F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff */,
 				AFCD05F50DBB000200348AB0 /* HUDCheckBoxOffPressed.tiff */,
 				AFCD05F60DBB000200348AB0 /* HUDCheckBoxOn.tiff */,
 				AF06F9C30DBB09A700C78043 /* HUDCheckBoxOnDisabled.tiff */,
@@ -1199,6 +1202,7 @@
 				AF84B9630E45892B00421D39 /* HUDSegmentedSmallRight.tiff in Resources */,
 				AF84B9640E45892B00421D39 /* HUDSegmentedSmallRightSelected.tiff in Resources */,
 				AF84B9650E45892B00421D39 /* HUDSegmentedSmallSep.tiff in Resources */,
+				AF8DC2B00F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

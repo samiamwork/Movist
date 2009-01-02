@@ -43,7 +43,7 @@
     if (self = [super init]) {
         _url = [url retain];
         _type = [type retain];
-        _name = [NSLocalizedString(@"Unnamed Subtitle", nil) retain];
+        _name = [NSLocalizedString(@"Unnamed", nil) retain];
         _enabled = TRUE;
         _items = [[NSMutableArray alloc] init];
         _indexCache = -1;     // for initial comparison
@@ -78,6 +78,12 @@
 - (NSString*)type { return _type; }
 - (NSString*)name { return _name; }
 - (void)setName:(NSString*)name { [name retain], [_name release], _name = name; }
+
+- (NSString*)summary
+{
+    NSString* s = [_url isFileURL] ? [_url path] : [_url absoluteString];
+    return [NSString stringWithFormat:@"%@, %@", _name, [s lastPathComponent]];
+}
 
 - (BOOL)isEmpty { return ([_items count] == 0); }
 - (float)beginTime { return [self isEmpty] ? 0 : [[_items objectAtIndex:0] beginTime]; }
@@ -214,7 +220,7 @@
 
 - (int)indexAtTime:(float)time direction:(int)direction
 {
-    int index = (_indexCache < 0) ? 0 : _indexCache;
+    int index = MAX(0, _indexCache);
     if (index < 0) {
         //TRACE(@"%s(\"%@\")[%.03f]: <none>", __PRETTY_FUNCTION__, _name, time);
         return _indexCache = (0 < direction) ? 0 : -1;
@@ -226,7 +232,7 @@
 
     MSubtitleItem* si = (MSubtitleItem*)[_items objectAtIndex:index];
     if (time < [si beginTime]) {
-        while (0 < --index) {         // find in previous items
+        while (0 <= --index) {         // find in previous items
             si = [_items objectAtIndex:index];
             if ([si beginTime] <= time) {
                 break;
@@ -243,7 +249,7 @@
     }
     else if ([si endTime] < time) {
         int maxIndex = [_items count] - 1;
-        while (++index < maxIndex) {  // find in next items
+        while (++index <= maxIndex) {  // find in next items
             si = [_items objectAtIndex:index];
             if (time < [si endTime]) {
                 break;

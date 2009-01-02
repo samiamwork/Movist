@@ -14,19 +14,19 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>MainLCDView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSView</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>FSSeekSlider</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>SeekSlider</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainLCDView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -46,6 +46,14 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
+			<string>NSApplication</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
 			<string>MainWindow</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
@@ -61,27 +69,11 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>NSApplication</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSResponder</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>HoverButton</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSButton</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>HUDCheckBoxCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>CustomCheckBoxCell</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -98,6 +90,14 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSTextFieldCell</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDCheckBoxCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>CustomCheckBoxCell</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
@@ -138,19 +138,6 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>SeekSlider</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key></key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>FirstResponder</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -199,6 +186,19 @@
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSPanel</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key></key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -251,6 +251,8 @@
 		<dict>
 			<key>ACTIONS</key>
 			<dict>
+				<key>addSubtitleFileAction</key>
+				<string>id</string>
 				<key>aspectRatioAction</key>
 				<string>id</string>
 				<key>audioTrackAction</key>
@@ -476,47 +478,61 @@
 				<string>NSMenuItem</string>
 				<key>_seekSlider</key>
 				<string>MainSeekSlider</string>
-				<key>_subtitleControlMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitleEncodingMenu</key>
+				<key>_subtitle0EncodingMenu</key>
 				<string>NSMenu</string>
+				<key>_subtitle0MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle0PositionBottomMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle0PositionCenterMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle0PositionLBoxMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle0PositionTopMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle0PositionUBoxMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle1EncodingMenu</key>
+				<string>NSMenu</string>
+				<key>_subtitle1MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle1PositionBottomMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle1PositionCenterMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle1PositionLBoxMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle1PositionTopMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle1PositionUBoxMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle2EncodingMenu</key>
+				<string>NSMenu</string>
+				<key>_subtitle2MenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle2PositionBottomMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle2PositionCenterMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle2PositionLBoxMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle2PositionTopMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitle2PositionUBoxMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitleAllSyncDefaultMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_subtitleLanguageSegmentedControl</key>
 				<string>NSSegmentedControl</string>
 				<key>_subtitleMenu</key>
 				<string>NSMenu</string>
 				<key>_subtitleNameTextField</key>
 				<string>NSTextField</string>
-				<key>_subtitlePositionBottomMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitlePositionCenterMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_subtitlePositionDefaultButton</key>
 				<string>NSButton</string>
-				<key>_subtitlePositionLBoxMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitlePositionOnLetterBox1LineMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitlePositionOnLetterBox2LinesMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitlePositionOnLetterBox3LinesMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitlePositionOnLetterBoxMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitlePositionOnMovieMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_subtitlePositionPopUpButton</key>
 				<string>NSPopUpButton</string>
-				<key>_subtitlePositionTopMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitlePositionUBoxMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_subtitleVisibleMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_syncDefaultMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_syncEarlierMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_syncLaterMenuItem</key>
 				<string>NSMenuItem</string>
 				<key>_volumeDownMenuItem</key>
 				<string>NSMenuItem</string>

@@ -72,11 +72,11 @@
            operation:NSCompositeSourceOver fraction:1.0];
 }
 
-- (void)drawString:(NSString*)s subtitle:(BOOL)subtitle inRect:(NSRect)rect
+- (void)drawString:(NSString*)s inRect:(NSRect)rect isSubtitle:(BOOL)isSubtitle
 {
     //TRACE(@"%s %@ in %@", __PRETTY_FUNCTION__, s, NSStringFromRect(rect));
     NSColor* textColor;
-    if (subtitle) {
+    if (isSubtitle) {
         if ([NSApp isActive] && [self isHighlighted]) {
             textColor = [NSColor controlHighlightColor];
         }
@@ -112,34 +112,63 @@
     [s drawInRect:rect withAttributes:attrs];
 }
 
-- (void)drawURL:(NSURL*)url subtitle:(BOOL)subtitle inRect:(NSRect)rect
+- (void)drawMovieURL:(NSURL*)url inRect:(NSRect)rect
 {
     //TRACE(@"%s %@ in %@", __PRETTY_FUNCTION__, [url absoluteString], NSStringFromRect(rect));
-    if (!url && subtitle) {
-        // no icon
-        rect.origin.x   += 20;
-        rect.size.width -= 20;
-        NSString* s = NSLocalizedString(@"No Subtitle", nil);
-        [self drawString:s subtitle:TRUE inRect:rect];
+    NSImage* icon;
+    NSString* s;
+    if ([url isFileURL]) {
+        icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
+        s = [[url path] lastPathComponent];
     }
     else {
+        icon = nil;
+        s = [url absoluteString];
+    }
+    rect.origin.x   += 20;
+    rect.size.width -= 20;
+    [self drawString:s inRect:rect isSubtitle:FALSE];
+
+    rect.origin.x   -= 20;
+    rect.size.width  = 20;
+    [self drawIcon:icon inRect:rect];
+}
+
+- (void)drawSubtitleURLs:(NSArray*)urls inRect:(NSRect)rect
+{
+    //TRACE(@"%s %@ in %@", __PRETTY_FUNCTION__, [url absoluteString], NSStringFromRect(rect));
+    rect.origin.x   += 20;
+    rect.size.width -= 20;
+
+    if ([urls count] == 0) {
+        NSString* s = NSLocalizedString(@"No Subtitle", nil);
+        [self drawString:s inRect:rect isSubtitle:TRUE];
+    }
+    else {
+        rect.size.height /= [urls count];
+        NSRect iconRect = rect;
+        iconRect.origin.x -= 20;
+        iconRect.size.width = 20;
+
+        NSURL* url;
         NSImage* icon;
         NSString* s;
-        if ([url isFileURL]) {
-            icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
-            s = [[url path] lastPathComponent];
+        NSEnumerator* enumerator = [urls objectEnumerator];
+        while (url = [enumerator nextObject]) {
+            if ([url isFileURL]) {
+                icon = [[NSWorkspace sharedWorkspace] iconForFile:[url path]];
+                s = [[url path] lastPathComponent];
+            }
+            else {
+                icon = nil;
+                s = [url absoluteString];
+            }
+            [self drawString:s inRect:rect isSubtitle:TRUE];
+            [self drawIcon:icon inRect:iconRect];
+            
+            rect.origin.y += rect.size.height;
+            iconRect.origin.y += iconRect.size.height;
         }
-        else {
-            icon = nil;
-            s = [url absoluteString];
-        }
-        rect.origin.x   += 20;
-        rect.size.width -= 20;
-        [self drawString:s subtitle:subtitle inRect:rect];
-
-        rect.origin.x   -= 20;
-        rect.size.width  = 20;
-        [self drawIcon:icon inRect:rect];
     }
 }
 
@@ -151,12 +180,17 @@
         NSRectFill(cellFrame);
     }
 
-    NSRect rect = cellFrame;
-    rect.size.height /= 2;
-    [self drawURL:[_playlistItem movieURL] subtitle:FALSE inRect:rect];
+    NSArray* subtitleURLs = [_playlistItem subtitleURLs];
+    int lines = 1 + (([subtitleURLs count] <= 1) ? 1 : [subtitleURLs count]);
+    float lineHeight = cellFrame.size.height / lines;
 
-    rect.origin.y += rect.size.height;
-    [self drawURL:[_playlistItem subtitleURL] subtitle:TRUE inRect:rect];
+    NSRect rect = cellFrame;
+    rect.size.height = lineHeight;
+    [self drawMovieURL:[_playlistItem movieURL] inRect:rect];
+
+    rect.origin.y += lineHeight;
+    rect.size.height = cellFrame.size.height - lineHeight;
+    [self drawSubtitleURLs:subtitleURLs inRect:rect];
 }
 
 @end

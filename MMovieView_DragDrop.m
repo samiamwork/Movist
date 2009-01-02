@@ -36,12 +36,10 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     switch (_dragAction) {
         case DRAG_ACTION_PLAY_FILES :
-        case DRAG_ACTION_PLAY_URL :
+        case DRAG_ACTION_REPLACE_SUBTITLE_FILES :
             return NSDragOperationGeneric;
         case DRAG_ACTION_ADD_FILES :
-        case DRAG_ACTION_ADD_URL :
-        case DRAG_ACTION_REPLACE_SUBTITLE_FILE :
-        case DRAG_ACTION_REPLACE_SUBTITLE_URL :
+        case DRAG_ACTION_ADD_SUBTITLE_FILES :
             return NSDragOperationCopy;
     }
     return NSDragOperationNone;
@@ -56,14 +54,11 @@
 
     NSPasteboard* pboard = [sender draggingPasteboard];
     _dragAction = dragActionFromPasteboard(pboard, TRUE);
-    if (_dragAction == DRAG_ACTION_PLAY_FILES ||
-        _dragAction == DRAG_ACTION_PLAY_URL) {
+    if (_dragAction != DRAG_ACTION_NONE) {
+        [self redisplay];
         [NSTimer scheduledTimerWithTimeInterval:1.0
                                 target:self selector:@selector(draggingTimerElapsed:)
                                 userInfo:nil repeats:FALSE];
-    }
-    if (_dragAction != DRAG_ACTION_NONE) {
-        [self redisplay];
     }
     return [self dragOperation];
 }
@@ -95,16 +90,16 @@
         if (_dragAction == DRAG_ACTION_PLAY_FILES) {
             _dragAction = DRAG_ACTION_ADD_FILES;
         }
-        else if (_dragAction == DRAG_ACTION_PLAY_URL) {
-            _dragAction = DRAG_ACTION_ADD_URL;
+        else if (_dragAction == DRAG_ACTION_REPLACE_SUBTITLE_FILES) {
+            _dragAction = DRAG_ACTION_ADD_SUBTITLE_FILES;
         }
     }
     else {
         if (_dragAction == DRAG_ACTION_ADD_FILES) {
             _dragAction = DRAG_ACTION_PLAY_FILES;
         }
-        else if (_dragAction == DRAG_ACTION_ADD_URL) {
-            _dragAction = DRAG_ACTION_PLAY_URL;
+        else if (_dragAction == DRAG_ACTION_ADD_SUBTITLE_FILES) {
+            _dragAction = DRAG_ACTION_REPLACE_SUBTITLE_FILES;
         }
     }
     return [self dragOperation];
@@ -128,8 +123,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSPasteboard* pboard = [sender draggingPasteboard];
     switch (_dragAction) {
-        case DRAG_ACTION_PLAY_FILES :
-        case DRAG_ACTION_REPLACE_SUBTITLE_FILE : {
+        case DRAG_ACTION_PLAY_FILES : {
             NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
             [[NSApp delegate] performSelector:@selector(openFiles:)
                                    withObject:files afterDelay:0.01];
@@ -140,15 +134,14 @@
             [[NSApp delegate] addFiles:files];
             return TRUE;
         }
-        case DRAG_ACTION_ADD_URL : {
-            NSURL* movieURL = [NSURL URLFromPasteboard:pboard];
-            [[NSApp delegate] addURL:movieURL];
+        case DRAG_ACTION_REPLACE_SUBTITLE_FILES : {
+            NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
+            [[NSApp delegate] openSubtitleFiles:files];
             return TRUE;
         }
-        case DRAG_ACTION_REPLACE_SUBTITLE_URL : {
-            NSURL* subtitleURL = [NSURL URLFromPasteboard:pboard];
-            [[NSApp delegate] performSelector:@selector(openURL:)
-                                   withObject:subtitleURL afterDelay:0.01];
+        case DRAG_ACTION_ADD_SUBTITLE_FILES : {
+            NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
+            [[NSApp delegate] addSubtitleFiles:files];
             return TRUE;
         }
     }

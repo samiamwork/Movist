@@ -40,12 +40,13 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_playlist addFiles:filenames];
+    [_playlistController updateUI];
+    [_propertiesView reloadData];
 }
 
-- (void)addURL:(NSURL*)url
+- (void)addSubtitleFiles:(NSArray*)filenames
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_playlist addURL:url];
+    [self addSubtitles:URLsFromFilenames(filenames)];
 }
 
 - (void)updatePrevNextMovieButtons
@@ -60,7 +61,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     PlaylistItem* item = [_playlist currentItem];
     return [self openMovie:[item movieURL] movieClass:nil
-                  subtitle:[item subtitleURL] subtitleEncoding:kCFStringEncodingInvalidId];
+                 subtitles:[item subtitleURLs] subtitleEncoding:kCFStringEncodingInvalidId];
 }
 
 - (void)openPrevPlaylistItem

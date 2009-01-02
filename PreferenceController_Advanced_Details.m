@@ -402,10 +402,14 @@
       [NSArray arrayWithObjects:
        [BoolNode boolNodeWithName:LABEL(@"Activate on Dragging over Main Window")
                               key:MActivateOnDraggingKey],
-       [BoolNode boolNodeWithName:LABEL(@"Floating Playlist")
-                              key:MFloatingPlaylistKey],
        [BoolNode boolNodeWithName:LABEL(@"Auto Show Dock in Full Screen")
                               key:MAutoShowDockKey],
+       [BoolNode boolNodeWithName:LABEL(@"Floating Playlist")
+                              key:MFloatingPlaylistKey],
+       [BoolNode boolNodeWithName:LABEL(@"Goto Begginning When Reopen Movie")
+                              key:MGotoBegginingWhenReopenMovieKey],
+       [BoolNode boolNodeWithName:LABEL(@"Goto Begginning When Open Subtitle")
+                              key:MGotoBegginingWhenOpenSubtitleKey],
        [SelectNode selectNodeWithName:LABEL(@"Movie Resize Center")
                                   key:MMovieResizeCenterKey
                                titles:[NSArray arrayWithObjects:
@@ -544,7 +548,7 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
     }
     // subtitles
     else if ([key isEqualToString:MSubtitleReplaceNLWithBRKey]) {
-        [_appController reopenSubtitle];
+        [_appController reopenSubtitles];
     }
     else if ([key isEqualToString:MAutoLetterBoxHeightMaxLinesKey]) {
         [_movieView setAutoLetterBoxHeightMaxLines:[object intValue]];

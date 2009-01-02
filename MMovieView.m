@@ -158,9 +158,7 @@
     [_drawLock lock];
 
     [movie retain], [_movie release], _movie = movie;
-    [self setSubtitle:nil atIndex:0];
-    [self setSubtitle:nil atIndex:1];
-    [self setSubtitle:nil atIndex:2];
+    [self removeAllSubtitles];
     if (_image) {
         CVOpenGLTextureRelease(_image);
         _image = nil;

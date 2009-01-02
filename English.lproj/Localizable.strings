@@ -2,6 +2,7 @@
 "Cancel" = "Cancel";
 "Never" = "Never";
 "None" = "None";
+"Unnamed" = "Unnamed";
 "Decoder" = "Decoder";
 "iTunes Movies" = "iTunes Movies";
 "iTunes TV Shows" = "iTunes TV Shows";
@@ -47,7 +48,6 @@
 "Hide Subtitle" = "Hide Subtitle";
 "No Subtitle" = "No Subtitle";
 "Subtitle Rotation" = "Subtitle Rotation";
-"Unnamed Subtitle" = "Unnamed Subtitle";
 
 /* Message : Playback */
 "Play" = "Play";
@@ -122,8 +122,10 @@
 
 /* Preferences: advanced - details: general */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
-"Floating Playlist" = "Floating Playlist";
 "Auto Show Dock in Full Screen" = "Auto Show Dock in Full Screen";
+"Floating Playlist" = "Floating Playlist";
+"Goto Begginning When Reopen Movie" = "Goto Begginning When Reopen Movie";
+"Goto Begginning When Open Subtitle" = "Goto Begginning When Open Subtitle";
 "Movie Resize Center" = "Movie Resize Center";
 "Title Center" = "Title Center";
 "Title Left" = "Title Left";

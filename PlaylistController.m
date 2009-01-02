@@ -218,6 +218,18 @@
     return [_playlist count];
 }
 
+- (float)tableView:(NSTableView*)tableView heightOfRow:(int)rowIndex
+{
+    PlaylistItem* item = [_playlist itemAtIndex:rowIndex];
+    int subtitleURLCount = [[item subtitleURLs] count];
+    if (subtitleURLCount <= 1) {
+        return [tableView rowHeight];
+    }
+    else {
+        return [tableView rowHeight] / 2 * (1 + subtitleURLCount);
+    }
+}
+
 - (id)tableView:(NSTableView*)tableView
     objectValueForTableColumn:(NSTableColumn*)tableColumn
             row:(int)rowIndex
@@ -249,17 +261,6 @@
 #pragma mark -
 #pragma mark drag-and-drop
 
-- (void)replaceSubtitle:(NSURL*)subtitleURL atIndex:(int)index
-{
-    //TRACE(@"%s %@ at %d", __PRETTY_FUNCTION__, [subtitleURL absoluteString], index);
-    PlaylistItem* item = [_playlist itemAtIndex:index];
-    [item setSubtitleURL:subtitleURL];
-
-    if ([item isEqualTo:[_playlist currentItem]]) {
-        [_appController reopenSubtitle];
-    }
-}
-
 - (BOOL)tableView:(NSTableView*)tv writeRowsWithIndexes:(NSIndexSet*)rowIndexes
      toPasteboard:(NSPasteboard*)pboard
 {
@@ -278,20 +279,23 @@
     unsigned int dragAction = dragActionFromPasteboard(pboard, FALSE);
     switch (dragAction) {
         case DRAG_ACTION_ADD_FILES :
-        case DRAG_ACTION_ADD_URL :
             if (op == NSTableViewDropAbove) {
                 return NSDragOperationCopy;
             }
             break;
-        case DRAG_ACTION_REPLACE_SUBTITLE_FILE :
-        case DRAG_ACTION_REPLACE_SUBTITLE_URL :
+        case DRAG_ACTION_REPLACE_SUBTITLE_FILES :
+            if (op == NSTableViewDropOn) {
+                return NSDragOperationGeneric;
+            }
+            break;
+        case DRAG_ACTION_ADD_SUBTITLE_FILES :
             if (op == NSTableViewDropOn) {
                 return NSDragOperationCopy;
             }
             break;
         case DRAG_ACTION_REORDER_PLAYLIST :
             if (op == NSTableViewDropAbove) {
-                return NSDragOperationMove;
+                return NSDragOperationGeneric;
             }
             break;
     }
@@ -311,22 +315,20 @@
             [self updateUI];
             return TRUE;
         }
-        case DRAG_ACTION_ADD_URL : {
-            NSURL* url = [NSURL URLFromPasteboard:pboard];
-            [_playlist insertURL:url atIndex:row];
-            [self updateUI];
-            return TRUE;
-        }
-        case DRAG_ACTION_REPLACE_SUBTITLE_FILE : {
+        case DRAG_ACTION_REPLACE_SUBTITLE_FILES : {
             NSArray* filenames = [pboard propertyListForType:NSFilenamesPboardType];
-            NSURL* subtitleURL = [NSURL fileURLWithPath:[filenames objectAtIndex:0]];
-            [self replaceSubtitle:subtitleURL atIndex:row];
+            PlaylistItem* item = [_playlist itemAtIndex:row];
+            [item setSubtitleURLs:URLsFromFilenames(filenames)];
+            if ([item isEqualTo:[_playlist currentItem]]) {
+                [_appController reopenSubtitles];
+            }
             [_tableView reloadData];
             return TRUE;
         }
-        case DRAG_ACTION_REPLACE_SUBTITLE_URL : {
-            NSURL* subtitleURL = [NSURL URLFromPasteboard:pboard];
-            [self replaceSubtitle:subtitleURL atIndex:row];
+        case DRAG_ACTION_ADD_SUBTITLE_FILES : {
+            NSArray* filenames = [pboard propertyListForType:NSFilenamesPboardType];
+            PlaylistItem* item = [_playlist itemAtIndex:row];
+            [item addSubtitleURLs:URLsFromFilenames(filenames)];
             [_tableView reloadData];
             return TRUE;
         }
@@ -345,7 +347,56 @@
     }
     return FALSE;
 }
+/*
+- (NSDragOperation)dragOperation
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    switch (_dragAction) {
+        case DRAG_ACTION_ADD_FILES :
+        case DRAG_ACTION_REPLACE_SUBTITLE_FILES :
+        case DRAG_ACTION_REORDER_PLAYLIST :
+            return NSDragOperationGeneric;
+        case DRAG_ACTION_ADD_SUBTITLE_FILES :
+            return NSDragOperationCopy;
+    }
+    return NSDragOperationNone;
+}
 
+- (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSPasteboard* pboard = [sender draggingPasteboard];
+    _dragAction = dragActionFromPasteboard(pboard, TRUE);
+    return [self dragOperation];
+}
+
+- (NSDragOperation)draggingUpdated:(id<NSDraggingInfo>)sender
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    unsigned int modifierFlags = [[NSApp currentEvent] modifierFlags];
+    if (modifierFlags & NSAlternateKeyMask) {
+        if (_dragAction == DRAG_ACTION_REPLACE_SUBTITLE_FILE) {
+            _dragAction = DRAG_ACTION_ADD_SUBTITLE_FILE;
+        }
+        else if (_dragAction == DRAG_ACTION_REPLACE_SUBTITLE_URL) {
+            _dragAction = DRAG_ACTION_ADD_SUBTITLE_URL;
+        }
+    }
+    return [self dragOperation];
+}
+
+- (void)draggingExited:(id<NSDraggingInfo>)sender
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    _dragAction = DRAG_ACTION_NONE;
+}
+
+- (void)concludeDragOperation:(id<NSDraggingInfo>)sender
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    _dragAction = DRAG_ACTION_NONE;
+}
+*/
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark delegate

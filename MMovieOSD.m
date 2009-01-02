@@ -49,7 +49,7 @@
         _shadow = [[NSShadow alloc] init];
         _shadowNone = [[NSShadow alloc] init];
         _shadowColor = [[NSColor colorWithCalibratedRed:0 green:0 blue:0 alpha:1] retain];
-        _shadowBlur = 2.0;
+        _shadowBlur = 1.0;
         _shadowOffset = 0.0;
         _shadowDarkness = 1;
 
@@ -420,8 +420,8 @@ enum {  // for _updateMask
 - (void)renderImage:(NSImage*)image inRect:(NSRect)rect
 {
     [_shadow set];
-    int i;  assert(0 < _shadowDarkness);
-    for (i = 0; i < _shadowDarkness; i++) {
+    int i, darkness = (0 < [_shadow shadowBlurRadius]) ? _shadowDarkness : 1;
+    for (i = 0; i < darkness; i++) {
         [image drawInRect:rect fromRect:NSZeroRect
                 operation:NSCompositeSourceOver fraction:1.0];
     }
@@ -678,7 +678,7 @@ enum {  // for _updateMask
         if (_string || _image) {
             _updateMask |= UPDATE_TEX_IMAGE;
         }
-        _updateMask |= UPDATE_FONT | UPDATE_TEXTURE | UPDATE_DRAWING_RECT;
+        _updateMask |= UPDATE_SHADOW | UPDATE_FONT | UPDATE_TEXTURE | UPDATE_DRAWING_RECT;
         return TRUE;
     }
     return FALSE;

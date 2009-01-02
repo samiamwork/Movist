@@ -94,6 +94,24 @@ NSString* NSStringFromMovieTime(float time)
             totalMinutes / 60, totalMinutes % 60, totalSeconds % 60];
 }
 
+NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding)
+{
+    return [NSString localizedNameOfStringEncoding:
+            CFStringConvertEncodingToNSStringEncoding(encoding)];
+}
+
+NSArray* URLsFromFilenames(NSArray* filenames)
+{
+    NSMutableArray* URLs = [NSMutableArray arrayWithCapacity:[filenames count]];
+    
+    NSString* filename;
+    NSEnumerator* e = [filenames objectEnumerator];
+    while (filename = [e nextObject]) {
+        [URLs addObject:[NSURL fileURLWithPath:filename]];
+    }
+    return URLs;
+}
+
 NSString* codecName(int codecId)
 {
     if (codecId == MCODEC_ETC_) {
@@ -194,12 +212,6 @@ NSString* codecDescription(int codecId)
     return @"";
 }
 
-NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding)
-{
-    return [NSString localizedNameOfStringEncoding:
-            CFStringConvertEncodingToNSStringEncoding(encoding)];
-}
-
 void runAlertPanelForOpenError(NSError* error, NSURL* url)
 {
     NSString* s = [NSString stringWithFormat:@"%@\n\n%@",
@@ -216,21 +228,19 @@ unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)
     }
     else if ([type isEqualToString:NSFilenamesPboardType]) {
         NSArray* filenames = [pboard propertyListForType:NSFilenamesPboardType];
-        if ([filenames count] == 1 &&
-            [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle fileExtensions]]) {
-            return DRAG_ACTION_REPLACE_SUBTITLE_FILE;
+        NSArray* subtitleExts = [MSubtitle fileExtensions];
+        NSString* filename;
+        NSEnumerator* e = [filenames objectEnumerator];
+        while (filename = [e nextObject]) {
+            if (![filename hasAnyExtension:subtitleExts]) {
+                break;
+            }
+        }
+        if (!filename) {    // all subtitle files
+            return DRAG_ACTION_REPLACE_SUBTITLE_FILES;
         }
         else {
             return (defaultPlay) ? DRAG_ACTION_PLAY_FILES : DRAG_ACTION_ADD_FILES;
-        }
-    }
-    else if ([type isEqualToString:NSURLPboardType]) {
-        NSString* s = [[NSURL URLFromPasteboard:pboard] absoluteString];
-        if ([s hasAnyExtension:[MSubtitle fileExtensions]]) {
-            return DRAG_ACTION_REPLACE_SUBTITLE_URL;
-        }
-        else {
-            return (defaultPlay) ? DRAG_ACTION_PLAY_URL : DRAG_ACTION_ADD_URL;
         }
     }
     else if ([type isEqualToString:MPlaylistItemDataType]) {

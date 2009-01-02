@@ -25,16 +25,19 @@
 @interface PlaylistItem : NSObject <NSCopying, NSCoding>
 {
     NSURL* _movieURL;
-    NSURL* _subtitleURL;
+    NSMutableArray* _subtitleURLs;
 }
 
 - (id)initWithMovieURL:(NSURL*)movieURL;
 
 #pragma mark -
 - (NSURL*)movieURL;
-- (NSURL*)subtitleURL;
+- (NSArray*)subtitleURLs;
 - (void)setMovieURL:(NSURL*)movieURL;
-- (void)setSubtitleURL:(NSURL*)subtitleURL;
+- (void)setSubtitleURLs:(NSArray*)subtitleURLs;
+- (void)addSubtitleURL:(NSURL*)subtitleURL;
+- (void)addSubtitleURLs:(NSArray*)subtitleURLs;
+- (void)removeSubtitleURL:(NSURL*)subtitleURL;
 
 #pragma mark -
 - (BOOL)isEqualToMovieURL:(NSURL*)movieURL;

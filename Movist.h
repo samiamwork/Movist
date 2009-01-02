@@ -45,8 +45,8 @@ enum {
     OPENING_VIEW_REAL_SIZE,
     OPENING_VIEW_DOUBLE_SIZE,
     OPENING_VIEW_FIT_TO_SCREEN,
-    OPENING_VIEW_DESKTOP_BACKGROUND,
     OPENING_VIEW_FULL_SCREEN,
+    OPENING_VIEW_DESKTOP_BACKGROUND,
 };
 
 #pragma mark movie resize center
@@ -66,7 +66,7 @@ enum {
     WINDOW_RESIZE_ADJUST_TO_WIDTH,
 };
 
-#pragma mark full-scren transition
+#pragma mark full-screen transition
 enum {
     FS_EFFECT_NONE,
     FS_EFFECT_FADE,
@@ -147,7 +147,6 @@ typedef struct {
     float     hMargin;
     float     vMargin;
     float     sync;
-    
 } SubtitleAttributes;
 
 enum {  // for SubtitleAttributes.mask
@@ -187,11 +186,9 @@ enum {
 enum {
     DRAG_ACTION_NONE,
     DRAG_ACTION_PLAY_FILES,
-    DRAG_ACTION_PLAY_URL,
     DRAG_ACTION_ADD_FILES,
-    DRAG_ACTION_ADD_URL,
-    DRAG_ACTION_REPLACE_SUBTITLE_FILE,
-    DRAG_ACTION_REPLACE_SUBTITLE_URL,
+    DRAG_ACTION_REPLACE_SUBTITLE_FILES,
+    DRAG_ACTION_ADD_SUBTITLE_FILES,
     DRAG_ACTION_REORDER_PLAYLIST,
 };
 
@@ -427,6 +424,7 @@ float normalizedFloat2(float value);
 
 NSString* NSStringFromMovieTime(float time);
 NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding);
+NSArray* URLsFromFilenames(NSArray* filenames);
 
 NSString* codecName(int codecId);
 NSString* codecDescription(int codecId);

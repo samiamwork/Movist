@@ -67,7 +67,7 @@
     IBOutlet NSTableView* _propertiesView;
     MMovie* _movie;
     Playlist* _playlist;
-    NSArray* _subtitles;
+    NSMutableArray* _subtitles;
     NSMutableIndexSet* _audioTrackIndexSet;
     NSMutableSet* _subtitleNameSet;
     float _playRate;
@@ -103,21 +103,33 @@
     IBOutlet NSMenuItem* _altVolumeDownMenuItem;
     IBOutlet NSMenuItem* _muteMenuItem;
     IBOutlet NSMenu* _subtitleMenu;
-    IBOutlet NSMenu* _subtitleEncodingMenu;
+    IBOutlet NSMenuItem* _subtitle0MenuItem;
+    IBOutlet NSMenuItem* _subtitle1MenuItem;
+    IBOutlet NSMenuItem* _subtitle2MenuItem;
     IBOutlet NSMenuItem* _subtitleVisibleMenuItem;
-    IBOutlet NSMenuItem* _subtitleControlMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionUBoxMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionTopMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionCenterMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionBottomMenuItem;
-    IBOutlet NSMenuItem* _subtitlePositionLBoxMenuItem;
+    IBOutlet NSMenuItem* _subtitleAllSyncDefaultMenuItem;
+    IBOutlet NSMenu* _subtitle0EncodingMenu;
+    IBOutlet NSMenu* _subtitle1EncodingMenu;
+    IBOutlet NSMenu* _subtitle2EncodingMenu;
+    IBOutlet NSMenuItem* _subtitle0PositionUBoxMenuItem;
+    IBOutlet NSMenuItem* _subtitle0PositionTopMenuItem;
+    IBOutlet NSMenuItem* _subtitle0PositionCenterMenuItem;
+    IBOutlet NSMenuItem* _subtitle0PositionBottomMenuItem;
+    IBOutlet NSMenuItem* _subtitle0PositionLBoxMenuItem;
+    IBOutlet NSMenuItem* _subtitle1PositionUBoxMenuItem;
+    IBOutlet NSMenuItem* _subtitle1PositionTopMenuItem;
+    IBOutlet NSMenuItem* _subtitle1PositionCenterMenuItem;
+    IBOutlet NSMenuItem* _subtitle1PositionBottomMenuItem;
+    IBOutlet NSMenuItem* _subtitle1PositionLBoxMenuItem;
+    IBOutlet NSMenuItem* _subtitle2PositionUBoxMenuItem;
+    IBOutlet NSMenuItem* _subtitle2PositionTopMenuItem;
+    IBOutlet NSMenuItem* _subtitle2PositionCenterMenuItem;
+    IBOutlet NSMenuItem* _subtitle2PositionBottomMenuItem;
+    IBOutlet NSMenuItem* _subtitle2PositionLBoxMenuItem;
     IBOutlet NSMenuItem* _letterBoxHeightSameMenuItem;
     IBOutlet NSMenuItem* _letterBoxHeight1LineMenuItem;
     IBOutlet NSMenuItem* _letterBoxHeight2LinesMenuItem;
     IBOutlet NSMenuItem* _letterBoxHeight3LinesMenuItem;
-    IBOutlet NSMenuItem* _syncLaterMenuItem;
-    IBOutlet NSMenuItem* _syncEarlierMenuItem;
-    IBOutlet NSMenuItem* _syncDefaultMenuItem;
 
     // main window
     IBOutlet MainWindow* _mainWindow;
@@ -196,18 +208,19 @@
 - (BOOL)openFile:(NSString*)filename option:(int)option;
 - (BOOL)openFiles:(NSArray*)filenames option:(int)option;
 - (BOOL)openMovie:(NSURL*)movieURL movieClass:(Class)movieClass
-         subtitle:(NSURL*)subtitleURL subtitleEncoding:(CFStringEncoding)subtitleEncoding;
-- (BOOL)openSubtitle:(NSURL*)subtitleURL encoding:(CFStringEncoding)encoding;
+        subtitles:(NSArray*)subtitleURLs subtitleEncoding:(CFStringEncoding)subtitleEncoding;
+- (BOOL)openSubtitles:(NSArray*)subtitleURLs encoding:(CFStringEncoding)encoding;
+- (void)addSubtitles:(NSArray*)subtitleURLs;
 - (BOOL)reopenMovieWithMovieClass:(Class)movieClass;
-- (void)reopenSubtitle;
+- (void)reopenSubtitles;
 - (void)closeMovie;
 
 - (void)updateDecoderUI;
 - (void)updateDataSizeBpsUI;
 
 - (IBAction)openFileAction:(id)sender;
-- (IBAction)openURLAction:(id)sender;
 - (IBAction)openSubtitleFileAction:(id)sender;
+- (IBAction)addSubtitleFileAction:(id)sender;
 - (IBAction)reopenMovieAction:(id)sender;
 - (IBAction)reopenSubtitleAction:(id)sender;
 
@@ -221,7 +234,7 @@
 
 - (Playlist*)playlist;
 - (void)addFiles:(NSArray*)filenames;
-- (void)addURL:(NSURL*)url;
+- (void)addSubtitleFiles:(NSArray*)filenames;
 - (void)updatePrevNextMovieButtons;
 - (BOOL)openCurrentPlaylistItem;
 - (void)openPrevPlaylistItem;
@@ -376,7 +389,8 @@
 - (void)changeSubtitleLanguage:(int)tag;
 - (void)updateMovieViewSubtitles;
 - (void)updateSubtitleLanguageMenuItems;
-- (void)updateSubtitlePositionMenuItems;
+- (void)updateSubtitlePositionMenuItems:(int)index;
+- (void)updateSubtitleUIInControlPanel;
 - (void)updateLetterBoxHeightMenuItems;
 
 - (IBAction)subtitleVisibleAction:(id)sender;

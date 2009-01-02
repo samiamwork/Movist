@@ -60,6 +60,7 @@
 - (NSURL*)url;
 - (NSString*)type;
 - (NSString*)name;
+- (NSString*)summary;
 - (void)setName:(NSString*)name;
 
 - (BOOL)isEmpty;

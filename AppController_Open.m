@@ -120,7 +120,7 @@
     }
 
     if (cfEncoding == kCFStringEncodingInvalidId) {
-        cfEncoding = [_defaults integerForKey:MSubtitleEncodingKey[0]];
+        cfEncoding = [_defaults integerForKey:MSubtitleEncodingKey];
     }
 
     // parse subtitles
@@ -153,6 +153,28 @@
         return nil;
     }
     return subtitles;
+}
+
+- (NSArray*)subtitleFromURLs:(NSArray*)subtitleURLs
+                withEncoding:(CFStringEncoding)cfEncoding
+                       error:(NSError**)error
+{
+    NSMutableArray* subtitles = [NSMutableArray arrayWithCapacity:1];
+
+    BOOL someError = FALSE;
+    NSURL* url;
+    NSArray* subs;
+    NSEnumerator* e = [subtitleURLs objectEnumerator];
+    while (url = [e nextObject]) {
+        subs = [self subtitleFromURL:url withEncoding:cfEncoding error:error];
+        if (!subs) {
+            someError = TRUE;
+        }
+        else if (0 < [subs count]) {
+            [subtitles addObjectsFromArray:subs];
+        }
+    }
+    return (someError && 0 == [subtitles count]) ? nil : subtitles;
 }
 
 - (NSString*)subtitleInfoMessageString
@@ -238,7 +260,7 @@
 }
 
 - (BOOL)openMovie:(NSURL*)movieURL movieClass:(Class)movieClass
-         subtitle:(NSURL*)subtitleURL subtitleEncoding:(CFStringEncoding)subtitleEncoding
+        subtitles:(NSArray*)subtitleURLs subtitleEncoding:(CFStringEncoding)subtitleEncoding
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     // -[closeMovie] should be called after opening new-movie not to display black screen.
@@ -307,16 +329,20 @@
         [_movie gotoTime:_lastPlayedMovieTime];
     }
     
-    // open subtitle
-    if (subtitleURL && [_defaults boolForKey:MSubtitleEnableKey]) {
-        NSArray* subtitles = [self subtitleFromURL:subtitleURL
-                                      withEncoding:subtitleEncoding error:&error];
+    // open subtitles
+    if (0 < [subtitleURLs count] && [_defaults boolForKey:MSubtitleEnableKey]) {
+        NSArray* subtitles = [self subtitleFromURLs:subtitleURLs
+                                       withEncoding:subtitleEncoding error:&error];
         if (!subtitles) {
-            runAlertPanelForOpenError(error, subtitleURL);
+            NSURL* subtitleURL;
+            NSEnumerator* e = [subtitleURLs objectEnumerator];
+            while (subtitleURL = [e nextObject]) {
+                runAlertPanelForOpenError(error, subtitleURL);
+            }
             // continue... subtitle is not necessary for movie.
         }
         else {
-            _subtitles = [subtitles retain];
+            _subtitles = [[NSMutableArray alloc] initWithArray:subtitles];
             [self autoenableSubtitles];
         }
     }
@@ -369,34 +395,53 @@
         [_mainWindow makeKeyAndOrderFront:self];
     }
 
-    if ([filenames count] == 1 &&
-        [[filenames objectAtIndex:0] hasAnyExtension:[MSubtitle fileExtensions]]) {
-        if (_movie) {   // reopen subtitle
-            NSURL* subtitleURL = [NSURL fileURLWithPath:[filenames objectAtIndex:0]];
-            [[_playlist currentItem] setSubtitleURL:subtitleURL];
-            [_playlistController updateUI];
-            [self reopenSubtitle];
-        }
-        return TRUE;
+    [_playlist removeAllItems];
+    if ([filenames count] == 1) {
+        [_playlist addFile:[filenames objectAtIndex:0] option:option];
     }
     else {
-        [_playlist removeAllItems];
-        if ([filenames count] == 1) {
-            [_playlist addFile:[filenames objectAtIndex:0] option:option];
-        }
-        else {
-            [_playlist addFiles:filenames];
-        }
-        return (0 < [_playlist count]) ? [self openCurrentPlaylistItem] : FALSE;
+        [_playlist addFiles:filenames];
     }
+    return (0 < [_playlist count]) ? [self openCurrentPlaylistItem] : FALSE;
 }
 
-- (BOOL)openSubtitle:(NSURL*)subtitleURL encoding:(CFStringEncoding)encoding
+- (BOOL)openSubtitleFiles:(NSArray*)filenames
+{
+    if (!_movie) {
+        return FALSE;
+    }
+
+    if (![_mainWindow isVisible]) {
+        [_mainWindow makeKeyAndOrderFront:self];
+    }
+
+    NSArray* subtitleExts = [MSubtitle fileExtensions];
+    NSString* filename;
+    NSEnumerator* e = [filenames objectEnumerator];
+    while (filename = [e nextObject]) {
+        if (![filename hasAnyExtension:subtitleExts]) {
+            break;
+        }
+    }
+    if (!filename) {    // all subtitle files => open them
+        [[_playlist currentItem] setSubtitleURLs:URLsFromFilenames(filenames)];
+        [_playlistController updateUI];
+        [self reopenSubtitles];
+        return TRUE;
+    }
+    return FALSE;
+}
+
+- (BOOL)openSubtitles:(NSArray*)subtitleURLs encoding:(CFStringEncoding)encoding
 {
     NSError* error;
-    NSArray* subtitles = [self subtitleFromURL:subtitleURL withEncoding:encoding error:&error];
+    NSArray* subtitles = [self subtitleFromURLs:subtitleURLs withEncoding:encoding error:&error];
     if (!subtitles) {
-        runAlertPanelForOpenError(error, subtitleURL);
+        NSURL* subtitleURL;
+        NSEnumerator* e = [subtitleURLs objectEnumerator];
+        while (subtitleURL = [e nextObject]) {
+            runAlertPanelForOpenError(error, subtitleURL);
+        }
         [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
         return FALSE;
     }
@@ -416,7 +461,7 @@
         }
     }
 
-    [[_playlist currentItem] setSubtitleURL:subtitleURL];
+    [[_playlist currentItem] setSubtitleURLs:subtitleURLs];
     [self updateMovieViewSubtitles];
 
     [self autoenableSubtitles];
@@ -424,11 +469,68 @@
     [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
     [_propertiesView reloadData];
 
-    [_movie gotoBeginning];
+    if ([_defaults boolForKey:MGotoBegginingWhenOpenSubtitleKey]) {
+        [_movie gotoBeginning];
+    }
 
-    [_movieView setMessageWithURL:subtitleURL info:[self subtitleInfoMessageString]];
+    // FIXME: show all subtitleURLs...
+    [_movieView setMessageWithURL:[subtitleURLs objectAtIndex:0]
+                             info:[self subtitleInfoMessageString]];
 
     return TRUE;
+}
+
+- (void)addSubtitles:(NSArray*)subtitleURLs
+{
+    PlaylistItem* item = [_playlist currentItem];
+    if (!item) {
+        return;
+    }
+
+    NSError* error;
+    NSArray* subtitles = [self subtitleFromURLs:subtitleURLs
+                                   withEncoding:kCFStringEncodingInvalidId error:&error];
+    if (!subtitles) {
+        NSURL* subtitleURL;
+        NSEnumerator* e = [subtitleURLs objectEnumerator];
+        while (subtitleURL = [e nextObject]) {
+            runAlertPanelForOpenError(error, subtitleURL);
+        }
+        return;
+    }
+
+    MSubtitle* subtitle;
+    NSEnumerator* enumerator = [subtitles objectEnumerator];
+    while (subtitle = [enumerator nextObject]) {
+        [subtitle setEnabled:FALSE];
+    }
+    
+    BOOL initSubtitle = (_subtitles == nil);
+    if (!_subtitles) {
+        _subtitles = [[NSMutableArray alloc] initWithArray:subtitles];
+    }
+    else {
+        [_subtitles addObjectsFromArray:subtitles];
+    }
+    [[_playlist currentItem] addSubtitleURLs:subtitleURLs];
+    [self updateSubtitleLanguageMenuItems];
+    [_playlistController updateUI];
+    [_propertiesView reloadData];
+
+    // FIXME: show all subtitleURLs...
+    //[_movieView setMessageWithURL:[subtitleURLs objectAtIndex:0]
+    //                         info:[self subtitleInfoMessageString]];
+
+    if (initSubtitle && 0 < [_subtitles count]) {
+        // enable 1st subtitle only by default.
+        [[_subtitles objectAtIndex:0] setEnabled:TRUE];
+
+        [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
+
+        if ([_defaults boolForKey:MGotoBegginingWhenOpenSubtitleKey]) {
+            [_movie gotoBeginning];
+        }
+    }
 }
 
 - (BOOL)reopenMovieWithMovieClass:(Class)movieClass
@@ -436,21 +538,23 @@
     //TRACE(@"%s:%@", __PRETTY_FUNCTION__, movieClass);
     [self closeMovie];
 
-    // to play at the beginning
-    [_lastPlayedMovieURL release];
-    _lastPlayedMovieURL = nil;
+    if ([_defaults boolForKey:MGotoBegginingWhenReopenMovieKey]) {
+        // to play at the beginning
+        [_lastPlayedMovieURL release];
+        _lastPlayedMovieURL = nil;
+    }
 
     PlaylistItem* item = [_playlist currentItem];
     return [self openMovie:[item movieURL] movieClass:movieClass
-                  subtitle:[item subtitleURL] subtitleEncoding:kCFStringEncodingInvalidId];
+                 subtitles:[item subtitleURLs] subtitleEncoding:kCFStringEncodingInvalidId];
 }
 
-- (void)reopenSubtitle
+- (void)reopenSubtitles
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
-        [self openSubtitle:[[_playlist currentItem] subtitleURL]
-                  encoding:kCFStringEncodingInvalidId];
+        [self openSubtitles:[[_playlist currentItem] subtitleURLs]
+                   encoding:kCFStringEncodingInvalidId];
     }
 }
 
@@ -569,6 +673,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSOpenPanel* panel = [NSOpenPanel openPanel];
+    //[panel setTitle:NSLocalizedString(@"Open Movie File", nil)];
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:TRUE];
     [panel setAllowsMultipleSelection:FALSE];
@@ -577,23 +682,29 @@
     }
 }
 
-- (IBAction)openURLAction:(id)sender
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    // FIXME : not implemented yet
-    [self openURL:nil];
-}
-
 - (IBAction)openSubtitleFileAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSOpenPanel* panel = [NSOpenPanel openPanel];
+    //[panel setTitle:NSLocalizedString(@"Open Subtitle Files", nil)];
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:FALSE];
-    [panel setAllowsMultipleSelection:FALSE];
+    [panel setAllowsMultipleSelection:TRUE];
     if (NSOKButton == [panel runModalForTypes:[MSubtitle fileExtensions]]) {
-        [self openSubtitle:[NSURL fileURLWithPath:[panel filename]]
-                  encoding:kCFStringEncodingInvalidId];
+        [self openSubtitles:URLsFromFilenames([panel filenames])
+                   encoding:kCFStringEncodingInvalidId];
+    }
+}
+
+- (IBAction)addSubtitleFileAction:(id)sender
+{
+    NSOpenPanel* panel = [NSOpenPanel openPanel];
+    //[panel setTitle:NSLocalizedString(@"Add Subtitle Files", nil)];
+    [panel setCanChooseFiles:TRUE];
+    [panel setCanChooseDirectories:FALSE];
+    [panel setAllowsMultipleSelection:TRUE];
+    if (NSOKButton == [panel runModalForTypes:[MSubtitle fileExtensions]]) {
+        [self addSubtitles:URLsFromFilenames([panel filenames])];
     }
 }
 
@@ -610,8 +721,8 @@
 - (IBAction)reopenSubtitleAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [self openSubtitle:[[_playlist currentItem] subtitleURL]
-              encoding:[sender tag]];
+    [self openSubtitles:[[_playlist currentItem] subtitleURLs]
+               encoding:[sender tag]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -659,13 +770,28 @@
             return [NSNumber numberWithBool:state];
         }
         else {
-            [[tableColumn dataCellForRow:rowIndex] setEnabled:TRUE];
             if (aIndex < aCount) {
+                [[tableColumn dataCellForRow:rowIndex] setEnabled:TRUE];
                 BOOL state = [[[_movie audioTracks] objectAtIndex:aIndex] isEnabled];
                 return [NSNumber numberWithBool:state];
             }
             else {
                 BOOL state = [[_subtitles objectAtIndex:sIndex] isEnabled];
+                if (state) {
+                    [[tableColumn dataCellForRow:rowIndex] setEnabled:TRUE];
+                }
+                else {
+                    // max 3 subtitles can be enabled
+                    int count = 0;
+                    MSubtitle* subtitle;
+                    NSEnumerator* e = [_subtitles objectEnumerator];
+                    while (subtitle = [e nextObject]) {
+                        if ([subtitle isEnabled]) {
+                            count++;
+                        }
+                    }
+                    [[tableColumn dataCellForRow:rowIndex] setEnabled:count < 3];
+                }
                 return [NSNumber numberWithBool:state];
             }
         }
@@ -704,7 +830,7 @@
             return [[[_movie audioTracks] objectAtIndex:aIndex] summary];
         }
         else {
-            return [[_subtitles objectAtIndex:sIndex] name];
+            return [[_subtitles objectAtIndex:sIndex] summary];
         }
     }
     return nil;
@@ -731,7 +857,7 @@
         int vIndex = rowIndex;
         int aIndex = vIndex - vCount;
         int sIndex = aIndex - aCount;
-        
+
         if (vIndex < vCount) {
             BOOL enabled = [(NSNumber*)object boolValue];
             [self setVideoTrackAtIndex:vIndex enabled:enabled];
@@ -752,6 +878,7 @@
             MSubtitle* subtitle = [_subtitles objectAtIndex:sIndex];
             BOOL enabled = [(NSNumber*)object boolValue];
             [self setSubtitle:subtitle enabled:enabled];
+            [tableView reloadData];  // to update other subtitle tracks availablity
         }
     }
 }
