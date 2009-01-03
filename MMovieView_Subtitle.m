@@ -122,66 +122,6 @@
     [self redisplay];
 }
 
-/*
-- (void)setSubtitle:(MSubtitle*)subtitle atIndex:(int)index;
-{
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, subtitles);
-    assert(0 <= index && index < 3);
-    if (_subtitle[index] != subtitle) {
-        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-
-        if (_subtitle[index]) {
-            [nc removeObserver:self
-             name:MSubtitleEnableChangeNotification object:_subtitle[index]];
-            [_subtitle[index] quitRenderThread];
-            [_subtitle[index] release];
-            _subtitle[index] = nil;
-        }
-        _subtitle[index] = [subtitle retain];
-        TRACE(@"%s [%d]:%@", __PRETTY_FUNCTION__, index, subtitle ? [subtitle name] : @"nil");
-        if (_subtitle[index]) {
-            [_subtitle[index] setMovieOSD:_subtitleOSD[index]];
-            [nc addObserver:self selector:@selector(subtitleEnableChanged:)
-                       name:MSubtitleEnableChangeNotification object:_subtitle[index]];
-            if ([_subtitle[index] isEnabled]) {
-                [self updateSubtitleOSDAtIndex:index sync:TRUE];   // for optimized rendering
-                [_subtitle[index] startRenderThread];
-            }
-        }
-
-        [self updateIndexOfSubtitleInLBOX];
-        [self updateLetterBoxHeight];
-        [self updateMovieRect:TRUE];
-    }
-}
-
-- (void)subtitleEnableChanged:(NSNotification*)notification
-{
-    MSubtitle* subtitle = [notification object];
-    TRACE(@"%s subtitle[%@] is %@", __PRETTY_FUNCTION__,
-          [subtitle name], [subtitle isEnabled] ? @"enabled" : @"disabled");
-
-    int i;
-    for (i = 0; i < 3; i++) {
-        if (_subtitle[i] == subtitle) {
-            break;
-        }
-    }
-    if (i == 3) {   // not specified to movie-view
-        return;
-    }
-
-    if ([_subtitle[i] isEnabled]) {
-        [self updateSubtitleOSDAtIndex:i sync:TRUE];    // for optimized rendering
-        [_subtitle[i] startRenderThread];
-    }
-    else {
-        [_subtitle[i] quitRenderThread];
-        [self updateSubtitleOSDAtIndex:i sync:TRUE];
-    }
-    [self redisplay];
-}
-*/
 - (BOOL)updateSubtitleOSDAtIndex:(int)index sync:(BOOL)sync
 {
     BOOL ret = TRUE;
@@ -192,7 +132,7 @@
         [_auxSubtitleOSD[index] clearContent];
     }
     else {
-        BOOL renderFlag = FALSE;//sync && ([_movie rate] == 0.0);
+        BOOL renderFlag = sync && ([_movie rate] == 0.0);
         float time = [_movie currentTime] + [_subtitleOSD[index] subtitleSync];
         NSImage* texImage = [_subtitle[index] texImageAtTime:time direction:0
                                                   renderFlag:&renderFlag];

@@ -320,6 +320,7 @@
 {
     NSTextFieldCell* cell = [[NSTextFieldCell alloc] initTextCell:@""];
     [cell setControlSize:NSSmallControlSize];
+    [cell setLineBreakMode:NSLineBreakByTruncatingTail];
     [cell setEditable:TRUE];
     return [cell autorelease];
 }

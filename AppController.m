@@ -109,23 +109,24 @@ NSString* videoCodecName(int codecId);
     initSubtitleEncodingMenu(_subtitle1EncodingMenu, @selector(reopenSubtitleAction:));
     initSubtitleEncodingMenu(_subtitle2EncodingMenu, @selector(reopenSubtitleAction:));
 
-    // set modifier keys (I don't know how to set Shift key mask)
-    unsigned int mask = NSAlternateKeyMask | NSShiftKeyMask;
-    [_seekBackward3MenuItem setKeyEquivalentModifierMask:mask];
-    [_seekForward3MenuItem setKeyEquivalentModifierMask:mask];
-
-    mask = NSAlternateKeyMask | NSShiftKeyMask | NSControlKeyMask;
-    [_seekPrevSubtitleMenuItem setKeyEquivalentModifierMask:mask];
-    [_seekNextSubtitleMenuItem setKeyEquivalentModifierMask:mask];
-
-    mask = NSCommandKeyMask | NSShiftKeyMask;
-    [_rateSlowerMenuItem setKeyEquivalentModifierMask:mask];
-    [_rateFasterMenuItem setKeyEquivalentModifierMask:mask];
-    [_rateDefaultMenuItem setKeyEquivalentModifierMask:mask];
-
-    mask = NSControlKeyMask | NSShiftKeyMask;
-    [_subtitleAllSyncDefaultMenuItem setKeyEquivalent:@"="];
-    [_subtitleAllSyncDefaultMenuItem setKeyEquivalentModifierMask:mask];
+    // modify menu-item shortcuts with shift modifier.
+    NSMenuItem* item;
+    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
+    while (item = [e nextObject]) {
+        if ([item action] == @selector(rateAction:) && [item tag] == 0) {
+            [item setKeyEquivalent:@"\\"];
+            [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
+            break;
+        }
+    }
+    e = [[_subtitleMenu itemArray] objectEnumerator];
+    while (item = [e nextObject]) {
+        if ([item action] == @selector(subtitleSyncAction:) && [item tag] == 0) {
+            [item setKeyEquivalent:@"="];
+            [item setKeyEquivalentModifierMask:NSControlKeyMask | NSShiftKeyMask];
+            break;
+        }
+    }
 }
 
 - (void)dealloc

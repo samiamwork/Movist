@@ -86,6 +86,24 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
     return subtitle;
 }
 
+- (BOOL)reorderSubtitle:(MSubtitle*)subtitle byField:(NSString*)field
+{
+    NSRange r;
+    NSString* identifier;
+    NSEnumerator* enumerator = [_defaultLanguageIdentifiers objectEnumerator];
+    while (identifier = [enumerator nextObject]) {
+        r = [field rangeOfString:identifier options:NSCaseInsensitiveSearch];
+        if (r.location != NSNotFound) {
+            [subtitle retain];
+            [_subtitles removeObject:subtitle];
+            [_subtitles insertObject:subtitle atIndex:0];
+            [subtitle release];
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 - (void)parse_STYLE:(NSString*)attr
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, attr);
@@ -100,6 +118,7 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
     }
 
     MSubtitle* subtitle = nil;
+    BOOL reordered = FALSE;
     NSRange tr, cr = tag.range;
     while (0 < cr.length) {
         tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
@@ -108,8 +127,11 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
         }
         if ([_source characterAtIndex:tr.location] == '.') {
             tr.location++, tr.length--;
-            subtitle = [self addSubtitleClass:[_source substringWithRange:tr]];
-            //TRACE(@"class=\"%@\"", [_source substringWithRange:tr]);
+            NSString* class = [_source substringWithRange:tr];
+            subtitle = [self addSubtitleClass:class];
+            if (!reordered) {
+                reordered = [self reorderSubtitle:subtitle byField:class];
+            }
         }
         else if ([_source characterAtIndex:tr.location] == '#') {
             tr.location++, tr.length--;
@@ -119,24 +141,14 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
             if (![_source compare:@"NAME" options:NSCaseInsensitiveSearch range:tr]) {
                 tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
                 [subtitle setName:[_source substringWithRange:tr]];
-            }
-            else if (![_source compare:@"LANG" options:NSCaseInsensitiveSearch range:tr] &&
-                     0 < [_subtitles indexOfObject:subtitle] && _defaultLanguageIdentifiers) {
-                tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
-                NSString* lang = [_source substringWithRange:tr];
-                // reorder by "Lang:" field for default language.
-                NSString* identifier;
-                NSEnumerator* enumerator = [_defaultLanguageIdentifiers objectEnumerator];
-                while (identifier = [enumerator nextObject]) {
-                    r = [lang rangeOfString:identifier options:NSCaseInsensitiveSearch];
-                    if (r.location != NSNotFound) {
-                        [subtitle retain];
-                        [_subtitles removeObject:subtitle];
-                        [_subtitles insertObject:subtitle atIndex:0];
-                        [subtitle release];
-                        break;
-                    }
+                if (!reordered) {
+                    reordered = [self reorderSubtitle:subtitle byField:[subtitle name]];
                 }
+            }
+            else if (_defaultLanguageIdentifiers && !reordered &&
+                     ![_source compare:@"LANG" options:NSCaseInsensitiveSearch range:tr]) {
+                tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
+                reordered = [self reorderSubtitle:subtitle byField:[_source substringWithRange:tr]];
             }
         }
     }
@@ -251,7 +263,7 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
         if (tag.type == TAG_BR) {
             if (0 < range.length || !_removeLastBR) {
                 // remove leading white-spaces
-                while (0 <= tag.range.location - 1 &&
+                while (0 < tag.range.location &&
                        [set characterIsMember:[ms characterAtIndex:tag.range.location - 1]]) {
                     tag.range.location--;
                     tag.range.length++;

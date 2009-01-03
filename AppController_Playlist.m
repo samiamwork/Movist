@@ -110,10 +110,14 @@
 - (void)setRepeatMode:(unsigned int)mode
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, mode);
-    [_movieView setMessage:
-        (mode == REPEAT_OFF) ? [_repeatOffMenuItem title] :
-        (mode == REPEAT_ALL) ? [_repeatAllMenuItem title] :
-        (mode == REPEAT_ONE) ? [_repeatOneMenuItem title] : @""];
+    NSMenuItem* item;
+    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
+    while (item = [e nextObject]) {
+        if ([item action] == @selector(repeatAction:) && [item tag] == mode) {
+            break;
+        }
+    }
+    [_movieView setMessage:(item) ? [item title] : @""];
          
     [_playlist setRepeatMode:mode];
     [self updateRepeatUI];
@@ -167,10 +171,15 @@
 - (void)updateRepeatUI
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    unsigned int repeatMode = [_playlist repeatMode];
-    [_repeatOffMenuItem setState:(repeatMode == REPEAT_OFF)];
-    [_repeatAllMenuItem setState:(repeatMode == REPEAT_ALL)];
-    [_repeatOneMenuItem setState:(repeatMode == REPEAT_ONE)];
+    unsigned int mode = [_playlist repeatMode];
+
+    NSMenuItem* item;
+    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
+    while (item = [e nextObject]) {
+        if ([item action] == @selector(repeatAction:)) {
+            [item setState:[item tag] == mode];
+        }
+    }
     [_playlistController updateRepeatUI];
 }
 

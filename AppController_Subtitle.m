@@ -35,7 +35,15 @@
         [self reopenSubtitles];
         if (![_movieView subtitleVisible]) {
             [_movieView setSubtitleVisible:TRUE];
-            [_subtitleVisibleMenuItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
+
+            NSMenuItem* visibleItem;
+            NSEnumerator* e = [[_subtitleMenu itemArray] objectEnumerator];
+            while (visibleItem = [e nextObject]) {
+                if ([visibleItem action] == @selector(subtitleVisibleAction:)) {
+                    break;
+                }
+            }
+            [visibleItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
         }
     }
     else if (_subtitles) {
@@ -47,29 +55,56 @@
 
 - (void)changeSubtitleVisible
 {
+    NSMenuItem* visibleItem;
+    NSEnumerator* e = [[_subtitleMenu itemArray] objectEnumerator];
+    while (visibleItem = [e nextObject]) {
+        if ([visibleItem action] == @selector(subtitleVisibleAction:)) {
+            break;
+        }
+    }
+                    
     if ([_movieView subtitleVisible]) {
         [_movieView setSubtitleVisible:FALSE];
         [_movieView setMessage:NSLocalizedString(@"Hide Subtitle", nil)];
-        [_subtitleVisibleMenuItem setTitle:NSLocalizedString(@"Show Subtitle", nil)];
+        [visibleItem setTitle:NSLocalizedString(@"Show Subtitle", nil)];
     }
     else {
         [_movieView setSubtitleVisible:TRUE];
         [_movieView setMessage:NSLocalizedString(@"Show Subtitle", nil)];
-        [_subtitleVisibleMenuItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
+        [visibleItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+#define INIT_LETTER_BOX_HEIGHT_MENUITEMS    \
+    NSMenuItem* sameItem, *line1Item, *line2Item, *line3Item;   \
+    {   \
+        NSMenuItem* item;   \
+        NSEnumerator* e = [[_subtitleMenu itemArray] objectEnumerator];    \
+        while (item = [e nextObject]) { \
+        if ([item action] == @selector(letterBoxHeightAction:)) {   \
+            switch ([item tag]) {   \
+                case LETTER_BOX_HEIGHT_SAME    : sameItem  = item;  break;  \
+                case LETTER_BOX_HEIGHT_1_LINE  : line1Item = item;  break;  \
+                case LETTER_BOX_HEIGHT_2_LINES : line2Item = item;  break;  \
+                case LETTER_BOX_HEIGHT_3_LINES : line3Item = item;  break;  \
+                }   \
+            }   \
+        }   \
+    }
+
 - (void)setLetterBoxHeight:(int)height
 {
+    INIT_LETTER_BOX_HEIGHT_MENUITEMS
+
     NSString* msg;
     switch (height) {
-        case LETTER_BOX_HEIGHT_SAME    : msg = [_letterBoxHeightSameMenuItem title];    break;
-        case LETTER_BOX_HEIGHT_1_LINE  : msg = [_letterBoxHeight1LineMenuItem title];   break;
-        case LETTER_BOX_HEIGHT_2_LINES : msg = [_letterBoxHeight2LinesMenuItem title];  break;
-        case LETTER_BOX_HEIGHT_3_LINES : msg = [_letterBoxHeight3LinesMenuItem title];  break;
+        case LETTER_BOX_HEIGHT_SAME    : msg = [sameItem title];    break;
+        case LETTER_BOX_HEIGHT_1_LINE  : msg = [line1Item title];   break;
+        case LETTER_BOX_HEIGHT_2_LINES : msg = [line2Item title];   break;
+        case LETTER_BOX_HEIGHT_3_LINES : msg = [line3Item title];   break;
         default :   // including LETTER_BOX_HEIGHT_AUTO
             height = LETTER_BOX_HEIGHT_AUTO;
             msg = NSLocalizedString(@"Letter Box Height : Auto", nil);
@@ -103,6 +138,17 @@
                             screenMargin]];
 }
 
+- (NSString*)subtitleNameAtIndex:(int)index
+{
+    MSubtitle* subtitle = [_movieView subtitleAtIndex:index];
+    if (subtitle) {
+        return [NSString stringWithFormat:@"%d (%@)", index + 1, [subtitle name]];
+    }
+    else {
+        return [NSString stringWithFormat:@"%d", index + 1];
+    }
+}
+
 - (void)setSubtitleFontSize:(float)size atIndex:(int)index
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__);
@@ -114,10 +160,10 @@
 
     attrs.fontSize = size;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
-    
+
     [_movieView setMessage:[NSString localizedStringWithFormat:
                             NSLocalizedString(@"Subtitle %@ : Size %.1f", nil),
-                            [[_movieView subtitleAtIndex:index] name], size]];
+                            [self subtitleNameAtIndex:index], size]];
 }
 
 - (void)changeSubtitleFontSize:(int)tag atIndex:(int)index
@@ -133,48 +179,39 @@
     [self setSubtitleFontSize:attrs.fontSize atIndex:index];
 }
 
-#define DEFINE_SUBTITLE_POSITION_MENUITEMS  \
-    NSMenuItem* uboxMenuItem, *topMenuItem, *centerMenuItem, *bottomMenuItem, *lboxMenuItem;
-
 #define INIT_SUBTITLE_POSITION_MENUITEMS(index) \
-    switch (index) {    \
-        case 0 :    \
-            uboxMenuItem   = _subtitle0PositionUBoxMenuItem;    \
-            topMenuItem    = _subtitle0PositionTopMenuItem;     \
-            centerMenuItem = _subtitle0PositionCenterMenuItem;  \
-            bottomMenuItem = _subtitle0PositionBottomMenuItem;  \
-            lboxMenuItem   = _subtitle0PositionLBoxMenuItem;    \
-            break;  \
-        case 1 :    \
-            uboxMenuItem   = _subtitle1PositionUBoxMenuItem;    \
-            topMenuItem    = _subtitle1PositionTopMenuItem;     \
-            centerMenuItem = _subtitle1PositionCenterMenuItem;  \
-            bottomMenuItem = _subtitle1PositionBottomMenuItem;  \
-            lboxMenuItem   = _subtitle1PositionLBoxMenuItem;    \
-            break;  \
-        case 2 :    \
-            uboxMenuItem   = _subtitle2PositionUBoxMenuItem;    \
-            topMenuItem    = _subtitle2PositionTopMenuItem;     \
-            centerMenuItem = _subtitle2PositionCenterMenuItem;  \
-            bottomMenuItem = _subtitle2PositionBottomMenuItem;  \
-            lboxMenuItem   = _subtitle2PositionLBoxMenuItem;    \
-            break;  \
+    NSMenuItem* uboxItem, *topItem, *centerItem, *bottomItem, *lboxItem;    \
+    {   \
+        NSMenuItem* item, *items[3] = {    \
+            _subtitle0MenuItem, _subtitle1MenuItem, _subtitle2MenuItem  \
+        };   \
+        NSEnumerator* e = [[[items[index] submenu] itemArray] objectEnumerator];    \
+        while (item = [e nextObject]) { \
+            if ([item action] == @selector(subtitlePositionAction:)) {  \
+                switch ([item tag]) {   \
+                    case OSD_VPOSITION_UBOX   : uboxItem = item;   break;   \
+                    case OSD_VPOSITION_TOP    : topItem = item;    break;   \
+                    case OSD_VPOSITION_CENTER : centerItem = item; break;   \
+                    case OSD_VPOSITION_BOTTOM : bottomItem = item; break;   \
+                    case OSD_VPOSITION_LBOX   : lboxItem = item;   break;   \
+                }   \
+            }   \
+        }   \
     }
 
 - (void)setSubtitlePosition:(int)position atIndex:(int)index
 {
-    DEFINE_SUBTITLE_POSITION_MENUITEMS
     INIT_SUBTITLE_POSITION_MENUITEMS(index)
 
     NSString* ps;
     switch (position) {
-        case OSD_VPOSITION_UBOX   : ps = [uboxMenuItem title];    break;
-        case OSD_VPOSITION_TOP    : ps = [topMenuItem title];     break;
-        case OSD_VPOSITION_CENTER : ps = [centerMenuItem title];  break;
-        case OSD_VPOSITION_BOTTOM : ps = [bottomMenuItem title];  break;
+        case OSD_VPOSITION_UBOX   : ps = [uboxItem title];    break;
+        case OSD_VPOSITION_TOP    : ps = [topItem title];     break;
+        case OSD_VPOSITION_CENTER : ps = [centerItem title];  break;
+        case OSD_VPOSITION_BOTTOM : ps = [bottomItem title];  break;
         default : // including OSD_VPOSITION_LBOX
             position = OSD_VPOSITION_LBOX;
-            ps = [lboxMenuItem title];
+            ps = [lboxItem title];
             break;
     }
     SubtitleAttributes attrs;
@@ -182,9 +219,10 @@
     attrs.mask = SUBTITLE_ATTRIBUTE_V_POSITION;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
     [_movieView setMessage:[NSString stringWithFormat:
-                    @"%@ : %@", [[_movieView subtitleAtIndex:index] name], ps]];
+                            NSLocalizedString(@"Subtitle %@ : Position %@", nil),
+                            [self subtitleNameAtIndex:index], ps]];
     [self updateSubtitlePositionMenuItems:index];
-    [self updateSubtitleUIInControlPanel];
+    [self updateControlPanelSubtitleUI];
 }
 
 - (void)changeSubtitlePositionAtIndex:(int)index
@@ -216,7 +254,7 @@
 
     [_movieView setMessage:[NSString localizedStringWithFormat:
                             NSLocalizedString(@"Subtitle %@ : HMargin %.1f %%", nil),
-                            [[_movieView subtitleAtIndex:index] name], hMargin]];
+                            [self subtitleNameAtIndex:index], hMargin]];
 }
 
 - (void)setSubtitleVMargin:(float)vMargin atIndex:(int)index
@@ -230,7 +268,7 @@
 
     [_movieView setMessage:[NSString localizedStringWithFormat:
                             NSLocalizedString(@"Subtitle %@ : VMargin %.1f %%", nil),
-                            [[_movieView subtitleAtIndex:index] name], vMargin]];
+                            [self subtitleNameAtIndex:index], vMargin]];
 }
 
 - (void)changeSubtitleVMargin:(int)tag atIndex:(int)index
@@ -257,7 +295,7 @@
 
     [_movieView setMessage:[NSString localizedStringWithFormat:
                             NSLocalizedString(@"Subtitle %@ : Line Spacing %.1f", nil),
-                            [[_movieView subtitleAtIndex:index] name], spacing]];
+                            [self subtitleNameAtIndex:index], spacing]];
 }
 
 - (void)setSubtitleSync:(float)sync atIndex:(int)index
@@ -269,7 +307,7 @@
 
     [_movieView setMessage:[NSString localizedStringWithFormat:
                             NSLocalizedString(@"Subtitle %@ : Sync %.1f sec.", nil),
-                            [[_movieView subtitleAtIndex:index] name], sync]];
+                            [self subtitleNameAtIndex:index], sync]];
 }
 
 - (void)changeSubtitleSync:(int)tag atIndex:(int)index
@@ -452,7 +490,8 @@
 
     if (!_subtitles || [_subtitles count] == 0) {
         item = [_subtitleMenu
-                    insertItemWithTitle:NSLocalizedString(@"No Subtitle", nil)
+                    insertItemWithTitle:[NSString stringWithFormat:@"<%@>",
+                                         NSLocalizedString(@"No Subtitle", nil)]
                                  action:@selector(subtitleLanguageAction:)
                           keyEquivalent:@"" atIndex:0];
     }
@@ -494,7 +533,7 @@
             [items[i] setEnabled:TRUE];
         }
         else {
-            [items[i] setTitle:[NSString stringWithFormat:@"%@ %d: %@",
+            [items[i] setTitle:[NSString stringWithFormat:@"%@ %d: <%@>",
                                 NSLocalizedString(@"Subtitle", nil), i + 1,
                                 NSLocalizedString(@"None", nil)]];
             [items[i] setEnabled:FALSE];
@@ -517,19 +556,35 @@
         position = attrs.vPosition;
     }
 
-    DEFINE_SUBTITLE_POSITION_MENUITEMS
     INIT_SUBTITLE_POSITION_MENUITEMS(index)
 
-#define SUBTITLE_POSITION_MENUITEM_SET_STATE(item)    \
-    [item setState:([item tag] == position) ? NSOnState : NSOffState]
-    SUBTITLE_POSITION_MENUITEM_SET_STATE(uboxMenuItem);
-    SUBTITLE_POSITION_MENUITEM_SET_STATE(topMenuItem);
-    SUBTITLE_POSITION_MENUITEM_SET_STATE(centerMenuItem);
-    SUBTITLE_POSITION_MENUITEM_SET_STATE(bottomMenuItem);
-    SUBTITLE_POSITION_MENUITEM_SET_STATE(lboxMenuItem);
+    #define SUBTITLE_POSITION_MENUITEM_SET_STATE(item)    \
+        [item setState:([item tag] == position) ? NSOnState : NSOffState]
+
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(uboxItem);
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(topItem);
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(centerItem);
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(bottomItem);
+    SUBTITLE_POSITION_MENUITEM_SET_STATE(lboxItem);
 }
 
-- (void)updateSubtitleUIInControlPanel
+- (void)updateLetterBoxHeightMenuItems
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    INIT_LETTER_BOX_HEIGHT_MENUITEMS
+
+    #define LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(item)    \
+        [item setState:([item tag] == height) ? NSOnState : NSOffState]
+
+    int height = (_movie) ? [_movieView letterBoxHeight] : -10; // -10 for no check
+    LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(sameItem);
+    LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(line1Item);
+    LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(line2Item);
+    LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(line3Item);
+    [_letterBoxHeightPopUpButton selectItemWithTag:height];
+}
+
+- (void)updateControlPanelSubtitleUI
 {
     int index = [_subtitleLanguageSegmentedControl selectedSegment];
     MSubtitle* subtitle = [_movieView subtitleAtIndex:index];
@@ -542,23 +597,11 @@
         [_subtitlePositionPopUpButton selectItemWithTag:attrs.vPosition];
     }
     else {
-        [_subtitleNameTextField setStringValue:NSLocalizedString(@"No Subtitle", nil)];
-        [_subtitlePositionPopUpButton selectItemWithTag:-1];
+        [_subtitleNameTextField setStringValue:
+         [NSString stringWithFormat:@"<%@>", NSLocalizedString(@"No Subtitle", nil)]];
+        int vpos = [_defaults integerForKey:MSubtitleVPositionKey[index]];
+        [_subtitlePositionPopUpButton selectItemWithTag:vpos];
     }
-}
-
-- (void)updateLetterBoxHeightMenuItems
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-#define LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(item)    \
-    [item setState:([item tag] == height) ? NSOnState : NSOffState]
-
-    int height = (_movie) ? [_movieView letterBoxHeight] : -10; // -10 for no check
-    LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(_letterBoxHeightSameMenuItem);
-    LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(_letterBoxHeight1LineMenuItem);
-    LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(_letterBoxHeight2LinesMenuItem);
-    LETTER_BOX_HEIGHT_MENUITEM_SET_STATE(_letterBoxHeight3LinesMenuItem);
-    [_letterBoxHeightPopUpButton selectItemWithTag:height];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -577,7 +620,7 @@
     if (sender == _subtitleLanguageSegmentedControl) {
         // this is just for updating subtitle name text-field in control-panel.
         // don't change subtitle language.
-        [self updateSubtitleUIInControlPanel];
+        [self updateControlPanelSubtitleUI];
     }
     else {
         [self changeSubtitleLanguage:[sender tag]];
@@ -591,11 +634,6 @@
                ([sender menu] == [_subtitle1MenuItem submenu]) ? 1 :
                ([sender menu] == [_subtitle2MenuItem submenu]) ? 2 : -1;
     }
-    /*
-    else if (sender == _subtitleLanguageSegmentedControl || // control-panel
-             sender == _subtitlePositionPopUpButton ||
-             sender == _subtitlePositionDefaultButton) {
-     */
     else if ([sender window] == (NSWindow*)_controlPanel) {
         return [_subtitleLanguageSegmentedControl selectedSegment];
     }
@@ -640,7 +678,7 @@
     else if (sender == _letterBoxHeightPopUpButton) {
         height = [[_letterBoxHeightPopUpButton selectedItem] tag];
     }
-    else if (sender == _letterBoxHeightDefaultButton) {
+    else if ([[sender class] isEqualTo:[NSButton class]]) { // default-button in control-panel
         height = [_defaults integerForKey:MLetterBoxHeightKey];
     }
     else {  // for menu-items
@@ -666,7 +704,7 @@
     if (sender == _subtitlePositionPopUpButton) {
         position = [[_subtitlePositionPopUpButton selectedItem] tag];
     }
-    else if (sender == _subtitlePositionDefaultButton) {
+    else if ([[sender class] isEqualTo:[NSButton class]]) { // default-button in control-panel
         position = [_defaults integerForKey:MSubtitleVPositionKey[index]];
     }
     else {  // for menu-items

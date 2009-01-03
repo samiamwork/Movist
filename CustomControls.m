@@ -716,6 +716,7 @@
 {
     if (self = [super initWithCoder:decoder]) {
         [self setTextColor:HUDTextColor];
+        [self setLineBreakMode:NSLineBreakByTruncatingMiddle];
     }
     return self;
 }
@@ -725,6 +726,7 @@
     [super copyAttributesFromCell:cell];
 
     [self setTextColor:HUDTextColor];
+    [self setLineBreakMode:NSLineBreakByTruncatingMiddle];
 }
 
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView*)controlView

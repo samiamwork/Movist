@@ -457,17 +457,30 @@
 
 - (void)updateVolumeMenuItems
 {
+    NSMenuItem* item, *upItem, *altUpItem, *downItem, *altDownItem;
+    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
+    while (item = [e nextObject]) {
+        if ([item action] == @selector(volumeAction:)) {
+            switch ([item tag]) {
+                case +1 : upItem = item;        break;
+                case +2 : altUpItem = item;     break;
+                case -1 : downItem = item;      break;
+                case -2 : altDownItem = item;   break;
+            }
+        }
+    }
+    
     if ([_defaults boolForKey:MUpdateSystemVolumeKey]) {
-        [_volumeUpMenuItem setTitle:NSLocalizedString(@"System Volume Up", nil)];
-        [_volumeDownMenuItem setTitle:NSLocalizedString(@"System Volume Down", nil)];
-        [_altVolumeUpMenuItem setTitle:NSLocalizedString(@"Volume Up", nil)];
-        [_altVolumeDownMenuItem setTitle:NSLocalizedString(@"Volume Down", nil)];
+        [upItem setTitle:NSLocalizedString(@"System Volume Up", nil)];
+        [downItem setTitle:NSLocalizedString(@"System Volume Down", nil)];
+        [altUpItem setTitle:NSLocalizedString(@"Volume Up", nil)];
+        [altDownItem setTitle:NSLocalizedString(@"Volume Down", nil)];
     }
     else {
-        [_volumeUpMenuItem setTitle:NSLocalizedString(@"Volume Up", nil)];
-        [_volumeDownMenuItem setTitle:NSLocalizedString(@"Volume Down", nil)];
-        [_altVolumeUpMenuItem setTitle:NSLocalizedString(@"System Volume Up", nil)];
-        [_altVolumeDownMenuItem setTitle:NSLocalizedString(@"System Volume Down", nil)];
+        [upItem setTitle:NSLocalizedString(@"Volume Up", nil)];
+        [downItem setTitle:NSLocalizedString(@"Volume Down", nil)];
+        [altUpItem setTitle:NSLocalizedString(@"System Volume Up", nil)];
+        [altDownItem setTitle:NSLocalizedString(@"System Volume Down", nil)];
     }
 }
 

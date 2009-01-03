@@ -186,10 +186,10 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
         [dict setObject:[NSNumber numberWithInt:26] forKey:MSubtitleAutoFontSizeCharsKey[i]];
         [dict setObject:[NSArchiver archivedDataWithRootObject:textColor] forKey:MSubtitleTextColorKey[i]];
         [dict setObject:[NSArchiver archivedDataWithRootObject:strokeColor] forKey:MSubtitleStrokeColorKey[i]];
-        [dict setObject:[NSNumber numberWithFloat:2.0] forKey:MSubtitleStrokeWidthKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:4.0] forKey:MSubtitleStrokeWidthKey[i]];
         [dict setObject:[NSArchiver archivedDataWithRootObject:shadowColor] forKey:MSubtitleShadowColorKey[i]];
-        [dict setObject:[NSNumber numberWithFloat:0.0] forKey:MSubtitleShadowOffsetKey[i]];
-        [dict setObject:[NSNumber numberWithFloat:2.5] forKey:MSubtitleShadowBlurKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:1.0] forKey:MSubtitleShadowOffsetKey[i]];
+        [dict setObject:[NSNumber numberWithFloat:2.0] forKey:MSubtitleShadowBlurKey[i]];
         [dict setObject:[NSNumber numberWithInt:5] forKey:MSubtitleShadowDarknessKey[i]];
         //[dict setObject:[NSNumber numberWithInt:OSD_HPOSITION_CENTER] forKey:MSubtitleHPositionKey[i]];
         [dict setObject:[NSNumber numberWithInt:vPosition[i]] forKey:MSubtitleVPositionKey[i]];
@@ -224,7 +224,8 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     // prefs: advanced - details: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
-    [dict setObject:@"ko kr" forKey:MDefaultLanguageIdentifiersKey];
+    [dict setObject:NSLocalizedString(@"DefaultSubtitleLanguageIdentifiers", nil)
+             forKey:MDefaultLanguageIdentifiersKey];
     [dict setObject:[NSNumber numberWithInt:2] forKey:MAutoLetterBoxHeightMaxLinesKey];
     // prefs: advanced - details: full-nav
     [dict setObject:@"~/Movies" forKey:MFullNavPathKey];

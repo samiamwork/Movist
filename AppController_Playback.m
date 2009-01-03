@@ -164,13 +164,22 @@
 {
     //TRACE(@"%s [%d]:%.1f sec", __PRETTY_FUNCTION__, index, interval);
     _seekInterval[index] = interval;
-    
-    NSMenuItem* backwardItem[3] = {
-        _seekBackward1MenuItem, _seekBackward2MenuItem, _seekBackward3MenuItem
-    };
-    NSMenuItem* forwardItem[3] = {
-        _seekForward1MenuItem, _seekForward2MenuItem, _seekForward3MenuItem
-    };
+
+    NSMenuItem* item, *backwardItem[3], *forwardItem[3];
+    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
+    while (item = [e nextObject]) {
+        if ([item action] == @selector(seekAction:)) {
+            switch ([item tag]) {
+                case SEEK_TAG_BACKWARD_3    : backwardItem[2] = item;   break;
+                case SEEK_TAG_BACKWARD_2    : backwardItem[1] = item;   break;
+                case SEEK_TAG_BACKWARD_1    : backwardItem[0] = item;   break;
+                case SEEK_TAG_FORWARD_1     : forwardItem[0] = item;    break;
+                case SEEK_TAG_FORWARD_2     : forwardItem[1] = item;    break;
+                case SEEK_TAG_FORWARD_3     : forwardItem[2] = item;    break;
+            }
+        }
+    }
+
     [backwardItem[index] setTitle:[NSString stringWithFormat:
         NSLocalizedString(@"Backward %d sec.", nil), (int)_seekInterval[index]]];
     [forwardItem[index] setTitle:[NSString stringWithFormat:
@@ -393,6 +402,14 @@
 - (void)updatePlayUI
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSMenuItem* playMenuItem;
+    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
+    while (playMenuItem = [e nextObject]) {
+        if ([playMenuItem action] == @selector(playAction:)) {
+            break;
+        }
+    }
+    
     if (_movie && [_movie rate] != 0) {
         NSImage* mainPauseImage, *mainPausePressedImage;
         if (isSystemTiger()) {
@@ -403,7 +420,7 @@
             mainPauseImage = [NSImage imageNamed:@"MainPause"];
             mainPausePressedImage = [NSImage imageNamed:@"MainPausePressed"];
         }
-        [_playMenuItem setTitle:NSLocalizedString(@"Pause_space", nil)];
+        [playMenuItem setTitle:NSLocalizedString(@"Pause_space", nil)];
         [_playButton setImage:mainPauseImage];
         [_playButton setAlternateImage:mainPausePressedImage];
         [_fsPlayButton setImage:[NSImage imageNamed:@"FSPause"]];
@@ -419,7 +436,7 @@
             mainPlayImage = [NSImage imageNamed:@"MainPlay"];
             mainPlayPressedImage = [NSImage imageNamed:@"MainPlayPressed"];
         }
-        [_playMenuItem setTitle:NSLocalizedString(@"Play_space", nil)];
+        [playMenuItem setTitle:NSLocalizedString(@"Play_space", nil)];
         [_playButton setImage:mainPlayImage];
         [_playButton setAlternateImage:mainPlayPressedImage];
         [_fsPlayButton setImage:[NSImage imageNamed:@"FSPlay"]];

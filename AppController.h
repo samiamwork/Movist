@@ -61,10 +61,6 @@
     BOOL _checkForAltVolumeChange;
 
     // movie & subtitle
-    IBOutlet NSMenu* _movieMenu;
-    IBOutlet NSMenu* _aspectRatioMenu;
-    IBOutlet NSMenu* _fullScreenFillMenu;
-    IBOutlet NSTableView* _propertiesView;
     MMovie* _movie;
     Playlist* _playlist;
     NSMutableArray* _subtitles;
@@ -82,54 +78,18 @@
     IBOutlet NSMenuItem* _reopenWithMenuItem;
     IBOutlet NSMenuItem* _altCopyImageMenuItem;
     IBOutlet NSMenuItem* _altSaveImageMenuItem;
-    IBOutlet NSMenuItem* _playMenuItem;
-    IBOutlet NSMenuItem* _seekBackward1MenuItem;
-    IBOutlet NSMenuItem* _seekBackward2MenuItem;
-    IBOutlet NSMenuItem* _seekBackward3MenuItem;
-    IBOutlet NSMenuItem* _seekPrevSubtitleMenuItem;
-    IBOutlet NSMenuItem* _seekForward1MenuItem;
-    IBOutlet NSMenuItem* _seekForward2MenuItem;
-    IBOutlet NSMenuItem* _seekForward3MenuItem;
-    IBOutlet NSMenuItem* _seekNextSubtitleMenuItem;
-    IBOutlet NSMenuItem* _repeatAllMenuItem;
-    IBOutlet NSMenuItem* _repeatOneMenuItem;
-    IBOutlet NSMenuItem* _repeatOffMenuItem;
-    IBOutlet NSMenuItem* _rateSlowerMenuItem;
-    IBOutlet NSMenuItem* _rateFasterMenuItem;
-    IBOutlet NSMenuItem* _rateDefaultMenuItem;
-    IBOutlet NSMenuItem* _volumeUpMenuItem;
-    IBOutlet NSMenuItem* _altVolumeUpMenuItem;
-    IBOutlet NSMenuItem* _volumeDownMenuItem;
-    IBOutlet NSMenuItem* _altVolumeDownMenuItem;
+    IBOutlet NSMenu* _movieMenu;
+    IBOutlet NSMenu* _aspectRatioMenu;
+    IBOutlet NSMenu* _fullScreenFillMenu;
+    IBOutlet NSMenu* _controlMenu;
     IBOutlet NSMenuItem* _muteMenuItem;
     IBOutlet NSMenu* _subtitleMenu;
     IBOutlet NSMenuItem* _subtitle0MenuItem;
     IBOutlet NSMenuItem* _subtitle1MenuItem;
     IBOutlet NSMenuItem* _subtitle2MenuItem;
-    IBOutlet NSMenuItem* _subtitleVisibleMenuItem;
-    IBOutlet NSMenuItem* _subtitleAllSyncDefaultMenuItem;
     IBOutlet NSMenu* _subtitle0EncodingMenu;
     IBOutlet NSMenu* _subtitle1EncodingMenu;
     IBOutlet NSMenu* _subtitle2EncodingMenu;
-    IBOutlet NSMenuItem* _subtitle0PositionUBoxMenuItem;
-    IBOutlet NSMenuItem* _subtitle0PositionTopMenuItem;
-    IBOutlet NSMenuItem* _subtitle0PositionCenterMenuItem;
-    IBOutlet NSMenuItem* _subtitle0PositionBottomMenuItem;
-    IBOutlet NSMenuItem* _subtitle0PositionLBoxMenuItem;
-    IBOutlet NSMenuItem* _subtitle1PositionUBoxMenuItem;
-    IBOutlet NSMenuItem* _subtitle1PositionTopMenuItem;
-    IBOutlet NSMenuItem* _subtitle1PositionCenterMenuItem;
-    IBOutlet NSMenuItem* _subtitle1PositionBottomMenuItem;
-    IBOutlet NSMenuItem* _subtitle1PositionLBoxMenuItem;
-    IBOutlet NSMenuItem* _subtitle2PositionUBoxMenuItem;
-    IBOutlet NSMenuItem* _subtitle2PositionTopMenuItem;
-    IBOutlet NSMenuItem* _subtitle2PositionCenterMenuItem;
-    IBOutlet NSMenuItem* _subtitle2PositionBottomMenuItem;
-    IBOutlet NSMenuItem* _subtitle2PositionLBoxMenuItem;
-    IBOutlet NSMenuItem* _letterBoxHeightSameMenuItem;
-    IBOutlet NSMenuItem* _letterBoxHeight1LineMenuItem;
-    IBOutlet NSMenuItem* _letterBoxHeight2LinesMenuItem;
-    IBOutlet NSMenuItem* _letterBoxHeight3LinesMenuItem;
 
     // main window
     IBOutlet MainWindow* _mainWindow;
@@ -137,9 +97,9 @@
     IBOutlet NSButton* _muteButton;
     IBOutlet NSSlider* _volumeSlider;
     IBOutlet MainSeekSlider* _seekSlider;
-    IBOutlet NSButton* _playButton;
     IBOutlet TimeTextField* _lTimeTextField;
     IBOutlet TimeTextField* _rTimeTextField;
+    IBOutlet NSButton* _playButton;
     IBOutlet HoverButton* _prevSeekButton;
     IBOutlet HoverButton* _nextSeekButton;
     IBOutlet HoverButton* _controlPanelButton;
@@ -150,21 +110,22 @@
     float _prevMovieTime;
     BOOL _viewDuration;
 
-    // control panel
+    // control panel: A/V Control
     IBOutlet ControlPanel* _controlPanel;
     IBOutlet NSTextField* _audioDeviceTextField;
     IBOutlet NSTextField* _audioOutTextField;
     IBOutlet NSSegmentedControl* _subtitleLanguageSegmentedControl;
     IBOutlet NSTextField* _subtitleNameTextField;
     IBOutlet NSPopUpButton* _subtitlePositionPopUpButton;
-    IBOutlet NSButton* _subtitlePositionDefaultButton;
     IBOutlet NSPopUpButton* _letterBoxHeightPopUpButton;
-    IBOutlet NSButton* _letterBoxHeightDefaultButton;
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
+
+    // control panel: Properties
     IBOutlet NSButton* _cpDecoderButton;
     IBOutlet NSTextField* _dataSizeBpsTextField;
     IBOutlet NSTextField* _fpsTextField;
+    IBOutlet NSTableView* _propertiesView;
 
     // full-screen & navigation
     NSLock* _fullScreenLock;
@@ -175,11 +136,11 @@
     IBOutlet NSButton* _fsMuteButton;
     IBOutlet NSSlider* _fsVolumeSlider;
     IBOutlet FSSeekSlider* _fsSeekSlider;
+    IBOutlet TimeTextField* _fsLTimeTextField;
+    IBOutlet TimeTextField* _fsRTimeTextField;
     IBOutlet NSButton* _fsPlayButton;
     IBOutlet NSButton* _fsPrevSeekButton;
     IBOutlet NSButton* _fsNextSeekButton;
-    IBOutlet TimeTextField* _fsLTimeTextField;
-    IBOutlet TimeTextField* _fsRTimeTextField;
     IBOutlet NSButton* _fsPlaylistButton;
     IBOutlet NSButton* _fsDecoderButton;
 }
@@ -209,6 +170,7 @@
 - (BOOL)openFiles:(NSArray*)filenames option:(int)option;
 - (BOOL)openMovie:(NSURL*)movieURL movieClass:(Class)movieClass
         subtitles:(NSArray*)subtitleURLs subtitleEncoding:(CFStringEncoding)subtitleEncoding;
+- (BOOL)openSubtitleFiles:(NSArray*)filenames;
 - (BOOL)openSubtitles:(NSArray*)subtitleURLs encoding:(CFStringEncoding)encoding;
 - (void)addSubtitles:(NSArray*)subtitleURLs;
 - (BOOL)reopenMovieWithMovieClass:(Class)movieClass;
@@ -390,8 +352,8 @@
 - (void)updateMovieViewSubtitles;
 - (void)updateSubtitleLanguageMenuItems;
 - (void)updateSubtitlePositionMenuItems:(int)index;
-- (void)updateSubtitleUIInControlPanel;
 - (void)updateLetterBoxHeightMenuItems;
+- (void)updateControlPanelSubtitleUI;
 
 - (IBAction)subtitleVisibleAction:(id)sender;
 - (IBAction)subtitleLanguageAction:(id)sender;

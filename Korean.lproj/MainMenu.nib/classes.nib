@@ -14,19 +14,19 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>NSSegmentedControl</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSControl</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>MainLCDView</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSSegmentedControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -46,14 +46,6 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>NSApplication</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSResponder</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>MainWindow</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
@@ -69,6 +61,14 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
+			<string>NSApplication</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
 			<string>HoverButton</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
@@ -77,19 +77,19 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>HUDTextFieldCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTextFieldCell</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>NSTextField</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTextFieldCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextFieldCell</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -132,6 +132,14 @@
 			<string>NSView</string>
 		</dict>
 		<dict>
+			<key>CLASS</key>
+			<string>MainSeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>SeekSlider</string>
+		</dict>
+		<dict>
 			<key>ACTIONS</key>
 			<dict>
 				<key></key>
@@ -149,14 +157,6 @@
 			<string>NSObject</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>MainSeekSlider</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>SeekSlider</string>
 		</dict>
 		<dict>
 			<key>ACTIONS</key>
@@ -281,8 +281,6 @@
 				<string>id</string>
 				<key>openSubtitleFileAction</key>
 				<string>id</string>
-				<key>openURLAction</key>
-				<string>id</string>
 				<key>playAction</key>
 				<string>id</string>
 				<key>playlistAction</key>
@@ -356,16 +354,14 @@
 				<string>NSMenuItem</string>
 				<key>_altSaveImageMenuItem</key>
 				<string>NSMenuItem</string>
-				<key>_altVolumeDownMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_altVolumeUpMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_aspectRatioMenu</key>
 				<string>NSMenu</string>
 				<key>_audioDeviceTextField</key>
 				<string>NSTextField</string>
 				<key>_audioOutTextField</key>
 				<string>NSTextField</string>
+				<key>_controlMenu</key>
+				<string>NSMenu</string>
 				<key>_controlPanel</key>
 				<string>ControlPanel</string>
 				<key>_controlPanelButton</key>
@@ -400,18 +396,8 @@
 				<string>NSMenu</string>
 				<key>_lTimeTextField</key>
 				<string>TimeTextField</string>
-				<key>_letterBoxHeight1LineMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_letterBoxHeight2LinesMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_letterBoxHeight3LinesMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_letterBoxHeightDefaultButton</key>
-				<string>NSButton</string>
 				<key>_letterBoxHeightPopUpButton</key>
 				<string>NSPopUpButton</string>
-				<key>_letterBoxHeightSameMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_mainWindow</key>
 				<string>MainWindow</string>
 				<key>_movieMenu</key>
@@ -428,8 +414,6 @@
 				<string>HoverButton</string>
 				<key>_playButton</key>
 				<string>NSButton</string>
-				<key>_playMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_playPanel</key>
 				<string>PlayPanel</string>
 				<key>_playlistButton</key>
@@ -442,85 +426,25 @@
 				<string>NSTableView</string>
 				<key>_rTimeTextField</key>
 				<string>TimeTextField</string>
-				<key>_rateDefaultMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_rateFasterMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_rateSlowerMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_reopenWithMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_repeatAllMenuItem</key>
 				<string>NSMenuItem</string>
 				<key>_repeatBeginningTextField</key>
 				<string>NSTextField</string>
 				<key>_repeatEndTextField</key>
 				<string>NSTextField</string>
-				<key>_repeatOffMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_repeatOneMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_seekBackward1MenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_seekBackward2MenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_seekBackward3MenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_seekForward1MenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_seekForward2MenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_seekForward3MenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_seekNextSubtitleMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_seekPrevSubtitleMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_seekSlider</key>
 				<string>MainSeekSlider</string>
 				<key>_subtitle0EncodingMenu</key>
 				<string>NSMenu</string>
 				<key>_subtitle0MenuItem</key>
 				<string>NSMenuItem</string>
-				<key>_subtitle0PositionBottomMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle0PositionCenterMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle0PositionLBoxMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle0PositionTopMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle0PositionUBoxMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_subtitle1EncodingMenu</key>
 				<string>NSMenu</string>
 				<key>_subtitle1MenuItem</key>
 				<string>NSMenuItem</string>
-				<key>_subtitle1PositionBottomMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle1PositionCenterMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle1PositionLBoxMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle1PositionTopMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle1PositionUBoxMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_subtitle2EncodingMenu</key>
 				<string>NSMenu</string>
 				<key>_subtitle2MenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle2PositionBottomMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle2PositionCenterMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle2PositionLBoxMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle2PositionTopMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitle2PositionUBoxMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_subtitleAllSyncDefaultMenuItem</key>
 				<string>NSMenuItem</string>
 				<key>_subtitleLanguageSegmentedControl</key>
 				<string>NSSegmentedControl</string>
@@ -528,18 +452,10 @@
 				<string>NSMenu</string>
 				<key>_subtitleNameTextField</key>
 				<string>NSTextField</string>
-				<key>_subtitlePositionDefaultButton</key>
-				<string>NSButton</string>
 				<key>_subtitlePositionPopUpButton</key>
 				<string>NSPopUpButton</string>
-				<key>_subtitleVisibleMenuItem</key>
-				<string>NSMenuItem</string>
-				<key>_volumeDownMenuItem</key>
-				<string>NSMenuItem</string>
 				<key>_volumeSlider</key>
 				<string>NSSlider</string>
-				<key>_volumeUpMenuItem</key>
-				<string>NSMenuItem</string>
 			</dict>
 			<key>SUPERCLASS</key>
 			<string>NSObject</string>

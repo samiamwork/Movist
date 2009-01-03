@@ -446,6 +446,15 @@
         return FALSE;
     }
 
+    if (encoding != kCFStringEncodingInvalidId && [subtitles count] == 0) {
+        // if this is reopening with other encoding and no subtitle in subtitleURLs,
+        // then, don't reset current subtitles for trials with other encodings.
+        // FIXME: show all subtitleURLs...
+        NSString* s = NSLocalizedString(@"No Subtitle: Reopen with other encodings", nil);
+        [_movieView setMessageWithURL:[subtitleURLs objectAtIndex:0] info:s];
+        return FALSE;
+    }
+
     [_subtitles release];
     _subtitles = [subtitles retain];
 
