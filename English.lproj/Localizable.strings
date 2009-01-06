@@ -3,6 +3,7 @@
 "Never" = "Never";
 "None" = "None";
 "Unnamed" = "Unnamed";
+"Unknown Language" = "Unknown Language";
 "Decoder" = "Decoder";
 "iTunes Movies" = "iTunes Movies";
 "iTunes TV Shows" = "iTunes TV Shows";
@@ -47,6 +48,8 @@
 "Show Subtitle" = "Show Subtitle";
 "Hide Subtitle" = "Hide Subtitle";
 "No Subtitle" = "No Subtitle";
+"Enable %@ - %@" = "Enable %@ - %@";
+"Disable %@ - %@" = "Disable %@ - %@";
 "Subtitle Rotation" = "Subtitle Rotation";
 
 /* Message : Playback */
@@ -100,6 +103,8 @@
 /* Control Panel */
 "Video Track" = "Video Track";
 "Sound Track" = "Sound Track";
+"Subtitle Track" = "Subtitle Track";
+"External Subtitle" = "External Subtitle";
 "Mono" = "Mono";
 "Stereo" = "Stereo";
 "5.1 Ch." = "5.1 Ch.";
@@ -149,8 +154,9 @@
 
 /* Preferences: advanced - details: subtitle */
 "Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
+"Auto-Load Embedded Subtitles in MKV" = "Auto-Load Embedded Subtitles in MKV";
 "Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
-"Default Subtitle Language Identifiers for SAMI" = "Default Subtitle Language Identifiers for SAMI";
+"Default Subtitle Language Identifiers" = "Default Subtitle Language Identifiers";
 "DefaultSubtitleLanguageIdentifiers" = "ENCC English en us";
 "Auto Letter Box Height Max Lines (1~3)" = "Auto Letter Box Height Max Lines (1~3)";
 
@@ -160,10 +166,8 @@
 "Show Actual Path for Alias or Symbolic-Link" = "Show Actual Path for Alias or Symbolic-Link";
 
 /* Playlist */
+"No Subtitle File" = "No Subtitle File";
 "%d items" = "%d items";
-
-/* Properties */
-"External Subtitle" = "External Subtitle";
 
 /* Codec Desc. */
 "etc." = "Etc.";

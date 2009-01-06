@@ -462,9 +462,11 @@
       [NSArray arrayWithObjects:
        [BoolNode boolNodeWithName:LABEL_R(@"Disable Perian Subtitle for using QuickTime")
                               key:MDisablePerianSubtitleKey],
+       [BoolNode boolNodeWithName:LABEL(@"Auto-Load Embedded Subtitles in MKV")
+                              key:MAutoLoadMKVEmbeddedSubtitlesKey],
        [BoolNode boolNodeWithName:LABEL(@"Replace New-Line with <BR> for SAMI")
                               key:MSubtitleReplaceNLWithBRKey],
-       [StringNode stringNodeWithName:LABEL(@"Default Subtitle Language Identifiers for SAMI")
+       [StringNode stringNodeWithName:LABEL(@"Default Subtitle Language Identifiers")
                                   key:MDefaultLanguageIdentifiersKey],
        [IntNode intNodeWithName:LABEL(@"Auto Letter Box Height Max Lines (1~3)")
                             key:MAutoLetterBoxHeightMaxLinesKey minValue:1 maxValue:3],

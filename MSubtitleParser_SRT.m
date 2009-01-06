@@ -130,10 +130,12 @@ typedef struct _SRTTag {
     }
 }
 
-- (void)parseSubtitleString:(NSString*)string
-                  beginTime:(float)beginTime endTime:(float)endTime
+- (NSMutableAttributedString*)parseSubtitleString:(NSString*)string
 {
     //TRACE(@"%s \"%@\" (%g) (\"%@\")", __PRETTY_FUNCTION__, string, time, class);
+
+    // this method can be called independently for parsing embedded subtitle.
+    
     NSMutableString* ms = [NSMutableString stringWithString:string];
     [ms removeRightWhitespaces];
 
@@ -172,9 +174,15 @@ typedef struct _SRTTag {
         }
         [mas fixAttributesInRange:NSMakeRange(0, [mas length])];
     }
+    return mas;
+}
 
+- (void)parseSubtitleString:(NSString*)string
+                  beginTime:(float)beginTime endTime:(float)endTime
+{
     MSubtitle* subtitle = [_subtitles objectAtIndex:0];
-    [subtitle addString:mas beginTime:beginTime endTime:endTime];
+    [subtitle addString:[self parseSubtitleString:string]
+              beginTime:beginTime endTime:endTime];
 }
 
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
@@ -187,8 +195,11 @@ typedef struct _SRTTag {
     if (options) {
     }
 
-    [_subtitles addObject:
-     [[[MSubtitle alloc] initWithURL:_subtitleURL type:@"SRT"] autorelease]];
+    MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease];
+    [subtitle setType:@"SRT"];
+    [subtitle setTrackName:NSLocalizedString(@"External Subtitle", nil)];
+    [subtitle setEmbedded:FALSE];
+    [_subtitles addObject:subtitle];
 
     NSCharacterSet* set = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
 
@@ -231,7 +242,6 @@ typedef struct _SRTTag {
     // remove empty subtitle if exist and
     // make complete not-ended-string if exist.
     int i;
-    MSubtitle* subtitle;
     for (i = [_subtitles count] - 1; 0 <= i; i--) {
         subtitle = [_subtitles objectAtIndex:i];
         if ([subtitle isEmpty]) {

@@ -102,8 +102,8 @@ NSString* MDefaultCodecBindingKey           = @"DefaultCodecBinding";
 NSString* MActivateOnDraggingKey            = @"ActivateOnDragging";
 NSString* MAutoShowDockKey                  = @"AutoShowDock";
 NSString* MFloatingPlaylistKey              = @"FloatingPlaylist";
-NSString* MGotoBegginingWhenReopenMovieKey  = @"MGotoBegginingWhenReopenMovieKey";
-NSString* MGotoBegginingWhenOpenSubtitleKey = @"MGotoBegginingWhenOpenSubtitleKey";
+NSString* MGotoBegginingWhenReopenMovieKey  = @"MGotoBegginingWhenReopenMovie";
+NSString* MGotoBegginingWhenOpenSubtitleKey = @"MGotoBegginingWhenOpenSubtitle";
 NSString* MMovieResizeCenterKey             = @"MovieResizeCenter";
 NSString* MWindowResizeModeKey              = @"WindowResizeMode";
 NSString* MViewDragActionKey                = @"ViewDragAction";
@@ -114,6 +114,7 @@ NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
 #pragma mark prefs: advanced - details: audio
 #pragma mark prefs: advanced - details: subtitle
 NSString* MDisablePerianSubtitleKey         = @"DisablePerianSubtitle";
+NSString* MAutoLoadMKVEmbeddedSubtitlesKey  = @"MAutoLoadMKVEmbeddedSubtitles";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
 NSString* MAutoLetterBoxHeightMaxLinesKey   = @"AutoLetterBoxHeightMaxLines";
@@ -223,6 +224,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     // prefs: advanced - details: audio
     // prefs: advanced - details: subtitle
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MDisablePerianSubtitleKey];
+    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoLoadMKVEmbeddedSubtitlesKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
     [dict setObject:NSLocalizedString(@"DefaultSubtitleLanguageIdentifiers", nil)
              forKey:MDefaultLanguageIdentifiersKey];

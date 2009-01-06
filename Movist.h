@@ -22,6 +22,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #import "MovistExtensions.h"
 
 #pragma mark check-for-updates
@@ -442,4 +446,8 @@ void initSubtitleEncodingMenu(NSMenu* menu, SEL action);
     void TRACE(NSString* format, ...);
 #else
     #define TRACE(...)
+#endif
+
+#if defined(__cplusplus)
+}   // extern "C"
 #endif

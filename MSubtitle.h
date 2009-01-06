@@ -30,6 +30,9 @@
     NSURL* _url;
     NSString* _type;
     NSString* _name;
+    NSString* _language;
+    NSString* _trackName;
+    BOOL _embedded;
     BOOL _enabled;
     NSMutableArray* _items; // of MSubtitleItem
     int _indexCache;        // for performance of -indexAtTime:
@@ -56,12 +59,21 @@
 + (NSArray*)fileExtensions;
 
 #pragma mark -
-- (id)initWithURL:(NSURL*)url type:(NSString*)type;
+- (id)initWithURL:(NSURL*)url;
 - (NSURL*)url;
 - (NSString*)type;
 - (NSString*)name;
+- (NSString*)language;
+- (NSString*)trackName;
 - (NSString*)summary;
+- (BOOL)isEmbedded;
+- (void)setType:(NSString*)type;
 - (void)setName:(NSString*)name;
+- (void)setLanguage:(NSString*)language;
+- (void)setTrackName:(NSString*)trackName;
+- (void)setEmbedded:(BOOL)embedded;
+
+- (BOOL)checkDefaultLanguage:(NSArray*)defaultLangIDs;
 
 - (BOOL)isEmpty;
 - (float)beginTime;

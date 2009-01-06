@@ -141,7 +141,7 @@
     rect.size.width -= 20;
 
     if ([urls count] == 0) {
-        NSString* s = NSLocalizedString(@"No Subtitle", nil);
+        NSString* s = NSLocalizedString(@"No Subtitle File", nil);
         [self drawString:s inRect:rect isSubtitle:TRUE];
     }
     else {

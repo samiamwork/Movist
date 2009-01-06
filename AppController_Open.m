@@ -29,6 +29,7 @@
 #import "MMovie_QuickTime.h"
 #import "MSubtitleParser_SMI.h"
 #import "MSubtitleParser_SRT.h"
+#import "MSubtitleParser_MKV.h"
 #import "MSubtitleParser_SUB.h"
 
 #import "MainWindow.h"
@@ -110,6 +111,8 @@
     NSString* ext = [[path pathExtension] lowercaseString];
     Class parserClass = ([ext isEqualToString:@"smi"]) ? [MSubtitleParser_SMI class] :
                         ([ext isEqualToString:@"srt"]) ? [MSubtitleParser_SRT class] :
+                        ([ext isEqualToString:@"mkv"] ||
+                         [ext isEqualToString:@"mks"]) ? [MSubtitleParser_MKV class] :
                         ([ext isEqualToString:@"idx"] ||
                          [ext isEqualToString:@"sub"] ||
                          [ext isEqualToString:@"rar"]) ? [MSubtitleParser_SUB class] :
@@ -128,12 +131,9 @@
     if (parserClass == [MSubtitleParser_SMI class]) {
         NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
         NSNumber* replaceNLWithBR = [_defaults objectForKey:MSubtitleReplaceNLWithBRKey];
-        NSArray* defaultLangIDs = [[_defaults objectForKey:MDefaultLanguageIdentifiersKey]
-                                                        componentsSeparatedByString:@" "];
         options = [NSDictionary dictionaryWithObjectsAndKeys:
                    stringEncoding, MSubtitleParserOptionKey_stringEncoding,
                    replaceNLWithBR, MSubtitleParserOptionKey_SMI_replaceNewLineWithBR,
-                   defaultLangIDs, MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers,
                    nil];
     }
     else if (parserClass == [MSubtitleParser_SRT class]) {
@@ -330,6 +330,14 @@
     }
     
     // open subtitles
+    if ([_defaults boolForKey:MAutoLoadMKVEmbeddedSubtitlesKey]) {
+        NSString* ext = [[[movieURL path] pathExtension] lowercaseString];
+        if ([ext isEqualToString:@"mkv"]) {
+            NSMutableArray* URLs = [NSMutableArray arrayWithArray:subtitleURLs];
+            [URLs addObject:movieURL];
+            subtitleURLs = URLs;
+        }
+    }
     if (0 < [subtitleURLs count] && [_defaults boolForKey:MSubtitleEnableKey]) {
         NSArray* subtitles = [self subtitleFromURLs:subtitleURLs
                                        withEncoding:subtitleEncoding error:&error];
@@ -432,6 +440,36 @@
     return FALSE;
 }
 
+- (void)updateExternalSubtitleTrackNames
+{
+    // count external subtitles
+    int externalCount = 0;
+    MSubtitle* subtitle;
+    NSString* defaultName = NSLocalizedString(@"External Subtitle", nil);
+    NSEnumerator* e = [_subtitles objectEnumerator];
+    while (subtitle = [e nextObject]) {
+        if (![subtitle isEmbedded] && 1 < externalCount++) {
+            break;
+        }
+    }
+
+    if (1 < externalCount) {
+        // add to track number.
+        int trackNumber = 1;
+        e = [_subtitles objectEnumerator];
+        while (subtitle = [e nextObject]) {
+            if ([subtitle isEmbedded]) {
+                continue;
+            }
+            if ([[subtitle trackName] isEqualToString:defaultName]) {
+                [subtitle setTrackName:
+                 [NSString stringWithFormat:@"%@ %d", defaultName, trackNumber]];
+            }
+            trackNumber++;
+        }
+    }
+}
+
 - (BOOL)openSubtitles:(NSArray*)subtitleURLs encoding:(CFStringEncoding)encoding
 {
     NSError* error;
@@ -457,26 +495,14 @@
 
     [_subtitles release];
     _subtitles = [subtitles retain];
-
-    if (0 < [_subtitles count]) {
-        // enable 1st subtitle only by default.
-        NSEnumerator* enumerator = [_subtitles objectEnumerator];
-        MSubtitle* subtitle = [enumerator nextObject];
-        [subtitle setEnabled:TRUE];
-        subtitle = [enumerator nextObject];
-        while (subtitle) {
-            [subtitle setEnabled:FALSE];
-            subtitle = [enumerator nextObject];
-        }
-    }
-
     [[_playlist currentItem] setSubtitleURLs:subtitleURLs];
-    [self updateMovieViewSubtitles];
-
     [self autoenableSubtitles];
+    [self updateExternalSubtitleTrackNames];
     [self updateSubtitleLanguageMenuItems];
-    [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
     [_propertiesView reloadData];
+
+    [self updateMovieViewSubtitles];
+    [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
 
     if ([_defaults boolForKey:MGotoBegginingWhenOpenSubtitleKey]) {
         [_movie gotoBeginning];
@@ -522,6 +548,7 @@
         [_subtitles addObjectsFromArray:subtitles];
     }
     [[_playlist currentItem] addSubtitleURLs:subtitleURLs];
+    [self updateExternalSubtitleTrackNames];
     [self updateSubtitleLanguageMenuItems];
     [_playlistController updateUI];
     [_propertiesView reloadData];
@@ -531,8 +558,9 @@
     //                         info:[self subtitleInfoMessageString]];
 
     if (initSubtitle && 0 < [_subtitles count]) {
-        // enable 1st subtitle only by default.
-        [[_subtitles objectAtIndex:0] setEnabled:TRUE];
+        [self autoenableSubtitles];
+        [self updateSubtitleLanguageMenuItems];
+        [_propertiesView reloadData];
 
         [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
 
@@ -758,7 +786,7 @@
     //TRACE(@"%s %@:%d", __PRETTY_FUNCTION__, [tableColumn identifier], rowIndex);
     int vCount = [[_movie videoTracks] count];
     int aCount = [[_movie audioTracks] count];
-    int sCount = [_subtitles count];
+    //int sCount = [_subtitles count];
     int vIndex = rowIndex;
     int aIndex = vIndex - vCount;
     int sIndex = aIndex - aCount;
@@ -791,14 +819,7 @@
                 }
                 else {
                     // max 3 subtitles can be enabled
-                    int count = 0;
-                    MSubtitle* subtitle;
-                    NSEnumerator* e = [_subtitles objectEnumerator];
-                    while (subtitle = [e nextObject]) {
-                        if ([subtitle isEnabled]) {
-                            count++;
-                        }
-                    }
+                    int count = [self enabledSubtitleCount];
                     [[tableColumn dataCellForRow:rowIndex] setEnabled:count < 3];
                 }
                 return [NSNumber numberWithBool:state];
@@ -813,11 +834,7 @@
             return [[[_movie audioTracks] objectAtIndex:aIndex] name];
         }
         else {
-            NSString* s = NSLocalizedString(@"External Subtitle", nil);
-            if (1 < sCount) {
-                s = [s stringByAppendingFormat:@" %d", sIndex + 1];
-            }
-            return s;
+            return [[_subtitles objectAtIndex:sIndex] trackName];
         }
     }
     else if ([identifier isEqualToString:@"codec"]) {

@@ -26,6 +26,7 @@
 		AF0204AA0C31D01F008F7D03 /* FSPausePressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A60C31D01F008F7D03 /* FSPausePressed.tiff */; };
 		AF0204AB0C31D01F008F7D03 /* FSPlay.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A70C31D01F008F7D03 /* FSPlay.tiff */; };
 		AF0204AC0C31D01F008F7D03 /* FSPlayPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A80C31D01F008F7D03 /* FSPlayPressed.tiff */; };
+		AF0247280F137C79007339EB /* libmatroska.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF0247270F137C79007339EB /* libmatroska.a */; };
 		AF0344520C71E0E400915EAB /* MSubtitleParser_SRT.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */; };
 		AF03F1870BDE3E2D0066B086 /* MMovieOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */; };
 		AF0439910BEA14EA0016091F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF0439900BEA14EA0016091F /* Carbon.framework */; };
@@ -177,6 +178,7 @@
 		AF850C730E3B18B000F73FEB /* MSubtitleItem.m in Sources */ = {isa = PBXBuildFile; fileRef = AF850C710E3B18B000F73FEB /* MSubtitleItem.m */; };
 		AF8DC2B00F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF8DC2AF0F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff */; };
 		AF9569820BFEEABF002A60BE /* Movist.m in Sources */ = {isa = PBXBuildFile; fileRef = AF9569810BFEEABF002A60BE /* Movist.m */; };
+		AF9653350F1094A70018A37A /* MSubtitleParser_MKV.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF9653340F1094A70018A37A /* MSubtitleParser_MKV.mm */; };
 		AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */; };
 		AFA843C90D1DA8D500D4805C /* AppController_AudioDigital.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA843C80D1DA8D500D4805C /* AppController_AudioDigital.m */; };
 		AFA999DD0DACDFE800E49D6E /* HUDClose.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFA999DA0DACDFE800E49D6E /* HUDClose.tiff */; };
@@ -272,6 +274,7 @@
 		AF0204A60C31D01F008F7D03 /* FSPausePressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPausePressed.tiff; path = Images/FSPausePressed.tiff; sourceTree = "<group>"; };
 		AF0204A70C31D01F008F7D03 /* FSPlay.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPlay.tiff; path = Images/FSPlay.tiff; sourceTree = "<group>"; };
 		AF0204A80C31D01F008F7D03 /* FSPlayPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPlayPressed.tiff; path = Images/FSPlayPressed.tiff; sourceTree = "<group>"; };
+		AF0247270F137C79007339EB /* libmatroska.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmatroska.a; path = contrib/lib/libmatroska.a; sourceTree = "<group>"; };
 		AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SRT.m; sourceTree = "<group>"; };
 		AF03F1850BDE3E2D0066B086 /* MMovieOSD.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MMovieOSD.h; sourceTree = "<group>"; };
 		AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovieOSD.m; sourceTree = "<group>"; };
@@ -453,6 +456,8 @@
 		AF850C720E3B18B000F73FEB /* MSubtitleItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleItem.h; sourceTree = "<group>"; };
 		AF8DC2AF0F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOffDisabled.tiff; path = Images/HUDCheckBoxOffDisabled.tiff; sourceTree = "<group>"; };
 		AF9569810BFEEABF002A60BE /* Movist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = Movist.m; sourceTree = "<group>"; };
+		AF9653330F1094A70018A37A /* MSubtitleParser_MKV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_MKV.h; sourceTree = "<group>"; };
+		AF9653340F1094A70018A37A /* MSubtitleParser_MKV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MSubtitleParser_MKV.mm; sourceTree = "<group>"; };
 		AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateChecker.h; sourceTree = "<group>"; };
 		AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateChecker.m; sourceTree = "<group>"; };
 		AFA843C80D1DA8D500D4805C /* AppController_AudioDigital.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController_AudioDigital.m; sourceTree = "<group>"; };
@@ -559,6 +564,7 @@
 				2CFA586B0DB3496B0084BFB6 /* libfaad.a in Frameworks */,
 				2CFA586C0DB3496B0084BFB6 /* libpostproc.a in Frameworks */,
 				2CFA586D0DB3496B0084BFB6 /* libswscale.a in Frameworks */,
+				AF0247280F137C79007339EB /* libmatroska.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -628,7 +634,7 @@
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
-				2CFA585D0DB349390084BFB6 /* FFmpeg */,
+				AF0247250F137C54007339EB /* Libraries */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -693,6 +699,23 @@
 				2CFA58650DB3496B0084BFB6 /* libswscale.a */,
 			);
 			name = FFmpeg;
+			sourceTree = "<group>";
+		};
+		AF0247250F137C54007339EB /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				2CFA585D0DB349390084BFB6 /* FFmpeg */,
+				AF0247260F137C63007339EB /* matroska */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		AF0247260F137C63007339EB /* matroska */ = {
+			isa = PBXGroup;
+			children = (
+				AF0247270F137C79007339EB /* libmatroska.a */,
+			);
+			name = matroska;
 			sourceTree = "<group>";
 		};
 		AF07C1B90C4BAA490007D17B /* FullScreen */ = {
@@ -782,6 +805,8 @@
 				AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */,
 				AFCD04C00DBA39B300348AB0 /* MSubtitleParser_SUB.h */,
 				AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */,
+				AF9653330F1094A70018A37A /* MSubtitleParser_MKV.h */,
+				AF9653340F1094A70018A37A /* MSubtitleParser_MKV.mm */,
 				AFCD04F10DBA6B6300348AB0 /* unrarlib.h */,
 				AFCD04F00DBA6B6300348AB0 /* unrarlib.c */,
 			);
@@ -1285,6 +1310,7 @@
 				AFCD39520E0454AA00963D8E /* FullScreener_Transition.m in Sources */,
 				AF850C730E3B18B000F73FEB /* MSubtitleItem.m in Sources */,
 				AF2546810E40AC4500889018 /* MSubtitle_Render.m in Sources */,
+				AF9653350F1094A70018A37A /* MSubtitleParser_MKV.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1347,6 +1373,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_ONE_BYTE_BOOL = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/$(arch)/include";
@@ -1354,9 +1381,8 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(SRCROOT)/contrib/lib",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/contrib/lib\"";
 				OTHER_LDFLAGS = (
 					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
 					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libbz2.dylib",
@@ -1376,15 +1402,15 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
+				GCC_ONE_BYTE_BOOL = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/$(arch)/include";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(SRCROOT)/contrib/lib",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/contrib/lib\"";
 				OTHER_LDFLAGS = (
 					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
 					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libbz2.dylib",

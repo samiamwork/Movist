@@ -24,17 +24,39 @@
 
 #import "MSubtitleParser.h"
 
-@interface MSubtitleParser_SRT : MSubtitleParser
+#if defined(__cplusplus)
+namespace libebml {
+    class StdIOCallback;
+    class EbmlStream;
+    class EbmlElement;
+}
+namespace libmatroska {
+    class KaxCluster;
+}
+#endif
+
+@interface MSubtitleParser_MKV : MSubtitleParser
 {
-    NSString* _source;
-    NSRange _sourceRange;
-    
-    NSMutableArray* _subtitles;
+    NSMutableDictionary* _subtitles;
+
+#if defined(__cplusplus)
+    libebml::StdIOCallback* _file;
+    libebml::EbmlStream* _stream;
+    libebml::EbmlElement* _level0;
+    libebml::EbmlElement* _level1;
+    libebml::EbmlElement* _level2;
+    libebml::EbmlElement* _level3;
+    libmatroska::KaxCluster* _cluster;
+    uint64_t _timecodeScale;
+    int _upperLevel;
+#endif
+
+    // current parsing info
+    NSMutableAttributedString* _string;
+    float _beginTime;
 }
 
-- (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
-                  error:(NSError**)error;
-
-- (NSMutableAttributedString*)parseSubtitleString:(NSString*)string;
+- (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error;
 
 @end
+

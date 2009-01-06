@@ -613,8 +613,14 @@ NSString* videoCodecName(int codecId);
     if ([menuItem action] == @selector(reopenSubtitleAction:)) {
         return (_subtitles != nil);
     }
-    if ([menuItem action] == @selector(subtitleLanguageAction:) ||
-        [menuItem action] == @selector(subtitleVisibleAction:) ||
+    if ([menuItem action] == @selector(subtitleLanguageAction:)) {
+        BOOL enabled = (_subtitles && 0 < [_subtitles count]);
+        if (enabled && [menuItem isAlternate] && ![menuItem state]) {
+            enabled = ([self enabledSubtitleCount] < 3);
+        }
+        return enabled;
+    }
+    if ([menuItem action] == @selector(subtitleVisibleAction:) ||
         [menuItem action] == @selector(subtitleFontSizeAction:) ||
         [menuItem action] == @selector(subtitleVMarginAction:) ||
         [menuItem action] == @selector(subtitlePositionAction:) ||

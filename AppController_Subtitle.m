@@ -25,8 +25,44 @@
 
 #import "MMovieView.h"
 #import "MMovie.h"
+#import "MSubtitle.h"
 
 @implementation AppController (Subtitle)
+
+- (void)changeSubtitleVisible
+{
+    NSMenuItem* visibleItem;
+    NSEnumerator* e = [[_subtitleMenu itemArray] objectEnumerator];
+    while (visibleItem = [e nextObject]) {
+        if ([visibleItem action] == @selector(subtitleVisibleAction:)) {
+            break;
+        }
+    }
+    
+    if ([_movieView subtitleVisible]) {
+        [_movieView setSubtitleVisible:FALSE];
+        [_movieView setMessage:NSLocalizedString(@"Hide Subtitle", nil)];
+        [visibleItem setTitle:NSLocalizedString(@"Show Subtitle", nil)];
+    }
+    else {
+        [_movieView setSubtitleVisible:TRUE];
+        [_movieView setMessage:NSLocalizedString(@"Show Subtitle", nil)];
+        [visibleItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
+    }
+}
+
+- (int)enabledSubtitleCount
+{
+    int count = 0;
+    MSubtitle* subtitle;
+    NSEnumerator* e = [_subtitles objectEnumerator];
+    while (subtitle = [e nextObject]) {
+        if ([subtitle isEnabled]) {
+            count++;
+        }
+    }
+    return count;
+}
 
 - (void)setSubtitleEnable:(BOOL)enable
 {
@@ -50,28 +86,6 @@
         [_movieView removeAllSubtitles];
         [_subtitles release], _subtitles = nil;
         [self updateSubtitleLanguageMenuItems];
-    }
-}
-
-- (void)changeSubtitleVisible
-{
-    NSMenuItem* visibleItem;
-    NSEnumerator* e = [[_subtitleMenu itemArray] objectEnumerator];
-    while (visibleItem = [e nextObject]) {
-        if ([visibleItem action] == @selector(subtitleVisibleAction:)) {
-            break;
-        }
-    }
-                    
-    if ([_movieView subtitleVisible]) {
-        [_movieView setSubtitleVisible:FALSE];
-        [_movieView setMessage:NSLocalizedString(@"Hide Subtitle", nil)];
-        [visibleItem setTitle:NSLocalizedString(@"Show Subtitle", nil)];
-    }
-    else {
-        [_movieView setSubtitleVisible:TRUE];
-        [_movieView setMessage:NSLocalizedString(@"Show Subtitle", nil)];
-        [visibleItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
     }
 }
 
@@ -353,11 +367,11 @@
     }
 
     MSubtitle* subtitle;
-    int i, enabledCount = 0;
+    int enabledCount = 0;
     if (0 < [_subtitleNameSet count]) {
         // select previous selected language
-        for (i = 0; i < [_subtitles count]; i++) {
-            subtitle = [_subtitles objectAtIndex:i];
+        NSEnumerator* e = [_subtitles objectEnumerator];
+        while (subtitle = [e nextObject]) {
             if ([_subtitleNameSet containsObject:[subtitle name]]) {
                 [subtitle setEnabled:TRUE];
                 enabledCount++;
@@ -367,25 +381,36 @@
             }
         }
     }
+    else {
+        // select by user-defined default language identifiers
+        NSArray* defaultLangIDs = [[_defaults objectForKey:MDefaultLanguageIdentifiersKey]
+                                   componentsSeparatedByString:@" "];
+        NSEnumerator* e = [_subtitles objectEnumerator];
+        while (subtitle = [e nextObject]) {
+            if ([subtitle checkDefaultLanguage:defaultLangIDs]) {
+                [subtitle setEnabled:TRUE];
+                enabledCount = 1;
+                break;
+            }
+        }
+        while (subtitle = [e nextObject]) {
+            [subtitle setEnabled:FALSE];
+        }
+    }
+
     if (enabledCount == 0) {
         // select first language by default
-        for (i = 0; i < [_subtitles count]; i++) {
-            subtitle = [_subtitles objectAtIndex:i];
-            [subtitle setEnabled:(i == 0)];
+        NSEnumerator* e = [_subtitles objectEnumerator];
+        [[e nextObject] setEnabled:TRUE];
+        while (subtitle = [e nextObject]) {
+            [subtitle setEnabled:FALSE];
         }
     }
 }
 
 - (void)changeSubtitleLanguage:(int)tag
 {
-    int index = tag;
-    if (0 <= index) {
-        int i, subtitleCount = [_subtitles count];
-        for (i = 0; i < subtitleCount; i++) {
-            [[_subtitles objectAtIndex:i] setEnabled:(i == index)];
-        }
-    }
-    else {  // rotation
+    if (tag < 0) {  // rotation
         if ([_subtitles count] <= 1) {
             return;
         }
@@ -436,6 +461,22 @@
         }
         for (i = 0; i < subtitleCount; i++) {
             [[_subtitles objectAtIndex:i] setEnabled:[indexSet containsIndex:i]];
+        }
+    }
+    else {  // select or enable/disable
+        BOOL addRemove = (100 <= tag);
+        int index = (addRemove) ? (tag - 100) : tag;
+        if (0 <= index) {
+            if (addRemove) {
+                MSubtitle* subtitle = [_subtitles objectAtIndex:index];
+                [subtitle setEnabled:![subtitle isEnabled]];
+            }
+            else {  // enable only one at index.
+                int i, subtitleCount = [_subtitles count];
+                for (i = 0; i < subtitleCount; i++) {
+                    [[_subtitles objectAtIndex:i] setEnabled:(i == index)];
+                }
+            }
         }
     }
 
@@ -497,25 +538,42 @@
     }
     else {
         MSubtitle* subtitle;
+        NSString* keyEquivalent;
         unsigned int mask = NSCommandKeyMask | NSControlKeyMask;
-        unsigned int i, count = [_subtitles count];
-        for (i = 0; i < count; i++) {
+        unsigned int i, mi, count = [_subtitles count];
+        for (i = mi = 0; i < count; i++) {
             subtitle = [_subtitles objectAtIndex:i];
+            keyEquivalent = [NSString stringWithFormat:@"%d", i + 1];
+            // select ... item
             item = [_subtitleMenu
-                        insertItemWithTitle:[NSString stringWithFormat:@"%@ (%@)",
-                                             [subtitle name], [subtitle type]]
-                                     action:@selector(subtitleLanguageAction:)
-                              keyEquivalent:@"" atIndex:i];
+                    insertItemWithTitle:[NSString stringWithFormat:
+                                         NSLocalizedString(@"%@ - %@", nil),
+                                         [subtitle trackName], [subtitle name]]
+                                 action:@selector(subtitleLanguageAction:)
+                          keyEquivalent:keyEquivalent atIndex:mi++];
             [item setTag:i];
             [item setState:[subtitle isEnabled]];
-            [item setKeyEquivalent:[NSString stringWithFormat:@"%d", i + 1]];
             [item setKeyEquivalentModifierMask:mask];
+
+            // enable/disable ... item
+            item = [_subtitleMenu
+                    insertItemWithTitle:[NSString stringWithFormat:
+                                         ([subtitle isEnabled] ? 
+                                          NSLocalizedString(@"Disable %@ - %@", nil) :
+                                          NSLocalizedString(@"Enable %@ - %@", nil)),
+                                         [subtitle trackName], [subtitle name]]
+                                 action:@selector(subtitleLanguageAction:)
+                          keyEquivalent:keyEquivalent atIndex:mi++];
+            [item setTag:i + 100];
+            [item setState:[subtitle isEnabled]];
+            [item setKeyEquivalentModifierMask:mask | NSAlternateKeyMask];
+            [item setAlternate:TRUE];
         }
         if (1 < [_subtitles count]) {   // add rotate item
             item = [_subtitleMenu
                     insertItemWithTitle:NSLocalizedString(@"Subtitle Rotation", nil)
                     action:@selector(subtitleLanguageAction:)
-                    keyEquivalent:@"s" atIndex:i];
+                    keyEquivalent:@"s" atIndex:mi];
             [item setKeyEquivalentModifierMask:mask];
             [item setTag:-1];
         }
@@ -527,9 +585,9 @@
     for (i = 0; i < 3; i++) {
         subtitle = [_movieView subtitleAtIndex:i];
         if (subtitle) {
-            [items[i] setTitle:[NSString stringWithFormat:@"%@ %d: %@ (%@)",
+            [items[i] setTitle:[NSString stringWithFormat:@"%@ %d: %@ - %@",
                                 NSLocalizedString(@"Subtitle", nil), i + 1,
-                                [subtitle name], [subtitle type]]];
+                                [subtitle trackName], [subtitle name]]];
             [items[i] setEnabled:TRUE];
         }
         else {

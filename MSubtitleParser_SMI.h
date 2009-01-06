@@ -38,7 +38,6 @@
     // options
     BOOL _removeLastBR;
     BOOL _replaceNewLineWithBR;
-    NSArray* _defaultLanguageIdentifiers;
 
     NSMutableDictionary* _classes;
     NSMutableArray* _subtitles;
@@ -47,8 +46,9 @@
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error;
 
+- (NSMutableAttributedString*)parseSubtitleString:(NSString*)string;
+
 @end
 
 // option keys
 extern NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR;
-extern NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers;

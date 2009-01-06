@@ -1338,8 +1338,11 @@ vobsub_reset(void *vobhandle)
 - (void)addSubtitleClass:(NSString*)class atIndex:(int)index
 {
     TRACE(@"%s class=%@ index=%d", __PRETTY_FUNCTION__, class, index);
-    MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL type:@"SUB"] autorelease];
+    MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease];
+    [subtitle setType:@"SUB"];
     [subtitle setName:class];
+    [subtitle setTrackName:NSLocalizedString(@"External Subtitle", nil)];
+    [subtitle setEmbedded:FALSE];
     [_subtitles addObject:subtitle];
     [_fileOffsets addObject:[NSMutableDictionary dictionaryWithCapacity:1024]];
 }
@@ -1386,16 +1389,17 @@ vobsub_reset(void *vobhandle)
         }
     }
     if (0 <= i) {
-        NSData* data = [NSData dataWithBytes:data length:dataSize];
-        NSImage* image = [[[NSImage alloc] initWithData:data] autorelease];
-
-        NSDictionary* offsetDict = [_fileOffsets objectAtIndex:classIndex];
-        float beginTime = [[offsetDict objectForKey:offset] floatValue];
-        float endTime   = (nextOffset == nil) ? (beginTime + 5) :
-                          [[offsetDict objectForKey:nextOffset] floatValue];
-        MSubtitle* subtitle = [_subtitles objectAtIndex:classIndex];
-        [subtitle addImage:image beginTime:beginTime endTime:endTime];
-        return TRUE;
+        NSData* imgData = [NSData dataWithBytes:data length:dataSize];
+        NSImage* image = [[[NSImage alloc] initWithData:imgData] autorelease];
+        if (image) {
+            NSDictionary* offsetDict = [_fileOffsets objectAtIndex:classIndex];
+            float beginTime = [[offsetDict objectForKey:offset] floatValue];
+            float endTime   = (nextOffset == nil) ? (beginTime + 5) :
+                              [[offsetDict objectForKey:nextOffset] floatValue];
+            MSubtitle* subtitle = [_subtitles objectAtIndex:classIndex];
+            [subtitle addImage:image beginTime:beginTime endTime:endTime];
+            return TRUE;
+        }
     }
     return FALSE;
 }

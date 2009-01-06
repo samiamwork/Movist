@@ -328,8 +328,10 @@
 
 @interface AppController (Subtitle)
 
-- (void)setSubtitleEnable:(BOOL)enable;
 - (void)changeSubtitleVisible;
+
+- (int)enabledSubtitleCount;
+- (void)setSubtitleEnable:(BOOL)enable;
 
 - (void)setSubtitleFontSize:(float)size atIndex:(int)index;
 - (void)changeSubtitleFontSize:(int)tag atIndex:(int)index;

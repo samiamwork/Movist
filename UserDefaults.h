@@ -117,6 +117,7 @@ extern NSString* MRemoveGreenBoxKey;
 #pragma mark prefs: advanced - details: audio
 #pragma mark prefs: advanced - details: subtitle
 extern NSString* MDisablePerianSubtitleKey;
+extern NSString* MAutoLoadMKVEmbeddedSubtitlesKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultLanguageIdentifiersKey;
 extern NSString* MAutoLetterBoxHeightMaxLinesKey;

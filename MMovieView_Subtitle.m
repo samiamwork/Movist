@@ -87,15 +87,16 @@
     }
 
     [_subtitle[i] quitRenderThread];
-    [self updateSubtitleOSDAtIndex:i sync:TRUE];
     [_subtitle[i] setMovieOSD:nil];
     [_subtitle[i] release];
     for (; i < 2; i++) {
         _subtitle[i] = _subtitle[i + 1];
         [_subtitle[i] setMovieOSD:_subtitleOSD[i]];
-        [self updateSubtitleOSDAtIndex:i sync:TRUE];   // for optimized rendering
     }
     _subtitle[i] = nil;
+    for (i = 0; i < 3; i++) {
+        [self updateSubtitleOSDAtIndex:i sync:TRUE];
+    }
 
     [self updateIndexOfSubtitleInLBOX];
     [self updateLetterBoxHeight];
@@ -109,10 +110,10 @@
     for (i = 0; i < 3; i++) {
         if (_subtitle[i]) {
             [_subtitle[i] quitRenderThread];
-            [self updateSubtitleOSDAtIndex:i sync:TRUE];
             [_subtitle[i] setMovieOSD:nil];
             [_subtitle[i] release];
             _subtitle[i] = nil;
+            [self updateSubtitleOSDAtIndex:i sync:TRUE];
         }
     }
 
@@ -127,7 +128,7 @@
     BOOL ret = TRUE;
     [_drawLock lock];
     if (!_movie || !_subtitle[index] || ![_subtitle[index] isEnabled]) {
-        [_subtitleOSD[index] setTexImage:nil];
+        [_subtitleOSD[index] clearContent];
         _needsSubtitleUpdate[index] = FALSE;
         [_auxSubtitleOSD[index] clearContent];
     }

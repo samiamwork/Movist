@@ -37,14 +37,15 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (id)initWithURL:(NSURL*)url type:(NSString*)type
+- (id)initWithURL:(NSURL*)url
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, type);
     if (self = [super init]) {
         _url = [url retain];
-        _type = [type retain];
         _name = [NSLocalizedString(@"Unnamed", nil) retain];
-        _enabled = TRUE;
+        _language = [NSLocalizedString(@"Unknown Language", nil) retain];
+        _embedded = FALSE;
+        _enabled = FALSE;
         _items = [[NSMutableArray alloc] init];
         _indexCache = -1;     // for initial comparison
 
@@ -66,6 +67,8 @@
     [_renderConditionLock release];
 
     [_items release];
+    [_trackName release];
+    [_language release];
     [_name release];
     [_type release];
     [super dealloc];
@@ -77,12 +80,30 @@
 - (NSURL*)url { return _url; }
 - (NSString*)type { return _type; }
 - (NSString*)name { return _name; }
-- (void)setName:(NSString*)name { [name retain], [_name release], _name = name; }
-
+- (NSString*)language { return _language; }
+- (NSString*)trackName { return _trackName; }
+- (BOOL)isEmbedded { return _embedded; }
+- (void)setType:(NSString*)s { [s retain], [_type release], _type = s; }
+- (void)setName:(NSString*)s { [s retain], [_name release], _name = s; }
+- (void)setLanguage:(NSString*)s { [s retain], [_language release], _language = s; }
+- (void)setTrackName:(NSString*)s { [s retain], [_trackName release], _trackName = s; }
+- (void)setEmbedded:(BOOL)embedded { _embedded = embedded; }
 - (NSString*)summary
 {
-    NSString* s = [_url isFileURL] ? [_url path] : [_url absoluteString];
-    return [NSString stringWithFormat:@"%@, %@", _name, [s lastPathComponent]];
+    return [NSString stringWithFormat:@"%@, %@ (%@)", [self type], _name, _language];
+}
+
+- (BOOL)checkDefaultLanguage:(NSArray*)defaultLangIDs
+{
+    NSString* s;
+    NSEnumerator* e = [defaultLangIDs objectEnumerator];
+    while (s = [e nextObject]) {
+        if ([_name rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound ||
+            [_language rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            return TRUE;
+        }
+    }
+    return FALSE;
 }
 
 - (BOOL)isEmpty { return ([_items count] == 0); }
@@ -130,6 +151,8 @@
 - (void)addString:(NSMutableAttributedString*)string
         beginTime:(float)beginTime endTime:(float)endTime
 {
+    //TRACE(@"subtitle[\"%@\"] addString:\"%@\" beginTime:%f endTime:%f",
+    //      [self name], [string string], beginTime, endTime);
     #define NEW_LINE    [[[NSAttributedString alloc] initWithString:@"\n"] autorelease]
 
     int index;

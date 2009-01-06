@@ -72,36 +72,20 @@ typedef struct _SMITag {
 #pragma mark -
 
 NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWithBR";
-NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLanguageIdentifiers";
 
 @implementation MSubtitleParser_SMI
 
 - (MSubtitle*)addSubtitleClass:(NSString*)class
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, class);
-    MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL type:@"SMI"] autorelease];
+    MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease];
+    [subtitle setType:@"SMI"];
     [subtitle setName:class];   // name will be updated later by "Name:" field.
+    [subtitle setTrackName:NSLocalizedString(@"External Subtitle", nil)];
+    [subtitle setEmbedded:FALSE];
     [_subtitles addObject:subtitle];
     [_classes setObject:subtitle forKey:class];
     return subtitle;
-}
-
-- (BOOL)reorderSubtitle:(MSubtitle*)subtitle byField:(NSString*)field
-{
-    NSRange r;
-    NSString* identifier;
-    NSEnumerator* enumerator = [_defaultLanguageIdentifiers objectEnumerator];
-    while (identifier = [enumerator nextObject]) {
-        r = [field rangeOfString:identifier options:NSCaseInsensitiveSearch];
-        if (r.location != NSNotFound) {
-            [subtitle retain];
-            [_subtitles removeObject:subtitle];
-            [_subtitles insertObject:subtitle atIndex:0];
-            [subtitle release];
-            return TRUE;
-        }
-    }
-    return FALSE;
 }
 
 - (void)parse_STYLE:(NSString*)attr
@@ -118,7 +102,6 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
     }
 
     MSubtitle* subtitle = nil;
-    BOOL reordered = FALSE;
     NSRange tr, cr = tag.range;
     while (0 < cr.length) {
         tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
@@ -129,9 +112,6 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
             tr.location++, tr.length--;
             NSString* class = [_source substringWithRange:tr];
             subtitle = [self addSubtitleClass:class];
-            if (!reordered) {
-                reordered = [self reorderSubtitle:subtitle byField:class];
-            }
         }
         else if ([_source characterAtIndex:tr.location] == '#') {
             tr.location++, tr.length--;
@@ -141,14 +121,10 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
             if (![_source compare:@"NAME" options:NSCaseInsensitiveSearch range:tr]) {
                 tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
                 [subtitle setName:[_source substringWithRange:tr]];
-                if (!reordered) {
-                    reordered = [self reorderSubtitle:subtitle byField:[subtitle name]];
-                }
             }
-            else if (_defaultLanguageIdentifiers && !reordered &&
-                     ![_source compare:@"LANG" options:NSCaseInsensitiveSearch range:tr]) {
+            else if (![_source compare:@"LANG" options:NSCaseInsensitiveSearch range:tr]) {
                 tr = [_source tokenRangeForDelimiterSet:_styleDelimSet rangePtr:&cr];
-                reordered = [self reorderSubtitle:subtitle byField:[_source substringWithRange:tr]];
+                [subtitle setLanguage:[_source substringWithRange:tr]];
             }
         }
     }
@@ -216,10 +192,14 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
     }
 }
 
-- (void)parseSubtitleString:(NSString*)string
-                       time:(float)time class:(NSString*)class
+- (NSMutableAttributedString*)parseSubtitleString:(NSString*)string
 {
     //TRACE(@"%s \"%@\" (%g) (\"%@\")", __PRETTY_FUNCTION__, string, time, class);
+
+    // this method can be called independently for parsing embedded subtitle.
+    // following instance variables should be initializaed before calling.
+    // _delimSet, _fontDelimSet, _replaceNewLineWithBR, _removeLastBR
+
     NSMutableString* ms = [NSMutableString stringWithCapacity:[string length]];
 
     // make ms without new-lines
@@ -323,7 +303,12 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
         }
         [mas fixAttributesInRange:NSMakeRange(0, [mas length])];
     }
+    return mas;
+}
 
+- (void)parseSubtitleString:(NSString*)string time:(float)time forClass:(NSString*)class
+{
+    //TRACE(@"%s \"%@\" (%g) (\"%@\")", __PRETTY_FUNCTION__, string, time, class);
     if (!class) {
         class = NSLocalizedString(@"Unnamed", nil);
     }
@@ -331,7 +316,7 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
     if (!subtitle) {
         subtitle = [self addSubtitleClass:class];
     }
-    [subtitle addString:mas time:time];
+    [subtitle addString:[self parseSubtitleString:string] time:time];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -341,16 +326,12 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _removeLastBR = TRUE;   // always true
     _replaceNewLineWithBR = TRUE;
-    _defaultLanguageIdentifiers = nil;
     if (options) {
         NSNumber* n = (NSNumber*)[options objectForKey:
                                   MSubtitleParserOptionKey_SMI_replaceNewLineWithBR];
         if (n) {
             _replaceNewLineWithBR = [n boolValue];
         }
-        
-        _defaultLanguageIdentifiers = (NSArray*)[options objectForKey:
-                                                 MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers];
     }
 
     _delimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
@@ -392,7 +373,7 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
                 if (0.0 <= time) {
                     range.length = tag.range.location - range.location;
                     [self parseSubtitleString:[_source substringWithRange:range]
-                                         time:time class:class];
+                                         time:time forClass:class];
                     time = -1.0;    // reset
                 }
                 time = [self parse_SYNC:tag.attr];
@@ -420,7 +401,7 @@ NSArray* MSubtitleParserOptionKey_SMI_defaultLanguageIdentifiers = @"defaultLang
             range.length = [_source length] - range.location;
         }
         [self parseSubtitleString:[_source substringWithRange:range]
-                             time:time class:class];
+                             time:time forClass:class];
     }
 
     // remove empty subtitle if exist and
