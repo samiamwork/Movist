@@ -27,6 +27,7 @@
 		AF0204AB0C31D01F008F7D03 /* FSPlay.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A70C31D01F008F7D03 /* FSPlay.tiff */; };
 		AF0204AC0C31D01F008F7D03 /* FSPlayPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A80C31D01F008F7D03 /* FSPlayPressed.tiff */; };
 		AF0247280F137C79007339EB /* libmatroska.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF0247270F137C79007339EB /* libmatroska.a */; };
+		AF0247690F1389E7007339EB /* MSubtitleParser_SSA.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0247680F1389E7007339EB /* MSubtitleParser_SSA.m */; };
 		AF0344520C71E0E400915EAB /* MSubtitleParser_SRT.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */; };
 		AF03F1870BDE3E2D0066B086 /* MMovieOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */; };
 		AF0439910BEA14EA0016091F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF0439900BEA14EA0016091F /* Carbon.framework */; };
@@ -275,6 +276,8 @@
 		AF0204A70C31D01F008F7D03 /* FSPlay.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPlay.tiff; path = Images/FSPlay.tiff; sourceTree = "<group>"; };
 		AF0204A80C31D01F008F7D03 /* FSPlayPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPlayPressed.tiff; path = Images/FSPlayPressed.tiff; sourceTree = "<group>"; };
 		AF0247270F137C79007339EB /* libmatroska.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmatroska.a; path = contrib/lib/libmatroska.a; sourceTree = "<group>"; };
+		AF0247670F1389E7007339EB /* MSubtitleParser_SSA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_SSA.h; sourceTree = "<group>"; };
+		AF0247680F1389E7007339EB /* MSubtitleParser_SSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SSA.m; sourceTree = "<group>"; };
 		AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SRT.m; sourceTree = "<group>"; };
 		AF03F1850BDE3E2D0066B086 /* MMovieOSD.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MMovieOSD.h; sourceTree = "<group>"; };
 		AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovieOSD.m; sourceTree = "<group>"; };
@@ -803,6 +806,8 @@
 				AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */,
 				AF37E14A0D20BA4300F572C4 /* MSubtitleParser_SRT.h */,
 				AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */,
+				AF0247670F1389E7007339EB /* MSubtitleParser_SSA.h */,
+				AF0247680F1389E7007339EB /* MSubtitleParser_SSA.m */,
 				AFCD04C00DBA39B300348AB0 /* MSubtitleParser_SUB.h */,
 				AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */,
 				AF9653330F1094A70018A37A /* MSubtitleParser_MKV.h */,
@@ -1311,6 +1316,7 @@
 				AF850C730E3B18B000F73FEB /* MSubtitleItem.m in Sources */,
 				AF2546810E40AC4500889018 /* MSubtitle_Render.m in Sources */,
 				AF9653350F1094A70018A37A /* MSubtitleParser_MKV.mm in Sources */,
+				AF0247690F1389E7007339EB /* MSubtitleParser_SSA.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

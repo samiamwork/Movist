@@ -23,6 +23,7 @@
 #import "MSubtitleParser_MKV.h"
 
 #import "MSubtitleParser_SRT.h"
+#import "MSubtitleParser_SSA.h"
 
 #import "ebml/StdIOCallback.h"
 #import "ebml/EbmlHead.h"
@@ -71,6 +72,22 @@ namespace { // unnamed
 
 @implementation MSubtitleParser_MKV
 
+- (id)initWithURL:(NSURL*)subtitleURL
+{
+    if (self = [super initWithURL:subtitleURL]) {
+        _parser_SRT = [[MSubtitleParser_SRT alloc] init];
+        _parser_SSA = [[MSubtitleParser_SSA alloc] init];
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    [_parser_SSA release];
+    [_parser_SRT release];
+    [super dealloc];
+}
+
 - (void)addSubtitleWithNumber:(int)number
 {
     [_subtitles setObject:[[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease]
@@ -108,7 +125,8 @@ namespace { // unnamed
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#if defined(DEBUG)
+//#define TRACE_PARSING
+#if defined(TRACE_PARSING)
     static void TRACE_ELEMENT(EbmlElement* element, int level,
                               NSString* format, ...)
     {
@@ -240,11 +258,8 @@ struct master_sorter_t {
 - (void)parseBlockGroup
 {
     BOOL blockGroupPrinted = FALSE;
-
     MSubtitle* subtitle = nil;
-
     char text[1024];
-    MSubtitleParser_SRT* parser_SRT = [[[MSubtitleParser_SRT alloc] init] autorelease];
 
     EbmlMaster* master2 = static_cast<EbmlMaster*>(_level2);
     for (int i2 = 0; i2 < master2->ListSize(); i2++) {
@@ -279,14 +294,14 @@ struct master_sorter_t {
 
                     NSString* s = [NSString stringWithUTF8String:text];
                     if ([type isEqualToString:@"UTF8"]) {
-                        _string = [parser_SRT parseSubtitleString:s];
+                        _string = [_parser_SRT parseSubtitleString:s];
                     }
                     else if ([type isEqualToString:@"SSA"] ||
                              [type isEqualToString:@"ASS"]) {
-                        _string = [parser_SRT parseSubtitleString:s];
+                        _string = [_parser_SSA parseSubtitleString_MKV:s];
                     }
                     else if ([type isEqualToString:@"USF"]) {
-                        _string = [parser_SRT parseSubtitleString:s];
+                        _string = [_parser_SRT parseSubtitleString:s];
                     }
                     TRACE_ELEMENT(0, 4, @"Subtitle: \"%@\"", [_string string]);
                 }
@@ -295,8 +310,8 @@ struct master_sorter_t {
         }
         else if (subtitle && is_id(_level3, KaxBlockDuration)) {
             KaxBlockDuration& duration = *static_cast<KaxBlockDuration*>(_level3);
-            float d = (((float)uint64(duration)) * _timecodeScale / 1000000.0) / 1000.0;
             if (_string) {
+                float d = (((float)uint64(duration)) * _timecodeScale / 1000000.0) / 1000.0;
                 [subtitle addString:_string beginTime:_beginTime endTime:_beginTime + d];
                 _string = nil;
             }

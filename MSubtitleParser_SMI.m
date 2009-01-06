@@ -194,7 +194,7 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
 
 - (NSMutableAttributedString*)parseSubtitleString:(NSString*)string
 {
-    //TRACE(@"%s \"%@\" (%g) (\"%@\")", __PRETTY_FUNCTION__, string, time, class);
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, string);
 
     // this method can be called independently for parsing embedded subtitle.
     // following instance variables should be initializaed before calling.

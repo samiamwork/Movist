@@ -35,6 +35,9 @@ namespace libmatroska {
 }
 #endif
 
+@class MSubtitleParser_SRT;
+@class MSubtitleParser_SSA;
+
 @interface MSubtitleParser_MKV : MSubtitleParser
 {
     NSMutableDictionary* _subtitles;
@@ -51,11 +54,15 @@ namespace libmatroska {
     int _upperLevel;
 #endif
 
+    MSubtitleParser_SRT* _parser_SRT;
+    MSubtitleParser_SSA* _parser_SSA;
+
     // current parsing info
     NSMutableAttributedString* _string;
     float _beginTime;
 }
 
+- (id)initWithURL:(NSURL*)subtitleURL;
 - (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error;
 
 @end

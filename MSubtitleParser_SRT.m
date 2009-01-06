@@ -132,7 +132,7 @@ typedef struct _SRTTag {
 
 - (NSMutableAttributedString*)parseSubtitleString:(NSString*)string
 {
-    //TRACE(@"%s \"%@\" (%g) (\"%@\")", __PRETTY_FUNCTION__, string, time, class);
+    //TRACE(@"%s \"%@\")", __PRETTY_FUNCTION__, string);
 
     // this method can be called independently for parsing embedded subtitle.
     
