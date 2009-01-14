@@ -99,6 +99,25 @@
     
 	GLint swapInterval = 1;
 	[[self openGLContext] setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
+    /*
+    const GLubyte* strVersion = glGetString(GL_VERSION);
+    const GLubyte* strExt = glGetString(GL_EXTENSIONS);
+    TRACE(@"GL_VERSION = \"%s\"", strVersion);
+    TRACE(@"GL_EXTENSIONS = \"%s\"", strExt);
+
+    GLboolean b;
+    b = gluCheckExtension((const GLubyte*)"GL_EXT_framebuffer_object", strExt);
+    TRACE(@"FBO = %d", b);
+
+    b = gluCheckExtension((const GLubyte*)"GL_APPLE_vertex_array_object", strExt);
+    TRACE(@"VAO = %d", b);
+
+    b = gluCheckExtension((const GLubyte*)"GL_APPLE_fence", strExt); 
+    TRACE(@"fence = %d", b);
+
+    b = gluCheckExtension((const GLubyte*)"GL_ARB_shading_language_100", strExt);
+    TRACE(@"shading = %d", b);
+     */
 }
 
 - (void)update

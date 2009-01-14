@@ -52,7 +52,7 @@
     MSubtitle* _subtitle[3];
     MMovieOSD* _subtitleOSD[3];
     MMovieOSD* _auxSubtitleOSD[3];
-    BOOL _needsSubtitleUpdate[3];
+    unsigned int _needsSubtitleDrawing; // bit-mask of subtitle-numbers
     BOOL _subtitleVisible;
     int _indexOfSubtitleInLBOX;
     int _autoLetterBoxHeightMaxLines;
@@ -185,7 +185,7 @@
 - (void)addSubtitle:(MSubtitle*)subtitle;
 - (void)removeSubtitle:(MSubtitle*)subtitle;
 - (void)removeAllSubtitles;
-- (BOOL)updateSubtitleOSDAtIndex:(int)index sync:(BOOL)sync;
+- (BOOL)updateSubtitleOSDAtIndex:(int)index;
 
 - (BOOL)subtitleVisible;
 - (void)setSubtitleVisible:(BOOL)visible;

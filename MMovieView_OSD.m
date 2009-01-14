@@ -108,11 +108,6 @@
     glScalef(2.0f / frame.size.width, -2.0f / frame.size.height, 1.0f);
     glTranslatef(-frame.size.width / 2.0f, -frame.size.height / 2.0f, 0.0f);
 
-    NSRect bounds = [self bounds];
-    if ([[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
-        bounds = [self underScannedRect:bounds];
-    }
-
     if ([_iconOSD hasContent]) {
         [_iconOSD drawOnScreen];
     }

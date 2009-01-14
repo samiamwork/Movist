@@ -86,22 +86,25 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                 }
                 _image = image;
                 if (_subtitleVisible) {
-                    [self updateSubtitleOSDAtIndex:0 sync:FALSE];
-                    [self updateSubtitleOSDAtIndex:1 sync:FALSE];
-                    [self updateSubtitleOSDAtIndex:2 sync:FALSE];
+                    [self updateSubtitleOSDAtIndex:0];
+                    [self updateSubtitleOSDAtIndex:1];
+                    [self updateSubtitleOSDAtIndex:2];
                 }
                 if ([self canDraw]) {
                     [self drawImage];
                 }
                 _fpsFrameCount++;
             }
-            else if (_image && _subtitleVisible &&
-                     (_needsSubtitleUpdate[0] ||
-                      _needsSubtitleUpdate[1] ||
-                      _needsSubtitleUpdate[2])) {
-                [self updateSubtitleOSDAtIndex:0 sync:FALSE];
-                [self updateSubtitleOSDAtIndex:1 sync:FALSE];
-                [self updateSubtitleOSDAtIndex:2 sync:FALSE];
+            else if (_image && _subtitleVisible && _needsSubtitleDrawing) {
+                if (_needsSubtitleDrawing & 0x01) {
+                    [self updateSubtitleOSDAtIndex:0];
+                }
+                if (_needsSubtitleDrawing & 0x02) {
+                    [self updateSubtitleOSDAtIndex:1];
+                }
+                if (_needsSubtitleDrawing & 0x04) {
+                    [self updateSubtitleOSDAtIndex:2];
+                }
                 if ([self canDraw]) {
                     [self drawImage];
                 }
@@ -179,13 +182,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
     }
 
-    if ([_iconOSD hasContent] ||
-        [_messageOSD hasContent] || [_errorOSD hasContent] ||
-        (_subtitleVisible && ([_subtitleOSD[0] hasContent] || [_auxSubtitleOSD[0] hasContent] ||
-                              [_subtitleOSD[1] hasContent] || [_auxSubtitleOSD[1] hasContent] ||
-                              [_subtitleOSD[2] hasContent] || [_auxSubtitleOSD[2] hasContent]))) {
-        [self drawOSD];
-    }
+    [self drawOSD];
 
     if (_dragAction != DRAG_ACTION_NONE) {
         [self drawDragHighlight];
@@ -269,7 +266,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             if ([_subtitleOSD[i] setViewBounds:bounds movieRect:mr]) {
                 if (_subtitle[i] && [_subtitle[i] isEnabled]) {
                     [_subtitle[i] setNeedsRemakeTexImages];
-                    [self updateSubtitleOSDAtIndex:i sync:FALSE];
+                    [self updateSubtitleOSDAtIndex:i];
                 }
             }
             [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:mr];

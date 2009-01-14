@@ -64,7 +64,7 @@
     _subtitle[i] = [subtitle retain];
     TRACE(@"%s [%d]:%@", __PRETTY_FUNCTION__, i, [subtitle name]);
     [_subtitle[i] setMovieOSD:_subtitleOSD[i]];
-    [self updateSubtitleOSDAtIndex:i sync:TRUE];   // for optimized rendering
+    [self updateSubtitleOSDAtIndex:i];
     [_subtitle[i] startRenderThread];
 
     [self updateIndexOfSubtitleInLBOX];
@@ -95,7 +95,7 @@
     }
     _subtitle[i] = nil;
     for (i = 0; i < 3; i++) {
-        [self updateSubtitleOSDAtIndex:i sync:TRUE];
+        [self updateSubtitleOSDAtIndex:i];
     }
 
     [self updateIndexOfSubtitleInLBOX];
@@ -113,7 +113,7 @@
             [_subtitle[i] setMovieOSD:nil];
             [_subtitle[i] release];
             _subtitle[i] = nil;
-            [self updateSubtitleOSDAtIndex:i sync:TRUE];
+            [self updateSubtitleOSDAtIndex:i];
         }
     }
 
@@ -123,24 +123,25 @@
     [self redisplay];
 }
 
-- (BOOL)updateSubtitleOSDAtIndex:(int)index sync:(BOOL)sync
+- (BOOL)updateSubtitleOSDAtIndex:(int)index
 {
     BOOL ret = TRUE;
     [_drawLock lock];
     if (!_movie || !_subtitle[index] || ![_subtitle[index] isEnabled]) {
         [_subtitleOSD[index] clearContent];
-        _needsSubtitleUpdate[index] = FALSE;
+        _needsSubtitleDrawing &= ~(1 << index);
         [_auxSubtitleOSD[index] clearContent];
     }
     else {
-        BOOL renderFlag = sync && ([_movie rate] == 0.0);
+        BOOL isRendering;
+        BOOL paused = (0 == [_movie rate]);
         float time = [_movie currentTime] + [_subtitleOSD[index] subtitleSync];
-        NSImage* texImage = [_subtitle[index] texImageAtTime:time direction:0
-                                                  renderFlag:&renderFlag];
+        NSImage* texImage = [_subtitle[index] texImageAtTime:time isSeek:paused
+                                                 isRendering:&isRendering];
         [_subtitleOSD[index] setTexImage:texImage];
 
-        if (texImage || !renderFlag) {
-            _needsSubtitleUpdate[index] = FALSE;
+        if (texImage || !isRendering) {
+            _needsSubtitleDrawing &= ~(1 << index);
             [_auxSubtitleOSD[index] clearContent];
         }
         else {
@@ -148,8 +149,8 @@
             if (item && [item string]) {
                 [_auxSubtitleOSD[index] setString:[item string]];
             }
-            if ([_movie rate] == 0.0) {
-                _needsSubtitleUpdate[index] = TRUE;
+            if (paused) {
+                _needsSubtitleDrawing |= (1 << index);
                 ret = FALSE;
             }
         }
@@ -173,9 +174,9 @@
         [_subtitle[1] setRenderingEnabled:_subtitleVisible];
         [_subtitle[2] setRenderingEnabled:_subtitleVisible];
         if (_subtitleVisible) {
-            [self updateSubtitleOSDAtIndex:0 sync:TRUE];
-            [self updateSubtitleOSDAtIndex:1 sync:TRUE];
-            [self updateSubtitleOSDAtIndex:2 sync:TRUE];
+            [self updateSubtitleOSDAtIndex:0];
+            [self updateSubtitleOSDAtIndex:1];
+            [self updateSubtitleOSDAtIndex:2];
         }
         [self redisplay];
     }
@@ -336,7 +337,7 @@
         if (remake) {
             [_subtitle[index] setNeedsRemakeTexImages];
         }
-        [self updateSubtitleOSDAtIndex:index sync:TRUE];
+        [self updateSubtitleOSDAtIndex:index];
     }
     [self redisplay];
 }

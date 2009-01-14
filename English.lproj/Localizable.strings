@@ -88,19 +88,20 @@
 /* Message: Subtitle */
 "No Subtitle: Reopen with other encodings" = "No Subtitle: Reopen with other encodings";
 "Letter Box Height : Auto" = "Letter Box Height : Auto";
-"Subtitle %@ : Size %.1f" = "Subtitle %@ : Size %.1f";
-"Subtitle %@ : Position %@" = "Subtitle %@ : %@";
-"Subtitle %@ : HMargin %.1f %%" = "Subtitle %@ : HMargin %.1f %%";
-"Subtitle %@ : VMargin %.1f %%" = "Subtitle %@ : VMargin %.1f %%";
-"Subtitle %@ : Line Spacing %.1f" = "Subtitle %@ : Line Spacing %.1f";
-"Subtitle %@ : Sync %.1f sec." = "Subtitle %@ : Sync %.1f sec";
+"Font Size" = "Font Size";
+"HMargin" = "HMargin";
+"VMargin" = "VMargin";
+"Line Spacing" = "Line Spacing";
+"Sync" = "Sync";
+"sec." = "sec.";
 "Subtitle %@ selected" = "Subtitle %@ selected";
 "Subtitle %@ enabled" = "Subtitle %@ enabled";
 "Subtitle %@ disabled" = "Subtitle %@ disabled";
 "Subtitle Screen Margin %.1f" = "Subtitle Screen Margin %.1f";
-"Controlling Subtitle %@ (%@)" = "Controlling Subtitle %@ (%@)";
+"Subtitle Order" = "Subtitle Order";
 
 /* Control Panel */
+"All Subtitles" = "All Subtitles";
 "Video Track" = "Video Track";
 "Sound Track" = "Sound Track";
 "Subtitle Track" = "Subtitle Track";

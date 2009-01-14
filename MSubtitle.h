@@ -43,7 +43,6 @@
     float _backwardRenderInterval;
     int _releaseBeginIndex;
     int _releaseEndIndex;
-    float _lastPlayTime;
     int _seekIndex;
     int _playIndex;
     int _renderStamp;
@@ -112,7 +111,7 @@
 - (void)startRenderThread;
 - (void)quitRenderThread;
 - (void)setNeedsRemakeTexImages;
-- (NSImage*)texImageAtTime:(float)time direction:(int)direction
-                renderFlag:(BOOL*)renderFlag;
+- (NSImage*)texImageAtTime:(float)time isSeek:(BOOL)isSeek
+               isRendering:(BOOL*)isRendering;
 
 @end

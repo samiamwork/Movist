@@ -126,35 +126,27 @@
     }
 }
 
-- (NSImage*)texImageAtTime:(float)time direction:(int)direction
-                renderFlag:(BOOL*)renderFlag
+- (NSImage*)texImageAtTime:(float)time isSeek:(BOOL)isSeek
+               isRendering:(BOOL*)isRendering
 {
     if (!_renderingEnabled) {
         return nil;
     }
 
-    BOOL seek = (1.0 <= ABS(_lastPlayTime - time));
-    _lastPlayTime = time;
-
-    int index = [self indexAtTime:time direction:direction];
+    int index = [self indexAtTime:time direction:0];
     if (index < 0) {
         index = [self indexAtTime:time direction:+1];   // find forward item
         if (0 <= index) {
-            [self updatePlaySeekIndexes:index isSeek:seek];
+            [self updatePlaySeekIndexes:index isSeek:isSeek];
         }
-        *renderFlag = FALSE;    // no subtitle-item at time
+        *isRendering = FALSE;    // no subtitle-item at time
         return nil;
     }
-    [self updatePlaySeekIndexes:index isSeek:seek];
+    [self updatePlaySeekIndexes:index isSeek:isSeek];
 
-    if (*renderFlag) {          // instant rendering
-        // if valid tex-image is returned, then renderFlag is ignored.
-        return [[_items objectAtIndex:index] makeTexImage:_movieOSD stamp:_renderStamp];
-    }
-    else {
-        *renderFlag = TRUE;     // subtitle-item exist, but not rendered yet.
-        return [[_items objectAtIndex:index] texImage:_renderStamp];
-    }
+    // subtitle-item exist.
+    *isRendering = TRUE;    // if already rendered, then ignore it.
+    return [[_items objectAtIndex:index] texImage:_renderStamp];
 }
 
 - (void)renderThreadFunc:(id)anObject

@@ -90,6 +90,15 @@
     IBOutlet NSMenu* _subtitle0EncodingMenu;
     IBOutlet NSMenu* _subtitle1EncodingMenu;
     IBOutlet NSMenu* _subtitle2EncodingMenu;
+    IBOutlet NSMenuItem* _subtitleFontSizeSmallerMenuItem;
+    IBOutlet NSMenuItem* _subtitleFontSizeBiggerMenuItem;
+    IBOutlet NSMenuItem* _subtitleFontSizeDefaultMenuItem;
+    IBOutlet NSMenuItem* _subtitleVMarginSmallerMenuItem;
+    IBOutlet NSMenuItem* _subtitleVMarginBiggerMenuItem;
+    IBOutlet NSMenuItem* _subtitleVMarginDefaultMenuItem;
+    IBOutlet NSMenuItem* _subtitleSyncLaterMenuItem;
+    IBOutlet NSMenuItem* _subtitleSyncEarlierMenuItem;
+    IBOutlet NSMenuItem* _subtitleSyncDefaultMenuItem;
 
     // main window
     IBOutlet MainWindow* _mainWindow;
@@ -117,6 +126,7 @@
     IBOutlet NSSegmentedControl* _subtitleLanguageSegmentedControl;
     IBOutlet NSTextField* _subtitleNameTextField;
     IBOutlet NSPopUpButton* _subtitlePositionPopUpButton;
+    IBOutlet NSButton* _subtitlePositionDefaultButton;
     IBOutlet NSPopUpButton* _letterBoxHeightPopUpButton;
     IBOutlet NSTextField* _repeatBeginningTextField;
     IBOutlet NSTextField* _repeatEndTextField;
@@ -156,6 +166,8 @@
 - (IBAction)viewDurationAction:(id)sender;
 - (IBAction)controlPanelAction:(id)sender;
 - (IBAction)preferencePanelAction:(id)sender;
+
+- (IBAction)alwaysOnTopAction:(id)sender;
 
 @end
 
@@ -349,6 +361,7 @@
 - (void)setSubtitleScreenMargin:(float)screenMargin;
 
 - (void)setSubtitle:(MSubtitle*)subtitle enabled:(BOOL)enabled;
+- (void)updateExternalSubtitleTrackNames;
 - (void)autoenableSubtitles;
 - (void)changeSubtitleLanguage:(int)tag;
 - (void)updateMovieViewSubtitles;
@@ -359,6 +372,7 @@
 
 - (IBAction)subtitleVisibleAction:(id)sender;
 - (IBAction)subtitleLanguageAction:(id)sender;
+- (IBAction)subtitleOrderAction:(id)sender;
 - (IBAction)subtitleFontSizeAction:(id)sender;
 - (IBAction)subtitleVMarginAction:(id)sender;
 - (IBAction)subtitlePositionAction:(id)sender;

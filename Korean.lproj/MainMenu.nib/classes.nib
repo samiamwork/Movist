@@ -14,50 +14,11 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>MainLCDView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSView</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>NSSegmentedControl</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSControl</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>SeekSlider</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSSlider</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>HUDTableColumn</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTableColumn</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>MainWindow</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>_movieView</key>
-				<string>MMovieView</string>
-				<key>_seekSlider</key>
-				<string>MainSeekSlider</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSWindow</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -77,6 +38,14 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
+			<string>HUDCheckBoxCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>CustomCheckBoxCell</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
 			<string>NSTextField</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
@@ -85,72 +54,11 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>HUDTextFieldCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTextFieldCell</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>HUDCheckBoxCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>CustomCheckBoxCell</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key>orderFrontWithFadeIn</key>
-				<string>id</string>
-				<key>orderOutWithFadeOut</key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>PlayPanel</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>OUTLETS</key>
-			<dict>
-				<key>_movieView</key>
-				<string>MMovieView</string>
-				<key>_seekSlider</key>
-				<string>FSSeekSlider</string>
-				<key>_titleTextField</key>
-				<string>NSTextField</string>
-			</dict>
-			<key>SUPERCLASS</key>
-			<string>NSWindow</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>NSControl</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSView</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>MainSeekSlider</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>SeekSlider</string>
-		</dict>
-		<dict>
-			<key>ACTIONS</key>
-			<dict>
-				<key></key>
-				<string>id</string>
-			</dict>
-			<key>CLASS</key>
-			<string>FirstResponder</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>
@@ -210,14 +118,6 @@
 		</dict>
 		<dict>
 			<key>CLASS</key>
-			<string>NSCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSObject</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
 			<string>NSWindow</string>
 			<key>LANGUAGE</key>
 			<string>ObjC</string>
@@ -225,33 +125,11 @@
 			<string>NSResponder</string>
 		</dict>
 		<dict>
-			<key>CLASS</key>
-			<string>HUDTableView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTableView</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>CustomCheckBoxCell</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSButtonCell</string>
-		</dict>
-		<dict>
-			<key>CLASS</key>
-			<string>HUDTabView</string>
-			<key>LANGUAGE</key>
-			<string>ObjC</string>
-			<key>SUPERCLASS</key>
-			<string>NSTabView</string>
-		</dict>
-		<dict>
 			<key>ACTIONS</key>
 			<dict>
 				<key>addSubtitleFileAction</key>
+				<string>id</string>
+				<key>alwaysOnTopAction</key>
 				<string>id</string>
 				<key>aspectRatioAction</key>
 				<string>id</string>
@@ -330,6 +208,8 @@
 				<key>subtitleFontSizeAction</key>
 				<string>id</string>
 				<key>subtitleLanguageAction</key>
+				<string>id</string>
+				<key>subtitleOrderAction</key>
 				<string>id</string>
 				<key>subtitlePositionAction</key>
 				<string>id</string>
@@ -446,14 +326,34 @@
 				<string>NSMenu</string>
 				<key>_subtitle2MenuItem</key>
 				<string>NSMenuItem</string>
+				<key>_subtitleFontSizeBiggerMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitleFontSizeDefaultMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitleFontSizeSmallerMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_subtitleLanguageSegmentedControl</key>
 				<string>NSSegmentedControl</string>
 				<key>_subtitleMenu</key>
 				<string>NSMenu</string>
 				<key>_subtitleNameTextField</key>
 				<string>NSTextField</string>
+				<key>_subtitlePositionDefaultButton</key>
+				<string>NSButton</string>
 				<key>_subtitlePositionPopUpButton</key>
 				<string>NSPopUpButton</string>
+				<key>_subtitleSyncDefaultMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitleSyncEarlierMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitleSyncLaterMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitleVMarginBiggerMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitleVMarginDefaultMenuItem</key>
+				<string>NSMenuItem</string>
+				<key>_subtitleVMarginSmallerMenuItem</key>
+				<string>NSMenuItem</string>
 				<key>_volumeSlider</key>
 				<string>NSSlider</string>
 			</dict>
@@ -472,6 +372,130 @@
 			<string>ObjC</string>
 			<key>SUPERCLASS</key>
 			<string>NSOpenGLView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSSegmentedControl</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSControl</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainLCDView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTableColumn</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableColumn</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainWindow</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_movieView</key>
+				<string>MMovieView</string>
+				<key>_seekSlider</key>
+				<string>MainSeekSlider</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindow</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTextFieldCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextFieldCell</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>orderFrontWithFadeIn</key>
+				<string>id</string>
+				<key>orderOutWithFadeOut</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>PlayPanel</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>_movieView</key>
+				<string>MMovieView</string>
+				<key>_seekSlider</key>
+				<string>FSSeekSlider</string>
+				<key>_titleTextField</key>
+				<string>NSTextField</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSWindow</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>MainSeekSlider</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>SeekSlider</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key></key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTableView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTableView</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>CustomCheckBoxCell</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSButtonCell</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>HUDTabView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTabView</string>
 		</dict>
 	</array>
 	<key>IBVersion</key>

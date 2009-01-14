@@ -102,6 +102,7 @@ NSString* videoCodecName(int codecId);
     [_rTimeTextField setClickable:TRUE];    [_fsRTimeTextField setClickable:TRUE];
 
     _decoderButton = [_mainWindow createDecoderButton];
+    [_subtitleLanguageSegmentedControl setSelectedSegment:1];    // "subtitle 1"
     [self updateDecoderUI];
     [self updateDataSizeBpsUI];
 
@@ -507,6 +508,12 @@ NSString* videoCodecName(int codecId);
     [_playPanel orderOutWithFadeOut:self];
 }
 
+- (IBAction)alwaysOnTopAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_mainWindow setAlwaysOnTop:![_mainWindow alwaysOnTop]];
+}
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -620,12 +627,19 @@ NSString* videoCodecName(int codecId);
         }
         return enabled;
     }
+    if ([menuItem action] == @selector(subtitleOrderAction:)) {
+        return 1 < [_movieView subtitleCount];
+    }
     if ([menuItem action] == @selector(subtitleVisibleAction:) ||
         [menuItem action] == @selector(subtitleFontSizeAction:) ||
         [menuItem action] == @selector(subtitleVMarginAction:) ||
         [menuItem action] == @selector(subtitlePositionAction:) ||
         [menuItem action] == @selector(subtitleSyncAction:)) {
         return (_subtitles && 0 < [_subtitles count]);
+    }
+    if ([menuItem action] == @selector(alwaysOnTopAction:)) {
+        [menuItem setState:[_mainWindow alwaysOnTop]];
+        return ([NSApp keyWindow] == _mainWindow);
     }
 
     return TRUE;

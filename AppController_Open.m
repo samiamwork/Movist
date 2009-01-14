@@ -351,6 +351,7 @@
         }
         else {
             _subtitles = [[NSMutableArray alloc] initWithArray:subtitles];
+            [self updateExternalSubtitleTrackNames];
             [self autoenableSubtitles];
         }
     }
@@ -438,36 +439,6 @@
         return TRUE;
     }
     return FALSE;
-}
-
-- (void)updateExternalSubtitleTrackNames
-{
-    // count external subtitles
-    int externalCount = 0;
-    MSubtitle* subtitle;
-    NSString* defaultName = NSLocalizedString(@"External Subtitle", nil);
-    NSEnumerator* e = [_subtitles objectEnumerator];
-    while (subtitle = [e nextObject]) {
-        if (![subtitle isEmbedded] && 1 < externalCount++) {
-            break;
-        }
-    }
-
-    if (1 < externalCount) {
-        // add to track number.
-        int trackNumber = 1;
-        e = [_subtitles objectEnumerator];
-        while (subtitle = [e nextObject]) {
-            if ([subtitle isEmbedded]) {
-                continue;
-            }
-            if ([[subtitle trackName] isEqualToString:defaultName]) {
-                [subtitle setTrackName:
-                 [NSString stringWithFormat:@"%@ %d", defaultName, trackNumber]];
-            }
-            trackNumber++;
-        }
-    }
 }
 
 - (BOOL)openSubtitles:(NSArray*)subtitleURLs encoding:(CFStringEncoding)encoding

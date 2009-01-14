@@ -52,7 +52,6 @@
         _renderConditionLock = [[NSConditionLock alloc] initWithCondition:0];
         _forwardRenderInterval = 30.0;
         _backwardRenderInterval = 30.0;
-        _lastPlayTime = 0;
         _seekIndex = 0;
         _playIndex = 0;
         [self initRenderInfo];
@@ -151,8 +150,8 @@
 - (void)addString:(NSMutableAttributedString*)string
         beginTime:(float)beginTime endTime:(float)endTime
 {
-    //TRACE(@"subtitle[\"%@\"] addString:\"%@\" beginTime:%f endTime:%f",
-    //      [self name], [string string], beginTime, endTime);
+    //TRACE(@"subtitle[\"%@\"]: [%.1f~%.1f]:\"%@\"",
+    //      [self name], beginTime, endTime, [string string]);
     #define NEW_LINE    [[[NSAttributedString alloc] initWithString:@"\n"] autorelease]
 
     int index;
