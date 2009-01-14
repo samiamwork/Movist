@@ -15,15 +15,13 @@ FFMPEG_SWSCALE_REVISION=25987
 FFMPEG_CONF_COMMON=
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-vhook --disable-ffserver --disable-ffmpeg --disable-ffplay"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-encoders --disable-muxers --disable-network"
-FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-gpl --enable-pp --enable-swscaler"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-gpl --enable-postproc --enable-swscale"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-pthreads"
-FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-libfaad --enable-liba52"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-libfaad"
 
 ########## SOURCE ##########
 
-svn co -r $FFMPEG_REVISION svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
-(cd ffmpeg/libswscale && svn up -r $FFMPEG_SWSCALE_REVISION)
-(cd ffmpeg&& patch -p0 < ../Patches/ffmpeg-macosx-intel-mmx.patch)
+svn co svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
 ########## INTEL ###########
 
@@ -47,7 +45,7 @@ EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=10.4 -mmacosx-v
 CFLAGS="-I$PREFIX/include $EXTRA_CFLAGS"
 LDFLAGS="-L$PREFIX/lib"
 
-FFMPEG_CONF_PPC=" --cross-compile --arch=ppc"
+FFMPEG_CONF_PPC=" --enable-cross-compile --arch=ppc"
 FFMPEG_CFLAGS_PPC="-arch ppc -mcpu=G3 -mtune=G5 -fstrict-aliasing -funroll-loops -falign-loops=16 -mmultiple"
 FFMPEG_LDFLAGS_PPC="-arch ppc"
 

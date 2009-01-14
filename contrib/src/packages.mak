@@ -34,9 +34,14 @@ FAAD_VERSION=2.6.1
 FAAD_URL=$(SF)/faac/faad2-$(FAAD_VERSION).tar.gz
 LAME_VERSION=3.97
 LAME_URL=$(SF)/lame/lame-$(LAME_VERSION).tar.gz
+EBML_VERSION=0.7.8
+EBML_URL=http://dl.matroska.org/downloads/libebml/libebml-$(EBML_VERSION).tar.bz2
+MATROSKA_VERSION=0.8.1
+MATROSKA_URL=http://dl.matroska.org/downloads/libmatroska/libmatroska-$(MATROSKA_VERSION).tar.bz2
+
 FFMPEG_VERSION=0.4.8
 FFMPEG_URL=$(SF)/ffmpeg/ffmpeg-$(FFMPEG_VERSION).tar.gz
 FFMPEG_SVN=svn://svn.mplayerhq.hu/ffmpeg/trunk
 
 # Definition of contributed packages
-darwin_packages:.a52 .faad2
+darwin_packages:.faad2 .matroska

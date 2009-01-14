@@ -137,6 +137,35 @@ CLEAN_PKG += $(CONTRIB_SRC_PATH)faad2
 DISTCLEAN_PKG += $(CONTRIB_SRC_PATH)faad2-$(FAAD_VERSION).tar.gz
 
 # ***************************************************************************
+# matroska
+# ***************************************************************************
+$(CONTRIB_SRC_PATH)libmatroska-$(MATROSKA_VERSION).tar.bz2:
+	cd $(CONTRIB_SRC_PATH) && $(WGET) $(MATROSKA_URL)
+
+libmatroska: $(CONTRIB_SRC_PATH)libmatroska-$(MATROSKA_VERSION).tar.bz2
+	(cd $(CONTRIB_SRC_PATH) && tar xvfj $< && rm -rf $@ && mv libmatroska-$(MATROSKA_VERSION) $@)
+
+$(CONTRIB_SRC_PATH)libebml-$(EBML_VERSION).tar.bz2:
+	cd $(CONTRIB_SRC_PATH) && $(WGET) $(EBML_URL)
+
+libebml: $(CONTRIB_SRC_PATH)libebml-$(EBML_VERSION).tar.bz2
+	(cd $(CONTRIB_SRC_PATH) && tar xvfj $< && rm -rf $@ && mv libebml-$(EBML_VERSION) $@)
+
+.matroska: libmatroska libebml
+	(cd $(CONTRIB_SRC_PATH)libebml/make/linux && \
+		make clean && \
+		make prefix=$(PREFIX) && \
+		make install prefix=$(PREFIX) && \
+		make install_headers prefix=$(PREFIX))
+	(cd $(CONTRIB_SRC_PATH)libmatroska/make/linux && \
+		make clean && \
+		make prefix=$(PREFIX) && \
+		make install prefix=$(PREFIX) && \
+		make install_headers prefix=$(PREFIX))
+
+
+
+# ***************************************************************************
 # ffmpeg
 # ***************************************************************************
 

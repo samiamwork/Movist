@@ -26,9 +26,9 @@
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <AudioUnit/AudioUnit.h>
 
-#import <ffmpeg/avcodec.h>
-#import <ffmpeg/avformat.h>
-#import <ffmpeg/swscale.h>
+#import <libavcodec/avcodec.h>
+#import <libavformat/avformat.h>
+#import <libswscale/swscale.h>
 
 @interface FFContext : NSObject
 {

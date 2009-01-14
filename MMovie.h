@@ -23,7 +23,7 @@
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
 
-#import <ffmpeg/avformat.h>    // for AVFormatContext
+#import <libavformat/avformat.h>    // for AVFormatContext
 
 #import "Movist.h"
 
