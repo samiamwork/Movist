@@ -461,10 +461,8 @@
     [categories addObject:
      [CategoryNode categoryNodeWithName:LABEL(@"Subtitle") children:
       [NSArray arrayWithObjects:
-       [BoolNode boolNodeWithName:LABEL_R(@"Use Perian External Subtitles for using QuickTime")
-                              key:MUsePerianExternalSubtitlesKey],
-       [BoolNode boolNodeWithName:LABEL_R(@"Use Embedded Subtitles for using QuickTime")
-                              key:MUseQuickTimeEmbeddedSubtitlesKey],
+       [BoolNode boolNodeWithName:LABEL_R(@"Use QuickTime/Perian Subtitles")
+                              key:MUseQuickTimeSubtitlesKey],
        [BoolNode boolNodeWithName:LABEL_R(@"Auto-Load Embedded Subtitles in MKV")
                               key:MAutoLoadMKVEmbeddedSubtitlesKey],
        [BoolNode boolNodeWithName:LABEL_R(@"Replace New-Line with <BR> for SAMI")
@@ -553,8 +551,8 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
         [_movieView setRemoveGreenBox:[object boolValue]];
     }
     // subtitles
-    else if ([key isEqualToString:MUseQuickTimeEmbeddedSubtitlesKey]) {
-        [MMovie_QuickTime setUseQuickTimeEmbeddedSubtitles:[object boolValue]];
+    else if ([key isEqualToString:MUseQuickTimeSubtitlesKey]) {
+        [MMovie_QuickTime setUseQuickTimeSubtitles:[object boolValue]];
     }
     else if ([key isEqualToString:MSubtitleReplaceNLWithBRKey]) {
         [_appController reopenSubtitles];

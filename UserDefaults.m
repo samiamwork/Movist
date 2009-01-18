@@ -113,8 +113,7 @@ NSString* MIncludeLetterBoxOnCaptureKey     = @"IncludeLetterBoxOnCapture";
 NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
 #pragma mark prefs: advanced - details: audio
 #pragma mark prefs: advanced - details: subtitle
-NSString* MUsePerianExternalSubtitlesKey    = @"UsePerianExternalSubtitles";
-NSString* MUseQuickTimeEmbeddedSubtitlesKey = @"UseQuickTimeEmbeddedSubtitles";
+NSString* MUseQuickTimeSubtitlesKey         = @"UseQuickTimeSubtitles";
 NSString* MAutoLoadMKVEmbeddedSubtitlesKey  = @"AutoLoadMKVEmbeddedSubtitles";
 NSString* MSubtitleReplaceNLWithBRKey       = @"SubtitleReplaceNLWithBR";
 NSString* MDefaultLanguageIdentifiersKey    = @"DefaultLanguageIdentifiers";
@@ -224,8 +223,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MRemoveGreenBoxKey];
     // prefs: advanced - details: audio
     // prefs: advanced - details: subtitle
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MUsePerianExternalSubtitlesKey];
-    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MUseQuickTimeEmbeddedSubtitlesKey];
+    [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MUseQuickTimeSubtitlesKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MAutoLoadMKVEmbeddedSubtitlesKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MSubtitleReplaceNLWithBRKey];
     [dict setObject:NSLocalizedString(@"DefaultSubtitleLanguageIdentifiers", nil)

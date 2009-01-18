@@ -59,7 +59,8 @@ NSString* videoCodecName(int codecId);
         _fullScreenLock = [[NSLock alloc] init];
 
         _defaults = [NSUserDefaults standardUserDefaults];
-        [MMovie_QuickTime checkA52CodecAndPerianInstalled];
+        [MMovie_QuickTime checkA52CodecInstalled];
+        [MMovie_QuickTime checkPerianInstalled];
     }
     return self;
 }
@@ -239,12 +240,12 @@ NSString* videoCodecName(int codecId);
         }
     }
 
-    // @"DisablePerianSubtitle" is renamed to MUsePerianExternalSubtitlesKey.
+    // @"DisablePerianSubtitle" is renamed to MUseQuickTimeSubtitlesKey.
     value = [_defaults objectForKey:@"DisablePerianSubtitle"];
     if (value) {
         [_defaults removeObjectForKey:@"DisablePerianSubtitle"];
         if ([value boolValue] != TRUE) {   // default was TRUE.
-            [_defaults setInteger:![value boolValue] forKey:MUsePerianExternalSubtitlesKey];
+            [_defaults setInteger:![value boolValue] forKey:MUseQuickTimeSubtitlesKey];
         }
     }
 
@@ -340,7 +341,7 @@ NSString* videoCodecName(int codecId);
     [_movieView setRemoveGreenBox:[_defaults boolForKey:MRemoveGreenBoxKey]];
 
     // initial update preferences: advanced - details : subtitle
-    [MMovie_QuickTime setUseQuickTimeEmbeddedSubtitles:[_defaults boolForKey:MUseQuickTimeEmbeddedSubtitlesKey]];
+    [MMovie_QuickTime setUseQuickTimeSubtitles:[_defaults boolForKey:MUseQuickTimeSubtitlesKey]];
     [_movieView setAutoLetterBoxHeightMaxLines:[_defaults integerForKey:MAutoLetterBoxHeightMaxLinesKey]];
 
     // initial update preferences: advanced - details : full-nav

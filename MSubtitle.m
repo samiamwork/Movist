@@ -92,7 +92,8 @@
 - (void)setEmbedded:(BOOL)embedded { _embedded = embedded; }
 - (NSString*)summary
 {
-    return [NSString stringWithFormat:@"%@, %@ (%@)", [self type], _name, _language];
+    NSString* s = [NSString stringWithFormat:@"%@, %@ (%@)", [self type], _name, _language];
+    return (_extraInfo) ? [s stringByAppendingFormat:@", %@", _extraInfo] : s;
 }
 
 - (BOOL)checkDefaultLanguage:(NSArray*)defaultLangIDs

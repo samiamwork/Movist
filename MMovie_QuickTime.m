@@ -87,56 +87,69 @@ BOOL _a52CodecAttemptPassthrough = FALSE;
 static BOOL _perianInstalled = FALSE;
 static BOOL _perianSubtitleEnabled = FALSE;
 
+static BOOL _useQuickTimeSubtitles = FALSE;
+
 @implementation MMovie_QuickTime
 
 + (NSString*)name { return @"QuickTime"; }
 
-+ (void)checkA52CodecAndPerianInstalled
++ (void)setUseQuickTimeSubtitles:(BOOL)use
 {
-    NSString* root, *home;
-    NSFileManager* fm = [NSFileManager defaultManager];
-    root = @"/Library/Audio/Plug-Ins/Components/A52Codec.component";
-    home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
-    _a52CodecInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
-    
-    root = @"/Library/QuickTime/Perian.component";
-    home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
-    _perianInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
+    _useQuickTimeSubtitles = use;
 }
 
-- (void)initA52CodecAndPerian:(BOOL)digitalAudioOut
++ (void)checkA52CodecInstalled
+{
+    NSFileManager* fm = [NSFileManager defaultManager];
+    NSString* root = @"/Library/Audio/Plug-Ins/Components/A52Codec.component";
+    NSString* home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
+    _a52CodecInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
+}
+
+- (void)initA52Codec:(BOOL)digitalAudioOut
 {
     // remember original settings & update new settings
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     if (_a52CodecInstalled) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
         _a52CodecAttemptPassthrough = [defaults a52CodecAttemptPassthrough];
         [defaults setA52CodecAttemptPassthrough:digitalAudioOut];
     }
-    if (_perianInstalled) {
-        _perianSubtitleEnabled = [defaults isPerianSubtitleEnabled];
-        if (![defaults boolForKey:MUsePerianExternalSubtitlesKey]) {
-            [defaults setPerianSubtitleEnabled:FALSE];
-        }
-    }
 }
 
-- (void)cleanupA52CodecAndPerian
+- (void)cleanupA52Codec
 {
     // restore original settings
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     if (_a52CodecInstalled) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
         [defaults setA52CodecAttemptPassthrough:_a52CodecAttemptPassthrough];
-    }
-    if (_perianInstalled) {
-        [defaults setPerianSubtitleEnabled:_perianSubtitleEnabled];
     }
 }
 
-static BOOL _useQuickTimeEmbeddedSubtitles;
-
-+ (void)setUseQuickTimeEmbeddedSubtitles:(BOOL)use
++ (void)checkPerianInstalled
 {
-    _useQuickTimeEmbeddedSubtitles = use;
+    NSFileManager* fm = [NSFileManager defaultManager];
+    NSString* root = @"/Library/QuickTime/Perian.component";
+    NSString* home = [[@"~" stringByExpandingTildeInPath] stringByAppendingString:root];
+    _perianInstalled = [fm fileExistsAtPath:root] || [fm fileExistsAtPath:home];
+}
+
+- (void)initPerianSubtitle
+{
+    // remember original settings & update new settings
+    if (_perianInstalled) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        _perianSubtitleEnabled = [defaults isPerianSubtitleEnabled];
+        [defaults setPerianSubtitleEnabled:[defaults boolForKey:MUseQuickTimeSubtitlesKey]];
+    }
+}
+
+- (void)cleanupPerianSubtitle
+{
+    // restore original settings
+    if (_perianInstalled) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setPerianSubtitleEnabled:_perianSubtitleEnabled];
+    }
 }
 
 - (MTrack*)videoTrackWithIndex:(int)index qtTrack:(QTTrack*)qtTrack
@@ -208,16 +221,18 @@ static BOOL _useQuickTimeEmbeddedSubtitles;
   digitalAudioOut:(BOOL)digitalAudioOut error:(NSError**)error
 {
     // currently, A52Codec supports AC3 only (not DTS).
-    [self initA52CodecAndPerian:(digitalAudioOut && movieInfo->hasAC3Codec)];
+    [self initA52Codec:(digitalAudioOut && movieInfo->hasAC3Codec)];
 
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     QTMovie* qtMovie;
+    [self initPerianSubtitle];
     if ([url isFileURL]) {
         qtMovie = [QTMovie movieWithFile:[url path] error:error];
     }
     else {
         qtMovie = [QTMovie movieWithURL:url error:error];
     }
+    [self cleanupPerianSubtitle];
     if (!qtMovie) {
         return nil;
     }
@@ -246,12 +261,7 @@ static BOOL _useQuickTimeEmbeddedSubtitles;
             if ([mediaType isEqualToString:QTMediaTypeVideo] ||
                 [mediaType isEqualToString:QTMediaTypeMPEG]/* ||
                 [mediaType isEqualToString:QTMediaTypeMovie]*/) {
-                if (vi < [_videoTracks count] || _useQuickTimeEmbeddedSubtitles) {
-                    [vTracks addObject:[self videoTrackWithIndex:vi++ qtTrack:qtTrack]];
-                }
-                else {
-                    [qtTrack setEnabled:FALSE];
-                }
+                [vTracks addObject:[self videoTrackWithIndex:vi++ qtTrack:qtTrack]];
             }
             else if ([mediaType isEqualToString:QTMediaTypeSound]/* ||
                      [mediaType isEqualToString:QTMediaTypeMusic]*/) {
@@ -329,7 +339,7 @@ static BOOL _useQuickTimeEmbeddedSubtitles;
         CFRelease(_visualContext);
     }
     [_qtMovie release], _qtMovie = nil;
-    [self cleanupA52CodecAndPerian];
+    [self cleanupA52Codec];
 
     [super cleanup];
 }
