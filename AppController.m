@@ -151,6 +151,113 @@ NSString* videoCodecName(int codecId);
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
+- (void)checkLegacyPreferences
+{
+    // @"AutoFullScreen" is replaced with MOpeningViewKey.
+    id value = [_defaults objectForKey:@"AutoFullScreen"];
+    if (value) {
+        [_defaults removeObjectForKey:@"AutoFullScreen"];
+        if ([value boolValue] != FALSE) {    // default was FALSE
+            [_defaults setInteger:OPENING_VIEW_FULL_SCREEN forKey:MOpeningViewKey];
+        }
+    }
+
+    // @"BlackoutSecondaryScreen" is renamed to MFullScreenBlackScreensKey.
+    value = [_defaults objectForKey:@"BlackoutSecondaryScreen"];
+    if (value) {
+        [_defaults removeObjectForKey:@"BlackoutSecondaryScreen"];
+        if ([value boolValue] != FALSE) {   // default was FALSE
+            [_defaults setBool:TRUE forKey:MFullScreenBlackScreensKey];
+        }
+    }
+
+    // @"SubtitlePosition" is changed to MLetterBoxHeightKey and MSubtitleVPositionKey[0].
+    value = [_defaults objectForKey:@"SubtitlePosition"];
+    if (value) {
+        [_defaults removeObjectForKey:@"SubtitlePosition"];
+        if ([value intValue] != 100) {  // default was 100 ("auto")
+            switch ([value intValue]) {
+                case -1 :   // -1 is "on movie"
+                    [_defaults setInteger:OSD_VPOSITION_BOTTOM forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:LETTER_BOX_HEIGHT_SAME forKey:MLetterBoxHeightKey];
+                    break;
+                case 0 :    // 0 is "on letter-box"
+                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:LETTER_BOX_HEIGHT_SAME forKey:MLetterBoxHeightKey];
+                    break;
+                case 1 :    // 1 is "on letter-box (1 line)"
+                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:LETTER_BOX_HEIGHT_1_LINE forKey:MLetterBoxHeightKey];
+                    break;
+                case 2 :    // 2 is "on letter-box (2 lines)"
+                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:LETTER_BOX_HEIGHT_2_LINES forKey:MLetterBoxHeightKey];
+                    break;
+                case 3 :    // 3 is "on letter-box (3 lines)"
+                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:LETTER_BOX_HEIGHT_3_LINES forKey:MLetterBoxHeightKey];
+                    break;
+            }
+        }
+    }
+
+    // @"OpeningResize" is changed to MOpeningViewKey and MMovieResizeCenterKey.
+    value = [_defaults objectForKey:@"OpeningResize"];
+    if (value) {
+        [_defaults removeObjectForKey:@"OpeningResize"];
+        switch ([value intValue]) {
+            case 0 :    // 0 is "never resize"
+                [_defaults setInteger:OPENING_VIEW_NONE forKey:MOpeningViewKey];
+                break;
+            case 1 :    // 1 is "title center"
+                [_defaults setInteger:MOVIE_RESIZE_CENTER_TM forKey:MMovieResizeCenterKey];
+                break;
+            case 2 :    // 2 is "bottom center"
+                [_defaults setInteger:MOVIE_RESIZE_CENTER_BM forKey:MMovieResizeCenterKey];
+                break;
+            case 3 :    // 3 is "bottom right"
+                [_defaults setInteger:MOVIE_RESIZE_CENTER_BR forKey:MMovieResizeCenterKey];
+                break;
+        }
+    }
+
+    // @"WindowResize" is renamed to MWindowResizeModeKey.
+    value = [_defaults objectForKey:@"WindowResize"];
+    if (value) {
+        [_defaults removeObjectForKey:@"WindowResize"];
+        if ([value intValue] != 1) {   // default was "adjust to size"
+            [_defaults setInteger:[value intValue] forKey:MWindowResizeModeKey];
+        }
+    }
+
+    // @"DraggingAction" is renamed to MViewDragActionKey.
+    value = [_defaults objectForKey:@"DraggingAction"];
+    if (value) {
+        [_defaults removeObjectForKey:@"DraggingAction"];
+        if ([value intValue] != 0) {   // default was 0 ("none")
+            [_defaults setInteger:[value intValue] forKey:MViewDragActionKey];
+        }
+    }
+
+    // @"DisablePerianSubtitle" is renamed to MUsePerianExternalSubtitlesKey.
+    value = [_defaults objectForKey:@"DisablePerianSubtitle"];
+    if (value) {
+        [_defaults removeObjectForKey:@"DisablePerianSubtitle"];
+        if ([value boolValue] != TRUE) {   // default was TRUE.
+            [_defaults setInteger:![value boolValue] forKey:MUsePerianExternalSubtitlesKey];
+        }
+    }
+
+    // @"AutoSubtitlePositionMaxLines" is renamed to MAutoLetterBoxHeightMaxLinesKey.
+    value = [_defaults objectForKey:@"AutoSubtitlePositionMaxLines"];
+    if (value) {
+        [_defaults removeObjectForKey:@"AutoSubtitlePositionMaxLines"];
+        if ([value intValue] != 2) {   // default was 2.
+            [_defaults setInteger:[value intValue] forKey:MAutoLetterBoxHeightMaxLinesKey];
+        }
+    }
+}
+
 - (void)applicationWillFinishLaunching:(NSNotification*)aNotification
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -161,6 +268,8 @@ NSString* videoCodecName(int codecId);
     [_prevMovieButton setHoverImage:[NSImage imageNamed:@"MainPrevMovieHover"]];
     [_nextMovieButton setHoverImage:[NSImage imageNamed:@"MainNextMovieHover"]];
     [_playlistButton setHoverImage:[NSImage imageNamed:@"MainPlaylistHover"]];
+
+    [self checkLegacyPreferences];
 
     // initial update preferences: general
     [_mainWindow setAlwaysOnTop:[_defaults boolForKey:MAlwaysOnTopKey]];
@@ -231,6 +340,7 @@ NSString* videoCodecName(int codecId);
     [_movieView setRemoveGreenBox:[_defaults boolForKey:MRemoveGreenBoxKey]];
 
     // initial update preferences: advanced - details : subtitle
+    [MMovie_QuickTime setUseQuickTimeEmbeddedSubtitles:[_defaults boolForKey:MUseQuickTimeEmbeddedSubtitlesKey]];
     [_movieView setAutoLetterBoxHeightMaxLines:[_defaults integerForKey:MAutoLetterBoxHeightMaxLinesKey]];
 
     // initial update preferences: advanced - details : full-nav

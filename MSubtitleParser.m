@@ -109,4 +109,30 @@ NSString* MSubtitleParserOptionKey_stringEncoding = @"stringEncoding";
     return nil;
 }
 
+- (void)mutableAttributedString:(NSMutableAttributedString*)mas
+                   appendString:(NSString*)string
+                      withColor:(NSColor*)color italic:(BOOL)italic bold:(BOOL)bold
+{
+    //TRACE(@"%s \"%@\" + \"%@\" with %@, %@, %@", __PRETTY_FUNCTION__,
+    //      [mas string], string, color, italic ? @"italic" : @"-", bold ? @"bold" : @"-");
+    if (color || italic || bold) {
+        NSMutableDictionary* attrs = [NSMutableDictionary dictionaryWithCapacity:3];
+        if (color) {
+            [attrs setObject:color forKey:NSForegroundColorAttributeName];
+        }
+        if (italic) {
+            [attrs setObject:[NSNumber numberWithBool:TRUE] forKey:MFontItalicAttributeName];
+        }
+        if (bold) {
+            [attrs setObject:[NSNumber numberWithBool:TRUE] forKey:MFontBoldAttributeName];
+        }
+        [mas appendAttributedString:[[[NSAttributedString alloc]
+                                      initWithString:string attributes:attrs] autorelease]];
+    }
+    else {
+        [mas appendAttributedString:[[[NSAttributedString alloc]
+                                      initWithString:string] autorelease]];
+    }
+}
+
 @end

@@ -326,6 +326,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>smi</string>
+				<string>sami</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Subtitle-SMI</string>

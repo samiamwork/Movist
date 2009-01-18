@@ -75,8 +75,8 @@ namespace { // unnamed
 - (id)initWithURL:(NSURL*)subtitleURL
 {
     if (self = [super initWithURL:subtitleURL]) {
-        _parser_SRT = [[MSubtitleParser_SRT alloc] init];
-        _parser_SSA = [[MSubtitleParser_SSA alloc] init];
+        _parser_SRT = [[MSubtitleParser_SRT alloc] initWithURL:nil];
+        _parser_SSA = [[MSubtitleParser_SSA alloc] initWithURL:nil];
     }
     return self;
 }
@@ -245,6 +245,17 @@ struct master_sorter_t {
                     [subtitle setType:[codec substringFromIndex:index]];
                     TRACE_ELEMENT(_level3, 3, @"CodecID: %@", codec);
                 }
+                else if (subtitle && is_id(_level3, KaxCodecPrivate)) {
+                    KaxCodecPrivate& codecPrivate = *static_cast<KaxCodecPrivate*>(_level3);
+                    if (0 < codecPrivate.GetSize()) {
+                        const char* cps = (const char*)(codecPrivate.GetBuffer());
+                        NSString* s = [NSString stringWithUTF8String:std::string(cps).c_str()];
+                        if (s) {
+                            [_parser_SSA setStyles:s forSubtitleNumber:trackNumber];
+                        }
+                    }
+                    TRACE_ELEMENT(_level3, 3, @"CodecPrivate: ...");
+                }
                 else if (subtitle && is_id(_level3, KaxTrackLanguage)) {
                     KaxTrackLanguage& language = *static_cast<KaxTrackLanguage*>(_level3);
                     [subtitle setLanguage:[NSString stringWithUTF8String:std::string(language).c_str()]];
@@ -298,7 +309,8 @@ struct master_sorter_t {
                     }
                     else if ([type isEqualToString:@"SSA"] ||
                              [type isEqualToString:@"ASS"]) {
-                        _string = [_parser_SSA parseSubtitleString_MKV:s];
+                        _string = [_parser_SSA parseSubtitleString_MKV:s
+                                                     forSubtitleNumber:(int)block.TrackNum()];
                     }
                     else if ([type isEqualToString:@"USF"]) {
                         _string = [_parser_SRT parseSubtitleString:s];

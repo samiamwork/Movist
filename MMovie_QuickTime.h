@@ -35,4 +35,6 @@
 + (NSString*)name;
 + (void)checkA52CodecAndPerianInstalled;
 
++ (void)setUseQuickTimeEmbeddedSubtitles:(BOOL)use;
+
 @end

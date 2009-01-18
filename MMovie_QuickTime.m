@@ -114,7 +114,7 @@ static BOOL _perianSubtitleEnabled = FALSE;
     }
     if (_perianInstalled) {
         _perianSubtitleEnabled = [defaults isPerianSubtitleEnabled];
-        if ([defaults boolForKey:MDisablePerianSubtitleKey]) {
+        if (![defaults boolForKey:MUsePerianExternalSubtitlesKey]) {
             [defaults setPerianSubtitleEnabled:FALSE];
         }
     }
@@ -130,6 +130,13 @@ static BOOL _perianSubtitleEnabled = FALSE;
     if (_perianInstalled) {
         [defaults setPerianSubtitleEnabled:_perianSubtitleEnabled];
     }
+}
+
+static BOOL _useQuickTimeEmbeddedSubtitles;
+
++ (void)setUseQuickTimeEmbeddedSubtitles:(BOOL)use
+{
+    _useQuickTimeEmbeddedSubtitles = use;
 }
 
 - (MTrack*)videoTrackWithIndex:(int)index qtTrack:(QTTrack*)qtTrack
@@ -239,7 +246,12 @@ static BOOL _perianSubtitleEnabled = FALSE;
             if ([mediaType isEqualToString:QTMediaTypeVideo] ||
                 [mediaType isEqualToString:QTMediaTypeMPEG]/* ||
                 [mediaType isEqualToString:QTMediaTypeMovie]*/) {
-                [vTracks addObject:[self videoTrackWithIndex:vi++ qtTrack:qtTrack]];
+                if (vi < [_videoTracks count] || _useQuickTimeEmbeddedSubtitles) {
+                    [vTracks addObject:[self videoTrackWithIndex:vi++ qtTrack:qtTrack]];
+                }
+                else {
+                    [qtTrack setEnabled:FALSE];
+                }
             }
             else if ([mediaType isEqualToString:QTMediaTypeSound]/* ||
                      [mediaType isEqualToString:QTMediaTypeMusic]*/) {

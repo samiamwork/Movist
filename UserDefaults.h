@@ -116,7 +116,8 @@ extern NSString* MIncludeLetterBoxOnCaptureKey;
 extern NSString* MRemoveGreenBoxKey;
 #pragma mark prefs: advanced - details: audio
 #pragma mark prefs: advanced - details: subtitle
-extern NSString* MDisablePerianSubtitleKey;
+extern NSString* MUsePerianExternalSubtitlesKey;
+extern NSString* MUseQuickTimeEmbeddedSubtitlesKey;
 extern NSString* MAutoLoadMKVEmbeddedSubtitlesKey;
 extern NSString* MSubtitleReplaceNLWithBRKey;
 extern NSString* MDefaultLanguageIdentifiersKey;

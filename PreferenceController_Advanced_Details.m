@@ -26,6 +26,7 @@
 #import "AppController.h"
 #import "MainWindow.h"
 #import "MMovieView.h"
+#import "MMovie_QuickTime.h"
 
 @interface DetailsNode : NSObject
 {
@@ -460,15 +461,17 @@
     [categories addObject:
      [CategoryNode categoryNodeWithName:LABEL(@"Subtitle") children:
       [NSArray arrayWithObjects:
-       [BoolNode boolNodeWithName:LABEL_R(@"Disable Perian Subtitle for using QuickTime")
-                              key:MDisablePerianSubtitleKey],
-       [BoolNode boolNodeWithName:LABEL(@"Auto-Load Embedded Subtitles in MKV")
+       [BoolNode boolNodeWithName:LABEL_R(@"Use Perian External Subtitles for using QuickTime")
+                              key:MUsePerianExternalSubtitlesKey],
+       [BoolNode boolNodeWithName:LABEL_R(@"Use Embedded Subtitles for using QuickTime")
+                              key:MUseQuickTimeEmbeddedSubtitlesKey],
+       [BoolNode boolNodeWithName:LABEL_R(@"Auto-Load Embedded Subtitles in MKV")
                               key:MAutoLoadMKVEmbeddedSubtitlesKey],
-       [BoolNode boolNodeWithName:LABEL(@"Replace New-Line with <BR> for SAMI")
+       [BoolNode boolNodeWithName:LABEL_R(@"Replace New-Line with <BR> for SAMI")
                               key:MSubtitleReplaceNLWithBRKey],
-       [StringNode stringNodeWithName:LABEL(@"Default Subtitle Language Identifiers")
+       [StringNode stringNodeWithName:LABEL_R(@"Default Subtitle Language Identifiers")
                                   key:MDefaultLanguageIdentifiersKey],
-       [IntNode intNodeWithName:LABEL(@"Auto Letter Box Height Max Lines (1~3)")
+       [IntNode intNodeWithName:LABEL_R(@"Auto Letter Box Height Max Lines (1~3)")
                             key:MAutoLetterBoxHeightMaxLinesKey minValue:1 maxValue:3],
        nil]]];
     
@@ -550,6 +553,9 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
         [_movieView setRemoveGreenBox:[object boolValue]];
     }
     // subtitles
+    else if ([key isEqualToString:MUseQuickTimeEmbeddedSubtitlesKey]) {
+        [MMovie_QuickTime setUseQuickTimeEmbeddedSubtitles:[object boolValue]];
+    }
     else if ([key isEqualToString:MSubtitleReplaceNLWithBRKey]) {
         [_appController reopenSubtitles];
     }

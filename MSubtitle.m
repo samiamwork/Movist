@@ -67,6 +67,7 @@
 
     [_items release];
     [_trackName release];
+    [_extraInfo release];
     [_language release];
     [_name release];
     [_type release];
@@ -80,11 +81,13 @@
 - (NSString*)type { return _type; }
 - (NSString*)name { return _name; }
 - (NSString*)language { return _language; }
+- (NSString*)extraInfo { return _extraInfo; }
 - (NSString*)trackName { return _trackName; }
 - (BOOL)isEmbedded { return _embedded; }
 - (void)setType:(NSString*)s { [s retain], [_type release], _type = s; }
 - (void)setName:(NSString*)s { [s retain], [_name release], _name = s; }
 - (void)setLanguage:(NSString*)s { [s retain], [_language release], _language = s; }
+- (void)setExtraInfo:(NSString*)s { [s retain], [_extraInfo release], _extraInfo = s; }
 - (void)setTrackName:(NSString*)s { [s retain], [_trackName release], _trackName = s; }
 - (void)setEmbedded:(BOOL)embedded { _embedded = embedded; }
 - (NSString*)summary
@@ -98,7 +101,8 @@
     NSEnumerator* e = [defaultLangIDs objectEnumerator];
     while (s = [e nextObject]) {
         if ([_name rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound ||
-            [_language rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound) {
+            [_language rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound ||
+            [_extraInfo rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound) {
             return TRUE;
         }
     }

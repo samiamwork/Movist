@@ -37,6 +37,10 @@
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error;
 
+- (void)mutableAttributedString:(NSMutableAttributedString*)mas
+                   appendString:(NSString*)string
+                      withColor:(NSColor*)color italic:(BOOL)italic bold:(BOOL)bold;
+
 @end
 
 extern NSString* MSubtitleParserOptionKey_stringEncoding;

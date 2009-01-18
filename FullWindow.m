@@ -103,7 +103,8 @@
 - (void)mouseMoved:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([self isVisible] && ![self isNavigating]) {
+    if (NSPointInRect([NSEvent mouseLocation], [self frame]) &&
+        [self isVisible] && ![self isNavigating]) {
         [_playPanel showPanel];
 
         NSPoint p = [self convertBaseToScreen:[event locationInWindow]];

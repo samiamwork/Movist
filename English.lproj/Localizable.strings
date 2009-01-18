@@ -154,7 +154,8 @@
 "Remove Green Box" = "Remove Green Box";
 
 /* Preferences: advanced - details: subtitle */
-"Disable Perian Subtitle for using QuickTime" = "Disable Perian Subtitle for using QuickTime";
+"Use Perian External Subtitles for using QuickTime" = "Use Perian External Subtitles for using QuickTime";
+"Use Embedded Subtitles for using QuickTime" = "Use Embedded Subtitles for using QuickTime";
 "Auto-Load Embedded Subtitles in MKV" = "Auto-Load Embedded Subtitles in MKV";
 "Replace New-Line with <BR> for SAMI" = "Replace New-Line with <BR> for SAMI";
 "Default Subtitle Language Identifiers" = "Default Subtitle Language Identifiers";

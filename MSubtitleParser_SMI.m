@@ -81,6 +81,7 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
     MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease];
     [subtitle setType:@"SMI"];
     [subtitle setName:class];   // name will be updated later by "Name:" field.
+    [subtitle setExtraInfo:class];
     [subtitle setTrackName:NSLocalizedString(@"External Subtitle", nil)];
     [subtitle setEmbedded:FALSE];
     [_subtitles addObject:subtitle];
@@ -164,32 +165,6 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
         return [NSColor colorFromSMIString:[attr substringWithRange:tr]];
     }
     return nil;
-}
-
-- (void)mutableAttributedString:(NSMutableAttributedString*)mas
-                   appendString:(NSString*)string
-                      withColor:(NSColor*)color italic:(BOOL)italic bold:(BOOL)bold
-{
-    //TRACE(@"%s \"%@\" + \"%@\" with %@, %@, %@", __PRETTY_FUNCTION__,
-    //      [mas string], string, color, italic ? @"italic" : @"-", bold ? @"bold" : @"-");
-    if (color || italic || bold) {
-        NSMutableDictionary* attrs = [NSMutableDictionary dictionaryWithCapacity:3];
-        if (color) {
-            [attrs setObject:color forKey:NSForegroundColorAttributeName];
-        }
-        if (italic) {
-            [attrs setObject:[NSNumber numberWithBool:TRUE] forKey:MFontItalicAttributeName];
-        }
-        if (bold) {
-            [attrs setObject:[NSNumber numberWithBool:TRUE] forKey:MFontBoldAttributeName];
-        }
-        [mas appendAttributedString:[[[NSAttributedString alloc]
-                initWithString:string attributes:attrs] autorelease]];
-    }
-    else {
-        [mas appendAttributedString:[[[NSAttributedString alloc]
-                initWithString:string] autorelease]];
-    }
 }
 
 - (NSMutableAttributedString*)parseSubtitleString:(NSString*)string

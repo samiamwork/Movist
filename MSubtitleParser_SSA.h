@@ -30,11 +30,18 @@
     NSRange _sourceRange;
 
     NSMutableArray* _subtitles;
+    NSMutableDictionary* _styles;
+
+    NSColor* _defaultColor;
+    BOOL _defaultBold;
+    BOOL _defaultItalic;
 }
 
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error;
 
-- (NSMutableAttributedString*)parseSubtitleString_MKV:(NSString*)string;
+- (void)setStyles:(NSString*)styles forSubtitleNumber:(int)subtitleNumber;
+- (NSMutableAttributedString*)parseSubtitleString_MKV:(NSString*)string
+                                    forSubtitleNumber:(int)subtitleNumber;
 
 @end

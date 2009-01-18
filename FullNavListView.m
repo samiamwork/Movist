@@ -190,36 +190,32 @@
 
         CIColor* c0 = [CIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1.0];
         CIColor* c1 = [CIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:0.0];
-        CIVector* p0 = [CIVector vectorWithX:0 Y:_itemHeight];
-        CIVector* p1 = [CIVector vectorWithX:0 Y:0];
-        if (isSystemTiger()) { CIVector* p; p = p0, p0 = p1, p1 = p; }
+        CIVector* p0 = [CIVector vectorWithX:0 Y:0];
+        CIVector* p1 = [CIVector vectorWithX:0 Y:_itemHeight];
         _tFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_tFilter setValue:p0 forKey:@"inputPoint0"];
         [_tFilter setValue:p1 forKey:@"inputPoint1"];
         [_tFilter setValue:c0 forKey:@"inputColor0"];
         [_tFilter setValue:c1 forKey:@"inputColor1"];
 
-        p0 = [CIVector vectorWithX:0 Y:0];
-        p1 = [CIVector vectorWithX:0 Y:_itemHeight];
-        if (isSystemTiger()) { CIVector* p; p = p0, p0 = p1, p1 = p; }
+        p0 = [CIVector vectorWithX:0 Y:_itemHeight];
+        p1 = [CIVector vectorWithX:0 Y:0];
         _bFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_bFilter setValue:p0 forKey:@"inputPoint0"];
         [_bFilter setValue:p1 forKey:@"inputPoint1"];
         [_bFilter setValue:c0 forKey:@"inputColor0"];
         [_bFilter setValue:c1 forKey:@"inputColor1"];
 
-        p0 = [CIVector vectorWithX:0 Y:0];
-        p1 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
-        if (isSystemTiger()) { CIVector* p; p = p0, p0 = p1, p1 = p; }
+        p0 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
+        p1 = [CIVector vectorWithX:0 Y:0];
         _lFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_lFilter setValue:p0 forKey:@"inputPoint0"];
         [_lFilter setValue:p1 forKey:@"inputPoint1"];
         [_lFilter setValue:c0 forKey:@"inputColor0"];
         [_lFilter setValue:c1 forKey:@"inputColor1"];
 
-        p0 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
-        p1 = [CIVector vectorWithX:0 Y:0];
-        if (isSystemTiger()) { CIVector* p; p = p0, p0 = p1, p1 = p; }
+        p0 = [CIVector vectorWithX:0 Y:0];
+        p1 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
         _rFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_rFilter setValue:p0 forKey:@"inputPoint0"];
         [_rFilter setValue:p1 forKey:@"inputPoint1"];

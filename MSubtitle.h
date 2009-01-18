@@ -31,6 +31,7 @@
     NSString* _type;
     NSString* _name;
     NSString* _language;
+    NSString* _extraInfo;
     NSString* _trackName;
     BOOL _embedded;
     BOOL _enabled;
@@ -63,12 +64,14 @@
 - (NSString*)type;
 - (NSString*)name;
 - (NSString*)language;
+- (NSString*)extraInfo;
 - (NSString*)trackName;
 - (NSString*)summary;
 - (BOOL)isEmbedded;
 - (void)setType:(NSString*)type;
 - (void)setName:(NSString*)name;
 - (void)setLanguage:(NSString*)language;
+- (void)setExtraInfo:(NSString*)extraInfo;
 - (void)setTrackName:(NSString*)trackName;
 - (void)setEmbedded:(BOOL)embedded;
 

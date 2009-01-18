@@ -109,7 +109,8 @@
     // find parser for subtitle's path extension
     NSString* path = [subtitleURL path];
     NSString* ext = [[path pathExtension] lowercaseString];
-    Class parserClass = ([ext isEqualToString:@"smi"]) ? [MSubtitleParser_SMI class] :
+    Class parserClass = ([ext isEqualToString:@"smi"] ||
+                         [ext isEqualToString:@"sami"])? [MSubtitleParser_SMI class] :
                         ([ext isEqualToString:@"srt"]) ? [MSubtitleParser_SRT class] :
                         ([ext isEqualToString:@"mkv"] ||
                          [ext isEqualToString:@"mks"]) ? [MSubtitleParser_MKV class] :
@@ -217,10 +218,10 @@
         [_movieView setMessageWithURL:[self movieURL] info:[[_movie class] name]];
     }
     
-    if (![self isFullScreen] && ![self isDesktopBackground]) {
+    if (_mainWindow == [_movieView window]) {
         switch ([_defaults integerForKey:MOpeningViewKey]) {
             case OPENING_VIEW_HALF_SIZE         : [self resizeWithMagnification:0.5];   break;
-            case OPENING_VIEW_REAL_SIZE         : [self resizeWithMagnification:1.0];   break;
+            case OPENING_VIEW_NORMAL_SIZE       : [self resizeWithMagnification:1.0];   break;
             case OPENING_VIEW_DOUBLE_SIZE       : [self resizeWithMagnification:2.0];   break;
             case OPENING_VIEW_FIT_TO_SCREEN     : [self resizeToScreen];                break;
             case OPENING_VIEW_DESKTOP_BACKGROUND: [self beginDesktopBackground];        break;
