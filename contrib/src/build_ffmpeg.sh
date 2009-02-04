@@ -9,19 +9,25 @@ EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=10.4 -mmacosx-v
 CFLAGS="-I$PREFIX/include $EXTRA_CFLAGS"
 LDFLAGS="-L$PREFIX/lib"
 
-FFMPEG_REVISION=11914
-FFMPEG_SWSCALE_REVISION=25987
+FFMPEG_REVISION=15261
+FFMPEG_SWSCALE_REVISION=27728
+PATCHES_DIR="../Patches"
+PATCHES="FFMPEG_PATCHES"
 
 FFMPEG_CONF_COMMON=
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-vhook --disable-ffserver --disable-ffmpeg --disable-ffplay"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-encoders --disable-muxers --disable-network"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-gpl --enable-postproc --enable-swscale"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-pthreads"
-FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-libfaad"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-libfaad --enable-liba52"
 
 ########## SOURCE ##########
 
+rm -rf ffmpeg
 svn co svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
+(cd ffmpeg && svn up -r $FFMPEG_REVISION)
+(cd ffmpeg/libswscale && svn up -r $FFMPEG_SWSCALE_REVISION)
+(cd ffmpeg && for P in `cat $PATCHES_DIR/$PATCHES`; do patch -p0 < $PATCHES_DIR/$P; done)
 
 ########## INTEL ###########
 
