@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C32A5BE0F391CBE0037D6AE /* liba52.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C32A5BD0F391CBE0037D6AE /* liba52.a */; };
 		2CB96DA40F1CCF1C00C14189 /* libebml.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CB96DA30F1CCF1C00C14189 /* libebml.a */; };
 		2CC012030DC484910020241D /* FFAudioTrack_Digital.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CC012020DC484910020241D /* FFAudioTrack_Digital.m */; };
 		2CDF931B0DC4D1360069B195 /* FFAudioTrack_Analog.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */; };
@@ -256,6 +257,7 @@
 		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		2C32A5BD0F391CBE0037D6AE /* liba52.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liba52.a; path = contrib/lib/liba52.a; sourceTree = "<group>"; };
 		2CB96DA30F1CCF1C00C14189 /* libebml.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libebml.a; path = contrib/lib/libebml.a; sourceTree = "<group>"; };
 		2CC012020DC484910020241D /* FFAudioTrack_Digital.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFAudioTrack_Digital.m; sourceTree = "<group>"; };
 		2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFAudioTrack_Analog.m; sourceTree = "<group>"; };
@@ -568,6 +570,7 @@
 				2CFA586D0DB3496B0084BFB6 /* libswscale.a in Frameworks */,
 				AF0247280F137C79007339EB /* libmatroska.a in Frameworks */,
 				2CB96DA40F1CCF1C00C14189 /* libebml.a in Frameworks */,
+				2C32A5BE0F391CBE0037D6AE /* liba52.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -692,6 +695,7 @@
 		2CFA585D0DB349390084BFB6 /* FFmpeg */ = {
 			isa = PBXGroup;
 			children = (
+				2C32A5BD0F391CBE0037D6AE /* liba52.a */,
 				2CFA585F0DB3496B0084BFB6 /* libavcodec.a */,
 				2CFA58600DB3496B0084BFB6 /* libavdevice.a */,
 				2CFA58610DB3496B0084BFB6 /* libavformat.a */,

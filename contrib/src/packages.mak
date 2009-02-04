@@ -44,4 +44,4 @@ FFMPEG_URL=$(SF)/ffmpeg/ffmpeg-$(FFMPEG_VERSION).tar.gz
 FFMPEG_SVN=svn://svn.mplayerhq.hu/ffmpeg/trunk
 
 # Definition of contributed packages
-darwin_packages:.faad2 .matroska
+darwin_packages:.faad2 .matroska .a52
