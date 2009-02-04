@@ -66,7 +66,7 @@
     context->skip_frame = AVDISCARD_DEFAULT;
     context->skip_idct = AVDISCARD_DEFAULT;
     context->skip_loop_filter = AVDISCARD_DEFAULT;
-    context->error_recognition = FF_ER_CAREFUL;
+    context->error_resilience = FF_ER_CAREFUL;
     context->error_concealment = 3;
     
     if (avcodec_open(context, codec) < 0) {
