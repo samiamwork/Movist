@@ -440,37 +440,17 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         return;
     }
     
-    double currentAudioTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
+    double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
     //[_avSyncMutex lock];
-    double currentTime = currentAudioTime - [_movie hostTime0point];
+    double currentTime = hostTime - [_movie hostTime0point];
     //[_avSyncMutex unlock];
     [_dataQueue getFirstTime:&_nextDecodedTime];
     
-    if (currentTime + 0.02 < _nextDecodedTime) {
-        if (currentTime + 0.2 < _nextDecodedTime) {
-            [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
-            [_movie audioTrack:self avFineTuningTime:0];
-            //TRACE(@"currentTime(%f) < _nextDecodedTime %f", currentTime, _nextDecodedTime);
-            return;
-        }
-        double dt = _nextDecodedTime - currentTime;
-        [_movie audioTrack:self avFineTuningTime:dt];
+	double dt = _nextDecodedTime - currentTime;
+    if (-0.02 < dt && dt < 0.02) {
+		dt = 0;
     }
-    else if (_nextDecodedTime != 0 && _nextDecodedTime + 0.02 < currentTime) {
-        if (_nextDecodedTime + 0.2 < currentTime) {
-            double gap = 0.2/*currentTime - _nextDecodedTime*/; // FIXME
-            //TRACE(@"currentTime(%f) > &_nextDecodedTime %f data removed", currentTime, _nextDecodedTime);
-            [_dataQueue removeDataDuring:gap time:&_nextDecodedTime];
-            [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
-            [_movie audioTrack:self avFineTuningTime:0];
-            return;
-        }
-        double dt = _nextDecodedTime - currentTime;
-        [_movie audioTrack:self avFineTuningTime:dt];
-    }
-    else {
-        [_movie audioTrack:self avFineTuningTime:0];
-    }
+    [_movie audioTrack:self avFineTuningTime:0];
     
     int16_t audioBuf[AUDIO_BUF_SIZE];
     [_dataQueue getData:(UInt8*)audioBuf size:requestSize time:&_nextDecodedTime];
