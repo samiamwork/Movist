@@ -197,7 +197,7 @@
     return s;
 }
 
-- (void)updateUIForOpenedMovieAndSubtitle
+- (void)updateUIForOpenedMovieAndSubtitle:(BOOL)isSeries
 {
     NSSize ss = [[_mainWindow screen] frame].size;
     NSSize ms = [_movie adjustedSizeByAspectRatio];
@@ -218,7 +218,7 @@
         [_movieView setMessageWithURL:[self movieURL] info:[[_movie class] name]];
     }
     
-    if (_mainWindow == [_movieView window]) {
+    if (_mainWindow == [_movieView window] && !isSeries) {
         switch ([_defaults integerForKey:MOpeningViewKey]) {
             case OPENING_VIEW_HALF_SIZE         : [self resizeWithMagnification:0.5];   break;
             case OPENING_VIEW_NORMAL_SIZE       : [self resizeWithMagnification:1.0];   break;
@@ -311,6 +311,18 @@
     // don't check for alt-volume-change while opening movie
     _checkForAltVolumeChange = FALSE;
 
+    BOOL isSeries = (_lastPlayedMovieURL &&
+                     checkMovieSeries([[_lastPlayedMovieURL path] lastPathComponent],
+                                      [[movieURL path] lastPathComponent]));
+    if (isSeries) {
+        // if same movie series, then maintain some previous settings.
+        [_movie setAspectRatio:_lastPlayedMovieAspectRatio];
+    }
+    else {
+        // if not same movie series, then clear previous audio track info.
+        [_audioTrackIndexSet removeAllIndexes];
+    }
+
     // update movie
     [self updateDigitalAudioOut:self];
     // -[autoenableAudioTracks] should be sent after -[updateDigitalAudioOut:]
@@ -353,11 +365,15 @@
         else {
             _subtitles = [[NSMutableArray alloc] initWithArray:subtitles];
             [self updateExternalSubtitleTrackNames];
+            if (!isSeries) {
+                // if not same movie series, then clear previous subtitle info.
+                [_subtitleNameSet removeAllObjects];
+            }
             [self autoenableSubtitles];
         }
     }
 
-    [self updateUIForOpenedMovieAndSubtitle];
+    [self updateUIForOpenedMovieAndSubtitle:isSeries];
     _checkForAltVolumeChange = TRUE;
 
     [_movie setRate:_playRate];  // auto play
@@ -577,6 +593,7 @@
         _lastPlayedMovieTime = ([_movie currentTime] < [_movie duration]) ?
                                 [_movie currentTime] : 0.0;
         _lastPlayedMovieRepeatRange = [_seekSlider repeatRange];
+        _lastPlayedMovieAspectRatio = [_movie aspectRatio];
 
         // init _audioTrackIndexSet for next open.
         [_audioTrackIndexSet removeAllIndexes];

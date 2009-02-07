@@ -428,6 +428,8 @@ NSArray* movistDragTypes();
 float normalizedFloat1(float value);
 float normalizedFloat2(float value);
 
+BOOL checkMovieSeries(NSString* filename1, NSString* filename2);
+
 NSString* NSStringFromMovieTime(float time);
 NSString* NSStringFromSubtitleEncoding(CFStringEncoding encoding);
 NSArray* URLsFromFilenames(NSArray* filenames);

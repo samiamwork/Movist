@@ -74,6 +74,7 @@
     NSURL* _lastPlayedMovieURL;
     float _lastPlayedMovieTime;
     NSRange _lastPlayedMovieRepeatRange;
+    int _lastPlayedMovieAspectRatio;
 
     // main-menu
     IBOutlet NSMenuItem* _reopenWithMenuItem;

@@ -85,6 +85,32 @@ float normalizedFloat2(float value)
     return (float)(int)((value + f) * 100) / 100;   // make "x.xx"
 }
 
+BOOL checkMovieSeries(NSString* filename1, NSString* filename2)
+{
+    //TRACE(@"%s \"%@\" for \"%@\"", __PRETTY_FUNCTION__, filename1, filename2);
+    if ([filename1 isEqualToString:filename2]) {
+        return TRUE;
+    }
+
+    // don't check if same extension for more flexibility
+    //if (![[filename1 pathExtension] isEqualToString:[filename2 pathExtension]]) {
+    //    return FALSE;
+    //}
+
+    unsigned int length1 = [filename1 length];
+    unsigned int length2 = [filename2 length];
+    unsigned int i, minSameLength = 5;
+    unichar c1, c2;
+    for (i = 0; i < length1 && i < length2; i++) {
+        c1 = [filename1 characterAtIndex:i];
+        c2 = [filename2 characterAtIndex:i];
+        if (toupper(c1) != toupper(c2)) {
+            return (minSameLength <= i || (isdigit(c1) && isdigit(c2)));
+        }
+    }
+    return TRUE;
+}
+
 NSString* NSStringFromMovieTime(float time)
 {
     BOOL positive = (0.0 <= time) ? TRUE : (time = -time, FALSE);
