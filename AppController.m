@@ -89,6 +89,7 @@ NSString* videoCodecName(int codecId);
     cell = [_fsVolumeSlider cell];
     [cell setImageName:@"FSVolume" backColor:HUDBackgroundColor trackOffset:0.0 knobOffset:2.0];
 
+    _alwaysOnTopEnabled = FALSE;
     _checkForAltVolumeChange = TRUE;
     _systemVolume = -1;
     [self updateVolumeUI];
@@ -273,7 +274,7 @@ NSString* videoCodecName(int codecId);
     [self checkLegacyPreferences];
 
     // initial update preferences: general
-    [_mainWindow setAlwaysOnTop:[_defaults boolForKey:MAlwaysOnTopKey]];
+    [self setAlwaysOnTopEnabled:[_defaults boolForKey:MAlwaysOnTopKey]];
     // don't set as-desktop-background. it will be set when movie is opened.
     [self setSeekInterval:[_defaults floatForKey:MSeekInterval0Key] atIndex:0];
     [self setSeekInterval:[_defaults floatForKey:MSeekInterval1Key] atIndex:1];
@@ -301,12 +302,13 @@ NSString* videoCodecName(int codecId);
         fontName = [_defaults stringForKey:MSubtitleFontNameKey[i]];
         font = [NSFont fontWithName:fontName size:10.0];
         if (!font) {
-            NSRunAlertPanel(NSLocalizedString(@"Subtitle Font Not Found", nil),
-                            [NSString stringWithFormat:NSLocalizedString(
-                             @"Subtitle font not found: \"%@\"\n"
-                              "Subtitle font setting will be restored to default.", nil),
-                             fontName],
-                            NSLocalizedString(@"OK", nil), nil, nil);
+            runAlertPanel(_mainWindow,
+                          NSLocalizedString(@"Subtitle Font Not Found", nil),
+                          [NSString stringWithFormat:NSLocalizedString(
+                           @"\"%@\" not found\n"
+                            "Subtitle font setting will be restored to default.", nil),
+                           fontName],
+                          NSLocalizedString(@"OK", nil), nil, nil);
             [_defaults setObject:[[NSFont boldSystemFontOfSize:1.0] fontName]
                           forKey:MSubtitleFontNameKey[i]];
         }
@@ -426,7 +428,7 @@ NSString* videoCodecName(int codecId);
             }
         }
     }
-    NSRunAlertPanel([NSApp localizedAppName], msg, NSLocalizedString(@"OK", nil), nil, nil);
+    runAlertPanel(_mainWindow, title, @"", NSLocalizedString(@"OK", nil), nil, nil);
      */
 }
 
@@ -541,20 +543,20 @@ NSString* videoCodecName(int codecId);
     [_preferenceController updateLastUpdateCheckTimeTextField];
 
     if (ret == UPDATE_CHECK_FAILED) {
-        NSString* s = [NSString stringWithFormat:@"%@", error];
         if (manual) {   // only for manual checking
-            NSRunAlertPanel([NSApp localizedAppName], s,
-                            NSLocalizedString(@"OK", nil), nil, nil);
+            runAlertPanel(_mainWindow,
+                          NSLocalizedString(@"Cannot check for update.", nil),
+                          [error localizedDescription],
+                          NSLocalizedString(@"OK", nil), nil, nil);
         }
         else {
-            [_movieView setMessage:s];
+            [_movieView setMessage:[error localizedDescription]];
         }
     }
     else if (ret == NO_UPDATE_AVAILABLE) {
         NSString* s = NSLocalizedString(@"No update available.", nil);
         if (manual) {   // only for manual checking
-            NSRunAlertPanel([NSApp localizedAppName], s,
-                            NSLocalizedString(@"OK", nil), nil, nil);
+            runAlertPanel(_mainWindow, s, @"", NSLocalizedString(@"OK", nil), nil, nil);
         }
         else {
             [_movieView setMessage:s];
@@ -568,10 +570,10 @@ NSString* videoCodecName(int codecId);
         NSString* s = [NSString stringWithFormat:
                         NSLocalizedString(@"New version %@ is available.", nil),
                         newVersion];
-        ret = NSRunAlertPanel([NSApp localizedAppName], s,
-                              NSLocalizedString(@"Show Updates", nil),
-                              NSLocalizedString(@"Download", nil),
-                              NSLocalizedString(@"Cancel", nil), nil);
+        ret = runAlertPanel(_mainWindow, s, @"",
+                            NSLocalizedString(@"Show Updates", nil),
+                            NSLocalizedString(@"Download", nil),
+                            NSLocalizedString(@"Cancel", nil));
         if (ret == NSAlertDefaultReturn) {
             [[NSWorkspace sharedWorkspace] openURL:homepageURL];
         }
@@ -601,6 +603,7 @@ NSString* videoCodecName(int codecId);
         [_controlPanel hidePanel];
     }
     else {
+        [_controlPanel setLevel:[_mainWindow level] + 1];
         [_controlPanel showPanel];
         //[_controlPanel makeKeyWindow];
     }
@@ -612,17 +615,59 @@ NSString* videoCodecName(int codecId);
     if (!_preferenceController) {
         _preferenceController = [[PreferenceController alloc]
                             initWithAppController:self mainWindow:_mainWindow];
+        [[_preferenceController window] setDelegate:self];
+        [[_preferenceController window] setVisibleInAllSpaces:TRUE];
     }
     [_preferenceController showWindow:self];
-    [[_preferenceController window] setDelegate:self];
     [[_preferenceController window] makeKeyWindow];
+    [[_preferenceController window] setAlwaysOnTop:[_mainWindow alwaysOnTop]];
     [_playPanel orderOutWithFadeOut:self];
+}
+
+- (void)setAlwaysOnTopEnabled:(BOOL)enabled
+{
+    _alwaysOnTopEnabled = enabled;
+
+    if ([_mainWindow isKeyWindow]) {
+        [self updateAlwaysOnTop:_alwaysOnTopEnabled];
+    }
+}
+
+- (void)updateAlwaysOnTop:(BOOL)alwaysOnTop
+{
+    if (![_mainWindow isKeyWindow]) {
+        return;
+    }
+
+    if (alwaysOnTop) {
+        alwaysOnTop = ![_defaults boolForKey:MAlwaysOnTopOnPlayingKey] ||
+                      (_movie && [_movie rate] != 0.0);
+    }
+
+    [[_preferenceController window] setAlwaysOnTop:alwaysOnTop];
+    [_mainWindow setAlwaysOnTop:alwaysOnTop];
+    [_controlPanel setLevel:[_mainWindow level] + 1];
 }
 
 - (IBAction)alwaysOnTopAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_mainWindow setAlwaysOnTop:![_mainWindow alwaysOnTop]];
+    _alwaysOnTopEnabled = !_alwaysOnTopEnabled;
+
+    NSString* s;
+    if (_alwaysOnTopEnabled) {
+        s = NSLocalizedString(@"Keep on Top of All Other Windows", nil);
+        if ([_defaults boolForKey:MAlwaysOnTopOnPlayingKey]) {
+            s = [s stringByAppendingFormat:@" (%@)",
+                 NSLocalizedString(@"Apply on Playing Only", nil)];
+        }
+    }
+    else {
+        s = NSLocalizedString(@"Don't keep on Top of All Other Windows", nil);
+    }
+    [_movieView setMessage:s];
+
+    [self updateAlwaysOnTop:_alwaysOnTopEnabled];
 }
 
 @end
@@ -652,6 +697,13 @@ NSString* videoCodecName(int codecId);
                     return (_movie != nil);
                 }
             }
+        }
+        if ([menuItem action] == @selector(fullScreenAction:) ||
+            [menuItem action] == @selector(fullScreenFillAction:)) {
+            return (_movie != nil);
+        }
+        if ([menuItem action] == @selector(desktopBackgroundAction:)) {
+            return _movie && ![self isFullScreen];
         }
         if ([NSApp keyWindow] == [_playlistController window] &&
             [menuItem action] == @selector(playlistAction:)) {
@@ -748,8 +800,10 @@ NSString* videoCodecName(int codecId);
         [menuItem action] == @selector(subtitleSyncAction:)) {
         return (_subtitles && 0 < [_subtitles count]);
     }
+
+    // Window
     if ([menuItem action] == @selector(alwaysOnTopAction:)) {
-        [menuItem setState:[_mainWindow alwaysOnTop]];
+        [menuItem setState:_alwaysOnTopEnabled];//[_mainWindow alwaysOnTop]];
         return ([NSApp keyWindow] == _mainWindow);
     }
 

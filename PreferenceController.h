@@ -34,6 +34,7 @@
     IBOutlet NSButton*      _autodetectMovieSeriesButton;
     IBOutlet NSButton*      _autoPlayOnFullScreenButton;
     IBOutlet NSButton*      _alwaysOnTopButton;
+    IBOutlet NSButton*      _alwaysOnTopOnPlayingButton;
     IBOutlet NSButton*      _deactivateScreenSaverButton;
     IBOutlet NSButton*      _quitWhenWindowCloseButton;
     IBOutlet NSButton*      _rememberLastPlayButton;
@@ -141,6 +142,7 @@
 - (IBAction)autodetectMovieSeriesAction:(id)sender;
 - (IBAction)autoPlayOnFullScreenAction:(id)sender;
 - (IBAction)alwaysOnTopAction:(id)sender;
+- (IBAction)alwaysOnTopOnPlayingAction:(id)sender;
 - (IBAction)deactivateScreenSaverAction:(id)sender;
 - (IBAction)quitWhenWindowCloseAction:(id)sender;
 - (IBAction)rememberLastPlayAction:(id)sender;

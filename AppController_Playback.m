@@ -21,11 +21,13 @@
 //
 
 #import "AppController.h"
+#import "UserDefaults.h"
 
 #import "MMovie.h"
 #import "Playlist.h"
 
 #import "MMovieView.h"
+#import "MainWindow.h"
 #import "ControlPanel.h"
 #import "CustomControls.h"  // for SeekSlider
 #import "FullScreener.h"
@@ -296,6 +298,10 @@
     else {
         //TRACE(@"%s", __PRETTY_FUNCTION__);
         [self updatePlayUI];
+
+        if (_alwaysOnTopEnabled && [_mainWindow isKeyWindow]) {
+            [self updateAlwaysOnTop:_alwaysOnTopEnabled];
+        }
     }
 }
 

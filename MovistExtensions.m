@@ -23,6 +23,8 @@
 #import "MovistExtensions.h"
 #import "CustomControls.h"
 
+#import <Carbon/Carbon.h>   // for kHIWindowVisibleInAllSpaces
+
 @implementation NSCell (Movist)
 
 - (void)copyAttributesFromCell:(NSCell*)cell
@@ -404,6 +406,50 @@
 
 - (void)fadeIn:(float)duration  { [self fadeWithEffect:NSViewAnimationFadeInEffect duration:duration]; }
 - (void)fadeOut:(float)duration { [self fadeWithEffect:NSViewAnimationFadeOutEffect duration:duration]; }
+
+- (void)setVisibleInAllSpaces:(BOOL)visible
+{
+    if (isSystemLeopard()) {
+        HIWindowRef windowRef = (HIWindowRef)[self windowRef];
+        if (visible) {
+            HIWindowChangeAvailability(windowRef, kHIWindowVisibleInAllSpaces, 0);
+        }
+        else {
+            HIWindowChangeAvailability(windowRef, 0, kHIWindowVisibleInAllSpaces);
+        }
+    }
+}
+
+- (void)setAlwaysOnTop:(BOOL)alwaysOnTop
+{
+    // enhancement for Expose & Spaces
+    // based on patch of Chan-gu Lee <maidaro@gmail.com>.
+    if (alwaysOnTop) {
+        [self setLevel:TopMostWindowLevel];
+    }
+    else {
+        [self setLevel:NSNormalWindowLevel];
+    }
+
+    HIWindowRef windowRef = (HIWindowRef)[self windowRef];
+    HIWindowAvailability windowAvailability = 0;
+    HIWindowGetAvailability(windowRef, &windowAvailability);
+    if (!(windowAvailability & kHIWindowExposeHidden)) {
+        HIWindowChangeAvailability(windowRef, kHIWindowExposeHidden, 0);
+    }
+    HIWindowChangeAvailability(windowRef, 0, kHIWindowExposeHidden);
+    /*
+    if (isSystemLeopard()) {
+        if (alwaysOnTop) {
+            HIWindowChangeAvailability(windowRef, kHIWindowVisibleInAllSpaces, 0);
+        }
+        else {
+            HIWindowChangeAvailability(windowRef, 0, kHIWindowVisibleInAllSpaces);
+        }
+        [self orderFront:self];
+    }
+     */
+}
 
 @end
 

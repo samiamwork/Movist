@@ -23,6 +23,7 @@
 #import "FullWindow.h"
 
 #import "AppController.h"   // for NSApp's delegate
+#import "UserDefaults.h"
 #import "MMovieView.h"
 #import "PlayPanel.h"
 #import "FullNavView.h"
@@ -104,7 +105,8 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (NSPointInRect([NSEvent mouseLocation], [self frame]) &&
-        [self isVisible] && ![self isNavigating]) {
+        [self isVisible] && ![self isNavigating] &&
+        [[NSUserDefaults standardUserDefaults] boolForKey:MUsePlayPanelKey]) {
         [_playPanel showPanel];
 
         NSPoint p = [self convertBaseToScreen:[event locationInWindow]];

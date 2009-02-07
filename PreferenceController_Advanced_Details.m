@@ -406,6 +406,8 @@
                               key:MActivateOnDraggingKey],
        [BoolNode boolNodeWithName:LABEL(@"Auto Show Dock in Full Screen")
                               key:MAutoShowDockKey],
+       [BoolNode boolNodeWithName:LABEL(@"Use Play-Panel in Full Screen")
+                              key:MUsePlayPanelKey],
        [BoolNode boolNodeWithName:LABEL(@"Floating Playlist")
                               key:MFloatingPlaylistKey],
        [BoolNode boolNodeWithName:LABEL(@"Goto Begginning When Reopen Movie")

@@ -57,8 +57,9 @@
     NSUserDefaults* _defaults;
     NSTimer* _updateSystemActivityTimer;
     BOOL _audioDeviceSupportsDigital;
-    float _systemVolume;
+    BOOL _alwaysOnTopEnabled;
     BOOL _checkForAltVolumeChange;
+    float _systemVolume;
 
     // movie & subtitle
     MMovie* _movie;
@@ -167,6 +168,8 @@
 - (IBAction)controlPanelAction:(id)sender;
 - (IBAction)preferencePanelAction:(id)sender;
 
+- (void)setAlwaysOnTopEnabled:(BOOL)enabled;
+- (void)updateAlwaysOnTop:(BOOL)alwaysOnTop;
 - (IBAction)alwaysOnTopAction:(id)sender;
 
 @end

@@ -260,6 +260,8 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#import <Carbon/Carbon.h>   // for kHIWindowVisibleInAllSpaces
+
 @implementation SeekSlider
 
 - (void)initToolTipWithTextColor:(NSColor*)textColor backColor:(NSColor*)backColor
@@ -273,6 +275,7 @@
     [window setBackgroundColor:backColor];
     [window setHasShadow:FALSE];
     [window setHidesOnDeactivate:TRUE];
+    [window setVisibleInAllSpaces:TRUE];
 
     _toolTipTextField = [[NSTextField alloc] initWithFrame:NSZeroRect];
     [_toolTipTextField setAlignment:NSCenterTextAlignment];

@@ -55,6 +55,8 @@
 			<dict>
 				<key>alwaysOnTopAction</key>
 				<string>id</string>
+				<key>alwaysOnTopOnPlayingAction</key>
+				<string>id</string>
 				<key>autoPlayOnFullScreenAction</key>
 				<string>id</string>
 				<key>autodetectDigitalAudioOutAction</key>
@@ -127,6 +129,8 @@
 				<key>_advancedTabView</key>
 				<string>NSTabView</string>
 				<key>_alwaysOnTopButton</key>
+				<string>NSButton</string>
+				<key>_alwaysOnTopOnPlayingButton</key>
 				<string>NSButton</string>
 				<key>_audioPane</key>
 				<string>NSView</string>

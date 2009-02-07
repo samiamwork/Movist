@@ -36,6 +36,7 @@ extern NSString* MOpeningViewKey;
 extern NSString* MAutodetectMovieSeriesKey;
 extern NSString* MAutoPlayOnFullScreenKey;
 extern NSString* MAlwaysOnTopKey;
+extern NSString* MAlwaysOnTopOnPlayingKey;
 extern NSString* MDeactivateScreenSaverKey;
 extern NSString* MQuitWhenWindowCloseKey;
 extern NSString* MRememberLastPlayKey;
@@ -104,6 +105,7 @@ extern NSString* MDefaultCodecBindingKey;
 #pragma mark prefs: advanced - details: general
 extern NSString* MActivateOnDraggingKey;
 extern NSString* MAutoShowDockKey;
+extern NSString* MUsePlayPanelKey;
 extern NSString* MFloatingPlaylistKey;
 extern NSString* MGotoBegginingWhenReopenMovieKey;
 extern NSString* MGotoBegginingWhenOpenSubtitleKey;

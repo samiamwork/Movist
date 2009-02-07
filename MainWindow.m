@@ -108,34 +108,7 @@
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, alwaysOnTop);
     _alwaysOnTop = alwaysOnTop;
-
-    // enhancement for Expose & Spaces
-    // based on patch of Chan-gu Lee <maidaro@gmail.com>.
-    if (_alwaysOnTop) {
-        [self setLevel:TopMostWindowLevel];
-    }
-    else {
-        [self setLevel:NSNormalWindowLevel];
-    }
-
-    HIWindowRef windowRef = (HIWindowRef)[self windowRef];
-    HIWindowAvailability windowAvailability = 0;
-    HIWindowGetAvailability(windowRef, &windowAvailability);
-    if (!(windowAvailability & kHIWindowExposeHidden)) {
-        HIWindowChangeAvailability(windowRef, kHIWindowExposeHidden, 0);
-    }
-    HIWindowChangeAvailability(windowRef, 0, kHIWindowExposeHidden);
-
-    if (isSystemLeopard()) {
-        const int kHIWindowVisibleInAllSpaces = 1 << 8;
-        if (_alwaysOnTop) {
-            HIWindowChangeAvailability(windowRef, kHIWindowVisibleInAllSpaces, 0);
-        }
-        else {
-            HIWindowChangeAvailability(windowRef, 0, kHIWindowVisibleInAllSpaces);
-        }
-        [self orderFront:self];
-    }
+    [super setAlwaysOnTop:alwaysOnTop];
 }
 
 - (void)orderFrontRegardless

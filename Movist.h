@@ -418,6 +418,8 @@ extern NSString* MPlaylistItemDataType;
 BOOL isSystemTiger();
 BOOL isSystemLeopard();
 
+#define kHIWindowVisibleInAllSpaces     (1 << 8)
+
 NSArray* movistDragTypes();
 
 #define valueInRange(value, minValue, maxValue)     ((minValue) <= (value) && (value) <= (maxValue))
@@ -433,7 +435,10 @@ NSArray* URLsFromFilenames(NSArray* filenames);
 NSString* codecName(int codecId);
 NSString* codecDescription(int codecId);
 
-void runAlertPanelForOpenError(NSError* error, NSURL* url);
+@class MainWindow;
+int runAlertPanel(MainWindow* mainWindow, NSString* title, NSString* msg,
+                  NSString* defaultButton, NSString* altButton, NSString* otherButton);
+void runAlertPanelForOpenError(MainWindow* mainWindow, NSError* error, NSURL* url);
 
 unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay);
 

@@ -287,7 +287,7 @@
             if ([self isDesktopBackground]) {
                 [self endDesktopBackground];
             }
-            runAlertPanelForOpenError(error, movieURL);
+            runAlertPanelForOpenError(_mainWindow, error, movieURL);
         }
         return FALSE;
     }
@@ -346,7 +346,7 @@
             NSURL* subtitleURL;
             NSEnumerator* e = [subtitleURLs objectEnumerator];
             while (subtitleURL = [e nextObject]) {
-                runAlertPanelForOpenError(error, subtitleURL);
+                runAlertPanelForOpenError(_mainWindow, error, subtitleURL);
             }
             // continue... subtitle is not necessary for movie.
         }
@@ -386,9 +386,9 @@
 - (BOOL)openURL:(NSURL*)url
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSString* s = @"\"Open URL...\" is not implemented yet.";
-    NSRunAlertPanel([NSApp localizedAppName], s,
-                    NSLocalizedString(@"OK", nil), nil, nil);
+    runAlertPanel(_mainWindow,
+                  @"\"Open URL...\" is not implemented yet.", @"",
+                  NSLocalizedString(@"OK", nil), nil, nil);
     return FALSE;
 }
 
@@ -450,7 +450,7 @@
         NSURL* subtitleURL;
         NSEnumerator* e = [subtitleURLs objectEnumerator];
         while (subtitleURL = [e nextObject]) {
-            runAlertPanelForOpenError(error, subtitleURL);
+            runAlertPanelForOpenError(_mainWindow, error, subtitleURL);
         }
         [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
         return FALSE;
@@ -501,7 +501,7 @@
         NSURL* subtitleURL;
         NSEnumerator* e = [subtitleURLs objectEnumerator];
         while (subtitleURL = [e nextObject]) {
-            runAlertPanelForOpenError(error, subtitleURL);
+            runAlertPanelForOpenError(_mainWindow, error, subtitleURL);
         }
         return;
     }
@@ -681,6 +681,11 @@
 - (IBAction)openFileAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL alwaysOnTop = [_mainWindow alwaysOnTop];
+    if (alwaysOnTop) {
+        [_mainWindow setAlwaysOnTop:FALSE];
+    }
+
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     //[panel setTitle:NSLocalizedString(@"Open Movie File", nil)];
     [panel setCanChooseFiles:TRUE];
@@ -689,11 +694,20 @@
     if (NSOKButton == [panel runModalForTypes:[MMovie fileExtensions]]) {
         [self openFile:[panel filename]];
     }
+
+    if (alwaysOnTop) {
+        [_mainWindow setAlwaysOnTop:TRUE];
+    }
 }
 
 - (IBAction)openSubtitleFileAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL alwaysOnTop = [_mainWindow alwaysOnTop];
+    if (alwaysOnTop) {
+        [_mainWindow setAlwaysOnTop:FALSE];
+    }
+
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     //[panel setTitle:NSLocalizedString(@"Open Subtitle Files", nil)];
     [panel setCanChooseFiles:TRUE];
@@ -703,10 +717,19 @@
         [self openSubtitles:URLsFromFilenames([panel filenames])
                    encoding:kCFStringEncodingInvalidId];
     }
+
+    if (alwaysOnTop) {
+        [_mainWindow setAlwaysOnTop:TRUE];
+    }
 }
 
 - (IBAction)addSubtitleFileAction:(id)sender
 {
+    BOOL alwaysOnTop = [_mainWindow alwaysOnTop];
+    if (alwaysOnTop) {
+        [_mainWindow setAlwaysOnTop:FALSE];
+    }
+
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     //[panel setTitle:NSLocalizedString(@"Add Subtitle Files", nil)];
     [panel setCanChooseFiles:TRUE];
@@ -714,6 +737,10 @@
     [panel setAllowsMultipleSelection:TRUE];
     if (NSOKButton == [panel runModalForTypes:[MSubtitle fileExtensions]]) {
         [self addSubtitles:URLsFromFilenames([panel filenames])];
+    }
+
+    if (alwaysOnTop) {
+        [_mainWindow setAlwaysOnTop:TRUE];
     }
 }
 

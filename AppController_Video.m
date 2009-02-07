@@ -111,6 +111,9 @@
             }
         }
 
+        if (_alwaysOnTopEnabled) {
+            [self updateAlwaysOnTop:FALSE];
+        }
         if (!_fullScreener) {
             _fullScreener = [FullScreener alloc];
             [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
@@ -132,6 +135,9 @@
             [_fullScreener release];
             _fullScreener = nil;
         }
+        if (_alwaysOnTopEnabled) {
+            [self updateAlwaysOnTop:TRUE];
+        }
     }
     [_fullScreenLock unlock];
 }
@@ -147,6 +153,9 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_fullScreenLock lock];
     if (_movie && ![self isDesktopBackground]) {
+        if (_alwaysOnTopEnabled) {
+            [self updateAlwaysOnTop:FALSE];
+        }
         if (!_fullScreener) {
             _fullScreener = [FullScreener alloc];
             [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
@@ -166,6 +175,9 @@
         [_fullScreener release];
         _fullScreener = nil;
         [_movieView updateMovieRect:TRUE];
+        if (_alwaysOnTopEnabled) {
+            [self updateAlwaysOnTop:TRUE];
+        }
     }
     [_fullScreenLock unlock];
 }
@@ -184,6 +196,10 @@
     }
 
     [_fullScreenLock lock];
+    if (_alwaysOnTopEnabled) {
+        [self updateAlwaysOnTop:FALSE];
+    }
+    [_controlPanel orderOut:self];
     if ([self isFullScreen]) {
         // enter from full-screen-mode with playing movie
         [_fullScreener setMovieURL:nil];
@@ -213,6 +229,9 @@
         [_fullScreener release];
         _fullScreener = nil;
         [_movieView updateMovieRect:TRUE];
+        if (_alwaysOnTopEnabled) {
+            [self updateAlwaysOnTop:TRUE];
+        }
     }
     [_fullScreenLock unlock];
 }

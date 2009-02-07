@@ -10,11 +10,13 @@
 "iTunes Video Podcast" = "iTunes Video Podcast";
 "No movie file" = "No movie file";
 "Subtitle Font Not Found" = "Subtitle Font Not Found";
-"Subtitle font not found: \"%@\"\nSubtitle font setting will be restored to default." =
-    "Subtitle font not found: \"%@\"\nSubtitle font setting will be restored to default.";
+"\"%@\" not found\nSubtitle font setting will be restored to default." =
+    "\"%@\" not found\nSubtitle font setting will be restored to default.";
+"Cannot open file" = "Cannot open file";
 
 /* Check for Updates */
 "Checking for Updates..." = "Checking for Updates...";
+"Cannot check for update." = "Cannot check for update.";
 "No update available." = "No update available.";
 "New version %@ is available." = "New version %@ is available.";
 "Show Updates" = "Show Updates";
@@ -100,6 +102,11 @@
 "Subtitle Screen Margin %.1f" = "Subtitle Screen Margin %.1f";
 "Subtitle Order" = "Subtitle Order";
 
+/* Message : Window */
+"Keep on Top of All Other Windows" = "Keep on Top of All Other Windows";
+"Don't keep on Top of All Other Windows" = "Don't keep on Top of All Other Windows";
+"Apply on Playing Only" = "Apply on Playing Only";
+
 /* Control Panel */
 "All Subtitles" = "All Subtitles";
 "Video Track" = "Video Track";
@@ -130,6 +137,7 @@
 /* Preferences: advanced - details: general */
 "Activate on Dragging over Main Window" = "Activate on Dragging over Main Window";
 "Auto Show Dock in Full Screen" = "Auto Show Dock in Full Screen";
+"Use Play-Panel in Full Screen" = "Use Play-Panel in Full Screen";
 "Floating Playlist" = "Floating Playlist";
 "Goto Begginning When Reopen Movie" = "Goto Begginning When Reopen Movie";
 "Goto Begginning When Open Subtitle" = "Goto Begginning When Open Subtitle";

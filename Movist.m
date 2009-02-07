@@ -22,6 +22,7 @@
 
 #import "Movist.h"
 #import "MSubtitle.h"
+#import "MainWindow.h"
 
 #pragma mark notifications: movie
 NSString* MMovieIndexedDurationNotification = @"MMovieIndexedDurationNotification";
@@ -212,12 +213,32 @@ NSString* codecDescription(int codecId)
     return @"";
 }
 
-void runAlertPanelForOpenError(NSError* error, NSURL* url)
+int runAlertPanel(MainWindow* mainWindow, NSString* title, NSString* msg,
+                  NSString* defaultButton, NSString* altButton, NSString* otherButton)
 {
-    NSString* s = [NSString stringWithFormat:@"%@\n\n%@",
-                   error, [url isFileURL] ? [url path] : [url absoluteString]];
-    NSRunAlertPanel([NSApp localizedAppName], s,
-                    NSLocalizedString(@"OK", nil), nil, nil);
+    BOOL alwaysOnTop = [mainWindow alwaysOnTop];
+    if (alwaysOnTop) {
+        [NSApp activateIgnoringOtherApps:TRUE];
+        [mainWindow setAlwaysOnTop:FALSE];
+    }
+
+    int ret = NSRunAlertPanel(title, msg, defaultButton, altButton, otherButton);
+    
+    if (alwaysOnTop) {
+        [mainWindow setAlwaysOnTop:TRUE];
+    }
+
+    return ret;
+}
+
+void runAlertPanelForOpenError(MainWindow* mainWindow, NSError* error, NSURL* url)
+{
+    runAlertPanel(mainWindow,
+                  NSLocalizedString(@"Cannot open file", nil),
+                  [NSString stringWithFormat:@"%@\n\n%@",
+                   [error localizedDescription],
+                   [url isFileURL] ? [url path] : [url absoluteString]],
+                  NSLocalizedString(@"OK", nil), nil, nil);
 }
 
 unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)

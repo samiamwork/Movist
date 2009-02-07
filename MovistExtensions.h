@@ -69,6 +69,9 @@
 - (void)fadeIn:(float)duration;
 - (void)fadeOut:(float)duration;
 
+- (void)setVisibleInAllSpaces:(BOOL)visible;
+- (void)setAlwaysOnTop:(BOOL)alwaysOnTop;
+
 @end
 
 #define HUDTitleBackColor   [NSColor colorWithCalibratedWhite:0.1 alpha:0.85]

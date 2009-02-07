@@ -45,6 +45,8 @@
     [_autoPlayOnFullScreenButton setState:[_defaults boolForKey:MAutoPlayOnFullScreenKey]];
 
     [_alwaysOnTopButton setState:[_defaults boolForKey:MAlwaysOnTopKey]];
+    [_alwaysOnTopOnPlayingButton setState:[_defaults boolForKey:MAlwaysOnTopOnPlayingKey]];
+    [_alwaysOnTopOnPlayingButton setEnabled:[_defaults boolForKey:MAlwaysOnTopKey]];
     [_deactivateScreenSaverButton setState:[_defaults boolForKey:MDeactivateScreenSaverKey]];
 
     [_quitWhenWindowCloseButton setState:[_defaults boolForKey:MQuitWhenWindowCloseKey]];
@@ -92,7 +94,18 @@
     BOOL alwaysOnTop = [_alwaysOnTopButton state];
     [_defaults setBool:alwaysOnTop forKey:MAlwaysOnTopKey];
 
-    [_mainWindow setAlwaysOnTop:alwaysOnTop];
+    [_alwaysOnTopOnPlayingButton setEnabled:alwaysOnTop];
+
+    [_appController setAlwaysOnTopEnabled:alwaysOnTop];
+}
+
+- (IBAction)alwaysOnTopOnPlayingAction:(id)sender
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    BOOL alwaysOnTopOnPlaying = [_alwaysOnTopOnPlayingButton state];
+    [_defaults setBool:alwaysOnTopOnPlaying forKey:MAlwaysOnTopOnPlayingKey];
+    
+    [_appController updateAlwaysOnTop:[_defaults boolForKey:MAlwaysOnTopKey]];
 }
 
 - (IBAction)deactivateScreenSaverAction:(id)sender

@@ -27,6 +27,7 @@
 #import "MMovie.h"
 #import "MSubtitle.h"
 #import "AppController.h"
+#import "MainWindow.h"
 
 #define MPlayingColumnIdentifier   @"playing"
 #define MMovieColumnIdentifier     @"movie"
@@ -125,6 +126,12 @@
 - (IBAction)addAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    MainWindow* mainWindow = (MainWindow*)[NSApp mainWindow];
+    BOOL alwaysOnTop = [mainWindow alwaysOnTop];
+    if (alwaysOnTop) {
+        [mainWindow setAlwaysOnTop:FALSE];
+    }
+
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:TRUE];
@@ -135,6 +142,10 @@
         [self updateUI];
 
         [_tableView selectRow:row byExtendingSelection:FALSE];
+    }
+
+    if (alwaysOnTop) {
+        [mainWindow setAlwaysOnTop:TRUE];
     }
 }
 

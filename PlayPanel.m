@@ -24,6 +24,8 @@
 #import "SeekSlider.h"
 #import "AppController.h"   // NSApp's delegate
 
+#import <Carbon/Carbon.h>   // for kHIWindowVisibleInAllSpaces
+
 @implementation PlayPanel
 
 - (id)initWithContentRect:(NSRect)contentRect
@@ -47,6 +49,7 @@
     [self setDelegate:self];
     [self updateHUDBackground];
     [self initHUDSubviews];
+    [self setVisibleInAllSpaces:TRUE];
     _movingByDragging = FALSE;
 }
 
