@@ -109,6 +109,11 @@
             else if (flags & NSAlternateKeyMask) {
                 [self setFullScreenFill:FS_FILL_CROP];
             }
+            else {
+                [_movieView setFullScreenFill:FS_FILL_NEVER];
+                [_movieView updateMovieRect:TRUE];
+                [self updateFullScreenFillMenu];
+            }
         }
 
         if (_alwaysOnTopEnabled) {
