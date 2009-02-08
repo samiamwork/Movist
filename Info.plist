@@ -337,6 +337,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>srt</string>
+				<string>txt</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Subtitle-SRT</string>

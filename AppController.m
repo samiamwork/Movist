@@ -645,6 +645,7 @@ NSString* videoCodecName(int codecId);
     }
 
     [[_preferenceController window] setAlwaysOnTop:alwaysOnTop];
+    [[_playlistController window] setAlwaysOnTop:alwaysOnTop];
     [_mainWindow setAlwaysOnTop:alwaysOnTop];
     [_controlPanel setLevel:[_mainWindow level] + 1];
 }
@@ -714,8 +715,8 @@ NSString* videoCodecName(int codecId);
         }
         return FALSE;
     }
-    if (![self isFullScreen] && _playlistController &&
-        [[_playlistController window] isVisible]) {
+    if (![self isFullScreen] &&
+        [NSApp keyWindow] == [_playlistController window]) {
         return FALSE;
     }
 

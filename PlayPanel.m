@@ -121,7 +121,8 @@
             [_lastShowTime timeIntervalSinceNow] < -1.0 &&
             !NSPointInRect([NSEvent mouseLocation], [self frame])) {
             [self orderOutWithFadeOut:self];
-            if (![_controlPanel isVisible]) {
+            if (![_controlPanel isVisible] &&
+                NSPointInRect([NSEvent mouseLocation], [[_movieView window] frame])) {
                 [NSCursor setHiddenUntilMouseMoves:TRUE];
             }
             [_lastShowTime release];
@@ -130,7 +131,8 @@
     }
     else if (CGCursorIsVisible() &&
              ![_controlPanel isVisible] &&
-             [[_movieView window] isKeyWindow]) {
+             [[_movieView window] isKeyWindow] &&
+             NSPointInRect([NSEvent mouseLocation], [[_movieView window] frame])) {
         [NSCursor setHiddenUntilMouseMoves:TRUE];
     }
 }

@@ -204,6 +204,9 @@
             [_playlistController showWindow:self];
             [[_playlistController window] setDelegate:self];
             [[_playlistController window] makeKeyWindow];
+            if (![self isFullScreen] && ![self isDesktopBackground] && floating) {
+                [[_playlistController window] setAlwaysOnTop:[_mainWindow alwaysOnTop]];
+            }
             [_playPanel orderOutWithFadeOut:self];
         }
         else {

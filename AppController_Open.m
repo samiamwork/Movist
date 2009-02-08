@@ -111,7 +111,8 @@
     NSString* ext = [[path pathExtension] lowercaseString];
     Class parserClass = ([ext isEqualToString:@"smi"] ||
                          [ext isEqualToString:@"sami"])? [MSubtitleParser_SMI class] :
-                        ([ext isEqualToString:@"srt"]) ? [MSubtitleParser_SRT class] :
+                        ([ext isEqualToString:@"srt"] ||
+                         [ext isEqualToString:@"txt"]) ? [MSubtitleParser_SRT class] :
                         ([ext isEqualToString:@"mkv"] ||
                          [ext isEqualToString:@"mks"]) ? [MSubtitleParser_MKV class] :
                         ([ext isEqualToString:@"idx"] ||
@@ -682,7 +683,7 @@
 - (void)updateSystemActivity:(NSTimer*)timer
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if ([self isFullScreen] ||  // always deactivate in full-screen
+    if ([self isFullScreen] ||  // always deactivate screen-saver in full-screen
         [_defaults boolForKey:MDeactivateScreenSaverKey]) {
         UpdateSystemActivity(UsrActivity);
     }
