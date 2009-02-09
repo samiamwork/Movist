@@ -88,7 +88,8 @@
 "Hue %.2f" = "Hue %.2f";
 
 /* Message: Subtitle */
-"No Subtitle: Reopen with other encodings" = "No Subtitle: Reopen with other encodings";
+"Cannot Read Subtitle" = "Cannot Read Subtitle";
+"Reopen with other encodings" = "Reopen with other encodings";
 "Letter Box Height : Auto" = "Letter Box Height : Auto";
 "Font Size" = "Font Size";
 "HMargin" = "HMargin";

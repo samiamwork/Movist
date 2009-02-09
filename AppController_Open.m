@@ -192,7 +192,7 @@
             }
         }
         if (!s) {
-            s = NSLocalizedString(@"No Subtitle: Reopen with other encodings", nil);
+            s = NSLocalizedString(@"Cannot Read Subtitle", nil);
         }
     }
     return s;
@@ -344,27 +344,46 @@
     }
     
     // open subtitles
-    if ([_defaults boolForKey:MAutoLoadMKVEmbeddedSubtitlesKey]) {
-        NSString* ext = [[[movieURL path] pathExtension] lowercaseString];
-        if ([ext isEqualToString:@"mkv"]) {
-            NSMutableArray* URLs = [NSMutableArray arrayWithArray:subtitleURLs];
-            [URLs addObject:movieURL];
-            subtitleURLs = URLs;
-        }
-    }
-    if (0 < [subtitleURLs count] && [_defaults boolForKey:MSubtitleEnableKey]) {
-        NSArray* subtitles = [self subtitleFromURLs:subtitleURLs
-                                       withEncoding:subtitleEncoding error:&error];
-        if (!subtitles) {
-            NSURL* subtitleURL;
-            NSEnumerator* e = [subtitleURLs objectEnumerator];
-            while (subtitleURL = [e nextObject]) {
-                runAlertPanelForOpenError(_mainWindow, error, subtitleURL);
+    if ([_defaults boolForKey:MSubtitleEnableKey]) {
+        NSMutableArray* subtitles = [NSMutableArray arrayWithCapacity:1];
+        // load mkv-embedded subtitles
+        if ([_defaults boolForKey:MAutoLoadMKVEmbeddedSubtitlesKey]) {
+            NSString* ext = [[[movieURL path] pathExtension] lowercaseString];
+            if ([ext isEqualToString:@"mkv"]) {
+                NSArray* subs = [self subtitleFromURL:movieURL
+                                         withEncoding:subtitleEncoding error:&error];
+                if (!subs) {
+                    runAlertPanelForOpenError(_mainWindow, error, movieURL);
+                    // continue... subtitle is not necessary for movie.
+                }
+                else {
+                    [subtitles addObjectsFromArray:subs];
+                }
             }
-            // continue... subtitle is not necessary for movie.
         }
-        else {
-            _subtitles = [[NSMutableArray alloc] initWithArray:subtitles];
+        // load external subtitle files
+        if (0 < [subtitleURLs count]) {
+            NSArray* subs = [self subtitleFromURLs:subtitleURLs
+                                      withEncoding:subtitleEncoding error:&error];
+            if (!subs) {
+                NSURL* subtitleURL;
+                NSEnumerator* e = [subtitleURLs objectEnumerator];
+                while (subtitleURL = [e nextObject]) {
+                    runAlertPanelForOpenError(_mainWindow, error, subtitleURL);
+                }
+                // continue... subtitle is not necessary for movie.
+            }
+            else if ([subs count] == 0) {
+                runAlertPanel(_mainWindow, NSLocalizedString(@"Cannot Read Subtitle", nil),
+                              NSLocalizedString(@"Reopen with other encodings", nil),
+                              NSLocalizedString(@"OK", nil), nil, nil);
+            }
+            else {
+                [subtitles addObjectsFromArray:subs];
+            }
+        }
+        if (0 < [subtitles count]) {
+            _subtitles = [subtitles retain];
             [self updateExternalSubtitleTrackNames];
             if (!isSeries) {
                 // if not same movie series, then clear previous subtitle info.
@@ -373,7 +392,6 @@
             [self autoenableSubtitles];
         }
     }
-
     [self updateUIForOpenedMovieAndSubtitle:isSeries];
     _checkForAltVolumeChange = TRUE;
 
@@ -477,7 +495,9 @@
         // if this is reopening with other encoding and no subtitle in subtitleURLs,
         // then, don't reset current subtitles for trials with other encodings.
         // FIXME: show all subtitleURLs...
-        NSString* s = NSLocalizedString(@"No Subtitle: Reopen with other encodings", nil);
+        NSString* s = [NSString stringWithFormat:@"%@: %@",
+                       NSLocalizedString(@"Cannot Read Subtitle", nil),
+                       NSLocalizedString(@"Reopen with other encodings", nil)];
         [_movieView setMessageWithURL:[subtitleURLs objectAtIndex:0] info:s];
         return FALSE;
     }

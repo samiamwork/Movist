@@ -33,6 +33,7 @@ namespace libebml {
 namespace libmatroska {
     class KaxCluster;
 }
+class StdIOCallback64;
 #endif
 
 @class MSubtitleParser_SRT;
@@ -43,7 +44,8 @@ namespace libmatroska {
     NSMutableDictionary* _subtitles;
 
 #if defined(__cplusplus)
-    libebml::StdIOCallback* _file;
+    //libebml::StdIOCallback* _file;    // libebml::StdIOCallback has 32-bit-fseek() problem.
+    StdIOCallback64* _file;             // so, we use custom IO class for file operations.
     libebml::EbmlStream* _stream;
     libebml::EbmlElement* _level0;
     libebml::EbmlElement* _level1;

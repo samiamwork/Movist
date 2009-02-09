@@ -98,12 +98,15 @@
 
 - (BOOL)checkDefaultLanguage:(NSArray*)defaultLangIDs
 {
-    NSString* s;
+#define CHECK_SUBSTRING(field, identifier)  \
+            (field && [field rangeOfString:identifier   \
+                                   options:NSCaseInsensitiveSearch].location != NSNotFound)
+    NSString* identifier;
     NSEnumerator* e = [defaultLangIDs objectEnumerator];
-    while (s = [e nextObject]) {
-        if ([_name rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound ||
-            [_language rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound ||
-            [_extraInfo rangeOfString:s options:NSCaseInsensitiveSearch].location != NSNotFound) {
+    while (identifier = [e nextObject]) {
+        if (CHECK_SUBSTRING(_name, identifier) ||
+            CHECK_SUBSTRING(_language, identifier) ||
+            CHECK_SUBSTRING(_extraInfo, identifier)) {
             return TRUE;
         }
     }

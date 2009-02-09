@@ -88,10 +88,11 @@ namespace { // unnamed
     [super dealloc];
 }
 
-- (void)addSubtitleWithNumber:(int)number
+- (MSubtitle*)addSubtitleWithNumber:(int)number
 {
-    [_subtitles setObject:[[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease]
-                   forKey:[NSNumber numberWithInt:number]];
+    MSubtitle* subtitle = [[MSubtitle alloc] initWithURL:_subtitleURL];
+    [_subtitles setObject:subtitle forKey:[NSNumber numberWithInt:number]];
+    return [subtitle autorelease];
 }
 
 - (MSubtitle*)subtitleWithNumber:(int)number
@@ -103,22 +104,22 @@ namespace { // unnamed
 {
     NSMutableArray* numbers = [NSMutableArray arrayWithArray:[_subtitles allKeys]];
     [numbers sortUsingSelector:@selector(compare:)];
-    
+
     NSMutableArray* subtitles = [NSMutableArray arrayWithCapacity:[numbers count]];
 
-    int trackNumber = 1;
-    NSNumber* number;
-    MSubtitle* subtitle;
+    int track = 1;
+    NSNumber* num;
+    MSubtitle* sub;
     NSEnumerator* e = [numbers objectEnumerator];
-    while (number = [e nextObject]) {
-        subtitle = [_subtitles objectForKey:number];
-        [subtitle setTrackName:(1 == [numbers count]) ?
-                                NSLocalizedString(@"Subtitle Track", nil) :
-                                [NSString stringWithFormat:@"%@ %d",
-                                 NSLocalizedString(@"Subtitle Track", nil), trackNumber]];
-        [subtitle setEmbedded:TRUE];
-        [subtitles addObject:subtitle];
-        trackNumber++;
+    while (num = [e nextObject]) {
+        sub = [_subtitles objectForKey:num];
+        [sub setTrackName:(1 == [numbers count]) ?
+                           NSLocalizedString(@"Subtitle Track", nil) :
+                           [NSString stringWithFormat:@"%@ %d",
+                            NSLocalizedString(@"Subtitle Track", nil), track]];
+        [sub setEmbedded:TRUE];
+        [subtitles addObject:sub];
+        track++;
     }
     return subtitles;
 }
@@ -179,7 +180,7 @@ struct master_sorter_t {
 - (void)parseInfo
 {
     // General info about this Matroska _file
-    TRACE_ELEMENT(_level1, 1, @"Segment information");
+    TRACE_ELEMENT(_level1, 1, @"Segment Information");
 
     _upperLevel = 0;
     EbmlMaster* master = static_cast<EbmlMaster*>(_level1);
@@ -197,7 +198,7 @@ struct master_sorter_t {
 
 - (void)parseTracks
 {
-    TRACE_ELEMENT(_level1, 1, @"Segment tracks");
+    TRACE_ELEMENT(_level1, 1, @"Segment Tracks");
 
     _upperLevel = 0;
     EbmlMaster* master1 = static_cast<EbmlMaster*>(_level1);
@@ -225,8 +226,7 @@ struct master_sorter_t {
                     else {
                         TRACE_ELEMENT(_level2, 2, @"Track");
                         TRACE_ELEMENT(_level3, 3, @"Track Type: subtitles");
-                        [self addSubtitleWithNumber:trackNumber];
-                        subtitle = [self subtitleWithNumber:trackNumber];
+                        subtitle = [self addSubtitleWithNumber:trackNumber];
                     }
                 }
                 else if (subtitle && is_id(_level3, KaxTrackName)) {
@@ -283,10 +283,10 @@ struct master_sorter_t {
             if (subtitle) {
                 if (!blockGroupPrinted) {
                     blockGroupPrinted = TRUE;
-                    TRACE_ELEMENT(_level2, 2, @"Block group");
+                    TRACE_ELEMENT(_level2, 2, @"Block Group");
                 }
                 TRACE_ELEMENT(_level3, 3,
-                              @"Block (track#= %u, %u frame(s), timecode %f sec = %s)",
+                              @"Block: track#=%u, %u frame(s), timecode=%f (%s)",
                               block.TrackNum(), block.NumberFrames(),
                               ((float)block.GlobalTimecode() / 1000000000.0),
                               format_timecode(block.GlobalTimecode()).c_str());
@@ -327,7 +327,7 @@ struct master_sorter_t {
                 [subtitle addString:_string beginTime:_beginTime endTime:_beginTime + d];
                 _string = nil;
             }
-            TRACE_ELEMENT(_level3, 3, @"Block duration: %llu.%llu ms",
+            TRACE_ELEMENT(_level3, 3, @"Block Duration: %llu.%llu ms",
                                        (uint64(duration) * _timecodeScale / 1000000),
                                        (uint64(duration) * _timecodeScale % 1000000));
         }
@@ -358,11 +358,42 @@ struct master_sorter_t {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// custom IO class
+
+class StdIOCallback64 : public IOCallback {
+public:
+    StdIOCallback64(NSString* path, BOOL readOnly = TRUE)
+    { _file = ::open([path UTF8String], (readOnly) ? O_RDONLY : O_RDWR); }
+	virtual ~StdIOCallback64() { close(); }
+
+private:
+    int _file;  // file descriptor
+public:
+    virtual uint64 getFilePointer() { return ::lseek(_file, 0, SEEK_CUR); }
+    virtual void setFilePointer(int64_t offset, seek_mode mode = seek_beginning);
+    virtual uint32 read(void* p, size_t size) { return ::read(_file, p, size); }
+    virtual size_t write(const void* p, size_t size) { return ::write(_file, p, size); }
+    virtual void close() { ::close(_file); }
+};
+
+void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
+{
+    switch (mode) {
+        case seek_beginning : ::lseek(_file, offset, SEEK_SET);     break;
+        case seek_end       : ::lseek(_file, offset, SEEK_END);     break;
+        default :
+            ::lseek(_file, lseek(_file, 0, SEEK_END) + offset, SEEK_SET);
+            break;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL)initEbmlStream
 {
     NSString* path = [_subtitleURL path];
-    _file = new StdIOCallback([path UTF8String], MODE_READ);
+    //_file = new StdIOCallback([path UTF8String], MODE_READ);
+    _file = new StdIOCallback64(path);
     _stream = new EbmlStream(*_file);
     _level0 = _level1 = _level2 = _level3 = 0;
     _timecodeScale = 1000000;   // default scale
@@ -370,14 +401,14 @@ struct master_sorter_t {
     // Find the EbmlHead element. Must be the first one.
     _level0 = _stream->FindNextID(EbmlHead::ClassInfos, 0xFFFFFFFFL);
     if (!_level0) {
-        TRACE(@"No EBML head found.");
+        TRACE(@"No EBML Head found.");
         delete _stream, _stream = 0;
         delete _file, _file = 0;
         return FALSE;
     }
 
     // skip header
-    TRACE_ELEMENT(_level0, 0, @"EBML head");
+    TRACE_ELEMENT(_level0, 0, @"EBML Head");
     _level0->SkipData(*_stream, _level0->Generic().Context);
     delete _level0, _level0 = 0;
 
@@ -418,6 +449,10 @@ struct master_sorter_t {
             }
             else if (is_id(_level1, KaxTracks)) {
                 [self parseTracks];     // find subtitle tracks
+                if ([_subtitles count] == 0) {      // if no subtitle track found,
+                    delete _level1, _level1 = 0;    // then, need not read more.
+                    break;
+                }
             }
             else if (is_id(_level1, KaxCluster)) {
                 [self parseCluster];    // get subtitles
