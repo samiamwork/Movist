@@ -1,0 +1,4 @@
+patch-libavcodec_ppc_check_altivec.c.diff
+patch-libavfilter-avfilter.h.diff
+patch-libswscale-Makefile.diff
+patch-libswscale-swscale.h.diff
