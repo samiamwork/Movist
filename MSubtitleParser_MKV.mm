@@ -75,6 +75,7 @@ namespace { // unnamed
 - (id)initWithURL:(NSURL*)subtitleURL
 {
     if (self = [super initWithURL:subtitleURL]) {
+        _subtitles = [[NSMutableDictionary alloc] initWithCapacity:1];
         _parser_SRT = [[MSubtitleParser_SRT alloc] initWithURL:nil];
         _parser_SSA = [[MSubtitleParser_SSA alloc] initWithURL:nil];
     }
@@ -85,6 +86,7 @@ namespace { // unnamed
 {
     [_parser_SSA release];
     [_parser_SRT release];
+    [_subtitles release];
     [super dealloc];
 }
 
@@ -391,6 +393,9 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
 
 - (BOOL)initEbmlStream
 {
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:MSubtitleTrackWillLoadNotification object:self];
+
     NSString* path = [_subtitleURL path];
     //_file = new StdIOCallback([path UTF8String], MODE_READ);
     _file = new StdIOCallback64(path);
@@ -428,66 +433,107 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
     delete _level0, _level0 = 0;
     delete _stream, _stream = 0;
     delete _file, _file = 0;
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName:MSubtitleTrackDidLoadNotification object:self];
+}
+
+- (void)parse:(id)object
+{
+    NSAutoreleasePool* pool = nil;
+    BOOL threading = (object != nil);
+    BOOL trackParsed = FALSE;
+
+    int64_t endOfLevel0 = _level0->GetElementPosition() +
+                            _level0->HeadSize() + _level0->GetSize();
+    while (_level1 && _upperLevel <= 0) {
+        pool = [[NSAutoreleasePool alloc] init];
+
+        if (is_id(_level1, KaxInfo)) {
+            [self parseInfo];       // update timecode-scale
+        }
+        else if (is_id(_level1, KaxTracks)) {
+            [self parseTracks];     // find subtitle tracks
+            trackParsed = TRUE;
+        }
+        else if (is_id(_level1, KaxCluster)) {
+            [self parseCluster];    // get subtitles
+            //[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+            MSubtitle* sub = [[_subtitles objectEnumerator] nextObject];
+            NSDictionary* dict = [NSDictionary dictionaryWithObject:
+                                  [NSNumber numberWithFloat:[sub endTime]]
+                                  forKey:@"progress"];
+            NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+            [nc postNotificationName:MSubtitleTrackIsLoadingNotification object:self
+                            userInfo:dict];
+        }
+
+        if (_level0->IsFiniteSize() && endOfLevel0 <= _file->getFilePointer()) {
+            delete _level1, _level1 = 0;
+            break;
+        }
+
+        if (0 < _upperLevel) {
+            if (0 < --_upperLevel) {
+                break;
+            }
+            delete _level1, _level1 = 0;
+            _level1 = _level2;
+            continue;
+        }
+        else if (_upperLevel < 0) {
+            if (++_upperLevel < 0) {
+                break;
+            }
+        }
+        _level1->SkipData(*_stream, _level1->Generic().Context);
+        delete _level1, _level1 = 0;
+        _level1 = _stream->FindNextElement(_level0->Generic().Context,
+                                           _upperLevel, 0xFFFFFFFFL, true);
+
+        if (!threading && trackParsed) {
+            if (0 < [_subtitles count]) {
+                // if subtitle found, then stop current reading and
+                // start new thread to read subtitle text or images.
+                TRACE(@"subtitle reading thread started");
+                [NSThread detachNewThreadSelector:@selector(parse:) toTarget:self
+                                       withObject:self];
+            }
+            else {
+                // else (no subtitle), then need not read more.
+                TRACE(@"no subtitle found");
+            }
+            break;
+        }        
+        [pool release], pool = nil;
+    }
+
+    if (threading || [_subtitles count] == 0) {
+        TRACE(@"subtitle reading finished");
+        [self cleanupEbmlStream];
+    }
+
+    [pool release];
 }
 
 - (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error
 {
-    _subtitles = [NSMutableDictionary dictionaryWithCapacity:1];
-
     try {
-        if (![self initEbmlStream]) {
-            return [self allSubtitles];
+        if ([self initEbmlStream]) {
+            // find tracks and get subtitles
+            _upperLevel = 0;
+            _level1 = _stream->FindNextElement(_level0->Generic().Context,
+                                               _upperLevel, 0xFFFFFFFFL, true);
+            [self parse:nil];
+
+            // -cleanupEbmlStream was already performed by -parse:.
         }
-
-        // find tracks and get subtitles
-        _upperLevel = 0;
-        int64_t endOfLevel0 = _level0->GetElementPosition() + _level0->HeadSize() + _level0->GetSize();
-        _level1 = _stream->FindNextElement(_level0->Generic().Context, _upperLevel, 0xFFFFFFFFL, true);
-        while (_level1 && _upperLevel <= 0) {
-            if (is_id(_level1, KaxInfo)) {
-                [self parseInfo];       // update timecode-scale
-            }
-            else if (is_id(_level1, KaxTracks)) {
-                [self parseTracks];     // find subtitle tracks
-                if ([_subtitles count] == 0) {      // if no subtitle track found,
-                    delete _level1, _level1 = 0;    // then, need not read more.
-                    break;
-                }
-            }
-            else if (is_id(_level1, KaxCluster)) {
-                [self parseCluster];    // get subtitles
-            }
-
-            if (_level0->IsFiniteSize() && endOfLevel0 <= _file->getFilePointer()) {
-                delete _level1, _level1 = 0;
-                break;
-            }
-
-            if (0 < _upperLevel) {
-                if (0 < --_upperLevel) {
-                    break;
-                }
-                delete _level1, _level1 = 0;
-                _level1 = _level2;
-                continue;
-            }
-            else if (_upperLevel < 0) {
-                if (++_upperLevel < 0) {
-                    break;
-                }
-            }
-
-            _level1->SkipData(*_stream, _level1->Generic().Context);
-            delete _level1, _level1 = 0;
-            _level1 = _stream->FindNextElement(_level0->Generic().Context, _upperLevel, 0xFFFFFFFFL, true);
-        }
-        [self cleanupEbmlStream];
     }
     catch (...) {
         TRACE(@"Caught exception");
         [self cleanupEbmlStream];
     }
-    
+
     return [self allSubtitles];
 }
 

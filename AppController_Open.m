@@ -36,6 +36,7 @@
 #import "MMovieView.h"
 #import "FullScreener.h"
 #import "CustomControls.h"  // for SeekSlider
+#import "ControlPanel.h"
 
 @implementation AppController (Open)
 
@@ -893,7 +894,13 @@
             return [[[_movie audioTracks] objectAtIndex:aIndex] summary];
         }
         else {
-            return [[_subtitles objectAtIndex:sIndex] summary];
+            MSubtitle* subtitle = [_subtitles objectAtIndex:sIndex];
+            float loadingTime = [_controlPanel subtitleTrackLoadingTime];
+            return ([subtitle isEmbedded] && 0 < loadingTime) ?
+                    [[subtitle summary] stringByAppendingFormat:@" (%@ %.1f %%)",
+                                        NSLocalizedString(@"Loading", nil),
+                                        100 * loadingTime / [_movie duration]] :
+                    [subtitle summary];
         }
     }
     return nil;

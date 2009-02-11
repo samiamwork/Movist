@@ -33,6 +33,9 @@ NSString* MMovieEndNotification             = @"MMovieEndNotification";
 #pragma mark -
 #pragma mark notifications: subtitle
 NSString* MSubtitleEnableChangeNotification = @"MSubtitleEnableChangeNotification";
+NSString* MSubtitleTrackWillLoadNotification= @"MSubtitleTrackWillLoadNotification";
+NSString* MSubtitleTrackIsLoadingNotification=@"MSubtitleTrackIsLoadingNotification";
+NSString* MSubtitleTrackDidLoadNotification = @"MSubtitleTrackDidLoadNotification";
 
 #pragma mark notifications: etc
 NSString* MPlaylistUpdatedNotification      = @"MPlaylistUpdatedNotification";

@@ -67,6 +67,10 @@ NSString* const STYLE_KEY_COLOR     = @"PrimaryColour";
 NSString* const STYLE_KEY_ITALIC    = @"Italic";
 NSString* const STYLE_KEY_BOLD      = @"Bold";
 
+#if defined(DEBUG)
+//#define _TRACE_TEXT
+#endif
+
 - (id)initWithURL:(NSURL*)subtitleURL
 {
     if (self = [super initWithURL:subtitleURL]) {
@@ -136,13 +140,14 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
         for (i = 0; i < [as count]; i++) {
             [style setObject:[as objectAtIndex:i] forKey:[format objectAtIndex:i]];
         }
+#if defined(_TRACE_TEXT)
         TRACE(@"[%d]style={ name=\"%@\", color=%@, bold=%@, italic=%@ }",
               subtitleNumber,
               [style objectForKey:STYLE_KEY_NAME],
               [style objectForKey:STYLE_KEY_COLOR],
               [style objectForKey:STYLE_KEY_BOLD],
               [style objectForKey:STYLE_KEY_ITALIC]);
-        
+#endif
         [styles setObject:style forKey:[as objectAtIndex:nameIndex]];
     }
     
@@ -255,7 +260,7 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
     _defaultBold = [[dict objectForKey:STYLE_KEY_BOLD] isEqualToString:@"1"];
     _defaultItalic = [[dict objectForKey:STYLE_KEY_ITALIC] isEqualToString:@"1"];
 
-#if defined(DEBUG)
+#if defined(_TRACE_TEXT)
     if ([[dict objectForKey:STYLE_KEY_NAME] isEqualToString:style]) {
         TRACE(@"[%2d]style=\"%@\":{ color=%@, bold=%@, italic=%@ }, text=\"%@\"",
               subtitleNumber, style,

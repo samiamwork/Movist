@@ -42,6 +42,7 @@
     // Audio
 
     // Subtitle
+    float _subtitleTrackLoadingTime;
 
     // Playback
     IBOutlet NSSlider* _playbackRateSlider;
@@ -68,6 +69,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark subtitle
+- (float)subtitleTrackLoadingTime;
+- (void)setSubtitleTrackLoadingTime:(float)time;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

@@ -400,6 +400,9 @@ extern NSString* MMovieEndNotification;
 #pragma mark -
 #pragma mark notifications: subtitle
 extern NSString* MSubtitleEnableChangeNotification;
+extern NSString* MSubtitleTrackWillLoadNotification;
+extern NSString* MSubtitleTrackIsLoadingNotification;
+extern NSString* MSubtitleTrackDidLoadNotification;
 
 #pragma mark -
 #pragma mark notifications: etc

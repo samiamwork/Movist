@@ -112,6 +112,14 @@ NSString* videoCodecName(int codecId);
     initSubtitleEncodingMenu(_subtitle1EncodingMenu, @selector(reopenSubtitleAction:));
     initSubtitleEncodingMenu(_subtitle2EncodingMenu, @selector(reopenSubtitleAction:));
 
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(subtitleTrackWillLoad:)
+               name:MSubtitleTrackWillLoadNotification object:nil];
+    [nc addObserver:self selector:@selector(subtitleTrackIsLoading:)
+               name:MSubtitleTrackIsLoadingNotification object:nil];
+    [nc addObserver:self selector:@selector(subtitleTrackDidLoad:)
+               name:MSubtitleTrackDidLoadNotification object:nil];
+    
     // modify menu-item shortcuts with shift modifier.
     NSMenuItem* item;
     NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];

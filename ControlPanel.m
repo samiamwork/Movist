@@ -224,6 +224,9 @@
 #pragma mark -
 #pragma mark subtitle
 
+- (float)subtitleTrackLoadingTime { return _subtitleTrackLoadingTime; }
+- (void)setSubtitleTrackLoadingTime:(float)t { _subtitleTrackLoadingTime = t; }
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark playback

@@ -22,6 +22,7 @@
 
 #import "AppController.h"
 #import "UserDefaults.h"
+#import "ControlPanel.h"
 
 #import "MMovieView.h"
 #import "MMovie.h"
@@ -799,6 +800,27 @@
         [_subtitlePositionPopUpButton setEnabled:TRUE];
         [_subtitlePositionDefaultButton setEnabled:TRUE];
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)subtitleTrackWillLoad:(NSNotification*)notification
+{
+    [_controlPanel setSubtitleTrackLoadingTime:0.1];
+    [_propertiesView reloadData];
+}
+
+- (void)subtitleTrackIsLoading:(NSNotification*)notification
+{
+    float t = [[[notification userInfo] objectForKey:@"progress"] floatValue];
+    [_controlPanel setSubtitleTrackLoadingTime:t];
+    [_propertiesView reloadData];
+}
+
+- (void)subtitleTrackDidLoad:(NSNotification*)notification
+{
+    [_controlPanel setSubtitleTrackLoadingTime:0.0];
+    [_propertiesView reloadData];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
