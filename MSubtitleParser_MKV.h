@@ -62,7 +62,10 @@ class StdIOCallback64;
     // current parsing info
     NSMutableAttributedString* _string;
     float _beginTime;
+    BOOL _quitRequested;
 }
+
++ (void)quitThreadForSubtitleURL:(NSURL*)subtitleURL;
 
 - (id)initWithURL:(NSURL*)subtitleURL;
 - (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error;

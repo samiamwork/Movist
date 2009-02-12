@@ -609,6 +609,12 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_movie) {
+        NSURL* movieURL = [_movie url];
+        NSString* ext = [[[movieURL path] pathExtension] lowercaseString];
+        if ([ext isEqualToString:@"mkv"]) {
+            [MSubtitleParser_MKV quitThreadForSubtitleURL:movieURL];
+        }
+
         [_movie setRate:0.0];   // at first, pause.
         [_updateSystemActivityTimer invalidate];
 

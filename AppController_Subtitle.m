@@ -148,24 +148,9 @@
 {
     screenMargin = adjustToRange(screenMargin, MIN_SUBTITLE_SCREEN_MARGIN, MAX_SUBTITLE_SCREEN_MARGIN);
     [_movieView setSubtitleScreenMargin:screenMargin];
-    [_movieView setMessage:[NSString localizedStringWithFormat:
-                            NSLocalizedString(@"Subtitle Screen Margin %.1f", nil),
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%@ %.1f",
+                            NSLocalizedString(@"Subtitle Screen Margin", nil),
                             screenMargin]];
-}
-
-- (NSString*)subtitleNameAtIndex:(int)index
-{
-    assert(0 <= index);
-    MSubtitle* subtitle = [_movieView subtitleAtIndex:index];
-    if (subtitle) {
-        return [NSString stringWithFormat:@"%@ %d (%@ - %@)",
-                NSLocalizedString(@"Subtitle", nil), index + 1,
-                [subtitle trackName], [subtitle name]];
-    }
-    else {
-        return [NSString stringWithFormat:@"%@ %d",
-                NSLocalizedString(@"Subtitle", nil), index + 1];
-    }
 }
 
 - (void)setSubtitleFontSize:(float)size atIndex:(int)index
@@ -181,9 +166,8 @@
     attrs.fontSize = size;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
 
-    [_movieView setMessage:[NSString localizedStringWithFormat:@"%@ : %@ %.1f",
-                            [self subtitleNameAtIndex:index],
-                            NSLocalizedString(@"Font Size", nil), size]];
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f",
+                            index + 1, NSLocalizedString(@"Font Size", nil), size]];
 }
 
 - (float)_changeSubtitleFontSize:(int)tag atIndex:(int)index
@@ -208,14 +192,14 @@
     NSMutableString* msg = [NSMutableString stringWithString:action];
     if (0 <= index) {
         float size = [self _changeSubtitleFontSize:tag atIndex:index];
-        [msg appendFormat:@"\n%@ %.1f", [self subtitleNameAtIndex:index], size];
+        [msg appendFormat:@"\n%d: %.1f", index + 1, size];
     }
     else {
         float size;
         for (index = 0; index < 3; index++) {
             size = [self _changeSubtitleFontSize:tag atIndex:index];
             if ([_movieView subtitleAtIndex:index]) {
-                [msg appendFormat:@"\n%@ %.1f", [self subtitleNameAtIndex:index], size];
+                [msg appendFormat:@"\n%d: %.1f", index + 1, size];
             }
         }
     }
@@ -232,9 +216,8 @@
     attrs.mask = SUBTITLE_ATTRIBUTE_H_MARGIN;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
 
-    [_movieView setMessage:[NSString localizedStringWithFormat:
-                            @"%@ : %@ %.1f %%", [self subtitleNameAtIndex:index],
-                            NSLocalizedString(@"HMargin", nil), hMargin]];
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f %%",
+                            index + 1, NSLocalizedString(@"HMargin", nil), hMargin]];
 }
 
 - (void)setSubtitleVMargin:(float)vMargin atIndex:(int)index
@@ -247,9 +230,8 @@
     attrs.mask = SUBTITLE_ATTRIBUTE_V_MARGIN;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
     
-    [_movieView setMessage:[NSString localizedStringWithFormat:
-                            @"%@ : %@ %.1f %%", [self subtitleNameAtIndex:index],
-                            NSLocalizedString(@"VMargin", nil), vMargin]];
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f %%",
+                            index + 1, NSLocalizedString(@"VMargin", nil), vMargin]];
 }
 
 - (float)_changeSubtitleVMargin:(int)tag atIndex:(int)index
@@ -276,14 +258,14 @@
     NSMutableString* msg = [NSMutableString stringWithString:action];
     if (0 <= index) {
         float vMargin = [self _changeSubtitleVMargin:tag atIndex:index];
-        [msg appendFormat:@"\n%@ %.1f", [self subtitleNameAtIndex:index], vMargin];
+        [msg appendFormat:@"\n%d: %.1f", index + 1, vMargin];
     }
     else {
         float vMargin;
         for (index = 0; index < 3; index++) {
             vMargin = [self _changeSubtitleVMargin:tag atIndex:index];
             if ([_movieView subtitleAtIndex:index]) {
-                [msg appendFormat:@"\n%@ %.1f", [self subtitleNameAtIndex:index], vMargin];
+                [msg appendFormat:@"\n%d: %.1f", index + 1, vMargin];
             }
         }
     }
@@ -300,9 +282,8 @@
     attrs.mask = SUBTITLE_ATTRIBUTE_LINE_SPACING;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
     
-    [_movieView setMessage:[NSString localizedStringWithFormat:
-                            @"%@ : %@ %.1f", [self subtitleNameAtIndex:index],
-                            NSLocalizedString(@"Line Spacing", nil), spacing]];
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f",
+                            index + 1, NSLocalizedString(@"Line Spacing", nil), spacing]];
 }
 
 - (void)setSubtitleSync:(float)sync atIndex:(int)index
@@ -313,9 +294,8 @@
     attrs.mask = SUBTITLE_ATTRIBUTE_SYNC;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
     
-    [_movieView setMessage:[NSString localizedStringWithFormat:
-                            @"%@ : %@ %.1f %@", [self subtitleNameAtIndex:index],
-                            NSLocalizedString(@"Sync", nil), sync,
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f %@",
+                            index + 1, NSLocalizedString(@"Sync", nil), sync,
                             NSLocalizedString(@"sec.", nil)]];
 }
 
@@ -324,8 +304,8 @@
     SubtitleAttributes attrs;
     attrs.mask = SUBTITLE_ATTRIBUTE_SYNC;
     [_movieView getSubtitleAttributes:&attrs atIndex:index];
-    attrs.sync = (tag < 0) ? attrs.sync - 0.1 :
-                 (0 < tag) ? attrs.sync + 0.1 :
+    attrs.sync = (tag < 0) ? attrs.sync - 0.5 :
+                 (0 < tag) ? attrs.sync + 0.5 :
                  0.0;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
     return attrs.sync;
@@ -339,16 +319,16 @@
     NSMutableString* msg = [NSMutableString stringWithString:action];
     if (0 <= index) {
         float sync = [self _changeSubtitleSync:tag atIndex:index];
-        [msg appendFormat:@"\n%@ %.1f %@", [self subtitleNameAtIndex:index],
-                          sync, NSLocalizedString(@"sec.", nil)];
+        [msg appendFormat:@"\n%d: %.1f %@",
+         index + 1, sync, NSLocalizedString(@"sec.", nil)];
     }
     else {
         float sync;
         for (index = 0; index < 3; index++) {
             sync = [self _changeSubtitleSync:tag atIndex:index];
             if ([_movieView subtitleAtIndex:index]) {
-                [msg appendFormat:@"\n%@ %.1f %@", [self subtitleNameAtIndex:index],
-                                  sync, NSLocalizedString(@"sec.", nil)];
+                [msg appendFormat:@"\n%d: %.1f %@",
+                 index + 1, sync, NSLocalizedString(@"sec.", nil)];
             }
         }
     }
@@ -394,8 +374,7 @@
     attrs.vPosition = position;
     attrs.mask = SUBTITLE_ATTRIBUTE_V_POSITION;
     [_movieView setSubtitleAttributes:&attrs atIndex:index];
-    [_movieView setMessage:[NSString stringWithFormat:@"%@ : %@",
-                            [self subtitleNameAtIndex:index], ps]];
+    [_movieView setMessage:[NSString stringWithFormat:@"%d: %@", index + 1, ps]];
     [self updateSubtitlePositionMenuItems:index];
     [self updateControlPanelSubtitleUI];
 }
@@ -715,15 +694,13 @@
     for (i = 0; i < 3; i++) {
         subtitle = [_movieView subtitleAtIndex:i];
         if (subtitle) {
-            [items[i] setTitle:[NSString stringWithFormat:@"%@ %d: %@ - %@",
-                                NSLocalizedString(@"Subtitle", nil), i + 1,
-                                [subtitle trackName], [subtitle name]]];
+            [items[i] setTitle:[NSString stringWithFormat:@"%d: %@ - %@",
+                                i + 1, [subtitle trackName], [subtitle name]]];
             [items[i] setEnabled:TRUE];
         }
         else {
-            [items[i] setTitle:[NSString stringWithFormat:@"%@ %d: <%@>",
-                                NSLocalizedString(@"Subtitle", nil), i + 1,
-                                NSLocalizedString(@"None", nil)]];
+            [items[i] setTitle:[NSString stringWithFormat:@"%d: <%@>",
+                                i + 1, NSLocalizedString(@"None", nil)]];
             [items[i] setEnabled:FALSE];
         }
     }

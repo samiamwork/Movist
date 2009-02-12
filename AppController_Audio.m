@@ -182,23 +182,23 @@
             volume = normalizedFloat1(adjustToRange(volume, MIN_VOLUME, MAX_VOLUME));
             [_movie setVolume:volume];
             [_defaults setFloat:volume forKey:MVolumeKey];
-            [_movieView setMessage:[NSString stringWithFormat:
-                                    NSLocalizedString(@"Volume %.1f", nil), volume]];
+            [_movieView setMessage:[NSString stringWithFormat:@"%@ %.1f",
+                                    NSLocalizedString(@"Volume", nil), volume]];
         }
     }
     else {
         if ([self isUpdateSystemVolume]) {
             _systemVolume = normalizedFloat2(adjustToRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
             [self setSystemVolume:_systemVolume];
-            [_movieView setMessage:[NSString stringWithFormat:
-                                    NSLocalizedString(@"System Volume %.2f", nil), _systemVolume]];
+            [_movieView setMessage:[NSString stringWithFormat:@"%@ %.2f",
+                                    NSLocalizedString(@"System Volume", nil), _systemVolume]];
         }
         else {  // movie volume
             volume = normalizedFloat1(adjustToRange(volume, MIN_VOLUME, MAX_VOLUME));
             [_movie setVolume:volume];
             [_defaults setFloat:volume forKey:MVolumeKey];
-            [_movieView setMessage:[NSString stringWithFormat:
-                                    NSLocalizedString(@"Volume %.1f", nil), volume]];
+            [_movieView setMessage:[NSString stringWithFormat:@"%@ %.1f",
+                                    NSLocalizedString(@"Volume", nil), volume]];
         }
     }
     [self updateVolumeUI];

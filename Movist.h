@@ -430,6 +430,7 @@ NSArray* movistDragTypes();
 
 float normalizedFloat1(float value);
 float normalizedFloat2(float value);
+float normalizedFloat25(float value);
 
 BOOL checkMovieSeries(NSString* filename1, NSString* filename2);
 

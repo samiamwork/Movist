@@ -63,7 +63,7 @@
 "Next Subtitle" = "Next Subtitle";
 "Previous Frame" = "Previous Frame";
 "Next Frame" = "Next Frame";
-"Play Rate %.1fx" = "Play Rate %.1fx";
+"Play Rate" = "Play Rate";
 "Range Repeat Beginning %@" = "Range Repeat Beginning %@";
 "Range Repeat End %@" = "Range Repeat End %@";
 "Range Repeat Clear" = "Range Repeat Clear";
@@ -76,16 +76,16 @@
 /* Message : Audio */
 "Mute" = "Mute";
 "Unmute" = "Unmute";
-"Volume %.1f" = "Volume %.1f";
-"System Volume %.2f" = "System Volume %.2f";
+"Volume" = "Volume";
+"System Volume" = "System Volume";
 "Volume cannot be changed in Digital-Out" = "Volume cannot be changed in Digital-Out";
 "System Volume cannot be changed in Digital-Out Device" = "System Volume cannot be changed in Digital-Out Device";
 
 /* Message : Video */
-"Brightness %.2f" = "Brightness %.2f";
-"Saturation %.2f" = "Saturation %.2f";
-"Contrast %.2f" = "Contrast %.2f";
-"Hue %.2f" = "Hue %.2f";
+"Brightness" = "Brightness";
+"Saturation" = "Saturation";
+"Contrast" = "Contrast";
+"Hue" = "Hue";
 
 /* Message: Subtitle */
 "Cannot Read Subtitle" = "Cannot Read Subtitle";
@@ -100,7 +100,7 @@
 "Subtitle %@ selected" = "Subtitle %@ selected";
 "Subtitle %@ enabled" = "Subtitle %@ enabled";
 "Subtitle %@ disabled" = "Subtitle %@ disabled";
-"Subtitle Screen Margin %.1f" = "Subtitle Screen Margin %.1f";
+"Subtitle Screen Margin" = "Subtitle Screen Margin";
 "Subtitle Order" = "Subtitle Order";
 
 /* Message : Window */

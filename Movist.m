@@ -88,6 +88,13 @@ float normalizedFloat2(float value)
     return (float)(int)((value + f) * 100) / 100;   // make "x.xx"
 }
 
+float normalizedFloat25(float value)
+{
+    float nv = normalizedFloat1(value);
+    float d = value - nv;
+    return (ABS(d) < 0.025) ? nv : (0 < d) ? (nv + 0.05) : (nv - 0.05);  // make "x.x5"
+}
+
 BOOL checkMovieSeries(NSString* filename1, NSString* filename2)
 {
     //TRACE(@"%s \"%@\" for \"%@\"", __PRETTY_FUNCTION__, filename1, filename2);

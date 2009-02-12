@@ -192,8 +192,8 @@
 {
     //TRACE(@"%s %.1f", __PRETTY_FUNCTION__, rate);
     _playRate = normalizedFloat1(adjustToRange(rate, MIN_PLAY_RATE, MAX_PLAY_RATE));
-    [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Play Rate %.1fx", nil), _playRate]];
+    [_movieView setMessage:[NSString stringWithFormat:@"%@ %.1fx",
+                            NSLocalizedString(@"Play Rate", nil), _playRate]];
     [_controlPanel updatePlaybackRateSlider:_playRate];
 
     if ([_movie rate] != 0.0) {

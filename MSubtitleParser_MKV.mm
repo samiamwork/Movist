@@ -72,12 +72,27 @@ namespace { // unnamed
 
 @implementation MSubtitleParser_MKV
 
+static NSMutableDictionary* s_parsers = nil;    // [subtitleURL : parser]
+
++ (void)quitThreadForSubtitleURL:(NSURL*)subtitleURL
+{
+    MSubtitleParser_MKV* parser = [s_parsers objectForKey:subtitleURL];
+    if (parser) {
+        parser->_quitRequested = TRUE;
+    }
+}
+
 - (id)initWithURL:(NSURL*)subtitleURL
 {
+    if (!s_parsers) {
+        s_parsers = [[NSMutableDictionary alloc] initWithCapacity:1];
+    }
+
     if (self = [super initWithURL:subtitleURL]) {
         _subtitles = [[NSMutableDictionary alloc] initWithCapacity:1];
         _parser_SRT = [[MSubtitleParser_SRT alloc] initWithURL:nil];
         _parser_SSA = [[MSubtitleParser_SSA alloc] initWithURL:nil];
+        _quitRequested = FALSE;
     }
     return self;
 }
@@ -447,6 +462,10 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
     int64_t endOfLevel0 = _level0->GetElementPosition() +
                             _level0->HeadSize() + _level0->GetSize();
     while (_level1 && _upperLevel <= 0) {
+        if (_quitRequested) {
+            break;
+        }
+
         pool = [[NSAutoreleasePool alloc] init];
 
         if (is_id(_level1, KaxInfo)) {
@@ -496,6 +515,7 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
                 // if subtitle found, then stop current reading and
                 // start new thread to read subtitle text or images.
                 TRACE(@"subtitle reading thread started");
+                [s_parsers setObject:self forKey:_subtitleURL];
                 [NSThread detachNewThreadSelector:@selector(parse:) toTarget:self
                                        withObject:self];
             }
@@ -504,13 +524,18 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
                 TRACE(@"no subtitle found");
             }
             break;
-        }        
+        }
         [pool release], pool = nil;
     }
 
-    if (threading || [_subtitles count] == 0) {
-        TRACE(@"subtitle reading finished");
+    if (threading) {
+        [s_parsers removeObjectForKey:_subtitleURL];
         [self cleanupEbmlStream];
+        TRACE(@"subtitle reading thread finished");
+    }
+    else if ([_subtitles count] == 0) {
+        [self cleanupEbmlStream];
+        TRACE(@"subtitle reading finished (no-subtitle)");
     }
 
     [pool release];
