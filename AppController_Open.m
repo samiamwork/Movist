@@ -199,7 +199,7 @@
     return s;
 }
 
-- (void)updateUIForOpenedMovieAndSubtitle:(BOOL)isSeries
+- (void)updateUIForOpenedMovieAndSubtitle
 {
     NSSize ss = [[_mainWindow screen] frame].size;
     NSSize ms = [_movie adjustedSizeByAspectRatio];
@@ -220,7 +220,7 @@
         [_movieView setMessageWithURL:[self movieURL] info:[[_movie class] name]];
     }
     
-    if (_mainWindow == [_movieView window] && !isSeries) {
+    if (_mainWindow == [_movieView window]) {
         switch ([_defaults integerForKey:MOpeningViewKey]) {
             case OPENING_VIEW_HALF_SIZE         : [self resizeWithMagnification:0.5];   break;
             case OPENING_VIEW_NORMAL_SIZE       : [self resizeWithMagnification:1.0];   break;
@@ -393,7 +393,7 @@
             [self autoenableSubtitles];
         }
     }
-    [self updateUIForOpenedMovieAndSubtitle:isSeries];
+    [self updateUIForOpenedMovieAndSubtitle];
     _checkForAltVolumeChange = TRUE;
 
     [_movie setRate:_playRate];  // auto play
