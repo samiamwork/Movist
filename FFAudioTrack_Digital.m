@@ -510,34 +510,21 @@ static BOOL s_first = TRUE;
         [_movie audioTrack:self avFineTuningTime:(double)0];
         return;
     }
-    double currentAudioTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
-    double currentTime = currentAudioTime - [_movie hostTime0point];
-    double audioTime;
-    audioTime = [_rawDataQueue current];
-    if (currentTime + 0.02 < audioTime) {
-        if (currentTime + 0.2 < audioTime) {
-			memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
-            //TRACE(@"currentTime(%f) < audioTime[%d] %f", currentTime, streamId, audioTime);
-            [_movie audioTrack:self avFineTuningTime:(double)0];
-            return;
-        }
-        double dt = audioTime - currentTime;
-        [_movie audioTrack:self avFineTuningTime:dt];
+    
+    double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
+    double currentTime = hostTime - [_movie hostTime0point];
+    double audioTime = [_rawDataQueue current];
+    
+	double dt = audioTime - currentTime;
+	if (dt < -1.0 || 0.2 < dt) {
+        memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
+		[_movie audioTrack:self avFineTuningTime:0];
+		return;
+	}
+    if (-0.02 < dt && dt < 0.02) {
+		dt = 0;
     }
-    else if (audioTime != 0 && audioTime + 0.02 < currentTime) {
-        if (audioTime + 0.2 < currentTime) {
-            //TRACE(@"currentTime(%f) > audioTime[%d] %f data removed", currentTime, streamId, audioTime);
-            [_rawDataQueue removeDataUntilTime:currentTime];
-			memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
-            [_movie audioTrack:self avFineTuningTime:(double)0];
-            return;
-        }
-        double dt = audioTime - currentTime;
-        [_movie audioTrack:self avFineTuningTime:dt];
-    }
-    else {
-        [_movie audioTrack:self avFineTuningTime:(double)0];
-    }
+    [_movie audioTrack:self avFineTuningTime:dt];	
 
     if ([_movie muted]) {
         [_rawDataQueue removeData];

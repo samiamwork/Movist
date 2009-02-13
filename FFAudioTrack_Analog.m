@@ -439,18 +439,22 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         [_movie audioTrack:self avFineTuningTime:0];
         return;
     }
-    
+	
     double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
-    //[_avSyncMutex lock];
     double currentTime = hostTime - [_movie hostTime0point];
-    //[_avSyncMutex unlock];
     [_dataQueue getFirstTime:&_nextDecodedTime];
     
 	double dt = _nextDecodedTime - currentTime;
+	if (dt < -1.0 || 0.2 < dt) {
+		[self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
+		[_movie audioTrack:self avFineTuningTime:0];
+		TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+		return;
+	}
     if (-0.02 < dt && dt < 0.02) {
 		dt = 0;
     }
-    [_movie audioTrack:self avFineTuningTime:0];
+	[_movie audioTrack:self avFineTuningTime:dt];
     
     int16_t audioBuf[AUDIO_BUF_SIZE];
     [_dataQueue getData:(UInt8*)audioBuf size:requestSize time:&_nextDecodedTime];

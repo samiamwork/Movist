@@ -34,8 +34,6 @@
 }
 
 - (id)initWithCapacity:(unsigned int)capacity;
-
-#pragma mark -
 - (void)clear;
 - (BOOL)isEmpty;
 - (BOOL)isFull;
@@ -114,6 +112,123 @@
 #define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
 
+@interface ImageQueue : NSObject
+{
+	AVFrame* _frame[MAX_VIDEO_DATA_BUF_SIZE];
+	double _time[MAX_VIDEO_DATA_BUF_SIZE];
+    unsigned int _capacity;
+    unsigned int _front;
+    unsigned int _rear;
+    NSLock* _mutex;
+}
+@end
+
+@implementation ImageQueue
+
+- (id)init:(unsigned int)bufSize
+	 width:(int)width
+	height:(int)height
+{
+    self = [super init];
+	if (!self) {
+		return 0;
+	}
+	
+	_capacity = bufSize;
+    int i;
+    for (i = 0; i < bufSize; i++) {
+        _frame[i] = avcodec_alloc_frame();
+        if (_frame[i] == 0) {
+            TRACE(@"ERROR_FFMPEG_FRAME_ALLOCATE_FAILED");
+            return FALSE;
+        }    
+        int bufWidth = width + 37;
+        if (bufWidth < 512) {
+            bufWidth = 512 + 37;
+        }
+        int bufSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , height);
+        avpicture_fill((AVPicture*)_frame[i], malloc(bufSize),
+                       RGB_PIXEL_FORMAT, bufWidth, height);
+    }
+	_mutex = [[NSRecursiveLock alloc] init];
+    return self;
+}
+
+- (void)dealloc
+{
+    [_mutex release];
+    int i;
+    for (i = 0; i < _capacity; i++) {
+        if (_frame[i]) {
+            free(_frame[i]->data[0]);
+            av_free(_frame[i]);
+            _frame[i] = 0;
+        }
+    }
+    [super dealloc];
+}
+
+- (int)capacity
+{
+	return _capacity;
+}
+
+- (int)count 
+{ 
+	return (_capacity + _rear - _front) % _capacity; 
+}
+
+- (BOOL)isEmpty 
+{
+	return (_front == _rear); 
+}
+
+- (BOOL)isFull 
+{ 
+	return (_front == (_rear + 1) % _capacity); 
+}
+
+- (void)clear 
+{ 
+    _rear = _front; 
+}
+
+- (AVFrame*)front
+{
+	return _frame[_front];
+}
+
+- (AVFrame*)back 
+{ 
+	return _frame[_rear]; 
+}
+
+- (double)time 
+{
+	return _time[_front];
+}
+
+- (void)enqueue:(AVFrame*)frame time:(double)time
+{
+	[_mutex lock];
+	_time[_rear] = time;
+	_rear = (_rear + 1) % _capacity;
+    [_mutex unlock];
+}
+
+- (void)dequeue
+{
+	[_mutex lock];
+	_front = (_front + 1) % _capacity;
+    [_mutex unlock];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+
 @implementation FFVideoTrack
 
 + (id)videoTrackWithAVStream:(AVStream*)stream index:(int)index
@@ -153,33 +268,9 @@
         return FALSE;
     }
 
-    int i, bufWidth, bufSize;
-    for (i = 0; i < MAX_VIDEO_DATA_BUF_SIZE; i++) {
-        _frameData[i] = avcodec_alloc_frame();
-        if (_frameData[i] == 0) {
-            *errorCode = ERROR_FFMPEG_FRAME_ALLOCATE_FAILED;
-            return FALSE;
-        }    
-        bufWidth = width + 37;
-        if (bufWidth < 512) {
-            bufWidth = 512 + 37;
-        }
-        bufSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , height);
-        avpicture_fill((AVPicture*)_frameData[i], malloc(bufSize),
-                       RGB_PIXEL_FORMAT, bufWidth, height);
-    }
-
     // init playback
     _packetQueue = [[PacketQueue alloc] initWithCapacity:30 * 5];  // 30 fps * 5 sec.
-
-    _decodedImageCount = 0;
-    _decodedImageBufCount = 0;
-    _dataBufId = 0;
-    _nextDataBufId = 0;
-    _prevImageTime = 0;
-    for (i = 0; i < MAX_VIDEO_DATA_BUF_SIZE; i++) {
-        _decodedImageTime[i] = 0;
-    }
+	_imageQueue = [[ImageQueue alloc] init:MAX_VIDEO_DATA_BUF_SIZE width:width height:height];
     _needKeyFrame = FALSE;
     _useFrameDrop = _stream->r_frame_rate.num / _stream->r_frame_rate.den > 30;
     _frameInterval = 1. / (_stream->r_frame_rate.num / _stream->r_frame_rate.den);
@@ -199,18 +290,11 @@
         av_free(_scalerContext);
         _scalerContext = 0;
     }
-    int i;
-    for (i = 0; i < MAX_VIDEO_DATA_BUF_SIZE; i++) {
-        if (_frameData[i]) {
-            free(_frameData[i]->data[0]);
-            av_free(_frameData[i]);
-            _frameData[i] = 0;
-        }
-    }
     if (_frame) {
         av_free(_frame);
         _frame = 0;
     }
+	[_imageQueue release];
     [_packetQueue release];
     _packetQueue = 0;
 
@@ -245,7 +329,7 @@
 
 - (double)decodePacket
 {
-    //TRACE(@"%s(%d) %d %d", __PRETTY_FUNCTION__, _nextDataBufId, _decodedImageCount, _decodedImageBufCount);
+    //TRACE(@"%s(%d) %d", __PRETTY_FUNCTION__, _nextDataBufId, _decodedImageCount);
     AVPacket packet;
     if (![_packetQueue getPacket:&packet]) {
         //TRACE(@"%s no more packet", __PRETTY_FUNCTION__);
@@ -287,36 +371,19 @@
     return (double)(pts * av_q2d(_stream->time_base));
 }
 
-- (BOOL)convertImage
+- (BOOL)convertImage:(AVFrame*) frame
 {
     // sw-scaler should be used under GPL only!
     int ret = sws_scale(_scalerContext,
                         _frame->data, _frame->linesize,
                         0, [_movie encodedSize].height,
-                        _frameData[_nextDataBufId]->data,
-                        _frameData[_nextDataBufId]->linesize);
+                        frame->data, frame->linesize);
     if (ret < 0) {
         TRACE(@"%s sws_scale() failed : %d", __PRETTY_FUNCTION__, ret);
         return FALSE;
     }
     
     return TRUE;
-}
-
-- (double)nextDecodedImageTime
-{
-    return (0 <= _decodedImageCount) ? _decodedImageTime[_dataBufId] : -1.0;
-}
-
-- (BOOL)discardImage
-{
-    assert(0 < _decodedImageCount);
-    _decodedImageCount--;
-    _decodedImageBufCount--;
-    _dataBufId = (_dataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;
-    TRACE(@"discard image");
-
-    return (0 <= _decodedImageCount);
 }
 
 - (void)decodeThreadFunc:(id)anObject
@@ -330,29 +397,21 @@
     NSAutoreleasePool* pool;
     while (![_movie quitRequested]) {
         pool = [[NSAutoreleasePool alloc] init];
-
-        if (MAX_VIDEO_DATA_BUF_SIZE - 3 <= _decodedImageCount ||
+        if ([_imageQueue capacity] - 3 <= [_imageQueue count] ||
             ![_movie canDecodeVideo]) {
             [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
             [pool release];
             continue;
         }
-
-        _decodedImageTime[_nextDataBufId] = [self decodePacket];
-        if (_decodedImageTime[_nextDataBufId] < 0) {
+        double frameTime = [self decodePacket];
+        if (frameTime < 0) {
             [pool release];
             continue;
         }
-        [self convertImage];
-        [_movie videoTrack:self decodedTime:_decodedImageTime[_nextDataBufId]];
-
-        //TRACE(@"decoded(%d,%d:%d) %f", _decodedImageBufCount, 
-        //                               _decodedImageCount, 
-        //                               _nextDataBufId, 
-        //                               _lastDecodedTime);
-        _decodedImageBufCount++;
-        _decodedImageCount++;
-        _nextDataBufId = (_nextDataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;
+		AVFrame* frame = [_imageQueue back];
+        [self convertImage:frame];
+		[_imageQueue enqueue:frame time:frameTime];
+        [_movie videoTrack:self decodedTime:frameTime];
         [pool release];
     }
     _running = FALSE;
@@ -363,66 +422,50 @@
 - (BOOL)isNewImageAvailable:(double)hostTime
              hostTime0point:(double*)hostTime0point
 {
-    if (_decodedImageCount < 1) {
+    if ([_imageQueue isEmpty]) {
         //TRACE(@"not decoded %f", current);
         return FALSE;
     }
     double current = hostTime - *hostTime0point;
-    double imageTime = _decodedImageTime[_dataBufId];
+    double imageTime = [_imageQueue time];
     if (imageTime + 0.5 < current || current + 0.5 < imageTime) {
         TRACE(@"reset av sync %f %f", current, imageTime);
         *hostTime0point = hostTime - imageTime;
         current = imageTime;
     }
-    //#define _FRAME_DROP
-#ifdef _FRAME_DROP
-    while (([_movie avFineTuningTime] || _useFrameDrop) && 
-           imageTime + _frameInterval < current) {
-        if (_decodedImageCount < 0) {
-            break;
-        }
-        [self discardImage];
-        imageTime = _decodedImageTime[_dataBufId];
-    }
-#endif
     if (current < imageTime) {
         //TRACE(@"wait(%d) %f < %f", _dataBufId, current, imageTime);
         return FALSE;
     }
-    /*
-    if (_prevImageTime < current && 
-        current - _prevImageTime < _frameInterval * 0.5) {
-        return FALSE;
-    }
-     */
-    _prevImageTime = current;
-    _decodedImageCount--;
     //TRACE(@"draw(%d) %f %f", _dataBufId, current, imageTime);
     return TRUE;
 }
 
-- (CVOpenGLTextureRef)nextImage:(double*)currentTime
+- (CVOpenGLTextureRef)nextImage:(double)hostTime
+					currentTime:(double*)currentTime
+				 hostTime0point:(double*)hostTime0point
 {
-    //[_avSyncMutex lock];
-    *currentTime = _decodedImageTime[_dataBufId];
-    //[_avSyncMutex unlock];
+	if (![self isNewImageAvailable:hostTime
+					hostTime0point:hostTime0point]) {
+		return 0;
+	}
+	
+    *currentTime = [_imageQueue time];
 
     CVPixelBufferRef bufferRef = 0;
     NSSize size = [_movie encodedSize];
+	AVFrame* frame = [_imageQueue front];
     int ret = CVPixelBufferCreateWithBytes(0, size.width, size.height,
                                            kYUVSPixelFormat,    // k32ARGBPixelFormat
-                                           _frameData[_dataBufId]->data[0], 
-                                           _frameData[_dataBufId]->linesize[0],
+                                           frame->data[0], 
+                                           frame->linesize[0],
                                            0, 0, 0, // pixelBufferReleaseCallback, self, 0,
                                            &bufferRef);
-    if (ret == kCVReturnSuccess) {
-        //TRACE(@"display(%d) %f", _dataBufId, _currentTime);
-    }
-    else {
+    if (ret != kCVReturnSuccess) {
         TRACE(@"CVPixelBufferCreateWithBytes() failed : %d", ret);
     }
-
-    _dataBufId = (_dataBufId + 1) % MAX_VIDEO_DATA_BUF_SIZE;    
+	
+	[_imageQueue dequeue];
     return bufferRef;
 }
 

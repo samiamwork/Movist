@@ -139,6 +139,10 @@
         return FALSE;
     }
     [_frameReadMutex unlock];
+    //TRACE(@"[%s] frame flag %d pts %lld dts %lld pos %lld", __PRETTY_FUNCTION__, 
+    //                                                packet.flags, 
+    //                                                packet.pts, packet.dts, 
+    //                                                packet.pos);
     _needKeyFrame = FALSE;
 
     enumerator = [_videoTracks objectEnumerator];
@@ -438,25 +442,21 @@
 {
     double hostTime = (double)timeStamp->hostTime / _hostTimeFreq;
     [_trackMutex lock];
-    if (!_mainVideoTrack ||
-        ![_mainVideoTrack isNewImageAvailable:hostTime
-                               hostTime0point:&_hostTime0point]) {
-        [_trackMutex unlock];
-        return 0;
-    }
-
-    _hostTime = hostTime;
-    _hostTime0point -= _avFineTuningTime;
-
     if (!_mainVideoTrack) {
         [_trackMutex unlock];
         return 0;
     }
-    CVOpenGLTextureRef image = [_mainVideoTrack nextImage:&_currentTime];
-    [_trackMutex unlock];
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:MMovieCurrentTimeNotification object:self];
 
+    CVOpenGLTextureRef image = [_mainVideoTrack nextImage:hostTime 
+                                              currentTime:&_currentTime
+                                           hostTime0point:&_hostTime0point];
+    if (image) {
+        _hostTime = hostTime;
+        _hostTime0point -= _avFineTuningTime;
+        [[NSNotificationCenter defaultCenter]
+         postNotificationName:MMovieCurrentTimeNotification object:self];
+    }
+    [_trackMutex unlock];
     return image;
 }
 

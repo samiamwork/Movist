@@ -26,9 +26,12 @@
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <AudioUnit/AudioUnit.h>
 
-#import <libavcodec/avcodec.h>
-#import <libavformat/avformat.h>
-#import <libswscale/swscale.h>
+//#import <libavcodec/avcodec.h>
+//#import <libavformat/avformat.h>
+//#import <libswscale/swscale.h>
+#import <ffmpeg/avcodec.h>
+#import <ffmpeg/avformat.h>
+#import <ffmpeg/swscale.h>
 
 @interface FFContext : NSObject
 {
@@ -77,20 +80,15 @@ extern AVPacket s_flushPacket;
 #pragma mark -
 
 @class PacketQueue;
+@class ImageQueue;
 
 @interface FFVideoTrack : FFTrack
 {
     #define MAX_VIDEO_DATA_BUF_SIZE 8
     PacketQueue* _packetQueue;
     AVFrame* _frame;   // for decoding
-    AVFrame* _frameData[MAX_VIDEO_DATA_BUF_SIZE];
+	ImageQueue* _imageQueue;
     struct SwsContext* _scalerContext;
-    int _decodedImageCount;
-    int _decodedImageBufCount;
-    double _prevImageTime;
-    double _decodedImageTime[MAX_VIDEO_DATA_BUF_SIZE];
-    int _dataBufId;
-    int _nextDataBufId;
     BOOL _needKeyFrame;
     BOOL _useFrameDrop;
     double _frameInterval;
@@ -102,10 +100,9 @@ extern AVPacket s_flushPacket;
 - (BOOL)isQueueEmpty;
 - (BOOL)isQueueFull;
 - (void)clearQueue;
-
-- (BOOL)isNewImageAvailable:(double)hostTime
-             hostTime0point:(double*)hostTime0point;
-- (CVOpenGLTextureRef)nextImage:(double*)currentTime;
+- (CVOpenGLTextureRef)nextImage:(double)hostTime
+					currentTime:(double*)currentTime
+				 hostTime0point:(double*)hostTime0point;
 
 @end
 

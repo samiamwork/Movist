@@ -13,6 +13,7 @@
 #          Damien Fouilleul <damienf at videolan dot org>
 #          Jean-Baptiste Kempf <jb at videolan dot org>
 # Modifiers: Chan-gu Lee <maidaro@gmail.com>
+#            Ju, Cheol <moosoy@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,46 +45,10 @@ export CPPFLAGS = -I$(PREFIX)/include $(EXTRA_CFLAGS) $(EXTRA_CPPFLAGS)
 export CXXFLAGS = $(CPPFLAGS)
 export LDFLAGS = -L$(PREFIX)/lib $(EXTRA_LDFLAGS)
 
-FFMPEGCONF=
-FFMPEG_CFALGS=
-FFMPEG_LDALGS=
-
 # Define ranlib on non-cross compilation setups
 ifeq ($(RANLIB),)
 	RANLIB=ranlib
 endif
-
-# For ffmpeg if not cross compiling
-ifneq ($(CC),)
-	FFMPEGCONF=--cc="$(CC)"
-endif
-
-#
-# Special target-dependant options
-#
-ifdef CROSS_COMPILE
-	HOSTCONF=--target=$(HOST) --host=$(HOST) --build=$(BUILD)
-	FFMPEGCONF += --cross-compile
-	FFMPEG_LDFLAGS = $(EXTRA_LDFLAGS) -mmacosx-version-min=${SDK_TARGET}
-ifdef HAVE_DARWIN_OS_ON_INTEL
-	FFMPEGCONF += --arch=i386
-else
-	FFMPEGCONF += --arch=ppc
-endif
-endif
-
-ifdef HAVE_DARWIN_OS_ON_INTEL
-	FFMPEG_CFLAGS += -mtune=nocona -fstrict-aliasing -frerun-cse-after-loop -fweb -falign-loops=16
-	FFMPEGCONF += --cpu=pentium-m
-else
-	FFMPEG_CFLAGS += -mcpu=G3 -mtune=G5 -fstrict-aliasing -funroll-loops -falign-loops=16 -mmultiple
-endif
-
-FFMPEGCONF += --disable-vhook --disable-ffserver --disable-ffmpeg --disable-ffplay
-FFMPEGCONF += --disable-encoders --disable-muxers --disable-network 
-FFMPEGCONF += --enable-gpl --enable-pp --enable-swscaler
-FFMPEGCONF += --enable-pthreads
-FFMPEGCONF += --enable-libfaad --enable-liba52
 
 DATE=`date +%Y-%m-%d`
 
@@ -163,27 +128,18 @@ libebml: $(CONTRIB_SRC_PATH)libebml-$(EBML_VERSION).tar.bz2
 		make install prefix=$(PREFIX) && \
 		make install_headers prefix=$(PREFIX))
 
-
-
 # ***************************************************************************
-# ffmpeg
+# libsdl
 # ***************************************************************************
 
-$(CONTRIB_SRC_PATH)ffmpeg:
-	$(SVN) co $(FFMPEG_SVN) $@
-
-.ffmpeg: $(CONTRIB_SRC_PATH)ffmpeg .faad2 .a52
-	echo LDFLAGS=$(LDFLAGS)
-	echo CFLAGS=$(CFLAGS)
-	($(CONTRIB_SRC_PATH)ffmpeg/configure $(FFMPEGCONF) --prefix=$(PREFIX) --extra-cflags="$(CFLAGS) $(FFMPEG_CFLAGS)" --extra-ldflags="$(FFMPEG_LDFLAGS)" && make && make install-libs install-headers)
+.sdl: 
+	cd $(CONTRIB_SRC_PATH)libsdl && \
+		./configure $(HOSTCONF) --prefix=$(PREFIX) &&\
+		make clean && make && make install
 	touch $@
 
-ffmpeg-source: cfvz $(CONTRIB_SRC_PATH)ffmpeg-$(DATE).tar.gz
-	tar cfvz $(CONTRIB_SRC_PATH)ffmpeg-$(DATE).tar.gz $(CONTRIB_SRC_PATH)ffmpeg
-
-SOURCE += ffmpeg-source
-CLEAN_PKG += $(CONTRIB_SRC_PATH)ffmpeg
-
+CLEAN_PKG += $(CONTRIB_SRC_PATH)a52dec
+DISTCLEAN_PKG += $(CONTRIB_SRC_PATH)a52dec-$(A52DEC_VERSION).tar.gz
 source: $(SOURCE) $(DISTCLEAN_PKG)
 
 clean: FORCE
