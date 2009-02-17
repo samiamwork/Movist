@@ -719,7 +719,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([self isFullScreen] ||  // always deactivate screen-saver in full-screen
-        [_defaults boolForKey:MDeactivateScreenSaverKey]) {
+        ([_movie rate] != 0 && [_defaults boolForKey:MDeactivateScreenSaverKey])) {
         UpdateSystemActivity(UsrActivity);
     }
     if ([self isFullScreen]) {
