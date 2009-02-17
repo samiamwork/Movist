@@ -23,6 +23,8 @@
 #import "AppController.h"
 #import "UserDefaults.h"
 #import "FullScreener.h"
+#import "MainWindow.h"
+#import "MMovieView.h"
 
 #import "AppleRemote/MultiClickRemoteBehavior.h"
 #import "AppleRemote/RemoteControlContainer.h"
@@ -188,13 +190,10 @@
 - (IBAction)remoteControlPlusAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self isFullScreen]) {                 // window mode
+    if ([[NSApp keyWindow] firstResponder] == _movieView) {
         [self volumeUp];
     }
-    else if (![_fullScreener isNavigating]) {   // full play mode
-        [self volumeUp];
-    }
-    else {                                      // full navigation mode
+    else {      // full navigation mode
         [_fullScreener selectUpper];
     }
 }
@@ -202,10 +201,7 @@
 - (IBAction)remoteControlMinusAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self isFullScreen]) {                 // window mode
-        [self volumeDown];
-    }
-    else if (![_fullScreener isNavigating]) {   // full play mode
+    if ([[NSApp keyWindow] firstResponder] == _movieView) {
         [self volumeDown];
     }
     else {                                      // full navigation mode
@@ -228,7 +224,7 @@
 - (IBAction)remoteControlPlayAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self isFullScreen]) {                 // window mode
+    if ([NSApp keyWindow] == _mainWindow) {     // window mode
         if (!_movie) {
             // go to folder navigation directly
             [self beginFullNavigation];

@@ -173,6 +173,8 @@
 - (void)updateAlwaysOnTop:(BOOL)alwaysOnTop;
 - (IBAction)alwaysOnTopAction:(id)sender;
 
+- (void)showOpenAlert:(NSError*)error forURL:(NSURL*)url;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

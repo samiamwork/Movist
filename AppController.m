@@ -636,14 +636,14 @@ NSString* videoCodecName(int codecId);
 {
     _alwaysOnTopEnabled = enabled;
 
-    if ([_mainWindow isKeyWindow]) {
+    if ([_movieView window] == _mainWindow) {
         [self updateAlwaysOnTop:_alwaysOnTopEnabled];
     }
 }
 
 - (void)updateAlwaysOnTop:(BOOL)alwaysOnTop
 {
-    if (![_mainWindow isKeyWindow]) {
+    if ([_movieView window] != _mainWindow) {
         return;
     }
 
@@ -677,6 +677,21 @@ NSString* videoCodecName(int codecId);
     [_movieView setMessage:s];
 
     [self updateAlwaysOnTop:_alwaysOnTopEnabled];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)showOpenAlert:(NSError*)error forURL:(NSURL*)url
+{
+    if ([_movieView window] == _mainWindow) {
+        runAlertPanelForOpenError(_mainWindow, error, url);
+    }
+    else {
+        [_movieView setError:error
+                        info:[NSString stringWithFormat:@"%@\n\n%@",
+                              NSLocalizedString(@"Cannot open file", nil),
+                              [url isFileURL] ? [url path] : [url absoluteString]]];
+    }
 }
 
 @end

@@ -199,7 +199,7 @@
     return s;
 }
 
-- (void)updateUIForOpenedMovieAndSubtitle
+- (void)updateUIForOpenedMovieAndSubtitle:(NSString*)subtitleInfo
 {
     NSSize ss = [[_mainWindow screen] frame].size;
     NSSize ms = [_movie adjustedSizeByAspectRatio];
@@ -213,13 +213,20 @@
 
     if (_subtitles) {
         NSString* info = [NSString stringWithFormat:@"%@, %@",
-                            [[_movie class] name], [self subtitleInfoMessageString]];
+                          [[_movie class] name], [self subtitleInfoMessageString]];
         [_movieView setMessageWithURL:[self movieURL] info:info];
     }
     else {
-        [_movieView setMessageWithURL:[self movieURL] info:[[_movie class] name]];
+        if ([subtitleInfo isEqualToString:@""]) {
+            [_movieView setMessageWithURL:[self movieURL] info:[[_movie class] name]];
+        }
+        else {
+            NSString* info = [NSString stringWithFormat:@"%@, %@",
+                              [[_movie class] name], subtitleInfo];
+            [_movieView setMessageWithURL:[self movieURL] info:info];
+        }
     }
-    
+
     if (_mainWindow == [_movieView window]) {
         switch ([_defaults integerForKey:MOpeningViewKey]) {
             case OPENING_VIEW_HALF_SIZE         : [self resizeWithMagnification:0.5];   break;
@@ -289,7 +296,7 @@
             if ([self isDesktopBackground]) {
                 [self endDesktopBackground];
             }
-            runAlertPanelForOpenError(_mainWindow, error, movieURL);
+            [self showOpenAlert:error forURL:movieURL];
         }
         return FALSE;
     }
@@ -345,6 +352,7 @@
     }
     
     // open subtitles
+    NSString* subtitleInfo = @"";
     if ([_defaults boolForKey:MSubtitleEnableKey]) {
         NSMutableArray* subtitles = [NSMutableArray arrayWithCapacity:1];
         // load mkv-embedded subtitles
@@ -354,7 +362,7 @@
                 NSArray* subs = [self subtitleFromURL:movieURL
                                          withEncoding:subtitleEncoding error:&error];
                 if (!subs) {
-                    runAlertPanelForOpenError(_mainWindow, error, movieURL);
+                    // cannot open file...
                     // continue... subtitle is not necessary for movie.
                 }
                 else {
@@ -367,17 +375,14 @@
             NSArray* subs = [self subtitleFromURLs:subtitleURLs
                                       withEncoding:subtitleEncoding error:&error];
             if (!subs) {
-                NSURL* subtitleURL;
-                NSEnumerator* e = [subtitleURLs objectEnumerator];
-                while (subtitleURL = [e nextObject]) {
-                    runAlertPanelForOpenError(_mainWindow, error, subtitleURL);
-                }
+                subtitleInfo = [subtitleInfo stringByAppendingString:
+                                NSLocalizedString(@"No Subtitle", nil)];
                 // continue... subtitle is not necessary for movie.
             }
             else if ([subs count] == 0) {
-                runAlertPanel(_mainWindow, NSLocalizedString(@"Cannot Read Subtitle", nil),
-                              NSLocalizedString(@"Reopen with other encodings", nil),
-                              NSLocalizedString(@"OK", nil), nil, nil);
+                subtitleInfo = [subtitleInfo stringByAppendingFormat:@"%@ %@",
+                                NSLocalizedString(@"Cannot Read Subtitle", nil),
+                                NSLocalizedString(@"Reopen with other encodings", nil)];
             }
             else {
                 [subtitles addObjectsFromArray:subs];
@@ -393,7 +398,7 @@
             [self autoenableSubtitles];
         }
     }
-    [self updateUIForOpenedMovieAndSubtitle];
+    [self updateUIForOpenedMovieAndSubtitle:subtitleInfo];
     _checkForAltVolumeChange = TRUE;
 
     [_movie setRate:_playRate];  // auto play
@@ -483,11 +488,14 @@
     NSError* error;
     NSArray* subtitles = [self subtitleFromURLs:subtitleURLs withEncoding:encoding error:&error];
     if (!subtitles) {
+        NSString* s;
         NSURL* subtitleURL;
         NSEnumerator* e = [subtitleURLs objectEnumerator];
         while (subtitleURL = [e nextObject]) {
-            runAlertPanelForOpenError(_mainWindow, error, subtitleURL);
+            s = [s stringByAppendingFormat:@"%@\n", [[subtitleURL path] lastPathComponent]];
         }
+        runAlertPanel(_mainWindow, NSLocalizedString(@"Cannot open file", nil), s,
+                      NSLocalizedString(@"OK", nil), nil, nil);
         [self setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
         return FALSE;
     }

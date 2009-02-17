@@ -474,16 +474,23 @@
         // select by user-defined default language identifiers
         NSArray* defaultLangIDs = [[_defaults objectForKey:MDefaultLanguageIdentifiersKey]
                                    componentsSeparatedByString:@" "];
-        NSEnumerator* e = [_subtitles objectEnumerator];
-        while (subtitle = [e nextObject]) {
-            if ([subtitle checkDefaultLanguage:defaultLangIDs]) {
-                [subtitle setEnabled:TRUE];
+        NSString* s;
+        NSEnumerator* e = [defaultLangIDs objectEnumerator];
+        while (s = [e nextObject]) {
+            NSEnumerator* se = [_subtitles objectEnumerator];
+            while (subtitle = [se nextObject]) {
+                if ([subtitle checkDefaultLanguage:[NSArray arrayWithObject:s]]) {
+                    break;
+                }
+            }
+            if (subtitle) {
                 enabledCount = 1;
+                [subtitle setEnabled:TRUE];
+                while (subtitle = [se nextObject]) {
+                    [subtitle setEnabled:FALSE];
+                }
                 break;
             }
-        }
-        while (subtitle = [e nextObject]) {
-            [subtitle setEnabled:FALSE];
         }
     }
 

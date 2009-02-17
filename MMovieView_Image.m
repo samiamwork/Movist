@@ -302,7 +302,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         boundingRect = [self underScannedRect:boundingRect];
     }
     
-    if ([[NSApp delegate] isFullScreen] && _fullScreenFill != FS_FILL_NEVER) {
+    if (([[NSApp delegate] isFullScreen] || [[NSApp delegate] isDesktopBackground]) &&
+        _fullScreenFill != FS_FILL_NEVER) {
         return boundingRect;
     }
     else {

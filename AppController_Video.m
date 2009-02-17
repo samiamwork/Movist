@@ -102,7 +102,7 @@
     if (_movie && ![self isFullScreen]) {
         NSEvent* event = [NSApp currentEvent];
         unsigned int flags = [event modifierFlags];
-        if (/*[event type] == NSKeyDown && */!(flags & NSCommandKeyMask)) {
+        if (!(flags & NSCommandKeyMask)) {
             if (flags & NSControlKeyMask) {
                 [self setFullScreenFill:FS_FILL_STRETCH];
             }
@@ -111,16 +111,6 @@
             }
             else if (flags & NSShiftKeyMask) {
                 [self setFullScreenFill:FS_FILL_NEVER];
-            }
-            else {  // no modifierFlags => using defaults
-                NSSize ss = [[_mainWindow screen] frame].size;
-                NSSize ms = [_movie adjustedSizeByAspectRatio];
-                int fill = (ss.width / ss.height < ms.width / ms.height) ?
-                            [_defaults integerForKey:MFullScreenFillForWideMovieKey] :
-                            [_defaults integerForKey:MFullScreenFillForStdMovieKey];
-                [_movieView setFullScreenFill:fill];
-                [_movieView updateMovieRect:TRUE];
-                [self updateFullScreenFillMenu];
             }
         }
 
@@ -388,8 +378,9 @@
             [self beginFullNavigation];
         }
         else {
-            // this may be in full-navigation without preview
-            // do nothing.
+            if (![_fullScreener closeCurrent]) {
+                [self endFullNavigation];
+            }
         }
     }
     else if ([self isFullNavigation]) {
