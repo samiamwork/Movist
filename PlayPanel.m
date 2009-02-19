@@ -39,6 +39,7 @@
                                   backing:bufferingType
                                     defer:deferCreation]) {
         [self initHUDWindow];
+        [self setFloatingPanel:TRUE];
     }
     return self;
 }
@@ -49,7 +50,6 @@
     [self setDelegate:self];
     [self updateHUDBackground];
     [self initHUDSubviews];
-    [self setVisibleInAllSpaces:TRUE];
     _movingByDragging = FALSE;
 }
 
@@ -152,13 +152,11 @@
         [self setFrameOrigin:fr.origin];
     }
     [super orderFront:sender];
-    [[_movieView window] addChildWindow:self ordered:NSWindowAbove];
 }
 
 - (void)orderOut:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[_movieView window] removeChildWindow:self];
     [_seekSlider mouseMoved:NSMakePoint(-1, -1)];   // hide tooltip
     [super orderOut:sender];
 }

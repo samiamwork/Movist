@@ -266,16 +266,16 @@
 
 - (void)initToolTipWithTextColor:(NSColor*)textColor backColor:(NSColor*)backColor
 {
-    NSWindow* window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 58, 14)
-                                                   styleMask:NSBorderlessWindowMask
-                                                     backing:NSBackingStoreBuffered
-                                                       defer:TRUE];
+    NSPanel* window = [[NSPanel alloc] initWithContentRect:NSMakeRect(0, 0, 58, 14)
+                                                 styleMask:NSBorderlessWindowMask
+                                                   backing:NSBackingStoreBuffered
+                                                     defer:TRUE];
     [window setOpaque:FALSE];
     [window setAlphaValue:0.9];
     [window setBackgroundColor:backColor];
     [window setHasShadow:FALSE];
     [window setHidesOnDeactivate:TRUE];
-    [window setVisibleInAllSpaces:TRUE];
+    [window setFloatingPanel:TRUE];
 
     _toolTipTextField = [[NSTextField alloc] initWithFrame:NSZeroRect];
     [_toolTipTextField setAlignment:NSCenterTextAlignment];
@@ -310,7 +310,7 @@
 - (void)showMouseTimeToolTip:(NSPoint)locationInWindow
 {
     [_toolTipTextField setStringValue:NSStringFromMovieTime(_mouseTime)];
-    
+
     NSRect r = [self convertRect:[self bounds] toView:nil];
     r.origin.x = locationInWindow.x;
     r.origin.y += r.size.height;
@@ -318,13 +318,12 @@
     r.origin.x -= [[_toolTipTextField window] frame].size.width / 2;
     [[_toolTipTextField window] setFrameOrigin:r.origin];
     [[_toolTipTextField window] orderFront:self];
-    [[self window] addChildWindow:[_toolTipTextField window] ordered:NSWindowAbove];
 }
 
 - (void)hideMouseTimeToolTip
 {
-    [[self window] removeChildWindow:[_toolTipTextField window]];
     [[_toolTipTextField window] orderOut:self];
+
     [_toolTipTextField setStringValue:@""];
 }
 

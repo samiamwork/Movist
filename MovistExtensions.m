@@ -407,19 +407,6 @@
 - (void)fadeIn:(float)duration  { [self fadeWithEffect:NSViewAnimationFadeInEffect duration:duration]; }
 - (void)fadeOut:(float)duration { [self fadeWithEffect:NSViewAnimationFadeOutEffect duration:duration]; }
 
-- (void)setVisibleInAllSpaces:(BOOL)visible
-{
-    if (isSystemLeopard()) {
-        HIWindowRef windowRef = (HIWindowRef)[self windowRef];
-        if (visible) {
-            HIWindowChangeAvailability(windowRef, kHIWindowVisibleInAllSpaces, 0);
-        }
-        else {
-            HIWindowChangeAvailability(windowRef, 0, kHIWindowVisibleInAllSpaces);
-        }
-    }
-}
-
 - (void)setAlwaysOnTop:(BOOL)alwaysOnTop
 {
     // enhancement for Expose & Spaces

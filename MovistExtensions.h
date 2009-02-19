@@ -69,7 +69,6 @@
 - (void)fadeIn:(float)duration;
 - (void)fadeOut:(float)duration;
 
-- (void)setVisibleInAllSpaces:(BOOL)visible;
 - (void)setAlwaysOnTop:(BOOL)alwaysOnTop;
 
 @end
