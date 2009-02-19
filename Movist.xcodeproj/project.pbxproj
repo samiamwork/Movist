@@ -510,6 +510,11 @@
 		AFC7D4300C3715A500F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFC7D4330C37160300F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFC7D44D0C371C4C00F5EA5C /* Korean */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Korean; path = Korean.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AFCA76390F4B99A8008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		AFCA763A0F4B99BA008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/Playlist.nib; sourceTree = "<group>"; };
+		AFCA763B0F4B99CB008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/Preferences.nib; sourceTree = "<group>"; };
+		AFCA763C0F4B99E0008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Turkish; path = Turkish.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AFCA763D0F4B99E6008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Turkish; path = Turkish.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AFCD04C00DBA39B300348AB0 /* MSubtitleParser_SUB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_SUB.h; sourceTree = "<group>"; };
 		AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SUB.m; sourceTree = "<group>"; };
 		AFCD04F00DBA6B6300348AB0 /* unrarlib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unrarlib.c; sourceTree = "<group>"; };
@@ -1076,6 +1081,7 @@
 				French,
 				German,
 				Korean,
+				Turkish,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Movist */;
 			projectDirPath = "";
@@ -1332,6 +1338,7 @@
 			children = (
 				089C165DFE840E0CC02AAC07 /* English */,
 				AFC7D44D0C371C4C00F5EA5C /* Korean */,
+				AFCA763D0F4B99E6008DBDCD /* Turkish */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1341,6 +1348,7 @@
 			children = (
 				29B97319FDCFA39411CA2CEA /* English */,
 				AFC7D42E0C37138500F5EA5C /* Korean */,
+				AFCA76390F4B99A8008DBDCD /* Turkish */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -1350,6 +1358,7 @@
 			children = (
 				AF07D2150BE71FD400D7EC30 /* English */,
 				AFC7D4330C37160300F5EA5C /* Korean */,
+				AFCA763B0F4B99CB008DBDCD /* Turkish */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
@@ -1359,6 +1368,7 @@
 			children = (
 				AF76EF170BF60AE2000995C9 /* English */,
 				AFC7D4300C3715A500F5EA5C /* Korean */,
+				AFCA763A0F4B99BA008DBDCD /* Turkish */,
 			);
 			name = Playlist.nib;
 			sourceTree = "<group>";
@@ -1368,6 +1378,7 @@
 			children = (
 				AFC7D3A80C37084800F5EA5C /* English */,
 				AFC7D3DE0C370FD100F5EA5C /* Korean */,
+				AFCA763C0F4B99E0008DBDCD /* Turkish */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
