@@ -624,7 +624,6 @@ NSString* videoCodecName(int codecId);
         _preferenceController = [[PreferenceController alloc]
                             initWithAppController:self mainWindow:_mainWindow];
         [[_preferenceController window] setDelegate:self];
-        [[_preferenceController window] setVisibleInAllSpaces:TRUE];
     }
     [_preferenceController showWindow:self];
     [[_preferenceController window] makeKeyWindow];
