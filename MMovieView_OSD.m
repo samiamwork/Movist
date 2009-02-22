@@ -54,7 +54,7 @@
     [_messageOSD initTextRendering];
     [_messageOSD setViewBounds:bounds movieRect:bounds];
     [_messageOSD setHPosition:OSD_HPOSITION_LEFT];
-    [_messageOSD setVPosition:OSD_VPOSITION_UBOX];
+    [_messageOSD setVPosition:OSD_VPOSITION_TOP];
     [_messageOSD setTextAlignment:NSLeftTextAlignment];
     _messageHideInterval = 2.0;
 
