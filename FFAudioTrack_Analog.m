@@ -135,9 +135,11 @@
     return TRUE;
 }
 
-- (void)removeDataDuring:(double)dt time:(double*)time
+- (void)removeDataDuring:(double)dt channelNumber:(int)channelNumber time:(double*)time
 {
-    int size = 1. * dt * _bitRate;
+    int size = dt * _bitRate;
+    int sizeUnit = channelNumber * sizeof(_data[0]);
+    size = size / sizeUnit * sizeUnit;
     [_mutex lock];
     int dataSize = [self dataSize];
     if (dataSize < size) {
@@ -146,6 +148,7 @@
     _front = (_front + size) % _capacity;
     *time = _time - 1. * ([self dataSize] - size) / _bitRate;
     [_mutex unlock];
+    //TRACE(@"data removed %f", dt);
 }
 
 - (void)getFirstTime:(double*)time
@@ -153,6 +156,11 @@
     [_mutex lock];
     *time = _time - 1. * [self dataSize] / _bitRate;
     [_mutex unlock];
+}
+
+- (double)lastTime
+{
+    return _time;
 }
 @end
 
@@ -413,10 +421,10 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     const int MAX_AUDIO_CHANNEL_SIZE = 8;
     const int AUDIO_BUF_SIZE = 44000 * MAX_AUDIO_CHANNEL_SIZE / 10;
 
-	int i, j;
+    int i, j;
     int frameSize = sizeof(int16_t);  // int16
     int channelNumber = ioData->mNumberBuffers;
-	int requestSize = frameNumber * frameSize * channelNumber;
+    int requestSize = frameNumber * frameSize * channelNumber;
     if (AUDIO_BUF_SIZE < requestSize) {
         TRACE(@"AUDIO_BUF_SIZE(%d) < requestSize(%d)", AUDIO_BUF_SIZE, requestSize);
         return;
@@ -424,11 +432,11 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     }
 
     AUDIO_DATA_TYPE* dst[MAX_AUDIO_CHANNEL_SIZE];
-	for (i = 0; i < channelNumber; i++) {
-		dst[i] = ioData->mBuffers[i].mData;
+    for (i = 0; i < channelNumber; i++) {
+        dst[i] = ioData->mBuffers[i].mData;
         assert(ioData->mBuffers[i].mDataByteSize == 4 * frameNumber);
         assert(ioData->mBuffers[i].mNumberChannels == 1);
-	}
+    }
     if (![self isEnabled] ||
         [_movie quitRequested] ||
         [_movie reservedCommand] != COMMAND_NONE ||
@@ -437,41 +445,58 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
         [_dataQueue getFirstTime:&_nextDecodedTime];
         [_movie audioTrack:self avFineTuningTime:0];
+        //double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
+        //double currentTime = hostTime - [_movie hostTime0point];
+        //TRACE(@"currentTime(%f) audioTime %f make empty", currentTime, _nextDecodedTime);
         return;
     }
-	
+    
     double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
     double currentTime = hostTime - [_movie hostTime0point];
     [_dataQueue getFirstTime:&_nextDecodedTime];
     
-	double dt = _nextDecodedTime - currentTime;
-	if (dt < -1.0 || 0.2 < dt) {
-		[self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
-		[_movie audioTrack:self avFineTuningTime:0];
-		TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
-		return;
-	}
-    if (-0.02 < dt && dt < 0.02) {
-		dt = 0;
+    double dt = _nextDecodedTime - currentTime;
+    if (dt < -0.2 || 0.2 < dt) {
+        if (dt < 0 && currentTime < [_dataQueue lastTime]) {
+            [_dataQueue removeDataDuring:-dt channelNumber:channelNumber time:&_nextDecodedTime];
+            if ([_dataQueue dataSize] < requestSize) {
+                [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
+                [_movie audioTrack:self avFineTuningTime:0];
+                //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+                return;
+            }
+            dt = 0;
+        }
+        else {
+            [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
+            [_movie audioTrack:self avFineTuningTime:0];
+            //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+            return;
+        }
     }
-	[_movie audioTrack:self avFineTuningTime:dt];
+    else if (-0.01 < dt && dt < 0.01) {
+        dt = 0;
+    }
+    [_movie audioTrack:self avFineTuningTime:dt];
+    //TRACE(@"currentTime(%f) audioTime %f", currentTime, _nextDecodedTime);
     
     int16_t audioBuf[AUDIO_BUF_SIZE];
     [_dataQueue getData:(UInt8*)audioBuf size:requestSize time:&_nextDecodedTime];
     float volume = [_movie muted] ? 0 : _volume;
     for (i = 0; i < frameNumber; i++) { 
-		for (j = 0; j < channelNumber; j++) {
+        for (j = 0; j < channelNumber; j++) {
 #ifdef _USE_AUDIO_DATA_FLOAT_BIT
-            dst[j][i] = 1. * volume * audioBuf[channelNumber * i + j] / INT16_MAX;			
+            dst[j][i] = 1. * volume * audioBuf[channelNumber * i + j] / INT16_MAX;            
 #else
-            dst[j][i] = audioBuf[channelNumber * i + j];			
+            dst[j][i] = audioBuf[channelNumber * i + j];            
 #endif
         } 
-	}
+    }
     if (_speakerCount == 2 && channelNumber == 6) {
         for (i = 0; i < frameNumber; i++) {
             dst[0][i] += dst[4][i] + (dst[2][i] + dst[3][i]) / 2;
-            dst[1][i] += dst[5][i] + (dst[2][i] + dst[3][i]) / 2;
+            dst[1][i] = 0;;
+            //dst[1][i] += dst[5][i] + (dst[2][i] + dst[3][i]) / 2;
         }
     }
 }

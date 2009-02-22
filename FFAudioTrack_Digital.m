@@ -79,9 +79,9 @@ static int AudioStreamChangeFormat(AudioStreamID i_stream_id, AudioStreamBasicDe
 }
 
 - (void)clear { 
-    [_mutex lock];
+    //[_mutex lock];
     _rear = _front;
-    [_mutex unlock];
+    //[_mutex unlock];
 }
 
 - (BOOL)isEmpty { return (_front == _rear); }
@@ -89,25 +89,42 @@ static int AudioStreamChangeFormat(AudioStreamID i_stream_id, AudioStreamBasicDe
 
 - (int)dataSize
 {
-    [_mutex lock];
+    //[_mutex lock];
     int size = (_bufferCount + _rear - _front) % _bufferCount * 6144;
-    [_mutex unlock];
+    //[_mutex unlock];
     return size;
 }
 
 - (double)current
 {
+    //[_mutex lock];
     if ([self isEmpty]) {
+        //[_mutex unlock];
         return -1.;
     }
-    return _time[_front];
+    double time = _time[_front];
+    //[_mutex unlock];
+    return time;
+}
+
+- (double)lastTime
+{
+    //[_mutex lock];
+    if ([self isEmpty]) {
+        //[_mutex unlock];
+        return -1;
+    }
+    int index = (_rear + _bufferCount - 1) % _bufferCount;
+    double time = _time[index];
+    //[_mutex unlock];
+    return time;
 }
 
 - (BOOL)putData:(UInt8*)data size:(int)size time:(double)time
 {
-    [_mutex lock];
+    //[_mutex lock];
     if ([self isFull]) {
-        [_mutex unlock];
+        //[_mutex unlock];
         return FALSE;
     }
     assert(_remnant + size <= 6144);
@@ -122,45 +139,45 @@ static int AudioStreamChangeFormat(AudioStreamID i_stream_id, AudioStreamBasicDe
     else {
         _remnant += size;
     }
-    [_mutex unlock];
+    //[_mutex unlock];
     return TRUE;
 }
 
 - (BOOL)getData:(UInt8*)data
 {
-    [_mutex lock];
+    //[_mutex lock];
     if ([self isEmpty]) {
-        [_mutex unlock];
+        //[_mutex unlock];
         return FALSE;
     }
     memcpy(data, &_data[6144 * _front], 6144);
     _front = (_front + 1) % _bufferCount;
-    [_mutex unlock];
+    //[_mutex unlock];
     return TRUE;
 }
 
 - (BOOL)removeData
 {
-    [_mutex lock];
+    //[_mutex lock];
     if ([self isEmpty]) {
-        [_mutex unlock];
+        //[_mutex unlock];
         return FALSE;
     }
     _front = (_front + 1) % _bufferCount;
-    [_mutex unlock];
+    //[_mutex unlock];
     return TRUE;
 }
 
-- (void)removeDataUntilTime:(double)time
+- (void)removeDataUntilTime:(double)time 
 {
-    [_mutex lock];
+    //[_mutex lock];
     while (![self isEmpty]) {
         if (time <= _time[_front]) {
             break;
         }
         _front = (_front + 1) % _bufferCount;
     }
-    [_mutex unlock];
+    //[_mutex unlock];
 }
 
 @end
@@ -173,17 +190,17 @@ static BOOL s_first = TRUE;
 
 - (AudioDeviceID)getDeviceId
 {
-	AudioDeviceID audioDev = 0;
+    AudioDeviceID audioDev = 0;
     UInt32 paramSize = sizeof(AudioDeviceID);
-	OSStatus err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-								   &paramSize, &audioDev);
-	TRACE(@"%s device id=%u", __PRETTY_FUNCTION__, audioDev);
-	if (err != noErr) {
-		TRACE(@"failed to get device id : [%4.4s]\n", (char *)&err);
-		assert(FALSE);
-		return 0;
-	}
-	return audioDev;
+    OSStatus err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+                                   &paramSize, &audioDev);
+    TRACE(@"%s device id=%u", __PRETTY_FUNCTION__, audioDev);
+    if (err != noErr) {
+        TRACE(@"failed to get device id : [%4.4s]\n", (char *)&err);
+        assert(FALSE);
+        return 0;
+    }
+    return audioDev;
 }
 
 - (BOOL)setDeviceHogMode:(BOOL)hog
@@ -193,9 +210,9 @@ static BOOL s_first = TRUE;
                                  kAudioDevicePropertyHogMode, sizeof(pid_t), &pid );
     if (err != noErr ) {
         TRACE(@"failed to set hogmode %d : [%4.4s]", hog, (char *)&err );
-		return FALSE;
+        return FALSE;
     }
-	return TRUE;
+    return TRUE;
 }
 
 - (BOOL)setDeviceMixable:(BOOL)mixable
@@ -216,31 +233,31 @@ static BOOL s_first = TRUE;
     }
     if (err != noErr) {
         TRACE(@"failed to set mixmode %d : [%4.4s]\n", mixable, (char *)&err);
-		return FALSE;
+        return FALSE;
     }
-	return TRUE;
+    return TRUE;
 }
 
 - (BOOL)initDigitalAudio:(int*)error
 {
-	TRACE(@"%s", __PRETTY_FUNCTION__);
+    TRACE(@"%s", __PRETTY_FUNCTION__);
     OSStatus err = noErr;
     UInt32 paramSize = sizeof(AudioDeviceID);
     if (s_audioDeviceId) {
         _audioDev = s_audioDeviceId;
     }
     else {
-		_audioDev = [self getDeviceId];
-		if (!_audioDev) {
-			return FALSE;
-		}
+        _audioDev = [self getDeviceId];
+        if (!_audioDev) {
+            return FALSE;
+        }
         s_audioDeviceId = _audioDev;
     }
 
-	if (![self setDeviceHogMode:TRUE]) {
+    if (![self setDeviceHogMode:TRUE]) {
         return FALSE;
     }
-	[self setDeviceMixable:FALSE];
+    [self setDeviceMixable:FALSE];
 
     /* Retrieve all the output streams. */
     err = AudioDeviceGetPropertyInfo(_audioDev, 0, FALSE,
@@ -349,7 +366,7 @@ static BOOL s_first = TRUE;
     AudioStreamChangeFormat(_digitalStream, _originalDesc);
     _currentDesc = _originalDesc;
     _bigEndian = _currentDesc.mFormatFlags & kAudioFormatFlagIsBigEndian;
-	[self setDeviceMixable:TRUE];
+    [self setDeviceMixable:TRUE];
     
 /*
     err = AudioHardwareRemovePropertyListener(kAudioHardwarePropertyDevices,
@@ -359,7 +376,7 @@ static BOOL s_first = TRUE;
         TRACE(@"AudioHardwareRemovePropertyListener failed: [%4.4s]", (char *)&err );
     }    
 */
-	[self setDeviceHogMode:FALSE];
+    [self setDeviceHogMode:FALSE];
     _audioDev = 0;
     [_rawDataQueue clear];
     [_rawDataQueue release];
@@ -369,7 +386,7 @@ static BOOL s_first = TRUE;
 
 - (void)startDigitalAudio
 {
-	TRACE(@"%s", __PRETTY_FUNCTION__);
+    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (noErr !=  AudioDeviceStart(_audioDev, digitalAudioProc)) {
         TRACE(@"AudioDeviceStart failed");
         assert(FALSE);
@@ -379,7 +396,7 @@ static BOOL s_first = TRUE;
 
 - (void)stopDigitalAudio
 {
-	TRACE(@"%s", __PRETTY_FUNCTION__);
+    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (noErr != AudioDeviceStop(_audioDev, digitalAudioProc)) {
         //_started = FALSE;
         TRACE(@"AudioDeviceStop failed");
@@ -448,7 +465,7 @@ static BOOL s_first = TRUE;
         memcpy(buffer + 8, packetPtr, packetSize);        
     }
     double decodedAudioTime = (double)1. * packet->dts * PTS_TO_SEC;
-	assert(packetSize + 8 <= 6144/3);
+    assert(packetSize + 8 <= 6144/3);
     //TRACE(@"audio time %lld * %lf = %lf", packet->dts, PTS_TO_SEC, decodedAudioTime);
     [_rawDataQueue putData:buffer size:6144/3 time:decodedAudioTime];        
 }
@@ -495,9 +512,9 @@ static BOOL s_first = TRUE;
 - (void)nextDigitalAudio:(AudioBuffer)audioBuf
                timeStamp:(const AudioTimeStamp*)timeStamp
 {
-	int requestSize = audioBuf.mDataByteSize;
+    int requestSize = audioBuf.mDataByteSize;
     if (requestSize != 6144) {
-        TRACE(@"request audio data size %d", requestSize);
+        //TRACE(@"request audio data size %d", requestSize);
     }
     
     if (![self isEnabled] || 
@@ -506,25 +523,39 @@ static BOOL s_first = TRUE;
         [_movie command] != COMMAND_PLAY ||
         [_rawDataQueue isEmpty]) {
         memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
-		//TRACE(@"no audio data");
+        //TRACE(@"no audio data, queue(%f)", [_rawDataQueue current]);
         [_movie audioTrack:self avFineTuningTime:(double)0];
         return;
     }
+    
     
     double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
     double currentTime = hostTime - [_movie hostTime0point];
     double audioTime = [_rawDataQueue current];
     
-	double dt = audioTime - currentTime;
-	if (dt < -1.0 || 0.2 < dt) {
-        memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
-		[_movie audioTrack:self avFineTuningTime:0];
-		return;
-	}
-    if (-0.02 < dt && dt < 0.02) {
-		dt = 0;
+    double dt = audioTime - currentTime;
+    if (dt < -0.2 || 0.2 < dt) {
+        if (dt < 0 && currentTime < [_rawDataQueue lastTime]) {
+            [_rawDataQueue removeDataUntilTime:currentTime];
+            if ([_rawDataQueue isEmpty]) {
+                memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
+                [_movie audioTrack:self avFineTuningTime:0];
+                //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, audioTime, dt);
+                return;
+            }
+            dt = 0;
+        }
+        else {
+            memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
+            [_movie audioTrack:self avFineTuningTime:0];
+            //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, audioTime, dt);
+            return;
+        }
     }
-    [_movie audioTrack:self avFineTuningTime:dt];	
+    else if (-0.01 < dt && dt < 0.01) {
+        dt = 0;
+    }
+    [_movie audioTrack:self avFineTuningTime:dt];    
 
     if ([_movie muted]) {
         [_rawDataQueue removeData];

@@ -33,11 +33,14 @@
 - (BOOL)initTrack:(int*)errorCode passThrough:(BOOL)passThrough
 {
     PTS_TO_SEC = av_q2d(_stream->time_base);
-	_passThrough = passThrough;
+    _passThrough = passThrough;
     _enabled = FALSE;
     _running = FALSE;
     
     AVCodecContext* context = _stream->codec;
+    if (!_passThrough) {
+        context->request_channels = 2;
+    }
     // FIXME: hack for DTS;
     if (context->codec_id == CODEC_ID_DTS && context->channels == 5) {
         TRACE(@"dts audio channel is 5? maybe 6...");
@@ -75,9 +78,9 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _running = TRUE;
     int error;
-	if (_passThrough) {
-		assert(!_audioUnit);
-		if (![self initDigitalAudio:&error]) {
+    if (_passThrough) {
+        assert(!_audioUnit);
+        if (![self initDigitalAudio:&error]) {
             _enabled = FALSE;
             _running = FALSE;
             return;
