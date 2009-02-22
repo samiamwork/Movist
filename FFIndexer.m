@@ -31,15 +31,15 @@
 ///////////// copied from ffmpeg/libavformat/avformat.h ///////////////////////
 
 //typedef struct {
-//	int64_t  riff_end;
-//	int64_t  movi_end;
-//	int64_t  fsize;
-//	int64_t movi_list;
-//	int64_t last_pkt_pos;
-//	int index_loaded;
-//	int is_odml;
-//	int non_interleaved;
-//	int stream_index;
+//    int64_t  riff_end;
+//    int64_t  movi_end;
+//    int64_t  fsize;
+//    int64_t movi_list;
+//    int64_t last_pkt_pos;
+//    int index_loaded;
+//    int is_odml;
+//    int non_interleaved;
+//    int stream_index;
 //    struct DVDemuxContext* dv_demux;
 //} AVIContext;
 
