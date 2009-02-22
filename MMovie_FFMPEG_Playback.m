@@ -111,7 +111,7 @@
     if (audioTrack == _mainAudioTrack) {
         _avFineTuningTime = time;
         if (time != 0) {
-            TRACE(@"finetuning %f", time);
+            //TRACE(@"finetuning %f", time);
         }
     }
 }
@@ -139,10 +139,11 @@
         return FALSE;
     }
     [_frameReadMutex unlock];
-    //TRACE(@"[%s] frame flag %d pts %lld dts %lld pos %lld", __PRETTY_FUNCTION__, 
-    //                                                packet.flags, 
-    //                                                packet.pts, packet.dts, 
-    //                                                packet.pos);
+//    TRACE(@"[%s] frame id %d flag %d pts %lld dts %lld pos %lld", __PRETTY_FUNCTION__, 
+//                                                    packet.stream_index,
+//                                                    packet.flags, 
+//                                                    packet.pts, packet.dts,
+//                                                    packet.pos);
     _needKeyFrame = FALSE;
 
     enumerator = [_videoTracks objectEnumerator];
@@ -150,6 +151,11 @@
         if ([vTrack isEnabled] && [vTrack streamIndex] == packet.stream_index) {
             av_dup_packet(&packet);
             [vTrack putPacket:&packet];
+            //TRACE(@"[%s] frame id %d flag %d pts %lld dts %lld pos %lld", __PRETTY_FUNCTION__, 
+            //      packet.stream_index,
+            //      packet.flags, 
+            //      packet.pts, packet.dts,
+            //      packet.pos);
             return TRUE;
         }
     }
@@ -220,6 +226,7 @@
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
         [(FFVideoTrack*)[track impl] clearQueue];
+        [(FFVideoTrack*)[track impl] seek:_seekTime];
     }
     enumerator = [_audioTracks objectEnumerator];
     while (track = [enumerator nextObject]) {

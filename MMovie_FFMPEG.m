@@ -186,6 +186,8 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _trackMutex = [[NSLock alloc] init];
+    bool needPtsAdjust = strstr(_formatContext->iformat->name, "matroska");
+
     MTrack* track;
     FFVideoTrack* vTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
@@ -196,6 +198,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
                 _mainVideoTrack = vTrack;
             }
             [track setEnabled:vTrack == _mainVideoTrack];
+            [vTrack enablePtsAdjust:needPtsAdjust];
         }
         else {
             [track setEnabled:FALSE];

@@ -87,11 +87,15 @@ extern AVPacket s_flushPacket;
     #define MAX_VIDEO_DATA_BUF_SIZE 8
     PacketQueue* _packetQueue;
     AVFrame* _frame;   // for decoding
-	ImageQueue* _imageQueue;
+    ImageQueue* _imageQueue;
     struct SwsContext* _scalerContext;
     BOOL _needKeyFrame;
     BOOL _useFrameDrop;
+    BOOL _seeked;
+    BOOL _needPtsAdjust;
     double _frameInterval;
+    double _nextFrameTime;
+    int64_t _nextFramePts;
 }
 
 + (id)videoTrackWithAVStream:(AVStream*)stream index:(int)index;
@@ -100,9 +104,11 @@ extern AVPacket s_flushPacket;
 - (BOOL)isQueueEmpty;
 - (BOOL)isQueueFull;
 - (void)clearQueue;
+- (void)seek:(double)time;
+- (void)enablePtsAdjust:(BOOL)enable;
 - (CVOpenGLTextureRef)nextImage:(double)hostTime
-					currentTime:(double*)currentTime
-				 hostTime0point:(double*)hostTime0point;
+                    currentTime:(double*)currentTime
+                 hostTime0point:(double*)hostTime0point;
 
 @end
 

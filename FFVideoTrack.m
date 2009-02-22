@@ -274,6 +274,9 @@
     _needKeyFrame = FALSE;
     _useFrameDrop = _stream->r_frame_rate.num / _stream->r_frame_rate.den > 30;
     _frameInterval = 1. / (_stream->r_frame_rate.num / _stream->r_frame_rate.den);
+	_seeked = FALSE;
+	_nextFrameTime = 0;
+	_nextFramePts = 0;
 
     _running = TRUE;
     [NSThread detachNewThreadSelector:@selector(decodeThreadFunc:)
@@ -327,6 +330,16 @@
     [self putPacket:&s_flushPacket];
 }
 
+- (void)seek:(double)time
+{
+	_seeked = TRUE;
+}
+
+- (void)enablePtsAdjust:(BOOL)enable
+{
+	_needPtsAdjust = enable;
+}
+
 - (double)decodePacket
 {
     //TRACE(@"%s(%d) %d", __PRETTY_FUNCTION__, _nextDataBufId, _decodedImageCount);
@@ -357,18 +370,40 @@
         return -1;
     }
     if (!gotFrame) {
-        //TRACE(@"%s incomplete decoded frame", __PRETTY_FUNCTION__);
+        TRACE(@"%s incomplete decoded frame", __PRETTY_FUNCTION__);
         return -1;
     }
 
-    double pts = 0;
+    int64_t pts = 0;
     if (packet.dts != AV_NOPTS_VALUE) {
         pts = packet.dts;
     }
     else if (_frame->opaque && *(uint64_t*)_frame->opaque != AV_NOPTS_VALUE) {
         pts = *(uint64_t*)_frame->opaque;
     }
-    return (double)(pts * av_q2d(_stream->time_base));
+	double time;
+	double timeErr = (_nextFramePts - pts) * av_q2d(_stream->time_base);
+	if (_needPtsAdjust && _seeked &&
+		_frame->pict_type != FF_I_TYPE && packet.duration &&
+		-1. < timeErr && timeErr < 1.) {
+		//time = _nextFrameTime;
+		time = (double)(_nextFramePts) * av_q2d(_stream->time_base);
+		_nextFramePts += packet.duration;
+	}
+	else {
+		time = (double)(pts) * av_q2d(_stream->time_base);
+		_nextFramePts = pts + packet.duration;
+	}
+	//_nextFrameTime = time + _frameInterval;
+
+//	static int64_t prevPts;
+//	if (pts - prevPts != packet.duration) {
+//		TRACE(@"pts %lld prevPts %lld duration %d", pts, prevPts, packet.duration);
+//	}
+//	prevPts = pts;
+	
+	//TRACE(@"%s %f %f %f", __PRETTY_FUNCTION__, pts, av_q2d(_stream->time_base), (double)(pts * av_q2d(_stream->time_base)));
+    return time;
 }
 
 - (BOOL)convertImage:(AVFrame*) frame
@@ -423,7 +458,7 @@
              hostTime0point:(double*)hostTime0point
 {
     if ([_imageQueue isEmpty]) {
-        //TRACE(@"not decoded %f", current);
+        //TRACE(@"not decoded %f", hostTime - *hostTime0point);
         return FALSE;
     }
     double current = hostTime - *hostTime0point;
@@ -434,10 +469,10 @@
         current = imageTime;
     }
     if (current < imageTime) {
-        //TRACE(@"wait(%d) %f < %f", _dataBufId, current, imageTime);
+        //TRACE(@"wait %f < %f", current, imageTime);
         return FALSE;
     }
-    //TRACE(@"draw(%d) %f %f", _dataBufId, current, imageTime);
+    //TRACE(@"draw %f %f", current, imageTime);
     return TRUE;
 }
 
