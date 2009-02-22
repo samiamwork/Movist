@@ -39,6 +39,7 @@
     
     AVCodecContext* context = _stream->codec;
     if (!_passThrough) {
+		// request downmix.
         context->request_channels = 2;
     }
     // FIXME: hack for DTS;
