@@ -270,6 +270,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if ([_movieView movie]) {
         BOOL subtitleVisible = [_movieView subtitleVisible];
+        [_seekSlider hideMouseTimeToolTip];
         [_movieView setSubtitleVisible:FALSE];
         if ([self isZoomed]) {
             [self setFrame:_zoomRestoreRect display:TRUE animate:TRUE];

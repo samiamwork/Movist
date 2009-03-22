@@ -204,7 +204,12 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
                     case TAG_I_OPEN  : italic = TRUE;    break;
                     case TAG_I_CLOSE : italic = FALSE;   break;
                     case TAG_C :
-                        color = [NSColor colorFromSSAString:tag.attr];
+                        if (tag.attr) {
+                            color = [NSColor colorFromSSAString:tag.attr];
+                        }
+                        else {
+                            color = _defaultColor;
+                        }
                         break;
                     case TAG_R :
                         bold = _defaultBold;

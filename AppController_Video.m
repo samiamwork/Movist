@@ -70,6 +70,7 @@
             frame = [_mainWindow frameRectForScreen];
         }
         BOOL subtitleVisible = [_movieView subtitleVisible];
+        [_seekSlider hideMouseTimeToolTip];
         [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
         [_movieView setSubtitleVisible:subtitleVisible];
@@ -83,6 +84,7 @@
         NSRect frame = [_mainWindow frameRectForScreen];
 
         BOOL subtitleVisible = [_movieView subtitleVisible];
+        [_seekSlider hideMouseTimeToolTip];
         [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
         [_movieView setSubtitleVisible:subtitleVisible];
@@ -123,6 +125,7 @@
             [_fullScreener setMovieURL:[self movieURL]];
             [_fullScreener setAutoShowDock:[_defaults boolForKey:MAutoShowDockKey]];
         }
+        [_seekSlider hideMouseTimeToolTip];
         [_fullScreener beginFullScreen];
     }
     [_fullScreenLock unlock];
@@ -164,6 +167,7 @@
             [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
             [_fullScreener setMovieURL:[self movieURL]];
         }
+        [_seekSlider hideMouseTimeToolTip];
         [_fullScreener beginDesktopBackground];
     }
     [_fullScreenLock unlock];
@@ -217,6 +221,7 @@
         _fullScreener = [FullScreener alloc];
         [_fullScreener initWithMainWindow:_mainWindow playPanel:_playPanel];
         [_fullScreener setMovieURL:nil];
+        [_seekSlider hideMouseTimeToolTip];
         [_fullScreener beginNavigation];
     }
     [_fullScreenLock unlock];

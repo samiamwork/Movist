@@ -30,6 +30,7 @@
 }
 
 - (void)initToolTipWithTextColor:(NSColor*)textColor backColor:(NSColor*)backColor;
+- (void)hideMouseTimeToolTip;
 - (void)mouseMoved:(NSPoint)locationInWindow;
 
 - (float)duration;

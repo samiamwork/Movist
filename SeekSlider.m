@@ -311,18 +311,22 @@
 {
     [_toolTipTextField setStringValue:NSStringFromMovieTime(_mouseTime)];
 
+    NSWindow* toolTipWindow = [_toolTipTextField window];
     NSRect r = [self convertRect:[self bounds] toView:nil];
     r.origin.x = locationInWindow.x;
     r.origin.y += r.size.height;
     r.origin = [[self window] convertBaseToScreen:r.origin];
-    r.origin.x -= [[_toolTipTextField window] frame].size.width / 2;
-    [[_toolTipTextField window] setFrameOrigin:r.origin];
-    [[_toolTipTextField window] orderFront:self];
+    r.origin.x -= [toolTipWindow frame].size.width / 2;
+    [toolTipWindow setFrameOrigin:r.origin];
+    [toolTipWindow orderFront:self];
+    [[self window] addChildWindow:toolTipWindow ordered:NSWindowAbove];
 }
 
 - (void)hideMouseTimeToolTip
 {
-    [[_toolTipTextField window] orderOut:self];
+    NSWindow* toolTipWindow = [_toolTipTextField window];
+    [[self window] removeChildWindow:toolTipWindow];
+    [toolTipWindow orderOut:self];
 
     [_toolTipTextField setStringValue:@""];
 }
@@ -415,6 +419,26 @@
     [cell setKnobSize:8.0];
 
     [self initToolTipWithTextColor:[NSColor whiteColor] backColor:HUDTitleBackColor];
+
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc addObserver:self selector:@selector(windowWillMiniaturize:)
+               name:NSWindowWillMiniaturizeNotification object:[self window]];
+}
+
+- (void)dealloc
+{
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc removeObserver:self];
+
+    [super dealloc];
+}
+
+- (void)windowWillMiniaturize:(NSNotification*)notification
+{
+    TRACE(@"%s", __PRETTY_FUNCTION__);
+    if (0 <= _mouseTime) {
+        [self hideMouseTimeToolTip];
+    }
 }
 
 @end

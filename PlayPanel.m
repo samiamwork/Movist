@@ -157,7 +157,7 @@
 - (void)orderOut:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_seekSlider mouseMoved:NSMakePoint(-1, -1)];   // hide tooltip
+    [_seekSlider hideMouseTimeToolTip];
     [super orderOut:sender];
 }
 
