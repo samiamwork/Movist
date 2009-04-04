@@ -442,7 +442,7 @@
 				<string>NSTextField</string>
 			</dict>
 			<key>SUPERCLASS</key>
-			<string>NSWindow</string>
+			<string>NSPanel</string>
 		</dict>
 		<dict>
 			<key>CLASS</key>

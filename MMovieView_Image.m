@@ -158,9 +158,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)drawImage
 {
     [[self openGLContext] makeCurrentContext];
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    if (_image) {
+    if (!_image) {
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+    else {
         CIImage* img = [CIImage imageWithCVImageBuffer:_image];
         if (_removeGreenBox) {
             [_cropFilter setValue:img forKey:@"inputImage"];
@@ -180,6 +181,35 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             [self updateImageRect];
         }
         [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
+
+        // clear extra area
+        NSRect bounds = [self bounds];
+        if (!NSEqualRects(bounds, *(NSRect*)&_movieRect)) {
+            glBegin(GL_QUADS);
+                float vb = NSMinY(bounds), vt = NSMaxY(bounds);
+                float vl = NSMinX(bounds), vr = NSMaxX(bounds);
+                float rl = NSMinX(*(NSRect*)&_movieRect);
+                float rb = NSMinY(*(NSRect*)&_movieRect);
+                float rt = NSMaxY(*(NSRect*)&_movieRect);
+                float rr = NSMaxX(*(NSRect*)&_movieRect);
+                glColor3f(0.0f, 0.0f, 0.0f);
+                // lower letter-box
+                glVertex2f(vl, vb), glVertex2f(vl, rb);
+                glVertex2f(vr, rb), glVertex2f(vr, vb);
+                // upper letter-box
+                glVertex2f(vl, rt), glVertex2f(vl, vt);
+                glVertex2f(vr, vt), glVertex2f(vr, rt);
+                if (0 < _fullScreenUnderScan) {
+                    // left area
+                    glVertex2f(vl, rb), glVertex2f(vl, rt);
+                    glVertex2f(rl, rt), glVertex2f(rl, rb);
+                    // right area
+                    glVertex2f(rr, rb), glVertex2f(rr, rt);
+                    glVertex2f(vr, rt), glVertex2f(vr, rb);
+                }
+                glColor3f(1.0f, 1.0f, 1.0f);
+            glEnd();
+        }
     }
 
     [self drawOSD];
