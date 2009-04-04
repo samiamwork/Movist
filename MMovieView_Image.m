@@ -186,12 +186,12 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         NSRect bounds = [self bounds];
         if (!NSEqualRects(bounds, *(NSRect*)&_movieRect)) {
             glBegin(GL_QUADS);
-                float vb = NSMinY(bounds), vt = NSMaxY(bounds);
                 float vl = NSMinX(bounds), vr = NSMaxX(bounds);
+                float vb = NSMinY(bounds), vt = NSMaxY(bounds);
                 float rl = NSMinX(*(NSRect*)&_movieRect);
+                float rr = NSMaxX(*(NSRect*)&_movieRect);
                 float rb = NSMinY(*(NSRect*)&_movieRect);
                 float rt = NSMaxY(*(NSRect*)&_movieRect);
-                float rr = NSMaxX(*(NSRect*)&_movieRect);
                 glColor3f(0.0f, 0.0f, 0.0f);
                 // lower letter-box
                 glVertex2f(vl, vb), glVertex2f(vl, rb);
@@ -199,7 +199,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                 // upper letter-box
                 glVertex2f(vl, rt), glVertex2f(vl, vt);
                 glVertex2f(vr, vt), glVertex2f(vr, rt);
-                if (0 < _fullScreenUnderScan) {
+                if (bounds.size.width != _movieRect.size.width) {
                     // left area
                     glVertex2f(vl, rb), glVertex2f(vl, rt);
                     glVertex2f(rl, rt), glVertex2f(rl, rb);
