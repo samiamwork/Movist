@@ -319,6 +319,7 @@
 - (void)setVolume:(float)volume;
 - (void)setMuted:(BOOL)muted;
 - (void)updateVolumeUI;
+- (float)systemVolume;
 
 - (void)setAudioTrackAtIndex:(unsigned int)index enabled:(BOOL)enabled;
 - (void)enableAudioTracksInIndexSet:(NSIndexSet*)set;

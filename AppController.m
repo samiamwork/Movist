@@ -91,7 +91,7 @@ NSString* videoCodecName(int codecId);
 
     _alwaysOnTopEnabled = FALSE;
     _checkForAltVolumeChange = TRUE;
-    _systemVolume = -1;
+    _systemVolume = [self systemVolume];
     [self updateVolumeUI];
 
     _playRate = DEFAULT_PLAY_RATE;

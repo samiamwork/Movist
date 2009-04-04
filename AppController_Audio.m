@@ -228,10 +228,7 @@
     BOOL muted;
     if (!_audioDeviceSupportsDigital && [self isUpdateSystemVolume]) {
         if (_systemVolume < 0) {
-            _systemVolume = [self systemVolume];
-            if (_systemVolume < 0) {
-                return;
-            }
+            return;
         }
         // adjust for using same slider min/max range
         volume = normalizedFloat2(MIN_VOLUME +
