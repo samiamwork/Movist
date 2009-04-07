@@ -282,6 +282,8 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     unsigned int queueCapacity = AVCODEC_MAX_AUDIO_FRAME_SIZE * 20 * 5;
     _dataQueue = [[AudioDataQueue alloc] initWithCapacity:queueCapacity];
     AVCodecContext* context = _stream->codec;
+	_audioDataBufNotAligned = malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE + 16);
+	_audioDataBuf = (int16_t*)(((int)_audioDataBufNotAligned) / 16 * 16);
     [_dataQueue setBitRate:sizeof(int16_t) * context->sample_rate * context->channels];
     _nextDecodedTime = 0;
     _nextAudioPts = 0;
@@ -305,6 +307,8 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     [_dataQueue clear];
     [_dataQueue release];
     _dataQueue = 0;
+	free(_audioDataBufNotAligned);
+	_audioDataBuf = 0;
     _running = FALSE;
 }
 
@@ -339,7 +343,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 
     UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
-    int16_t audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE];
     int dataSize, decodedSize, pts, nextPts;
     double decodedTime;
     BOOL newPacket = true;
@@ -348,7 +351,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
         decodedSize = avcodec_decode_audio2(context,
-                                            audioBuf, &dataSize,
+                                            _audioDataBuf, &dataSize,
                                             packetPtr, packetSize);
         if (decodedSize < 0) { 
             TRACE(@"decodedSize < 0");
@@ -384,7 +387,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
                 }
                 [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
             }
-            [_dataQueue putData:(UInt8*)audioBuf size:dataSize time:decodedTime];
+            [_dataQueue putData:(UInt8*)_audioDataBuf size:dataSize time:decodedTime];
             _nextAudioPts = nextPts;
         }
     }
