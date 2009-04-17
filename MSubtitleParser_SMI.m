@@ -252,6 +252,11 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
         while (0 < range.length) {
             r.location = range.location;
             tag = [ms smiTagWithRangePtr:&range delimSet:_delimSet];
+            /*if (tag.type == TAG_UNKNOWN) {
+                [self mutableAttributedString:mas
+                                 appendString:[ms substringWithRange:tag.range]
+                                    withColor:color italic:italic bold:bold];
+            }*/
             if (isContentsTag(tag.type)) {
                 r.length = tag.range.location - r.location;
                 if (0 < r.length) {
@@ -259,7 +264,6 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
                                      appendString:[ms substringWithRange:r]
                                         withColor:color italic:italic bold:bold];
                 }
-                r.location = NSMaxRange(tag.range);
                 switch (tag.type) {
                     case TAG_FONT_OPEN  : color = [self parse_FONT:tag.attr];   break;
                     case TAG_FONT_CLOSE : color = nil;                          break;
@@ -424,15 +428,17 @@ SMITag MMakeSMITag(int type, int location, int length, NSString* attr)
     }
 
     NSRange cr;
-    if ([self characterAtIndex:or.location + 1] == '!') {  // may be a comment tag
-        [self rangeOfString:@"--" rangePtr:range];
-        [self rangeOfString:@"--" rangePtr:range];
+    if ([self characterAtIndex:or.location + 1] == '!' &&   // may be a comment tag
+        [self characterAtIndex:or.location + 2] == '-' &&
+        [self characterAtIndex:or.location + 3] == '-') {
+        //[self rangeOfString:@"--" rangePtr:range];
+        //[self rangeOfString:@"--" rangePtr:range];
         cr = [self rangeOfString:@">" rangePtr:range];
         return MMakeSMITag(TAG_COMMENT, or.location, NSMaxRange(cr) - or.location, nil);
     }
     cr = [self rangeOfString:@">" rangePtr:range];
     if (cr.location == NSNotFound) {
-        return MMakeSMITag(TAG_UNKNOWN, NSNotFound, 0, nil);
+        return MMakeSMITag(TAG_UNKNOWN, or.location, 0, nil);
     }
 
     // find tag name & attributes
@@ -458,14 +464,15 @@ SMITag MMakeSMITag(int type, int location, int length, NSString* attr)
         { @"I",     TAG_I_OPEN,     TAG_I_CLOSE },
         { @"B",     TAG_B_OPEN,     TAG_B_CLOSE },
     };
+    int tag = TAG_UNKNOWN;
     for (i = 0; i < sizeof(nameType) / sizeof(nameType[0]); i++) {
         if (![self compare:nameType[i].name options:NSCaseInsensitiveSearch range:nr]) {
-            return MMakeSMITag(nameType[i].type[c],
-                               or.location, NSMaxRange(cr) - or.location,
-                               (0 < ar.length) ? [self substringWithRange:ar] : nil);
+            tag = nameType[i].type[c];
+            break;
         }
     }
-    return MMakeSMITag(TAG_UNKNOWN, NSNotFound, 0, nil);
+    return MMakeSMITag(tag, or.location, NSMaxRange(cr) - or.location,
+                       (0 < ar.length) ? [self substringWithRange:ar] : nil);
 }
 
 @end
