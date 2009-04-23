@@ -390,6 +390,9 @@ NSString* videoCodecName(int codecId);
 - (void)applicationWillResignActive:(NSNotification*)aNotification
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    if ([_playPanel isVisible]) {
+        [_playPanel orderOut:self];
+    }
     if ([_defaults boolForKey:MSupportAppleRemoteKey]) {
         [self stopRemoteControl];
     }
