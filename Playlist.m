@@ -210,11 +210,15 @@ int compareSubtitleURLs(id url1, id url2, void* context)
     
     NSMutableArray* subtitleURLs = [NSMutableArray arrayWithCapacity:1];
     NSString* filename, *path;
+    NSRange range = NSMakeRange(0, [movieFilenameWithoutExt length]);
     NSArray* contents = [fileManager sortedDirectoryContentsAtPath:directory];
     NSEnumerator* enumerator = [contents objectEnumerator];
     while (filename = [enumerator nextObject]) {
-        if ([filename hasPrefix:movieFilenameWithoutExt] &&
-            [filename hasAnyExtension:fileExtensions]) {
+        if ([filename hasAnyExtension:fileExtensions] &&
+            range.length <= [filename length] &&
+            [filename compare:movieFilenameWithoutExt
+                      options:NSCaseInsensitiveSearch
+                        range:range] == NSOrderedSame) {
             path = [directory stringByAppendingPathComponent:filename];
             [subtitleURLs addObject:[NSURL fileURLWithPath:path]];
         }
