@@ -264,6 +264,7 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
                                      appendString:[ms substringWithRange:r]
                                         withColor:color italic:italic bold:bold];
                 }
+                r.location = NSMaxRange(tag.range);
                 switch (tag.type) {
                     case TAG_FONT_OPEN  : color = [self parse_FONT:tag.attr];   break;
                     case TAG_FONT_CLOSE : color = nil;                          break;

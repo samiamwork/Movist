@@ -578,12 +578,22 @@ enum {  // for _updateMask
         return;
     }
 
-    NSBitmapImageRep* bmp;
-    [_texImage lockFocus];
     NSSize size = [_texImage size];
-    NSRect rect = NSMakeRect(0, 0, size.width, size.height);
-    bmp = [[NSBitmapImageRep alloc] initWithFocusedViewRect:rect];
-    [_texImage unlockFocus];
+    NSBitmapImageRep* bmp = [[NSBitmapImageRep alloc]
+                             initWithBitmapDataPlanes:0
+                             pixelsWide:(int)size.width pixelsHigh:(int)size.height
+                             bitsPerSample:8 samplesPerPixel:4 hasAlpha:TRUE
+                             isPlanar:FALSE colorSpaceName:NSCalibratedRGBColorSpace
+                             bitmapFormat:0 bytesPerRow:(int)size.width * 4 bitsPerPixel:32];
+
+    [NSGraphicsContext saveGraphicsState];
+    [NSGraphicsContext setCurrentContext:
+     [NSGraphicsContext graphicsContextWithBitmapImageRep:bmp]];
+
+    [_texImage drawAtPoint:NSMakePoint(0,0) fromRect:NSZeroRect
+                 operation:NSCompositeCopy fraction:1.0];
+
+    [NSGraphicsContext restoreGraphicsState];
 
     // make texture
     glGenTextures(1, &_texName);
