@@ -276,6 +276,7 @@
     [window setHasShadow:FALSE];
     [window setHidesOnDeactivate:TRUE];
     [window setFloatingPanel:TRUE];
+    [window setLevel:[[self window] level] + 1];
 
     _toolTipTextField = [[NSTextField alloc] initWithFrame:NSZeroRect];
     [_toolTipTextField setAlignment:NSCenterTextAlignment];
@@ -319,14 +320,11 @@
     r.origin.x -= [toolTipWindow frame].size.width / 2;
     [toolTipWindow setFrameOrigin:r.origin];
     [toolTipWindow orderFront:self];
-    [[self window] addChildWindow:toolTipWindow ordered:NSWindowAbove];
 }
 
 - (void)hideMouseTimeToolTip
 {
-    NSWindow* toolTipWindow = [_toolTipTextField window];
-    [[self window] removeChildWindow:toolTipWindow];
-    [toolTipWindow orderOut:self];
+    [[_toolTipTextField window] orderOut:self];
 
     [_toolTipTextField setStringValue:@""];
 }

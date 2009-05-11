@@ -28,7 +28,9 @@
 {
     NSString* _source;
     NSRange _sourceRange;
-    
+
+    NSCharacterSet* _fontDelimSet;
+
     NSMutableArray* _subtitles;
 }
 

@@ -27,6 +27,7 @@ enum {
     TAG_UNKNOWN         = 0,
     
     // contents tags
+    TAG_FONT_OPEN,      TAG_FONT_CLOSE,
     TAG_I_OPEN,         TAG_I_CLOSE,
     TAG_B_OPEN,         TAG_B_CLOSE,
 };
@@ -43,6 +44,15 @@ typedef struct _SRTTag {
 @interface NSString (MSubtitleParser_SRT)
 
 - (SRTTag)srtTagWithRangePtr:(NSRange*)range delimSet:(NSCharacterSet*)delimSet;
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+
+@interface NSColor (MSubtitleParser_SMI)
+
++ (NSColor*)colorFromSMIString:(NSString*)string;
 
 @end
 
@@ -104,30 +114,16 @@ typedef struct _SRTTag {
     *endTime = (hour * 60 * 60) + (min * 60) + (sec) + (msec / 1000.0);
 }
 
-- (void)mutableAttributedString:(NSMutableAttributedString*)mas
-                   appendString:(NSString*)string
-                      withColor:(NSColor*)color italic:(BOOL)italic bold:(BOOL)bold
+- (NSColor*)parse_FONT:(NSString*)attr
 {
-    //TRACE(@"%s \"%@\" + \"%@\" with %@, %@, %@", __PRETTY_FUNCTION__,
-    //      [mas string], string, color, italic ? @"italic" : @"-", bold ? @"bold" : @"-");
-    if (color || italic || bold) {
-        NSMutableDictionary* attrs = [NSMutableDictionary dictionaryWithCapacity:3];
-        if (color) {
-            [attrs setObject:color forKey:NSForegroundColorAttributeName];
-        }
-        if (italic) {
-            [attrs setObject:[NSNumber numberWithBool:TRUE] forKey:MFontItalicAttributeName];
-        }
-        if (bold) {
-            [attrs setObject:[NSNumber numberWithBool:TRUE] forKey:MFontBoldAttributeName];
-        }
-        [mas appendAttributedString:[[[NSAttributedString alloc]
-                initWithString:string attributes:attrs] autorelease]];
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, attr);
+    NSRange ar = NSMakeRange(0, [attr length]);
+    NSRange tr = [attr tokenRangeForDelimiterSet:_fontDelimSet rangePtr:&ar];
+    if (![attr compare:@"COLOR" options:NSCaseInsensitiveSearch range:tr]) {
+        tr = [attr tokenRangeForDelimiterSet:_fontDelimSet rangePtr:&ar];
+        return [NSColor colorFromSMIString:[attr substringWithRange:tr]];
     }
-    else {
-        [mas appendAttributedString:[[[NSAttributedString alloc]
-                initWithString:string] autorelease]];
-    }
+    return nil;
 }
 
 - (NSMutableAttributedString*)parseSubtitleString:(NSString*)string
@@ -135,7 +131,7 @@ typedef struct _SRTTag {
     //TRACE(@"%s \"%@\")", __PRETTY_FUNCTION__, string);
 
     // this method can be called independently for parsing embedded subtitle.
-    
+
     NSMutableString* ms = [NSMutableString stringWithString:string];
     [ms removeRightWhitespaces];
 
@@ -145,24 +141,27 @@ typedef struct _SRTTag {
     if (0 < [ms length]) {
         NSCharacterSet* set = [NSCharacterSet whitespaceAndNewlineCharacterSet];
         SRTTag tag;
+        NSColor* color = nil;
         BOOL italic = FALSE, bold = FALSE;
         NSRange r, range = NSMakeRange(0, [ms length]);
         while (0 < range.length) {
             r.location = range.location;
             tag = [ms srtTagWithRangePtr:&range delimSet:set];
-            if (TAG_UNKNOWN <  tag.type) {
+            if (TAG_UNKNOWN < tag.type) {
                 r.length = tag.range.location - r.location;
                 if (0 < r.length) {
                     [self mutableAttributedString:mas
                                      appendString:[ms substringWithRange:r]
-                                        withColor:nil italic:italic bold:bold];
+                                        withColor:color italic:italic bold:bold];
                 }
                 r.location = NSMaxRange(tag.range);
                 switch (tag.type) {
-                    case TAG_I_OPEN     : italic = TRUE;    break;
-                    case TAG_I_CLOSE    : italic = FALSE;   break;
-                    case TAG_B_OPEN     : bold = TRUE;      break;
-                    case TAG_B_CLOSE    : bold = FALSE;     break;
+                    case TAG_FONT_OPEN  : color = [self parse_FONT:tag.attr];   break;
+                    case TAG_FONT_CLOSE : color = nil;                          break;
+                    case TAG_I_OPEN     : italic = TRUE;                        break;
+                    case TAG_I_CLOSE    : italic = FALSE;                       break;
+                    case TAG_B_OPEN     : bold = TRUE;                          break;
+                    case TAG_B_CLOSE    : bold = FALSE;                         break;
                 }
             }
         }
@@ -170,7 +169,7 @@ typedef struct _SRTTag {
         if (0 < r.length) {
             [self mutableAttributedString:mas
                              appendString:[ms substringWithRange:r]
-                                withColor:nil italic:italic bold:bold];
+                                withColor:color italic:italic bold:bold];
         }
         [mas fixAttributesInRange:NSMakeRange(0, [mas length])];
     }
@@ -185,6 +184,15 @@ typedef struct _SRTTag {
               beginTime:beginTime endTime:endTime];
 }
 
+- (void)readyWithOptions:(NSDictionary*)options
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    NSMutableCharacterSet* mset;
+    mset = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
+    [mset addCharactersInString:@"{}:;='\""];
+    _fontDelimSet = [mset autorelease];
+}
+
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error
 {
@@ -192,8 +200,7 @@ typedef struct _SRTTag {
     _source = [[string retain] autorelease];
     _sourceRange = NSMakeRange(0, [_source length]);
     _subtitles = [NSMutableArray arrayWithCapacity:1];
-    if (options) {
-    }
+    [self readyWithOptions:options];
 
     MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease];
     [subtitle setType:@"SRT"];
@@ -295,6 +302,7 @@ SRTTag MMakeSRTTag(int type, int location, int length, NSString* attr)
         NSString* name;
         int type[2];
     } nameType[] = {
+        { @"FONT",  TAG_FONT_OPEN,  TAG_FONT_CLOSE },
         { @"I",     TAG_I_OPEN,     TAG_I_CLOSE },
         { @"B",     TAG_B_OPEN,     TAG_B_CLOSE },
     };

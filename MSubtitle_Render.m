@@ -271,9 +271,10 @@
 
     _releaseBeginIndex = _playIndex;
     _releaseEndIndex = -1;
-    float time = [[_items objectAtIndex:_playIndex] endTime];
-    [self makeTexImagesFrom:_playIndex to:-1 baseTime:time];
-
+    if (0 <= _playIndex && _playIndex < [_items count]) {
+        float time = [[_items objectAtIndex:_playIndex] endTime];
+        [self makeTexImagesFrom:_playIndex to:-1 baseTime:time];
+    }
     //TRACE(@"%s release-range=[%d]~[%d]", __PRETTY_FUNCTION__,
     //      _releaseBeginIndex, _releaseEndIndex);
 }

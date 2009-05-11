@@ -315,10 +315,11 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
     }
 
     _delimSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-    NSMutableCharacterSet* mset = [_delimSet mutableCopy];
+    NSMutableCharacterSet* mset;
+    mset = [[_delimSet mutableCopy] autorelease];
     [mset addCharactersInString:@"{}:;"];
     _styleDelimSet = mset;
-    mset = [_delimSet mutableCopy];
+    mset = [[_delimSet mutableCopy] autorelease];
     [mset addCharactersInString:@"='\""];
     _syncDelimSet = _pDelimSet = _fontDelimSet = mset;
 
