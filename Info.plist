@@ -347,6 +347,28 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>ssa</string>
+				<string>ass</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Subtitle-SSA</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sub</string>
+				<string>rar</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Subtitle-SUB</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>mks</string>
 			</array>
 			<key>CFBundleTypeName</key>

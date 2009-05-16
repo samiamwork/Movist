@@ -366,7 +366,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
                 nextPts = pts;
             }
             else {
-                TRACE(@"packet.dts == AV_NOPTS_VALUE");
+                //TRACE(@"packet.dts == AV_NOPTS_VALUE");
                 pts = _nextAudioPts;
                 //assert(FALSE);
             }

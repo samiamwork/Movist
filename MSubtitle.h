@@ -88,7 +88,7 @@
 - (void)addString:(NSMutableAttributedString*)string time:(float)time;
 - (void)addString:(NSMutableAttributedString*)string
         beginTime:(float)beginTime endTime:(float)endTime;
-- (void)addImage:(NSImage*)string
+- (void)addImage:(NSImage*)string baseWidth:(float)baseWidth
         beginTime:(float)beginTime endTime:(float)endTime;
 - (void)checkEndTimes;
 

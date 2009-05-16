@@ -36,6 +36,7 @@ namespace libmatroska {
 class StdIOCallback64;
 #endif
 
+@class MSubtitleParser_SUB;
 @class MSubtitleParser_SRT;
 @class MSubtitleParser_SSA;
 
@@ -56,11 +57,14 @@ class StdIOCallback64;
     int _upperLevel;
 #endif
 
+    MSubtitleParser_SUB* _parser_SUB;
     MSubtitleParser_SRT* _parser_SRT;
     MSubtitleParser_SSA* _parser_SSA;
 
     // current parsing info
     NSMutableAttributedString* _string;
+    NSImage* _image;
+    int _imageBaseWidth;
     float _beginTime;
     BOOL _quitRequested;
 }

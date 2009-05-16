@@ -220,6 +220,8 @@
 		AFB416A40DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFB416A10DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff */; };
 		AFB416A50DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFB416A20DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff */; };
 		AFB416A60DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFB416A30DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff */; };
+		AFB7D77E0FBB2CEF006BC714 /* vobsub.c in Sources */ = {isa = PBXBuildFile; fileRef = AFB7D77A0FBB2CEF006BC714 /* vobsub.c */; };
+		AFB7D77F0FBB2CEF006BC714 /* spudec.c in Sources */ = {isa = PBXBuildFile; fileRef = AFB7D77C0FBB2CEF006BC714 /* spudec.c */; };
 		AFC7D3A90C37084800F5EA5C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AFC7D3A70C37084800F5EA5C /* Localizable.strings */; };
 		AFCD04C20DBA39B400348AB0 /* MSubtitleParser_SUB.m in Sources */ = {isa = PBXBuildFile; fileRef = AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */; };
 		AFCD04F20DBA6B6300348AB0 /* unrarlib.c in Sources */ = {isa = PBXBuildFile; fileRef = AFCD04F00DBA6B6300348AB0 /* unrarlib.c */; };
@@ -502,6 +504,10 @@
 		AFB416A10DBCFBE900B08D60 /* HUDSegmentedLeftSelected.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedLeftSelected.tiff; path = Images/HUDSegmentedLeftSelected.tiff; sourceTree = "<group>"; };
 		AFB416A20DBCFBE900B08D60 /* HUDSegmentedMidSelected.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedMidSelected.tiff; path = Images/HUDSegmentedMidSelected.tiff; sourceTree = "<group>"; };
 		AFB416A30DBCFBE900B08D60 /* HUDSegmentedRightSelected.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedRightSelected.tiff; path = Images/HUDSegmentedRightSelected.tiff; sourceTree = "<group>"; };
+		AFB7D77A0FBB2CEF006BC714 /* vobsub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vobsub.c; sourceTree = "<group>"; };
+		AFB7D77B0FBB2CEF006BC714 /* vobsub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vobsub.h; sourceTree = "<group>"; };
+		AFB7D77C0FBB2CEF006BC714 /* spudec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spudec.c; sourceTree = "<group>"; };
+		AFB7D77D0FBB2CEF006BC714 /* spudec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spudec.h; sourceTree = "<group>"; };
 		AFC7D3A80C37084800F5EA5C /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AFC7D3DE0C370FD100F5EA5C /* Korean */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Korean; path = Korean.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AFC7D42E0C37138500F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/MainMenu.nib; sourceTree = "<group>"; };
@@ -817,6 +823,10 @@
 				AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */,
 				AF9653330F1094A70018A37A /* MSubtitleParser_MKV.h */,
 				AF9653340F1094A70018A37A /* MSubtitleParser_MKV.mm */,
+				AFB7D77B0FBB2CEF006BC714 /* vobsub.h */,
+				AFB7D77A0FBB2CEF006BC714 /* vobsub.c */,
+				AFB7D77D0FBB2CEF006BC714 /* spudec.h */,
+				AFB7D77C0FBB2CEF006BC714 /* spudec.c */,
 				AFCD04F10DBA6B6300348AB0 /* unrarlib.h */,
 				AFCD04F00DBA6B6300348AB0 /* unrarlib.c */,
 			);
@@ -1323,6 +1333,8 @@
 				AF2546810E40AC4500889018 /* MSubtitle_Render.m in Sources */,
 				AF9653350F1094A70018A37A /* MSubtitleParser_MKV.mm in Sources */,
 				AF0247690F1389E7007339EB /* MSubtitleParser_SSA.m in Sources */,
+				AFB7D77E0FBB2CEF006BC714 /* vobsub.c in Sources */,
+				AFB7D77F0FBB2CEF006BC714 /* spudec.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

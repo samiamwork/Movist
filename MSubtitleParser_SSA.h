@@ -32,6 +32,8 @@
     NSMutableArray* _subtitles;
     NSMutableDictionary* _styles;
 
+    NSArray* _formats;  // ordered format
+
     NSColor* _defaultColor;
     BOOL _defaultBold;
     BOOL _defaultItalic;

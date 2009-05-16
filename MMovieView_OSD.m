@@ -67,7 +67,7 @@
 
     _iconOSD = [[MMovieOSD alloc] init];
     [_iconOSD setViewBounds:bounds movieRect:bounds];
-    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
+    [_iconOSD setImage:[NSImage imageNamed:@"Movist"] baseWidth:0];
     [_iconOSD setHPosition:OSD_HPOSITION_CENTER];
     [_iconOSD setVPosition:OSD_VPOSITION_CENTER];
     return TRUE;
@@ -183,7 +183,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_drawLock lock];
 
-    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
+    [_iconOSD setImage:[NSImage imageNamed:@"Movist"] baseWidth:0];
 
     [_drawLock unlock];
 }
@@ -193,7 +193,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_drawLock lock];
 
-    [_iconOSD setImage:nil];
+    [_iconOSD setImage:nil baseWidth:0];
 
     [_drawLock unlock];
 }

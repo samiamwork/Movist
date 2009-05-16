@@ -22,6 +22,7 @@
 
 #import "MSubtitleParser_MKV.h"
 
+#import "MSubtitleParser_SUB.h"
 #import "MSubtitleParser_SRT.h"
 #import "MSubtitleParser_SSA.h"
 
@@ -90,6 +91,7 @@ static NSMutableDictionary* s_parsers = nil;    // [subtitleURL : parser]
 
     if (self = [super initWithURL:subtitleURL]) {
         _subtitles = [[NSMutableDictionary alloc] initWithCapacity:1];
+        _parser_SUB = [[MSubtitleParser_SUB alloc] initWithURL:nil];
         _parser_SRT = [[MSubtitleParser_SRT alloc] initWithURL:nil];
         _parser_SSA = [[MSubtitleParser_SSA alloc] initWithURL:nil];
         _quitRequested = FALSE;
@@ -101,6 +103,7 @@ static NSMutableDictionary* s_parsers = nil;    // [subtitleURL : parser]
 {
     [_parser_SSA release];
     [_parser_SRT release];
+    [_parser_SUB release];
     [_subtitles release];
     [super dealloc];
 }
@@ -266,9 +269,15 @@ struct master_sorter_t {
                     KaxCodecPrivate& codecPrivate = *static_cast<KaxCodecPrivate*>(_level3);
                     if (0 < codecPrivate.GetSize()) {
                         const char* cps = (const char*)(codecPrivate.GetBuffer());
-                        NSString* s = [NSString stringWithUTF8String:std::string(cps).c_str()];
+                        NSString* s = [NSString stringWithUTF8String:cps];
                         if (s) {
-                            [_parser_SSA setStyles:s forSubtitleNumber:trackNumber];
+                            NSString* type = [subtitle type];
+                            if ([type isEqualToString:@"VOBSUB"]) {
+                            }
+                            else if ([type isEqualToString:@"SSA"] ||
+                                     [type isEqualToString:@"ASS"]) {
+                                [_parser_SSA setStyles:s forSubtitleNumber:trackNumber];
+                            }
                         }
                     }
                     TRACE_ELEMENT(_level3, 3, @"CodecPrivate: ...");
@@ -310,27 +319,28 @@ struct master_sorter_t {
 
                 NSString* type = [subtitle type];
                 if ([type isEqualToString:@"VOBSUB"]) {
+                    DataBuffer& data = block.GetBuffer(0);
+                    _image = [_parser_SUB parseSubtitleImage:data.Buffer() size:data.Size()
+                                              baseImageWidth:&_imageBaseWidth];
                 }
                 else if ([type isEqualToString:@"BMP"]) {
                 }
                 else if ([type isEqualToString:@"KATE"]) {
                 }
-                else {
+                else {  // text based
                     DataBuffer& data = block.GetBuffer(0);  // only one!
                     memcpy(text, data.Buffer(), data.Size());
                     text[data.Size()] = '\0';
 
                     NSString* s = [NSString stringWithUTF8String:text];
-                    if ([type isEqualToString:@"UTF8"]) {
+                    if ([type isEqualToString:@"UTF8"] ||
+                        [type isEqualToString:@"USF"]) {
                         _string = [_parser_SRT parseSubtitleString:s];
                     }
                     else if ([type isEqualToString:@"SSA"] ||
                              [type isEqualToString:@"ASS"]) {
                         _string = [_parser_SSA parseSubtitleString_MKV:s
                                                      forSubtitleNumber:(int)block.TrackNum()];
-                    }
-                    else if ([type isEqualToString:@"USF"]) {
-                        _string = [_parser_SRT parseSubtitleString:s];
                     }
                     TRACE_ELEMENT(0, 4, @"Subtitle: \"%@\"", [_string string]);
                 }
@@ -339,10 +349,16 @@ struct master_sorter_t {
         }
         else if (subtitle && is_id(_level3, KaxBlockDuration)) {
             KaxBlockDuration& duration = *static_cast<KaxBlockDuration*>(_level3);
+            float d = (((float)uint64(duration)) * _timecodeScale / 1000000.0) / 1000.0;
             if (_string) {
-                float d = (((float)uint64(duration)) * _timecodeScale / 1000000.0) / 1000.0;
-                [subtitle addString:_string beginTime:_beginTime endTime:_beginTime + d];
+                [subtitle addString:_string
+                          beginTime:_beginTime endTime:_beginTime + d];
                 _string = nil;
+            }
+            else if (_image) {
+                [subtitle addImage:_image baseWidth:_imageBaseWidth
+                         beginTime:_beginTime endTime:_beginTime + d];
+                _image = nil;
             }
             TRACE_ELEMENT(_level3, 3, @"Block Duration: %llu.%llu ms",
                                        (uint64(duration) * _timecodeScale / 1000000),
@@ -527,6 +543,8 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
         }
         [pool release], pool = nil;
     }
+
+    pool = [[NSAutoreleasePool alloc] init];
 
     if (threading) {
         [s_parsers removeObjectForKey:_subtitleURL];

@@ -82,6 +82,12 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
     return self;
 }
 
+- (void)dealloc
+{
+    [_formats release];
+    [super dealloc];
+}
+
 - (NSMutableArray*)formatForTitle:(NSString*)title
                            styles:(NSString*)styles rangePtr:(NSRange*)rangePtr
 {
@@ -92,8 +98,13 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
 
     NSMutableString* ms;
     NSRange sr = [styles rangeOfString:@"\n" rangePtr:rangePtr];
-    sr.length = sr.location - NSMaxRange(r) - 1;
-    sr.location = NSMaxRange(r);
+    if (sr.location != NSNotFound) {
+        sr.length = sr.location - NSMaxRange(r);
+        sr.location = NSMaxRange(r);
+    }
+    else {
+        sr = *rangePtr;
+    }
     NSString* s = [styles substringWithRange:sr];
     NSArray* as = [s componentsSeparatedByString:@","];
     NSMutableArray* format = [NSMutableArray arrayWithCapacity:[as count]];
@@ -109,7 +120,6 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
 
 - (void)setStyles:(NSString*)string forSubtitleNumber:(int)subtitleNumber
 {
-    TRACE(@"[%d]styles=%@", subtitleNumber, string);
     NSRange range = NSMakeRange(0, [string length]);
     NSMutableArray* format = [self formatForTitle:@"Format:" styles:string rangePtr:&range];
     if (!format) {
@@ -232,26 +242,42 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
     return mas;
 }
 
-- (NSMutableAttributedString*)parseSubtitleString_MKV:(NSString*)string
-                                    forSubtitleNumber:(int)subtitleNumber
+static float movieTimeFromString(NSString* string)
+{
+    // string is like this: "0:00:00.00"
+    int h, m, s, ms;
+    sscanf([string UTF8String], "%d:%d:%d.%d", &h, &m, &s, &ms);
+    return (float)(h * 60 * 60) + (m * 60) + s + (ms * 0.01);
+}
+
+- (NSMutableAttributedString*)parseSubtitleString:(NSString*)string
+                                forSubtitleNumber:(int)subtitleNumber
+                                        beginTime:(float*)beginTime
+                                          endTime:(float*)endTime
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, string);
-
-    // this method is called independently for parsing embedded subtitle in MKV.
-    // string is formatted with following predefined order:
-    //   ReadOrder, Layer, Style, Name, MarginL, MarginR, MarginV, Effect, Text.
-
     // apply text-attributes : italic, bold, ...
     NSRange range = NSMakeRange(0, [string length]);
-    /*NSString* readOrder =*/ [self eventStringWithString:string rangePtr:&range];
-    /*NSString* layer =*/ [self eventStringWithString:string rangePtr:&range];
-    NSString* style = [self eventStringWithString:string rangePtr:&range];
-    /*NSString* name =*/ [self eventStringWithString:string rangePtr:&range];
-    /*NSString* marginL =*/ [self eventStringWithString:string rangePtr:&range];
-    /*NSString* marginR =*/ [self eventStringWithString:string rangePtr:&range];
-    /*NSString* marginV =*/ [self eventStringWithString:string rangePtr:&range];
-    /*NSString* effect =*/ [self eventStringWithString:string rangePtr:&range];
-    NSString* text = [string substringWithRange:range];
+    NSString* s, *format, *style, *text;
+    NSEnumerator* e = [_formats objectEnumerator];
+    while (format = [e nextObject]) {
+        if ([format isEqualToString:@"Text"]) {
+            // text may be the last formatted string.
+            text = [string substringWithRange:range];
+        }
+        else {
+            s = [self eventStringWithString:string rangePtr:&range];
+            if ([format isEqualToString:@"Style"]) {
+                style = s;
+            }
+            else if ([format isEqualToString:@"Start"]) {
+                *beginTime = movieTimeFromString(s);
+            }
+            else if ([format isEqualToString:@"End"]) {
+                *endTime = movieTimeFromString(s);
+            }
+        }
+    }
 
     NSNumber* number = [NSNumber numberWithInt:subtitleNumber];
     NSDictionary* dict = [[_styles objectForKey:number] objectForKey:style];
@@ -288,15 +314,25 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
     [mas fixAttributesInRange:NSMakeRange(0, [mas length])];
     return mas;
 }
-/*
-- (void)parseSubtitleString:(NSString*)string
-                  beginTime:(float)beginTime endTime:(float)endTime
+
+- (NSMutableAttributedString*)parseSubtitleString_MKV:(NSString*)string
+                                    forSubtitleNumber:(int)subtitleNumber
 {
-    MSubtitle* subtitle = [_subtitles objectAtIndex:0];
-    [subtitle addString:[self parseSubtitleString:string]
-              beginTime:beginTime endTime:endTime];
+    //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, string);
+    
+    if (!_formats) {
+        // if this method is called for parsing embedded subtitle in MKV,
+        // then _formats is not initialized yet. in this case, string is
+        // formatted with following predefined order:
+        _formats = [[NSArray alloc] initWithObjects:
+                    @"ReadOrder", @"Layer", @"Style", @"Name",
+                    @"MarginL", @"MarginR", @"MarginV", @"Effect", @"Text", nil];
+    }
+    float beginTime, endTime;
+    return [self parseSubtitleString:string forSubtitleNumber:subtitleNumber
+                           beginTime:&beginTime endTime:&endTime];
 }
-*/
+
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error
 {
@@ -307,49 +343,53 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
     if (options) {
     }
 
-    /*
     MSubtitle* subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease];
     [subtitle setType:@"SSA"];
     [subtitle setTrackName:NSLocalizedString(@"External Subtitle", nil)];
     [subtitle setEmbedded:FALSE];
     [_subtitles addObject:subtitle];
 
-    NSCharacterSet* set = [NSCharacterSet characterSetWithCharactersInString:@"\r\n"];
-
-    NSRange r;
-    NSString* s;
-    NSMutableString* ms = nil;
-    float beginTime = -1, endTime;
-    while (0 < _sourceRange.length) {
-        r = [_source tokenRangeForDelimiterSet:set rangePtr:&_sourceRange];
-        if (r.length != 0) {
-            s = [_source substringWithRange:r];
-            // ignore index...
-            if (beginTime < 0) {
-                [self parse_TIMES:s beginTime:&beginTime endTime:&endTime];
-            }
-            else {
-                if (![self isIndexString:s]) {
-                    if (!ms) {
-                        ms = [NSMutableString stringWithString:s];
-                    }
-                    else {
-                        [ms appendString:@"\n"];
-                        [ms appendString:s];
-                    }
-                }
-                else {
-                    if (ms) {
-                        [self parseSubtitleString:ms beginTime:beginTime endTime:endTime];
-                        ms = nil;
-                    }
-                    beginTime = -1;
-                }
-            }
-        }
+    NSRange r = [_source rangeOfString:@"[V4 Styles]" rangePtr:&_sourceRange];
+    if (r.location == NSNotFound) {
+        r = [_source rangeOfString:@"[V4+ Styles]" rangePtr:&_sourceRange];
     }
-    if (0 <= beginTime && ms) {
-        [self parseSubtitleString:ms beginTime:beginTime endTime:endTime];
+    if (r.location == NSNotFound) {
+        return _subtitles;
+    }
+
+    NSRange er = [_source rangeOfString:@"[Events]" rangePtr:&_sourceRange];
+    if (er.location == NSNotFound) {
+        return _subtitles;
+    }
+
+    // parse styles
+    NSRange sr = NSMakeRange(r.location, er.location - r.location);
+    [self setStyles:[_source substringWithRange:sr] forSubtitleNumber:0];
+
+    // parser events: formats
+    _formats = [self formatForTitle:@"Format:" styles:_source rangePtr:&_sourceRange];
+    [_formats retain];
+
+    // parser events: dialogues
+    float beginTime, endTime;
+    NSMutableAttributedString* mas;
+    r = [_source rangeOfString:@"Dialogue:" rangePtr:&_sourceRange];
+    while (0 < _sourceRange.length) {
+        r.location = NSMaxRange(r);
+        er = [_source rangeOfString:@"Dialogue:" rangePtr:&_sourceRange];
+        if (er.location != NSNotFound) {
+            r.length = er.location - r.location;
+        }
+        else {
+            r.length = NSMaxRange(_sourceRange) - r.location;
+            _sourceRange.length = 0;
+        }
+        mas = [self parseSubtitleString:[_source substringWithRange:r]
+                      forSubtitleNumber:0 beginTime:&beginTime endTime:&endTime];
+        TRACE(@"addString:[%@ ~ %@] \"%@\"",
+              NSStringFromMovieTime(beginTime), NSStringFromMovieTime(endTime),
+              [mas string]);
+        [subtitle addString:mas beginTime:beginTime endTime:endTime];
     }
 
     // remove empty subtitle if exist and
@@ -364,7 +404,7 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
             [subtitle checkEndTimes];
         }
     }
-     */
+
     return _subtitles;
 }
 

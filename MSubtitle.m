@@ -216,9 +216,10 @@
     }
 }
 
-- (void)addImage:(NSImage*)image beginTime:(float)beginTime endTime:(float)endTime
+- (void)addImage:(NSImage*)image baseWidth:(float)baseWidth
+       beginTime:(float)beginTime endTime:(float)endTime
 {
-    [_items addObject:[MSubtitleItem itemWithImage:image
+    [_items addObject:[MSubtitleItem itemWithImage:image baseWidth:baseWidth
                                          beginTime:beginTime endTime:endTime]];
 }
 

@@ -27,14 +27,15 @@
 @interface MSubtitleParser_SUB : MSubtitleParser
 {
     NSMutableArray* _subtitles;
-    NSMutableArray* _fileOffsets;
 
-    // for fast search
-    NSMutableArray* _sortedOffsets;
-    int _lastSearchedIndex[20];
+    void* _vobsub;
+    void* _spudec;
 }
 
 - (id)initWithURL:(NSURL*)subtitleURL;
 - (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error;
+
+- (NSImage*)parseSubtitleImage:(unsigned char*)data size:(int)dataSize
+                baseImageWidth:(int*)imageBaseWidth;
 
 @end

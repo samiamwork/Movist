@@ -419,12 +419,25 @@ enum {  // for _updateMask
 
 - (void)renderImage:(NSImage*)image inRect:(NSRect)rect
 {
+    //[[NSColor colorWithCalibratedRed:0.0 green:0.0 blue:1.0 alpha:1.0] set];
+    //NSFrameRect(rect);
+
+    float ltMargin = LT_MARGIN(_movieRect.size.width);
+    float rbMargin = RB_MARGIN(_movieRect.size.width);
+    rect.origin.x += ltMargin;
+    rect.origin.y += rbMargin;
+    rect.size.width  -= ltMargin + rbMargin;
+    rect.size.height -= ltMargin + rbMargin;
+    
     [_shadow set];
     int i, darkness = (0 < [_shadow shadowBlurRadius]) ? _shadowDarkness : 1;
     for (i = 0; i < darkness; i++) {
         [image drawInRect:rect fromRect:NSZeroRect
                 operation:NSCompositeSourceOver fraction:1.0];
     }
+
+    //[[NSColor colorWithCalibratedRed:1.0 green:0.0 blue:0.0 alpha:1.0] set];
+    //NSFrameRect(rect);
 }
 
 - (NSImage*)makeTexImageForString:(NSAttributedString*)string
@@ -472,7 +485,7 @@ enum {  // for _updateMask
     return [img autorelease];
 }
 
-- (NSImage*)makeTexImageForImage:(NSImage*)image
+- (NSImage*)makeTexImageForImage:(NSImage*)image baseWidth:(float)baseWidth
 {
     if (!image) {
         return nil;
@@ -486,8 +499,12 @@ enum {  // for _updateMask
 
     NSSize size;
     NSSize imageSize = [image size];
-    if (imageSize.width < _movieRect.size.width &&
-        imageSize.height< _movieRect.size.height) {
+    if (0 < baseWidth) {
+        size.width = imageSize.width * _movieRect.size.width / baseWidth;
+        size.height = imageSize.height * size.width / imageSize.width;
+    }
+    else if (imageSize.width < _movieRect.size.width &&
+             imageSize.height< _movieRect.size.height) {
         size = imageSize;
     }
     else {
@@ -501,8 +518,12 @@ enum {  // for _updateMask
             size.height = imageSize.height * minSize / imageSize.width;
         }
     }
-    // for image, currently need not add margins for shadow
-
+    // add margins for outline & shadow
+    float ltMargin = LT_MARGIN(_movieRect.size.width);
+    float rbMargin = RB_MARGIN(_movieRect.size.width);
+    size.width  += ltMargin + rbMargin;
+    size.height += ltMargin + rbMargin;
+    
     NSImage* img = [[NSImage alloc] initWithSize:size];
     [img setCacheMode:NSImageCacheNever];
     [img setCachedSeparately:TRUE]; // for thread safety
@@ -524,10 +545,11 @@ enum {  // for _updateMask
     return FALSE;
 }
 
-- (BOOL)setImage:(NSImage*)image
+- (BOOL)setImage:(NSImage*)image baseWidth:(float)baseWidth
 {
     if (![_image isEqualTo:image]) {
         [image retain], [_image release], _image = image;
+        _imageBaseWidth = baseWidth;
         _updateMask |= UPDATE_TEX_IMAGE;
         return TRUE;
     }
@@ -703,7 +725,8 @@ enum {  // for _updateMask
             [self setTexImage:[self makeTexImageForString:_string]];
         }
         else if (_image) {
-            [self setTexImage:[self makeTexImageForImage:_image]];
+            [self setTexImage:[self makeTexImageForImage:_image
+                                               baseWidth:_imageBaseWidth]];
         }
         else {
             [self setTexImage:nil];

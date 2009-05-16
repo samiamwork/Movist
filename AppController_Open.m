@@ -29,6 +29,7 @@
 #import "MMovie_QuickTime.h"
 #import "MSubtitleParser_SMI.h"
 #import "MSubtitleParser_SRT.h"
+#import "MSubtitleParser_SSA.h"
 #import "MSubtitleParser_MKV.h"
 #import "MSubtitleParser_SUB.h"
 
@@ -114,10 +115,11 @@
                          [ext isEqualToString:@"sami"])? [MSubtitleParser_SMI class] :
                         ([ext isEqualToString:@"srt"] ||
                          [ext isEqualToString:@"txt"]) ? [MSubtitleParser_SRT class] :
+                        ([ext isEqualToString:@"ssa"] ||
+                         [ext isEqualToString:@"ass"]) ? [MSubtitleParser_SSA class] :
                         ([ext isEqualToString:@"mkv"] ||
                          [ext isEqualToString:@"mks"]) ? [MSubtitleParser_MKV class] :
-                        ([ext isEqualToString:@"idx"] ||
-                         [ext isEqualToString:@"sub"] ||
+                        ([ext isEqualToString:@"sub"] ||
                          [ext isEqualToString:@"rar"]) ? [MSubtitleParser_SUB class] :
                                                          Nil;
     if (!parserClass) {
@@ -139,7 +141,8 @@
                    replaceNLWithBR, MSubtitleParserOptionKey_SMI_replaceNewLineWithBR,
                    nil];
     }
-    else if (parserClass == [MSubtitleParser_SRT class]) {
+    else if (parserClass == [MSubtitleParser_SRT class] ||
+             parserClass == [MSubtitleParser_SSA class]) {
         NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
         options = [NSDictionary dictionaryWithObjectsAndKeys:
                    stringEncoding, MSubtitleParserOptionKey_stringEncoding,

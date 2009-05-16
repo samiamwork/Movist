@@ -64,6 +64,7 @@
     // for convenience
     NSAttributedString* _string;
     NSImage* _image;
+    float _imageBaseWidth;
 
     NSRecursiveLock* _lock;
 }
@@ -115,9 +116,9 @@
 - (float)adjustedLineHeight:(float)movieWidth;
 - (float)adjustedLineSpacing:(float)movieWidth;
 - (NSImage*)makeTexImageForString:(NSAttributedString*)string;
-- (NSImage*)makeTexImageForImage:(NSImage*)image;
+- (NSImage*)makeTexImageForImage:(NSImage*)image baseWidth:(float)baseWidth;
 - (BOOL)setString:(NSAttributedString*)string;
-- (BOOL)setImage:(NSImage*)image;
+- (BOOL)setImage:(NSImage*)image baseWidth:(float)baseWidth;
 - (void)clearContent;
 
 #pragma mark drawing

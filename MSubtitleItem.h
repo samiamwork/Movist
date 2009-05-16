@@ -28,6 +28,7 @@
 {
     NSMutableAttributedString* _string;
     NSImage* _image;
+    float _imageBaseWidth;
     float _beginTime;
     float _endTime;
 
@@ -38,11 +39,11 @@
 
 + (id)itemWithString:(NSAttributedString*)string
            beginTime:(float)beginTime endTime:(float)endTime;
-+ (id)itemWithImage:(NSImage*)image
++ (id)itemWithImage:(NSImage*)image baseWidth:(float)baseWidth
           beginTime:(float)beginTime endTime:(float)endTime;
 - (id)initWithString:(NSAttributedString*)string
            beginTime:(float)beginTime endTime:(float)endTime;
-- (id)initWithImage:(NSImage*)image
+- (id)initWithImage:(NSImage*)image baseWidth:(float)baseWidth
            beginTime:(float)beginTime endTime:(float)endTime;
 
 #pragma mark -
