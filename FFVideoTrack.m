@@ -109,7 +109,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-#define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
+#define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
 
 @interface ImageQueue : NSObject
@@ -362,8 +362,8 @@
     }
 
     int gotFrame;
-    int bytesDecoded = avcodec_decode_video(_stream->codec, _frame,
-                                            &gotFrame, packet.data, packet.size);
+    int bytesDecoded = avcodec_decode_video2(_stream->codec, _frame,
+                                            &gotFrame, &packet);
     av_free_packet(&packet);
     if (bytesDecoded < 0) {
         TRACE(@"%s error while decoding frame", __PRETTY_FUNCTION__);

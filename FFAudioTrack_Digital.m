@@ -493,9 +493,9 @@ static BOOL s_first = TRUE;
     int dataSize, decodedSize;
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-        decodedSize = avcodec_decode_audio2(context,
+        decodedSize = avcodec_decode_audio3(context,
                                             audioBuf, &dataSize,
-                                            packetPtr, packetSize);
+                                            packet);
         if (decodedSize < 0) { 
             TRACE(@"decodedSize < 0");
             break;
