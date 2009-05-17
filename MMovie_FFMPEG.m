@@ -187,7 +187,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _trackMutex = [[NSLock alloc] init];
     bool needPtsAdjust = strstr(_formatContext->iformat->name, "matroska");
-
+    
     MTrack* track;
     FFVideoTrack* vTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
@@ -206,25 +206,27 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         [vTrack setMovie:self];
         [track setMovie:self];
     }
+    NSMutableIndexSet* removeTracks = [NSMutableIndexSet indexSet];
     BOOL passThrough = FALSE;
     FFAudioTrack* aTrack;
     enumerator = [_audioTracks objectEnumerator];
     while (track = (MTrack*)[enumerator nextObject]) {
         aTrack = (FFAudioTrack*)[track impl];
         passThrough = digitalAudioOut && [aTrack isAc3Dts];
-        if ([aTrack initTrack:errorCode passThrough:passThrough]) {
-            if (!_mainAudioTrack) {
-                _mainAudioTrack = aTrack;
-            }
-            [track setEnabled:aTrack == _mainAudioTrack];
-        }
-        else {
+        if (![aTrack initTrack:errorCode passThrough:passThrough]) {
             [track setEnabled:FALSE];
+            [removeTracks addIndex:[_audioTracks indexOfObject:track]];
+            continue;
         }
+        if (!_mainAudioTrack) {
+            _mainAudioTrack = aTrack;
+        }
+        [track setEnabled:aTrack == _mainAudioTrack];
         [aTrack setSpeakerCount:2]; // FIXME
         [aTrack setMovie:self];
         [track setMovie:self];
     }
+    [_audioTracks removeObjectsAtIndexes:removeTracks];
     return (0 != _mainVideoTrack);
 }
 
