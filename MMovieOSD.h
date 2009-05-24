@@ -57,6 +57,7 @@
     NSRect _viewBounds;
     NSRect _movieRect;
     NSRect _drawingRect;
+    float _autoSizeWidth;
     unsigned int _updateMask;   // bit-mask of UPDATE_*
     NSImage* _texImage;         // final rendered image for texture
     GLuint _texName;            // OpenGL texture name for _texImage
@@ -125,7 +126,8 @@
 - (BOOL)hasContent;
 - (NSImage*)texImage;
 - (BOOL)setTexImage:(NSImage*)texImage;
-- (BOOL)setViewBounds:(NSRect)viewBounds movieRect:(NSRect)movieRect;
+- (BOOL)setViewBounds:(NSRect)viewBounds movieRect:(NSRect)movieRect
+        autoSizeWidth:(float)autoSizeWidth;
 - (void)drawOnScreen;
 
 @end

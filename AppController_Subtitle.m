@@ -276,7 +276,7 @@
 {
     assert(0 <= index);
     spacing = adjustToRange(spacing, MIN_SUBTITLE_LINE_SPACING, MAX_SUBTITLE_LINE_SPACING);
-    
+
     SubtitleAttributes attrs;
     attrs.lineSpacing = spacing;
     attrs.mask = SUBTITLE_ATTRIBUTE_LINE_SPACING;
@@ -884,11 +884,11 @@
     }
     else {  // for menu-items
         position = [sender tag];
-        if (position != OSD_VPOSITION_UBOX &&
-            position != OSD_VPOSITION_TOP &&
-            position != OSD_VPOSITION_CENTER &&
-            position != OSD_VPOSITION_BOTTOM &&
-            position != OSD_VPOSITION_LBOX) {
+        if (position < 0) { // rotation for the 1st subtitle only
+            [self changeSubtitlePositionAtIndex:0];
+            return;
+        }
+        else if (OSD_VPOSITION_LBOX < position) {
             position = [_defaults integerForKey:MSubtitleVPositionKey[index]];
         }
     }

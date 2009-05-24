@@ -118,7 +118,7 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
     return format;
 }
 
-- (void)setStyles:(NSString*)string forSubtitleNumber:(int)subtitleNumber
+- (void)mkvTrackNumber:(int)trackNumber setStyles:(NSString*)string
 {
     NSRange range = NSMakeRange(0, [string length]);
     NSMutableArray* format = [self formatForTitle:@"Format:" styles:string rangePtr:&range];
@@ -161,7 +161,7 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
         [styles setObject:style forKey:[as objectAtIndex:nameIndex]];
     }
     
-    [_styles setObject:styles forKey:[NSNumber numberWithInt:subtitleNumber]];
+    [_styles setObject:styles forKey:[NSNumber numberWithInt:trackNumber]];
 }
 
 - (NSString*)eventStringWithString:(NSString*)string rangePtr:(NSRange*)rangePtr
@@ -250,8 +250,8 @@ static float movieTimeFromString(NSString* string)
     return (float)(h * 60 * 60) + (m * 60) + s + (ms * 0.01);
 }
 
-- (NSMutableAttributedString*)parseSubtitleString:(NSString*)string
-                                forSubtitleNumber:(int)subtitleNumber
+- (NSMutableAttributedString*)mkvTrackNumber:(int)trackNumber
+                         parseSubtitleString:(NSString*)string
                                         beginTime:(float*)beginTime
                                           endTime:(float*)endTime
 {
@@ -279,7 +279,7 @@ static float movieTimeFromString(NSString* string)
         }
     }
 
-    NSNumber* number = [NSNumber numberWithInt:subtitleNumber];
+    NSNumber* number = [NSNumber numberWithInt:trackNumber];
     NSDictionary* dict = [[_styles objectForKey:number] objectForKey:style];
     if (!dict) {
         dict = [[_styles objectForKey:number] objectForKey:@"Default"];
@@ -315,8 +315,8 @@ static float movieTimeFromString(NSString* string)
     return mas;
 }
 
-- (NSMutableAttributedString*)parseSubtitleString_MKV:(NSString*)string
-                                    forSubtitleNumber:(int)subtitleNumber
+- (NSMutableAttributedString*)mkvTrackNumber:(int)trackNumber
+                         parseSubtitleString:(NSString*)string
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, string);
     
@@ -329,7 +329,7 @@ static float movieTimeFromString(NSString* string)
                     @"MarginL", @"MarginR", @"MarginV", @"Effect", @"Text", nil];
     }
     float beginTime, endTime;
-    return [self parseSubtitleString:string forSubtitleNumber:subtitleNumber
+    return [self mkvTrackNumber:trackNumber parseSubtitleString:string
                            beginTime:&beginTime endTime:&endTime];
 }
 
@@ -364,7 +364,7 @@ static float movieTimeFromString(NSString* string)
 
     // parse styles
     NSRange sr = NSMakeRange(r.location, er.location - r.location);
-    [self setStyles:[_source substringWithRange:sr] forSubtitleNumber:0];
+    [self mkvTrackNumber:0 setStyles:[_source substringWithRange:sr]];
 
     // parser events: formats
     _formats = [self formatForTitle:@"Format:" styles:_source rangePtr:&_sourceRange];
@@ -384,11 +384,9 @@ static float movieTimeFromString(NSString* string)
             r.length = NSMaxRange(_sourceRange) - r.location;
             _sourceRange.length = 0;
         }
-        mas = [self parseSubtitleString:[_source substringWithRange:r]
-                      forSubtitleNumber:0 beginTime:&beginTime endTime:&endTime];
-        TRACE(@"addString:[%@ ~ %@] \"%@\"",
-              NSStringFromMovieTime(beginTime), NSStringFromMovieTime(endTime),
-              [mas string]);
+        mas = [self mkvTrackNumber:0
+               parseSubtitleString:[_source substringWithRange:r]
+                         beginTime:&beginTime endTime:&endTime];
         [subtitle addString:mas beginTime:beginTime endTime:endTime];
     }
 

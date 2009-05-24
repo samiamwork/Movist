@@ -167,8 +167,8 @@ enum {  // for _updateMask
 
 - (void)updateShadow
 {
-    float blur = AUTO_SIZE(_shadowBlur, _movieRect.size.width);
-    float offset = AUTO_SIZE(_shadowOffset, _movieRect.size.width);
+    float blur = AUTO_SIZE(_shadowBlur, _autoSizeWidth);
+    float offset = AUTO_SIZE(_shadowOffset, _autoSizeWidth);
     [_shadow setShadowOffset:NSMakeSize(offset, -offset)];
     [_shadow setShadowBlurRadius:blur];
     [_shadow setShadowColor:_shadowColor];
@@ -214,7 +214,7 @@ enum {  // for _updateMask
 - (void)updateFont
 {
     [_font release];
-    float size = AUTO_SIZE(_fontSize, _movieRect.size.width);
+    float size = AUTO_SIZE(_fontSize, _autoSizeWidth);
     _font = [[NSFont fontWithName:_fontName size:MAX(10.0, size)] retain];
 }
 
@@ -383,7 +383,7 @@ enum {  // for _updateMask
 
 - (float)adjustedLineSpacing:(float)movieWidth
 {
-    return AUTO_SIZE(_lineSpacing, _movieRect.size.width);
+    return AUTO_SIZE(_lineSpacing, movieWidth);
 }
 
 - (void)renderString:(NSMutableAttributedString*)string inRect:(NSRect)rect
@@ -391,8 +391,8 @@ enum {  // for _updateMask
     //[[NSColor colorWithCalibratedRed:0.0 green:0.0 blue:1.0 alpha:1.0] set];
     //NSFrameRect(rect);
 
-    float ltMargin = LT_MARGIN(_movieRect.size.width);
-    float rbMargin = RB_MARGIN(_movieRect.size.width);
+    float ltMargin = LT_MARGIN(_autoSizeWidth);
+    float rbMargin = RB_MARGIN(_autoSizeWidth);
     rect.origin.x += ltMargin;
     rect.origin.y += rbMargin;
     rect.size.width  -= ltMargin + rbMargin;
@@ -422,8 +422,8 @@ enum {  // for _updateMask
     //[[NSColor colorWithCalibratedRed:0.0 green:0.0 blue:1.0 alpha:1.0] set];
     //NSFrameRect(rect);
 
-    float ltMargin = LT_MARGIN(_movieRect.size.width);
-    float rbMargin = RB_MARGIN(_movieRect.size.width);
+    float ltMargin = LT_MARGIN(_autoSizeWidth);
+    float rbMargin = RB_MARGIN(_autoSizeWidth);
     rect.origin.x += ltMargin;
     rect.origin.y += rbMargin;
     rect.size.width  -= ltMargin + rbMargin;
@@ -458,7 +458,7 @@ enum {  // for _updateMask
 
     // set attributes : font & shadow should be applied before calculating size
     NSMutableAttributedString* s = [string mutableCopy];
-    [_paragraphStyle setLineSpacing:AUTO_SIZE(_lineSpacing, _movieRect.size.width)];
+    [_paragraphStyle setLineSpacing:AUTO_SIZE(_lineSpacing, _autoSizeWidth)];
     [s applyFont:_font textColor:_textColor strokeColor:_strokeColor
      strokeWidth:_strokeWidth paragraphStyle:_paragraphStyle];
 
@@ -469,8 +469,8 @@ enum {  // for _updateMask
                                      NSStringDrawingUsesDeviceMetrics;
     NSSize size = [s boundingRectWithSize:maxSize options:options].size;
     // add margins for outline & shadow
-    float ltMargin = LT_MARGIN(_movieRect.size.width);
-    float rbMargin = RB_MARGIN(_movieRect.size.width);
+    float ltMargin = LT_MARGIN(_autoSizeWidth);
+    float rbMargin = RB_MARGIN(_autoSizeWidth);
     size.width  += ltMargin + rbMargin;
     size.height += ltMargin + rbMargin;
 
@@ -519,8 +519,8 @@ enum {  // for _updateMask
         }
     }
     // add margins for outline & shadow
-    float ltMargin = LT_MARGIN(_movieRect.size.width);
-    float rbMargin = RB_MARGIN(_movieRect.size.width);
+    float ltMargin = LT_MARGIN(_autoSizeWidth);
+    float rbMargin = RB_MARGIN(_autoSizeWidth);
     size.width  += ltMargin + rbMargin;
     size.height += ltMargin + rbMargin;
     
@@ -629,8 +629,8 @@ enum {  // for _updateMask
 {
     float hmargin = _movieRect.size.width * _hMargin;
     float vmargin = _movieRect.size.height* _vMargin;
-    float ltMargin = LT_MARGIN(_movieRect.size.width);
-    float rbMargin = RB_MARGIN(_movieRect.size.width);
+    float ltMargin = LT_MARGIN(_autoSizeWidth);
+    float rbMargin = RB_MARGIN(_autoSizeWidth);
 
     NSRect mr = _movieRect;
     mr.origin.x   += hmargin;
@@ -701,11 +701,14 @@ enum {  // for _updateMask
 }
 
 - (BOOL)setViewBounds:(NSRect)viewBounds movieRect:(NSRect)movieRect
+        autoSizeWidth:(float)autoSizeWidth
 {
     if (!NSEqualRects(_viewBounds, viewBounds) ||
-        !NSEqualRects(_movieRect, movieRect)) {
+        !NSEqualRects(_movieRect, movieRect) ||
+        _autoSizeWidth != autoSizeWidth) {
         _viewBounds = viewBounds;
         _movieRect = movieRect;
+        _autoSizeWidth = MAX(autoSizeWidth, _movieRect.size.width);
 
         if (_string || _image) {
             _updateMask |= UPDATE_TEX_IMAGE;

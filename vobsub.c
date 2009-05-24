@@ -936,6 +936,36 @@ vobsub_parse_forced_subs(vobsub_t *vob, const char *line)
     return -1;
 }
 
+static int vobsub_parse_line(vobsub_t* vob, const char* line, int* res)
+{
+	if (*line == 0 || *line == '\r' || *line == '\n' || *line == '#')
+	    return 0;
+	else if (strncmp("langidx:", line, 8) == 0)
+	    *res = 0;//vobsub_set_lang(line);
+	else if (strncmp("delay:", line, 6) == 0)
+	    *res = vobsub_parse_delay(vob, line);
+	else if (strncmp("id:", line, 3) == 0)
+	    *res = vobsub_parse_id(vob, line + 3);
+	else if (strncmp("palette:", line, 8) == 0)
+	    *res = vobsub_parse_palette(vob, line + 8);
+	else if (strncmp("size:", line, 5) == 0)
+	    *res = vobsub_parse_size(vob, line + 5);
+	else if (strncmp("org:", line, 4) == 0)
+	    *res = vobsub_parse_origin(vob, line + 4);
+	else if (strncmp("timestamp:", line, 10) == 0)
+	    *res = vobsub_parse_timestamp(vob, line + 10);
+	else if (strncmp("custom colors:", line, 14) == 0)
+	    //custom colors: ON/OFF, tridx: XXXX, colors: XXXXXX, XXXXXX, XXXXXX,XXXXXX
+	    *res = vobsub_parse_cuspal(vob, line) + vobsub_parse_tridx(line) + vobsub_parse_custom(vob, line);
+	else if (strncmp("forced subs:", line, 12) == 0)
+		*res = vobsub_parse_forced_subs(vob, line + 12);
+	else {
+	    mp_msg(MSGT_VOBSUB,MSGL_V, "vobsub: ignoring %s", line);
+	    return 0;
+	}
+    return 1;
+}
+
 static int
 vobsub_parse_one_line(vobsub_t *vob, rar_stream_t *fd)
 {
@@ -948,31 +978,9 @@ vobsub_parse_one_line(vobsub_t *vob, rar_stream_t *fd)
 	if (line_size < 0) {
 	    break;
 	}
-	if (*line == 0 || *line == '\r' || *line == '\n' || *line == '#')
-	    continue;
-	else if (strncmp("langidx:", line, 8) == 0)
-	    res = 0;//vobsub_set_lang(line);
-	else if (strncmp("delay:", line, 6) == 0)
-	    res = vobsub_parse_delay(vob, line);
-	else if (strncmp("id:", line, 3) == 0)
-	    res = vobsub_parse_id(vob, line + 3);
-	else if (strncmp("palette:", line, 8) == 0)
-	    res = vobsub_parse_palette(vob, line + 8);
-	else if (strncmp("size:", line, 5) == 0)
-	    res = vobsub_parse_size(vob, line + 5);
-	else if (strncmp("org:", line, 4) == 0)
-	    res = vobsub_parse_origin(vob, line + 4);
-	else if (strncmp("timestamp:", line, 10) == 0)
-	    res = vobsub_parse_timestamp(vob, line + 10);
-	else if (strncmp("custom colors:", line, 14) == 0)
-	    //custom colors: ON/OFF, tridx: XXXX, colors: XXXXXX, XXXXXX, XXXXXX,XXXXXX
-	    res = vobsub_parse_cuspal(vob, line) + vobsub_parse_tridx(line) + vobsub_parse_custom(vob, line);
-	else if (strncmp("forced subs:", line, 12) == 0)
-		res = vobsub_parse_forced_subs(vob, line + 12);
-	else {
-	    mp_msg(MSGT_VOBSUB,MSGL_V, "vobsub: ignoring %s", line);
-	    continue;
-	}
+    if (!vobsub_parse_line(vob, line, &res)) {
+        continue;
+    }
 	if (res < 0)
 	    mp_msg(MSGT_VOBSUB,MSGL_ERR,  "ERROR in %s", line);
 	break;
@@ -1051,7 +1059,17 @@ vobsub_parse_ifo(void* this, const char *const name, unsigned int *palette, unsi
     }
     return res;
 }
-
+/*
+static void print_data(const char* name, unsigned char* data, int dataSize)
+{
+    int i, len = MIN(20, dataSize);
+    printf("%s-data=", name);
+    for (i = 0; i < len; i++) {
+        printf("%02x('%c') ", data[i], data[i]);
+    }
+    printf("\n");
+}
+*/
 void *
 vobsub_open(const char *const name,const char *const ifo,const int force,void** spu)
 {
@@ -1136,6 +1154,8 @@ vobsub_open(const char *const name,const char *const ifo,const int force,void** 
                     }
                     if (mpg->packet_size) {
                         if ((mpg->aid & 0xe0) == 0x20) {
+                            //print_data("sub", mpg->packet, mpg->packet_size);
+                            
                             unsigned int sid = mpg->aid & 0x1f;
                             if (vobsub_ensure_spu_stream(vob, sid) >= 0)  {
                                 packet_queue_t *queue = vob->spu_streams + sid;
@@ -1240,4 +1260,89 @@ vobsub_get_next_packet(void *vobhandle, int index, void** data, int* timestamp)
     }
   }
   return -1;
+}
+/*
+////////////////////////////////////////////////////////////////////////////////
+
+static void vobsub_parse_idx(vobsub_t *vob, const char* idx)
+{
+    int res = -1;
+	const char* p = idx;
+    char* l, line[4096];
+    do {
+        l = line;
+        while (*l++ = *p++) {
+            if (*(l - 1) == '\n') {
+                *(l - 1) = '\0';
+                break;
+            }
+        }
+
+        if (vobsub_parse_line(vob, line, &res)) {
+            if (0 <= res) {
+                continue;
+            }
+            else {
+                mp_msg(MSGT_VOBSUB,MSGL_ERR,  "ERROR in %s", line);
+                return;
+            }
+        }
+    } while (*(p - 1) != '\0');
+}
+
+void* vobsub_make(const char* idx, void** spu)
+{
+    vobsub_t* vob = malloc(sizeof(vobsub_t));
+    if (!vob) {
+        return 0;
+    }
+
+    vob->custom = 0;
+    vob->have_palette = 0;
+    vob->orig_frame_width = 0;
+    vob->orig_frame_height = 0;
+    vob->spu_streams = NULL;
+    vob->spu_streams_size = 0;
+    vob->spu_streams_current = 0;
+    vob->delay = 0;
+    vob->forced_subs=0;
+
+    vobsub_parse_idx(vob, idx);
+    
+    // if no palette in .idx then use custom colors
+    if ((vob->custom == 0)&&(vob->have_palette!=1)) {
+        vob->custom = 1;
+    }
+    if (vob->orig_frame_width && vob->orig_frame_height) {
+        *spu = spudec_new_scaled_vobsub(vob->palette, vob->cuspal, vob->custom,
+                                        vob->orig_frame_width, vob->orig_frame_height);
+    }
+
+    return vob;
+}
+
+void vobsub_add_sub(void* vobhandle, int sid, unsigned char* data, int dataSize, int pts)
+{
+    //print_data("mkv", data, dataSize);
+
+    vobsub_t* vob = (vobsub_t*)vobhandle;
+    if (vobsub_ensure_spu_stream(vob, sid) >= 0)  {
+        packet_queue_t* queue = vob->spu_streams + sid;
+        if (queue->packets_size == 0) {
+            packet_queue_grow(queue);
+        }
+        else {
+            packet_queue_insert(queue);
+        }
+        packet_t *pkt = queue->packets + queue->current_index;
+        pkt->data = data;
+        pkt->size = dataSize;
+        pkt->pts100 = pts;
+    }
+}
+*/
+void vobsub_init_spudec(void* vobhandle, int sid)
+{
+    vobsub_t *vob = (vobsub_t *)vobhandle;
+    vob->spu_streams[sid].current_index = 0;
 }

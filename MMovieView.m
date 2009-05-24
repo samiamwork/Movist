@@ -249,7 +249,7 @@
 
         case 'l' : case 'L' : [[NSApp delegate] changeLetterBoxHeight];             break;
         case 'p' : case 'P' : [[NSApp delegate] changeSubtitlePositionAtIndex:0];   break;
-            
+
         case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1 atIndex:0];   break;
         case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1 atIndex:0];   break;
         case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0 atIndex:0];   break;

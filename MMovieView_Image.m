@@ -280,8 +280,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     }
 
     if (!_movie) {
-        [_iconOSD setViewBounds:bounds movieRect:bounds];
-        [_messageOSD setViewBounds:bounds movieRect:bounds];
+        [_iconOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
+        [_messageOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
     }
     else {
         // make invalid to update later
@@ -291,20 +291,23 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         NSRect mr = [self calcMovieRectForBoundingRect:[self bounds]];
         _movieRect = *(CGRect*)&mr;
 
-        [_iconOSD setViewBounds:bounds movieRect:mr];
-        [_messageOSD setViewBounds:bounds movieRect:mr];
+        // in full-screen, auto-size-width should be screen-width.
+        float asw = [[NSApp delegate] isFullScreen] ? bounds.size.width : 0;
+
+        [_iconOSD setViewBounds:bounds movieRect:mr autoSizeWidth:asw];
+        [_messageOSD setViewBounds:bounds movieRect:mr autoSizeWidth:asw];
         int i;
         for (i = 0; i < 3; i++) {
-            if ([_subtitleOSD[i] setViewBounds:bounds movieRect:mr]) {
+            if ([_subtitleOSD[i] setViewBounds:bounds movieRect:mr autoSizeWidth:asw]) {
                 if (_subtitle[i] && [_subtitle[i] isEnabled]) {
                     [_subtitle[i] setNeedsRemakeTexImages];
                     [self updateSubtitleOSDAtIndex:i];
                 }
             }
-            [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:mr];
+            [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:mr autoSizeWidth:asw];
         }
     }
-    [_errorOSD setViewBounds:bounds movieRect:NSInsetRect(bounds, 50, 0)];
+    [_errorOSD setViewBounds:bounds movieRect:NSInsetRect(bounds, 50, 0) autoSizeWidth:0];
 
     if (display) {
         [self redisplay];

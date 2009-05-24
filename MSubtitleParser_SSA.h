@@ -42,8 +42,8 @@
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options
                   error:(NSError**)error;
 
-- (void)setStyles:(NSString*)styles forSubtitleNumber:(int)subtitleNumber;
-- (NSMutableAttributedString*)parseSubtitleString_MKV:(NSString*)string
-                                    forSubtitleNumber:(int)subtitleNumber;
+- (void)mkvTrackNumber:(int)trackNumber setStyles:(NSString*)styles;
+- (NSMutableAttributedString*)mkvTrackNumber:(int)trackNumber
+                         parseSubtitleString:(NSString*)string;
 
 @end

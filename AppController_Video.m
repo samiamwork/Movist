@@ -141,6 +141,7 @@
             [_fullScreener release];
             _fullScreener = nil;
         }
+        [_movieView updateMovieRect:TRUE];
         if (_alwaysOnTopEnabled) {
             [self updateAlwaysOnTop:TRUE];
         }

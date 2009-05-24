@@ -10,6 +10,11 @@ extern int vobsub_get_next_packet(void *vobhandle, int index, void** data, int* 
 extern void vobsub_close(void *this);
 extern unsigned int vobsub_get_indexes_count(void * /* vobhandle */);
 extern char *vobsub_get_id(void * /* vobhandle */, unsigned int /* index */);
+/*
+extern void* vobsub_make(const char* idx, void** spu);
+extern void vobsub_add_sub(void* vobhandle, int sid, unsigned char* data, int dataSize, int pts);
+ */
+extern void vobsub_init_spudec(void* vobhandle, int sid);
 
 #endif /* MPLAYER_VOBSUB_H */
 

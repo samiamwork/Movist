@@ -37,12 +37,12 @@
     for (i = 0; i < 3; i++) {
         _subtitleOSD[i] = [[MMovieOSD alloc] init];
         [_subtitleOSD[i] initTextRendering];
-        [_subtitleOSD[i] setViewBounds:bounds movieRect:bounds];
+        [_subtitleOSD[i] setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
 
         _auxSubtitleOSD[i] = [[MMovieOSD alloc] init];
         [_auxSubtitleOSD[i] initTextRendering];
         [_auxSubtitleOSD[i] setShadowBlur:0];   // no shadow
-        [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:bounds];
+        [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
 
         // h/v-position will be updated later
     }
@@ -52,7 +52,7 @@
 
     _messageOSD = [[MMovieOSD alloc] init];
     [_messageOSD initTextRendering];
-    [_messageOSD setViewBounds:bounds movieRect:bounds];
+    [_messageOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
     [_messageOSD setHPosition:OSD_HPOSITION_LEFT];
     [_messageOSD setVPosition:OSD_VPOSITION_TOP];
     [_messageOSD setTextAlignment:NSLeftTextAlignment];
@@ -60,13 +60,13 @@
 
     _errorOSD = [[MMovieOSD alloc] init];
     [_errorOSD initTextRendering];
-    [_errorOSD setViewBounds:bounds movieRect:bounds];
+    [_errorOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
     [_errorOSD setHPosition:OSD_HPOSITION_CENTER];
     [_errorOSD setVPosition:OSD_VPOSITION_CENTER];
     [_errorOSD setTextAlignment:NSCenterTextAlignment];
 
     _iconOSD = [[MMovieOSD alloc] init];
-    [_iconOSD setViewBounds:bounds movieRect:bounds];
+    [_iconOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
     [_iconOSD setImage:[NSImage imageNamed:@"Movist"] baseWidth:0];
     [_iconOSD setHPosition:OSD_HPOSITION_CENTER];
     [_iconOSD setVPosition:OSD_VPOSITION_CENTER];

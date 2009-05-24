@@ -29,13 +29,17 @@
     NSMutableArray* _subtitles;
 
     void* _vobsub;
-    void* _spudec;
+    void* _spudec[64];  // for each subtitle
+    NSMutableDictionary* _tracks;
 }
 
 - (id)initWithURL:(NSURL*)subtitleURL;
 - (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error;
 
-- (NSImage*)parseSubtitleImage:(unsigned char*)data size:(int)dataSize
-                baseImageWidth:(int*)imageBaseWidth;
-
+- (void)parseSubtitle:(MSubtitle*)subtitle atIndex:(int)index;
+/*
+- (void)mkvTrackNumber:(int)trackNumber parseIdx:(const char*)s;
+- (void)mkvTrackNumber:(int)trackNumber
+    parseSubtitleImage:(unsigned char*)data size:(int)dataSize time:(float)time;
+*/
 @end

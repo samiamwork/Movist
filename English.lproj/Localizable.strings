@@ -120,6 +120,7 @@
 "Digital" = "Digital";
 "Analog" = "Analog";
 "Loading" = "Loading";
+"Not Supported Yet" = "Not Supported Yet";
 
 /* Preferences */
 "General" = "General";

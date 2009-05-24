@@ -912,12 +912,34 @@
         }
         else {
             MSubtitle* subtitle = [_subtitles objectAtIndex:sIndex];
-            float loadingTime = [_controlPanel subtitleTrackLoadingTime];
-            return ([subtitle isEmbedded] && 0 < loadingTime) ?
-                    [[subtitle summary] stringByAppendingFormat:@" (%@ %.1f %%)",
-                                        NSLocalizedString(@"Loading", nil),
-                                        100 * loadingTime / [_movie duration]] :
-                    [subtitle summary];
+            NSString* summary = [subtitle summary];
+            NSString* type = [subtitle type];
+            if ([subtitle isEmbedded]) {
+                if ([type hasPrefix:@"UTF8"] || [type hasPrefix:@"USF"] ||
+                    [type hasPrefix:@"SSA"]  || [type hasPrefix:@"ASS"]) {
+                    float loadingTime = [_controlPanel subtitleTrackLoadingTime];
+                    if (0 < loadingTime) {
+                        summary = [summary stringByAppendingFormat:@" (%@ %.1f %%)",
+                                   NSLocalizedString(@"Loading", nil),
+                                   100 * loadingTime / [_movie duration]];
+                    }
+                }
+                else {
+                    summary = [summary stringByAppendingFormat:@" (%@)",
+                               NSLocalizedString(@"Not Supported Yet", nil)];
+                }
+            }
+            /*
+            else if ([type isEqualToString:@"VOBSUB"]) {
+                float loadingTime = [_controlPanel vobsubFileLoadingTime];
+                if (0 < loadingTime) {
+                    summary = [summary stringByAppendingFormat:@" (%@ %.1f %%)",
+                               NSLocalizedString(@"Loading", nil),
+                               100 * loadingTime / [_movie duration]];
+                }
+            }
+             */
+            return summary;
         }
     }
     return nil;

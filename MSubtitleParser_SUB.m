@@ -31,30 +31,30 @@
 {
     if (self = [super initWithURL:subtitleURL]) {
         _subtitles = [[NSMutableArray alloc] initWithCapacity:2];
+        _tracks = [[NSMutableDictionary alloc] initWithCapacity:2];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if (_spudec) {
-        spudec_free(_spudec);
-        _spudec = 0;
+    int i, count = [_subtitles count];
+    for (i = 0; i < count; i++) {
+        if (_spudec[i]) {
+            spudec_free(_spudec[i]);
+        }
     }
     if (_vobsub) {
         vobsub_close(_vobsub);
         _vobsub = 0;
     }
+    [_tracks release];
     [_subtitles release];
 
     [super dealloc];
 }
 
-static void dummy_draw_alpha(int x, int y, int w, int h,
-                             unsigned char* src, unsigned char* srca,
-                             int stride) { /* do nothing */ }
-
-- (NSBitmapImageRep*)imageRepWithSpudec:(spudec_handle_t*)spudec
+- (NSImage*)imageWithSpudec:(spudec_handle_t*)spudec
 {
     int x, y, width;
     int sx = spudec->width - 1, ex = 0;
@@ -94,18 +94,25 @@ static void dummy_draw_alpha(int x, int y, int w, int h,
         pi += spudec->stride;
         pa += spudec->stride;
     }
-    return [bmp autorelease];
+
+    NSImage* image = [[NSImage alloc] initWithSize:[bmp size]];
+    [image addRepresentation:bmp];
+    [image setCacheMode:NSImageCacheNever];
+    [image setCachedSeparately:TRUE]; // for thread safety
+    [bmp release];
+
+    return [image autorelease];
 }
 
 - (void)parseSubtitle:(MSubtitle*)subtitle atIndex:(int)index
 {
-    spudec_packet_t* packet;
-    int size, pts100;
-    NSBitmapImageRep* bmp;
-    NSImage* image;
+    TRACE(@"subtitle[%d] parse... (0x%x)", index, _spudec[index]);
+    vobsub_init_spudec(_vobsub, index);
 
     NSAutoreleasePool* pool;
-    spudec_handle_t* spudec = (spudec_handle_t*)_spudec;
+    int size, pts100;
+    spudec_packet_t* packet;
+    spudec_handle_t* spudec = (spudec_handle_t*)_spudec[index];
     while (0 <= (size = vobsub_get_next_packet(_vobsub, index, (void*)&packet, &pts100))) {
         spudec_assemble(spudec, (unsigned char*)packet, size, pts100);
         if (spudec->queue_head) {
@@ -113,46 +120,39 @@ static void dummy_draw_alpha(int x, int y, int w, int h,
             if (spudec_changed(spudec)) {
                 if (0 < spudec->width && 0 < spudec->height) {
                     pool = [[NSAutoreleasePool alloc] init];
-                    bmp = [self imageRepWithSpudec:spudec];
-                    image = [[NSImage alloc] initWithSize:[bmp size]];
-                    [image addRepresentation:bmp];
-                    [image setCacheMode:NSImageCacheNever];
-                    [image setCachedSeparately:TRUE]; // for thread safety
-                    [subtitle addImage:image baseWidth:spudec->width
+                    [subtitle addImage:[self imageWithSpudec:spudec]
+                             baseWidth:spudec->width
                              beginTime:spudec->start_pts / 90 / 1000.f
                                endTime:spudec->end_pts   / 90 / 1000.f];
-                    [image release];
                     [pool release];
                 }
-                spudec_draw(spudec, dummy_draw_alpha);
+
+                if (spudec->start_pts <= spudec->now_pts &&
+                    spudec->now_pts < spudec->end_pts && spudec->image) {
+                    spudec->spu_changed = 0;
+                }
             }
         }
     }
-    spudec_reset(_spudec);
+    spudec_reset(_spudec[index]);
+    TRACE(@"subtitle[%d] parse...done", index);
 }
 
 - (void)parseThread:(id)object
 {
-    NSAutoreleasePool* pool = nil;
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-    MSubtitle* subtitle;
-    int i, count = [_subtitles count];
-    for (i = 0; i < count; i++) {
-        pool = [[NSAutoreleasePool alloc] init];
+    int index = [(NSNumber*)object intValue];
+    MSubtitle* subtitle = [_subtitles objectAtIndex:index];
+    [self parseSubtitle:subtitle atIndex:index];
 
-        subtitle = [_subtitles objectAtIndex:i];
-        [self parseSubtitle:subtitle atIndex:i];
-
-        [pool release], pool = nil;
-    }
-
-    [self release];
+    [pool release];
 }
 
 - (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error
 {
     NSString* path = [[_subtitleURL path] stringByDeletingPathExtension];
-    _vobsub = vobsub_open([path UTF8String], 0, 0, &_spudec);
+    _vobsub = vobsub_open([path UTF8String], 0, 0, &_spudec[0]);
     if (!_vobsub) {
         return nil;
     }
@@ -160,33 +160,50 @@ static void dummy_draw_alpha(int x, int y, int w, int h,
     MSubtitle* subtitle;
     int i, count = vobsub_get_indexes_count(_vobsub);
     for (i = 0; i < count; i++) {
+        if (0 < i) {    // _spudec[0] is already init in vobsub_open().
+            _spudec[i] = calloc(1, sizeof(spudec_handle_t));
+            memcpy(_spudec[i], _spudec[0], sizeof(spudec_handle_t));
+        }
         subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease];
-        [subtitle setType:@"SUB"];
+        [subtitle setType:@"VOBSUB"];
         [subtitle setName:[NSString stringWithCString:vobsub_get_id(_vobsub, i)
                                              encoding:NSASCIIStringEncoding]];
         [subtitle setTrackName:NSLocalizedString(@"External Subtitle", nil)];
         [subtitle setEmbedded:FALSE];
         [_subtitles addObject:subtitle];
+
+        [NSThread detachNewThreadSelector:@selector(parseThread:) toTarget:self
+                               withObject:[NSNumber numberWithInt:i]];
     }
-
-    // self should be retained for threading.
-    // self will be released after threading.
-    [self retain];
-
-    [NSThread detachNewThreadSelector:@selector(parseThread:)
-                             toTarget:self withObject:self];
 
     // _spudec, _vobsub will be released in -dealloc.
 
     return _subtitles;
 }
-
-// this is called by MSubtitleParser_MKV for each subtitle-image-item.
-- (NSImage*)parseSubtitleImage:(unsigned char*)data size:(int)dataSize
-                baseImageWidth:(int*)imageBaseWidth
+/*
+// this is called by MSubtitleParser_MKV for each subtitle-idx.
+- (void)mkvTrackNumber:(int)trackNumber parseIdx:(const char*)s
 {
-    *imageBaseWidth = 0;
-    return nil; // FIXME
+    int index = [_tracks count];
+    if (!_vobsub) {
+        _vobsub = vobsub_make(s, &_spudec[0]);
+    }
+    if (0 < index) {
+        _spudec[index] = calloc(1, sizeof(spudec_handle_t));
+        memcpy(_spudec[index], _spudec[0], sizeof(spudec_handle_t));
+    }
+    [_tracks setObject:[NSNumber numberWithInt:index]
+                forKey:[NSNumber numberWithInt:trackNumber]];
+    //TRACE(@"idx: %d => %d", trackNumber, index);
 }
 
+// this is called by MSubtitleParser_MKV for each subtitle-image-item.
+- (void)mkvTrackNumber:(int)trackNumber
+    parseSubtitleImage:(unsigned char*)data size:(int)dataSize time:(float)time
+{
+    int index = [[_tracks objectForKey:[NSNumber numberWithInt:trackNumber]] intValue];
+
+    vobsub_add_sub(_vobsub, index, data, dataSize, (int)(time * 90 * 1000));
+}
+*/
 @end

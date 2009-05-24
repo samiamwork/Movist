@@ -559,7 +559,7 @@ void spudec_heartbeat(void *this, unsigned int pts100)
     spu->spu_changed = 1;
   }
 }
-
+#if 0000
 int spudec_visible(void *this){
     spudec_handle_t *spu = (spudec_handle_t *)this;
     int ret=(spu->start_pts <= spu->now_pts &&
@@ -1079,6 +1079,11 @@ void *spudec_new_scaled(unsigned int *palette, unsigned int frame_width, unsigne
   return spudec_new_scaled_vobsub(palette, NULL, 0, frame_width, frame_height);
 }
 
+void *spudec_new(unsigned int *palette)
+{
+    return spudec_new_scaled(palette, 0, 0);
+}
+#endif  // 0000
 /* get palette custom color, width, height from .idx file */
 void *spudec_new_scaled_vobsub(unsigned int *palette, unsigned int *cuspal, unsigned int custom, unsigned int frame_width, unsigned int frame_height)
 {
@@ -1111,11 +1116,6 @@ void *spudec_new_scaled_vobsub(unsigned int *palette, unsigned int *cuspal, unsi
   else
     mp_msg(MSGT_SPUDEC,MSGL_FATAL, "FATAL: spudec_init: calloc");
   return this;
-}
-
-void *spudec_new(unsigned int *palette)
-{
-    return spudec_new_scaled(palette, 0, 0);
 }
 
 void spudec_free(void *this)
