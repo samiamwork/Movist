@@ -493,9 +493,15 @@ static BOOL s_first = TRUE;
     int dataSize, decodedSize;
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+#ifdef __BIG_ENDIAN__
+        decodedSize = avcodec_decode_audio2(context,
+                                            audioBuf, &dataSize,
+                                            packetPtr, packetSize);
+#else
         decodedSize = avcodec_decode_audio3(context,
                                             audioBuf, &dataSize,
                                             packet);
+#endif
         if (decodedSize < 0) { 
             TRACE(@"decodedSize < 0");
             break;

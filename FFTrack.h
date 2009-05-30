@@ -26,12 +26,15 @@
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <AudioUnit/AudioUnit.h>
 
-#import <libavcodec/avcodec.h>
-#import <libavformat/avformat.h>
-#import <libswscale/swscale.h>
-//#import <ffmpeg/avcodec.h>
-//#import <ffmpeg/avformat.h>
-//#import <ffmpeg/swscale.h>
+#ifdef __BIG_ENDIAN__
+    #import <ffmpeg/avcodec.h>
+    #import <ffmpeg/avformat.h>
+    #import <ffmpeg/swscale.h>
+#else
+    #import <libavcodec/avcodec.h>
+    #import <libavformat/avformat.h>
+    #import <libswscale/swscale.h>
+#endif
 
 @interface FFContext : NSObject
 {
@@ -72,7 +75,7 @@ extern AVPacket s_flushPacket;
 - (BOOL)isEnabled;
 - (void)setEnabled:(BOOL)enabled;
 
-- (void)putPacket:(const AVPacket*)packet;
+- (void)putPacket:(AVPacket*)packet;
 
 @end
 
@@ -84,7 +87,6 @@ extern AVPacket s_flushPacket;
 
 @interface FFVideoTrack : FFTrack
 {
-    #define MAX_VIDEO_DATA_BUF_SIZE 8
     PacketQueue* _packetQueue;
     AVFrame* _frame;   // for decoding
     ImageQueue* _imageQueue;
@@ -95,7 +97,7 @@ extern AVPacket s_flushPacket;
     BOOL _needPtsAdjust;
     double _frameInterval;
     double _nextFrameTime;
-    int64_t _nextFramePts;
+    double _nextFramePts;
 }
 
 + (id)videoTrackWithAVStream:(AVStream*)stream index:(int)index;

@@ -149,7 +149,6 @@
     enumerator = [_videoTracks objectEnumerator];
     while (vTrack = (FFVideoTrack*)[[enumerator nextObject] impl]) {
         if ([vTrack isEnabled] && [vTrack streamIndex] == packet.stream_index) {
-            av_dup_packet(&packet);
             [vTrack putPacket:&packet];
             //TRACE(@"[%s] frame id %d flag %d pts %lld dts %lld pos %lld", __PRETTY_FUNCTION__, 
             //      packet.stream_index,

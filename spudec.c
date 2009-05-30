@@ -29,7 +29,9 @@
 //#include "libvo/video_out.h"
 #include "spudec.h"
 //#include "avutil.h"
-#include "libswscale/swscale.h"
+#ifndef __BIG_ENDIAN__
+    #include "libswscale/swscale.h"
+#endif
 
 #define MIN(a, b)	((a)<(b)?(a):(b))
 

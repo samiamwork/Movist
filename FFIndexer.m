@@ -24,12 +24,28 @@
 #import "FFIndexer.h"
 #import "MMovie_FFmpeg.h"
 
-//#import <ffmpeg/avio.h>
-#import <libavformat/avio.h>
+#ifdef __BIG_ENDIAN__
+    #import <ffmpeg/avio.h>
+#else
+    #import <libavformat/avio.h>
+#endif
 #import <fcntl.h>
 
 ///////////// copied from ffmpeg/libavformat/avformat.h ///////////////////////
 
+#ifdef __BIG_ENDIAN__
+typedef struct {
+    int64_t  riff_end;
+    int64_t  movi_end;
+    int64_t  fsize;
+    offset_t movi_list;
+    int index_loaded;
+    int is_odml;
+    int non_interleaved;
+    int stream_index;
+    struct DVDemuxContext* dv_demux;
+} AVIContext;
+#else
 typedef struct {
     int64_t  riff_end;
     int64_t  movi_end;
@@ -42,18 +58,7 @@ typedef struct {
     int stream_index;
     struct DVDemuxContext* dv_demux;
 } AVIContext;
-
-/* typedef struct {
-	int64_t  riff_end;
-	int64_t  movi_end;
-	int64_t  fsize;
-	offset_t movi_list;
-	int index_loaded;
-	int is_odml;
-	int non_interleaved;
-	int stream_index;
-	struct DVDemuxContext* dv_demux;
-} AVIContext; */
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 

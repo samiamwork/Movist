@@ -42,11 +42,6 @@
 		// request downmix.
         context->request_channels = 2;
     }
-    // FIXME: hack for DTS;
-    if (context->codec_id == CODEC_ID_DTS && context->channels == 5) {
-        TRACE(@"dts audio channel is 5? maybe 6...");
-        context->channels = 6;
-    }  
 
     if (![super initTrack:errorCode]) {
         return FALSE;

@@ -109,8 +109,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-#define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
+#ifdef __BIG_ENDIAN__
+	#define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
+#else
+	#define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
+#endif
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
+#define MAX_VIDEO_DATA_BUF_SIZE 8
+#define _EXPERIMENTAL_AV_SYNC
 
 @interface ImageQueue : NSObject
 {
@@ -119,6 +125,7 @@
     unsigned int _capacity;
     unsigned int _front;
     unsigned int _rear;
+    BOOL _full;
     NSLock* _mutex;
 }
 @end
@@ -135,6 +142,9 @@
 	}
 	
 	_capacity = bufSize;
+    _front = _rear = 0;
+    _full = FALSE;
+    
     int i;
     for (i = 0; i < bufSize; i++) {
         _frame[i] = avcodec_alloc_frame();
@@ -180,12 +190,12 @@
 
 - (BOOL)isEmpty 
 {
-	return (_front == _rear); 
+	return (_front == _rear && !_full); 
 }
 
 - (BOOL)isFull 
 { 
-	return (_front == (_rear + 1) % _capacity); 
+	return (_front == _rear && _full); 
 }
 
 - (void)clear 
@@ -213,6 +223,9 @@
 	[_mutex lock];
 	_time[_rear] = time;
 	_rear = (_rear + 1) % _capacity;
+    if (_rear == _front) {
+        _full = TRUE;
+    }
     [_mutex unlock];
 }
 
@@ -220,6 +233,7 @@
 {
 	[_mutex lock];
 	_front = (_front + 1) % _capacity;
+    _full = FALSE;
     [_mutex unlock];
 }
 
@@ -269,18 +283,22 @@
     }
 
     // init playback
+#ifndef _EXPERIMENTAL_AV_SYNC
     _packetQueue = [[PacketQueue alloc] initWithCapacity:30 * 5];  // 30 fps * 5 sec.
+#endif
 	_imageQueue = [[ImageQueue alloc] init:MAX_VIDEO_DATA_BUF_SIZE width:width height:height];
     _needKeyFrame = FALSE;
     _useFrameDrop = _stream->r_frame_rate.num / _stream->r_frame_rate.den > 30;
-    _frameInterval = 1. / (_stream->r_frame_rate.num / _stream->r_frame_rate.den);
+    _frameInterval = 1. * _stream->r_frame_rate.den / _stream->r_frame_rate.num;
 	_seeked = FALSE;
 	_nextFrameTime = 0;
 	_nextFramePts = 0;
 
+#ifndef _EXPERIMENTAL_AV_SYNC
     _running = TRUE;
     [NSThread detachNewThreadSelector:@selector(decodeThreadFunc:)
                              toTarget:self withObject:nil];
+#endif
 
     return TRUE;
 }
@@ -298,8 +316,10 @@
         _frame = 0;
     }
 	[_imageQueue release];
+#ifndef _EXPERIMENTAL_AV_SYNC
     [_packetQueue release];
     _packetQueue = 0;
+#endif
 
     [super cleanupTrack];
 }
@@ -311,23 +331,20 @@
 
 - (BOOL)isQueueEmpty
 {
+#ifdef _EXPERIMENTAL_AV_SYNC
+    return [_imageQueue isEmpty];
+#else
     return [_packetQueue isEmpty];
+#endif
 }
 
 - (BOOL)isQueueFull
 {
+#ifdef _EXPERIMENTAL_AV_SYNC
+    return [_imageQueue capacity] - 2 <= [_imageQueue count] || ![_movie canDecodeVideo];
+#else
     return [_packetQueue isFull];
-}
-
-- (void)putPacket:(const AVPacket*)packet
-{
-    [_packetQueue putPacket:packet];
-}
-
-- (void)clearQueue
-{
-    [_packetQueue clear];
-    [self putPacket:&s_flushPacket];
+#endif
 }
 
 - (void)seek:(double)time
@@ -340,31 +357,42 @@
 	_needPtsAdjust = enable;
 }
 
+#ifdef _EXPERIMENTAL_AV_SYNC
+- (double)decodePacket:(AVPacket*)packet
+#else
 - (double)decodePacket
+#endif
 {
-    //TRACE(@"%s(%d) %d", __PRETTY_FUNCTION__, _nextDataBufId, _decodedImageCount);
-    AVPacket packet;
-    if (![_packetQueue getPacket:&packet]) {
+#ifndef _EXPERIMENTAL_AV_SYNC
+    AVPacket packetInst;
+    AVPacket* packet = &packetInst;
+    if (![_packetQueue getPacket:packet]) {
         //TRACE(@"%s no more packet", __PRETTY_FUNCTION__);
         return -1;
     }
+#endif
 
-    if (packet.stream_index != _streamIndex) {
-        TRACE(@"%s invalid stream_index %d", __PRETTY_FUNCTION__, packet.stream_index);
+    if (packet->stream_index != _streamIndex) {
+        TRACE(@"%s invalid stream_index %d", __PRETTY_FUNCTION__, packet->stream_index);
         return -1;
     }
-    assert(packet.stream_index == _streamIndex);
+    assert(packet->stream_index == _streamIndex);
 
-    if (packet.data == s_flushPacket.data) {
+    if (packet->data == s_flushPacket.data) {
         TRACE(@"%s avcodec_flush_buffers", __PRETTY_FUNCTION__);
         avcodec_flush_buffers(_stream->codec);
         return -1;
     }
 
     int gotFrame;
+#ifdef __BIG_ENDIAN__
+    int bytesDecoded = avcodec_decode_video(_stream->codec, _frame,
+                                             &gotFrame, packet->data, packet->size);
+#else
     int bytesDecoded = avcodec_decode_video2(_stream->codec, _frame,
-                                            &gotFrame, &packet);
-    av_free_packet(&packet);
+                                            &gotFrame, packet);
+#endif
+    av_free_packet(packet);
     if (bytesDecoded < 0) {
         TRACE(@"%s error while decoding frame", __PRETTY_FUNCTION__);
         return -1;
@@ -375,8 +403,8 @@
     }
 
     int64_t pts = 0;
-    if (packet.dts != AV_NOPTS_VALUE) {
-        pts = packet.dts;
+    if (packet->dts != AV_NOPTS_VALUE) {
+        pts = packet->dts;
     }
     else if (_frame->opaque && *(uint64_t*)_frame->opaque != AV_NOPTS_VALUE) {
         pts = *(uint64_t*)_frame->opaque;
@@ -384,25 +412,19 @@
 	double time;
 	double timeErr = (_nextFramePts - pts) * av_q2d(_stream->time_base);
 	if (_needPtsAdjust && _seeked &&
-		_frame->pict_type != FF_I_TYPE && packet.duration &&
+		_frame->pict_type != FF_I_TYPE && packet->duration &&
 		-1. < timeErr && timeErr < 1.) {
-		//time = _nextFrameTime;
 		time = (double)(_nextFramePts) * av_q2d(_stream->time_base);
-		_nextFramePts += packet.duration;
+        _nextFramePts += _frameInterval / av_q2d(_stream->time_base);
 	}
 	else {
 		time = (double)(pts) * av_q2d(_stream->time_base);
-		_nextFramePts = pts + packet.duration;
+		_nextFramePts = pts + _frameInterval / av_q2d(_stream->time_base);
 	}
-	//_nextFrameTime = time + _frameInterval;
-
-//	static int64_t prevPts;
-//	if (pts - prevPts != packet.duration) {
-//		TRACE(@"pts %lld prevPts %lld duration %d", pts, prevPts, packet.duration);
-//	}
-//	prevPts = pts;
-	
-	//TRACE(@"%s %f %f %f", __PRETTY_FUNCTION__, pts, av_q2d(_stream->time_base), (double)(pts * av_q2d(_stream->time_base)));
+	//TRACE(@"[%s] frame flag %d pts %lld dts %lld pos %lld time %f timeErr %f", __PRETTY_FUNCTION__, 
+	//	  _frame->pict_type, 
+	//	  packet.pts, packet.dts,
+	//	  packet.pos, time, timeErr);
     return time;
 }
 
@@ -421,6 +443,37 @@
     return TRUE;
 }
 
+- (void)clearQueue
+{
+#ifdef _EXPERIMENTAL_AV_SYNC
+    [self decodePacket:&s_flushPacket];
+#else
+    [_packetQueue clear];
+    [self putPacket:&s_flushPacket];
+#endif
+}
+
+- (void)putPacket:(AVPacket*)packet
+{
+#ifdef _EXPERIMENTAL_AV_SYNC
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    double frameTime = [self decodePacket:packet];
+    if (frameTime < 0) {
+        [pool release];
+        return;
+    }
+    AVFrame* frame = [_imageQueue back];
+    [self convertImage:frame];
+    [_imageQueue enqueue:frame time:frameTime];
+    [_movie videoTrack:self decodedTime:frameTime];
+    [pool release];
+#else
+    av_dup_packet(&packet);
+    [_packetQueue putPacket:packet];
+#endif
+}
+
+#ifndef _EXPERIMENTAL_AV_SYNC
 - (void)decodeThreadFunc:(id)anObject
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -453,6 +506,7 @@
 
     TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
+#endif
 
 - (BOOL)isNewImageAvailable:(double)hostTime
              hostTime0point:(double*)hostTime0point

@@ -66,14 +66,22 @@
     context->skip_frame = AVDISCARD_DEFAULT;
     context->skip_idct = AVDISCARD_DEFAULT;
     context->skip_loop_filter = AVDISCARD_DEFAULT;
-//    context->error_resilience = FF_ER_CAREFUL;
+#ifdef __BIG_ENDIAN__
+    context->error_resilience = FF_ER_CAREFUL;
+#else
     context->error_recognition = FF_ER_CAREFUL;
+#endif
     context->error_concealment = 3;
     
     if (avcodec_open(context, codec) < 0) {
         *errorCode = ERROR_FFMPEG_CODEC_OPEN_FAILED;
         return FALSE;
     }
+	
+    if (context->codec_type == CODEC_TYPE_VIDEO) {
+        avcodec_thread_init(context, 2);
+    }
+	
     return TRUE;
 }
 

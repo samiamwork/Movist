@@ -23,8 +23,11 @@
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
 
-#import <libavformat/avformat.h>    // for AVFormatContext
-//#import <ffmpeg/avformat.h>    // for AVFormatContext
+#ifdef __BIG_ENDIAN__
+    #import <ffmpeg/avformat.h>    // for AVFormatContext
+#else
+    #import <libavformat/avformat.h>    // for AVFormatContext
+#endif
 
 #import "Movist.h"
 
