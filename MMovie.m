@@ -138,6 +138,12 @@
 {
     AVCodecContext* codecContext = stream->codec;
 
+    // fix some strange codec_width/height with display-width/height.
+    if (codecContext->coded_width == 0 && codecContext->coded_height == 0) {
+        codecContext->coded_width  = codecContext->width;
+        codecContext->coded_height = codecContext->height;
+    }
+
     NSString* fourCC = nil;
     if (codecContext->codec_tag != 0) {
         unsigned int tag = codecContext->codec_tag;
