@@ -468,7 +468,7 @@
     [_movie videoTrack:self decodedTime:frameTime];
     [pool release];
 #else
-    av_dup_packet(&packet);
+    av_dup_packet(packet);
     [_packetQueue putPacket:packet];
 #endif
 }
