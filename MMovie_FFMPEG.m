@@ -24,6 +24,7 @@
 #import "MMovie_FFmpeg.h"
 #import "FFTrack.h"
 #import "FFIndexer.h"
+#import "UserDefaults.h"
 
 #if defined(DEBUG)
 void traceAVFormatContext(AVFormatContext* formatContext)
@@ -187,13 +188,16 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _trackMutex = [[NSLock alloc] init];
     bool needPtsAdjust = strstr(_formatContext->iformat->name, "matroska");
-    
+
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    int videoQueueCapacity = [defaults integerForKey:MVideoQueueCapacityKey];
+
     MTrack* track;
     FFVideoTrack* vTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
     while (track = (MTrack*)[enumerator nextObject]) {
         vTrack = (FFVideoTrack*)[track impl];
-        if ([vTrack initTrack:errorCode]) {
+        if ([vTrack initTrack:errorCode videoQueueCapacity:videoQueueCapacity]) {
             if (!_mainVideoTrack) {
                 _mainVideoTrack = vTrack;
             }

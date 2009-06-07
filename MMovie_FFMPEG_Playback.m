@@ -234,6 +234,8 @@
         }
     }
 
+    _dispatchNextImage = TRUE;
+
     if ([self duration] < _seekTime) {
         TRACE(@"file end %f < %f", [self duration], _seekTime);
         _fileEnded = TRUE;
@@ -278,6 +280,7 @@
     //_hostTime = 0;
     _playAfterSeek = TRUE;
     _dispatchPacket = TRUE;
+    _dispatchNextImage = TRUE;
     NSAutoreleasePool* pool;
     while (DEFAULT_FUNC_CONDITION) {
         pool = [[NSAutoreleasePool alloc] init];
@@ -306,6 +309,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _dispatchPacket = FALSE;
     _playAfterSeek = FALSE;
+    _dispatchNextImage = FALSE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -448,7 +452,7 @@
 {
     double hostTime = (double)timeStamp->hostTime / _hostTimeFreq;
     [_trackMutex lock];
-    if (!_mainVideoTrack) {
+    if (!_mainVideoTrack || !_dispatchNextImage) {
         [_trackMutex unlock];
         return 0;
     }

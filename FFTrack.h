@@ -102,6 +102,7 @@ extern AVPacket s_flushPacket;
 
 + (id)videoTrackWithAVStream:(AVStream*)stream index:(int)index;
 
+- (BOOL)initTrack:(int*)errorCode videoQueueCapacity:(int)videoQueueCapacity;
 - (BOOL)isIndexComplete;
 - (BOOL)isQueueEmpty;
 - (BOOL)isQueueFull;

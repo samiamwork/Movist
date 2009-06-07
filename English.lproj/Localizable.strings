@@ -163,6 +163,7 @@
 "Capture Format" = "Capture Format";
 "Include Letter Box on Capture" = "Include Letter Box on Capture";
 "Remove Green Box" = "Remove Green Box";
+"Video Queue Capacity (8~99)" = "Video Queue Capacity (8~99)";
 
 /* Preferences: advanced - details: subtitle */
 "Use QuickTime/Perian Subtitles" = "Use QuickTime/Perian Subtitles";

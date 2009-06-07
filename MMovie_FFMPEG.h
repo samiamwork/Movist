@@ -62,6 +62,7 @@ enum {
     NSLock* _trackMutex;
     BOOL _running;
     BOOL _quitRequested;
+    BOOL _dispatchNextImage;
     BOOL _dispatchPacket;
     BOOL _seekComplete;
     BOOL _fileEnded;

@@ -36,10 +36,10 @@ rm -rf ffmpeg
 #tar xvfj ffmpeg-$FFMPEG_VERSION.tar.bz2
 #mv ffmpeg-$FFMPEG_VERSION ffmpeg
 
-#svn co svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
+svn co svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
-svn co -r $FFMPEG_REVISION svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
-(cd ffmpeg/libswscale && svn up -r $FFMPEG_SWSCALE_REVISION)
+#svn co -r $FFMPEG_REVISION svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
+#(cd ffmpeg/libswscale && svn up -r $FFMPEG_SWSCALE_REVISION)
 #(cd ffmpeg&& patch -p0 < ../Patches/ffmpeg-macosx-intel-mmx.patch)
 
 

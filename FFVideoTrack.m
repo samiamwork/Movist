@@ -115,13 +115,13 @@
     #define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
 #endif
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
-#define MAX_VIDEO_DATA_BUF_SIZE 24
+
 #define _EXPERIMENTAL_AV_SYNC
 
 @interface ImageQueue : NSObject
 {
-    AVFrame* _frame[MAX_VIDEO_DATA_BUF_SIZE];
-    double _time[MAX_VIDEO_DATA_BUF_SIZE];
+	AVFrame** _frame;
+	double* _time;
     unsigned int _capacity;
     unsigned int _front;
     unsigned int _rear;
@@ -132,21 +132,21 @@
 
 @implementation ImageQueue
 
-- (id)init:(unsigned int)bufSize
-     width:(int)width
-    height:(int)height
+- (id)initWithCapacity:(unsigned int)capacity width:(int)width	height:(int)height
 {
     self = [super init];
-    if (!self) {
-        return 0;
-    }
-    
-    _capacity = bufSize;
+	if (!self) {
+		return 0;
+	}
+
+    _frame = (AVFrame**)malloc(sizeof(AVFrame*) * capacity);
+    _time = (double*)malloc(sizeof(double) * capacity);
+	_capacity = capacity;
     _front = _rear = 0;
     _full = FALSE;
     
     int i;
-    for (i = 0; i < bufSize; i++) {
+    for (i = 0; i < _capacity; i++) {
         _frame[i] = avcodec_alloc_frame();
         if (_frame[i] == 0) {
             TRACE(@"ERROR_FFMPEG_FRAME_ALLOCATE_FAILED");
@@ -175,6 +175,8 @@
             _frame[i] = 0;
         }
     }
+    free(_frame);
+    free(_time);
     [super dealloc];
 }
 
@@ -258,8 +260,8 @@
     return [[[FFVideoTrack alloc] initWithAVStream:stream index:index] autorelease];
 }
 
-- (BOOL)initTrack:(int*)errorCode
-{    
+- (BOOL)initTrack:(int*)errorCode videoQueueCapacity:(int)videoQueueCapacity
+{
     _enabled = FALSE;
     _running = FALSE;
 
@@ -294,7 +296,8 @@
 #ifndef _EXPERIMENTAL_AV_SYNC
     _packetQueue = [[PacketQueue alloc] initWithCapacity:30 * 5];  // 30 fps * 5 sec.
 #endif
-    _imageQueue = [[ImageQueue alloc] init:MAX_VIDEO_DATA_BUF_SIZE width:width height:height];
+	_imageQueue = [[ImageQueue alloc] initWithCapacity:videoQueueCapacity
+                                                 width:width height:height];
     _needKeyFrame = FALSE;
     _useFrameDrop = _stream->r_frame_rate.num / _stream->r_frame_rate.den > 30;
     _frameInterval = 1. * _stream->r_frame_rate.den / _stream->r_frame_rate.num;
@@ -544,12 +547,12 @@
                  hostTime0point:(double*)hostTime0point
 {
     [_imageQueue lock];
-    if (![self isNewImageAvailable:hostTime
-                    hostTime0point:hostTime0point]) {
+	if (![self isNewImageAvailable:hostTime
+					hostTime0point:hostTime0point]) {
         [_imageQueue unlock];
-        return 0;
-    }
-    
+		return 0;
+	}
+
     *currentTime = [_imageQueue time];
 
     CVPixelBufferRef bufferRef = 0;
@@ -564,7 +567,7 @@
     if (ret != kCVReturnSuccess) {
         TRACE(@"CVPixelBufferCreateWithBytes() failed : %d", ret);
     }
-    
+
     [_imageQueue dequeue];
     [_imageQueue unlock];
     return bufferRef;

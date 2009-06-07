@@ -496,10 +496,25 @@
 
     if (enabledCount == 0) {
         // select first language by default
+        MSubtitle* firstExternal = nil;
+        MSubtitle* firstEmbedded = nil;
         NSEnumerator* e = [_subtitles objectEnumerator];
-        [[e nextObject] setEnabled:TRUE];
         while (subtitle = [e nextObject]) {
             [subtitle setEnabled:FALSE];
+            if ([subtitle isEmbedded]) {
+                if (!firstEmbedded) {
+                    firstEmbedded = subtitle;
+                }
+            }
+            else if (!firstExternal) {
+                firstExternal = subtitle;
+            }
+        }
+        if (firstExternal) {
+            [firstExternal setEnabled:TRUE];
+        }
+        else if (firstEmbedded) {
+            [firstEmbedded setEnabled:TRUE];
         }
     }
 }
