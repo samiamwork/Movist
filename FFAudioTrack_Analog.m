@@ -181,6 +181,12 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 - (BOOL)initAudioUnit
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
+    
+    if (_stream->codec->sample_fmt != SAMPLE_FMT_S16) {
+        TRACE(@"audio sample format is not signed short\n");
+        return false;
+    }
+
     ComponentDescription desc;
     desc.componentType = kAudioUnitType_Output;
     desc.componentSubType = kAudioUnitSubType_DefaultOutput;
@@ -211,7 +217,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     }
 
     AVCodecContext* context = _stream->codec;
-    assert(context->sample_fmt == SAMPLE_FMT_S16);
 #ifdef _USE_AUDIO_DATA_FLOAT_BIT
     UInt32 formatFlags =  kAudioFormatFlagsNativeFloatPacked
                         | kAudioFormatFlagIsNonInterleaved;
