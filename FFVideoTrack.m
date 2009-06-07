@@ -110,18 +110,18 @@
 #pragma mark -
 
 #ifdef __BIG_ENDIAN__
-	#define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
+    #define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
 #else
-	#define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
+    #define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
 #endif
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
-#define MAX_VIDEO_DATA_BUF_SIZE 8
+#define MAX_VIDEO_DATA_BUF_SIZE 24
 #define _EXPERIMENTAL_AV_SYNC
 
 @interface ImageQueue : NSObject
 {
-	AVFrame* _frame[MAX_VIDEO_DATA_BUF_SIZE];
-	double _time[MAX_VIDEO_DATA_BUF_SIZE];
+    AVFrame* _frame[MAX_VIDEO_DATA_BUF_SIZE];
+    double _time[MAX_VIDEO_DATA_BUF_SIZE];
     unsigned int _capacity;
     unsigned int _front;
     unsigned int _rear;
@@ -133,15 +133,15 @@
 @implementation ImageQueue
 
 - (id)init:(unsigned int)bufSize
-	 width:(int)width
-	height:(int)height
+     width:(int)width
+    height:(int)height
 {
     self = [super init];
-	if (!self) {
-		return 0;
-	}
-	
-	_capacity = bufSize;
+    if (!self) {
+        return 0;
+    }
+    
+    _capacity = bufSize;
     _front = _rear = 0;
     _full = FALSE;
     
@@ -160,7 +160,7 @@
         avpicture_fill((AVPicture*)_frame[i], malloc(bufSize),
                        RGB_PIXEL_FORMAT, bufWidth, height);
     }
-	_mutex = [[NSRecursiveLock alloc] init];
+    _mutex = [[NSRecursiveLock alloc] init];
     return self;
 }
 
@@ -180,60 +180,68 @@
 
 - (int)capacity
 {
-	return _capacity;
+    return _capacity;
 }
 
 - (int)count 
 { 
-	return (_capacity + _rear - _front) % _capacity; 
+    return (_capacity + _rear - _front) % _capacity; 
 }
 
 - (BOOL)isEmpty 
 {
-	return (_front == _rear && !_full); 
+    return (_front == _rear && !_full); 
 }
 
 - (BOOL)isFull 
 { 
-	return (_front == _rear && _full); 
+    return (_front == _rear && _full); 
 }
 
 - (void)clear 
 { 
+    [_mutex lock];
     _rear = _front; 
+    [_mutex unlock];
 }
 
 - (AVFrame*)front
 {
-	return _frame[_front];
+    return _frame[_front];
 }
 
 - (AVFrame*)back 
 { 
-	return _frame[_rear]; 
+    return _frame[_rear]; 
 }
 
 - (double)time 
 {
-	return _time[_front];
+    return _time[_front];
 }
 
 - (void)enqueue:(AVFrame*)frame time:(double)time
 {
-	[_mutex lock];
-	_time[_rear] = time;
-	_rear = (_rear + 1) % _capacity;
+    _time[_rear] = time;
+    _rear = (_rear + 1) % _capacity;
     if (_rear == _front) {
         _full = TRUE;
     }
-    [_mutex unlock];
 }
 
 - (void)dequeue
 {
-	[_mutex lock];
-	_front = (_front + 1) % _capacity;
+    _front = (_front + 1) % _capacity;
     _full = FALSE;
+}
+
+- (void)lock
+{
+    [_mutex lock];
+}
+
+- (void)unlock
+{
     [_mutex unlock];
 }
 
@@ -286,13 +294,13 @@
 #ifndef _EXPERIMENTAL_AV_SYNC
     _packetQueue = [[PacketQueue alloc] initWithCapacity:30 * 5];  // 30 fps * 5 sec.
 #endif
-	_imageQueue = [[ImageQueue alloc] init:MAX_VIDEO_DATA_BUF_SIZE width:width height:height];
+    _imageQueue = [[ImageQueue alloc] init:MAX_VIDEO_DATA_BUF_SIZE width:width height:height];
     _needKeyFrame = FALSE;
     _useFrameDrop = _stream->r_frame_rate.num / _stream->r_frame_rate.den > 30;
     _frameInterval = 1. * _stream->r_frame_rate.den / _stream->r_frame_rate.num;
-	_seeked = FALSE;
-	_nextFrameTime = 0;
-	_nextFramePts = 0;
+    _seeked = FALSE;
+    _nextFrameTime = 0;
+    _nextFramePts = 0;
 
 #ifndef _EXPERIMENTAL_AV_SYNC
     _running = TRUE;
@@ -315,7 +323,7 @@
         av_free(_frame);
         _frame = 0;
     }
-	[_imageQueue release];
+    [_imageQueue release];
 #ifndef _EXPERIMENTAL_AV_SYNC
     [_packetQueue release];
     _packetQueue = 0;
@@ -349,12 +357,12 @@
 
 - (void)seek:(double)time
 {
-	_seeked = TRUE;
+    _seeked = TRUE;
 }
 
 - (void)enablePtsAdjust:(BOOL)enable
 {
-	_needPtsAdjust = enable;
+    _needPtsAdjust = enable;
 }
 
 #ifdef _EXPERIMENTAL_AV_SYNC
@@ -409,22 +417,22 @@
     else if (_frame->opaque && *(uint64_t*)_frame->opaque != AV_NOPTS_VALUE) {
         pts = *(uint64_t*)_frame->opaque;
     }
-	double time;
-	double timeErr = (_nextFramePts - pts) * av_q2d(_stream->time_base);
-	if (_needPtsAdjust && _seeked &&
-		_frame->pict_type != FF_I_TYPE && packet->duration &&
-		-1. < timeErr && timeErr < 1.) {
-		time = (double)(_nextFramePts) * av_q2d(_stream->time_base);
+    double time;
+    double timeErr = (_nextFramePts - pts) * av_q2d(_stream->time_base);
+    if (_needPtsAdjust && _seeked &&
+        _frame->pict_type != FF_I_TYPE && packet->duration &&
+        -1. < timeErr && timeErr < 1.) {
+        time = (double)(_nextFramePts) * av_q2d(_stream->time_base);
         _nextFramePts += _frameInterval / av_q2d(_stream->time_base);
-	}
-	else {
-		time = (double)(pts) * av_q2d(_stream->time_base);
-		_nextFramePts = pts + _frameInterval / av_q2d(_stream->time_base);
-	}
-	//TRACE(@"[%s] frame flag %d pts %lld dts %lld pos %lld time %f timeErr %f", __PRETTY_FUNCTION__, 
-	//	  _frame->pict_type, 
-	//	  packet.pts, packet.dts,
-	//	  packet.pos, time, timeErr);
+    }
+    else {
+        time = (double)(pts) * av_q2d(_stream->time_base);
+        _nextFramePts = pts + _frameInterval / av_q2d(_stream->time_base);
+    }
+    //TRACE(@"[%s] frame flag %d pts %lld dts %lld pos %lld time %f timeErr %f", __PRETTY_FUNCTION__, 
+    //      _frame->pict_type, 
+    //      packet.pts, packet.dts,
+    //      packet.pos, time, timeErr);
     return time;
 }
 
@@ -451,6 +459,7 @@
     [_packetQueue clear];
     [self putPacket:&s_flushPacket];
 #endif
+    [_imageQueue clear];
 }
 
 - (void)putPacket:(AVPacket*)packet
@@ -496,9 +505,9 @@
             [pool release];
             continue;
         }
-		AVFrame* frame = [_imageQueue back];
+        AVFrame* frame = [_imageQueue back];
         [self convertImage:frame];
-		[_imageQueue enqueue:frame time:frameTime];
+        [_imageQueue enqueue:frame time:frameTime];
         [_movie videoTrack:self decodedTime:frameTime];
         [pool release];
     }
@@ -531,19 +540,21 @@
 }
 
 - (CVOpenGLTextureRef)nextImage:(double)hostTime
-					currentTime:(double*)currentTime
-				 hostTime0point:(double*)hostTime0point
+                    currentTime:(double*)currentTime
+                 hostTime0point:(double*)hostTime0point
 {
-	if (![self isNewImageAvailable:hostTime
-					hostTime0point:hostTime0point]) {
-		return 0;
-	}
-	
+    [_imageQueue lock];
+    if (![self isNewImageAvailable:hostTime
+                    hostTime0point:hostTime0point]) {
+        [_imageQueue unlock];
+        return 0;
+    }
+    
     *currentTime = [_imageQueue time];
 
     CVPixelBufferRef bufferRef = 0;
     NSSize size = [_movie encodedSize];
-	AVFrame* frame = [_imageQueue front];
+    AVFrame* frame = [_imageQueue front];
     int ret = CVPixelBufferCreateWithBytes(0, size.width, size.height,
                                            kYUVSPixelFormat,    // k32ARGBPixelFormat
                                            frame->data[0], 
@@ -553,8 +564,9 @@
     if (ret != kCVReturnSuccess) {
         TRACE(@"CVPixelBufferCreateWithBytes() failed : %d", ret);
     }
-	
-	[_imageQueue dequeue];
+    
+    [_imageQueue dequeue];
+    [_imageQueue unlock];
     return bufferRef;
 }
 
