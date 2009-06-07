@@ -80,6 +80,7 @@
 	
     if (context->codec_type == CODEC_TYPE_VIDEO) {
         avcodec_thread_init(context, 2);
+        context->thread_count = 2;
     }
 	
     return TRUE;
