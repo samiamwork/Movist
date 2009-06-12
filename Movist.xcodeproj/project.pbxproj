@@ -332,6 +332,11 @@
 		AF1E05270DA77F3D00CE7196 /* FFIndexer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFIndexer.m; sourceTree = "<group>"; };
 		AF1E05370DA790A700CE7196 /* FFVideoTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFVideoTrack.m; sourceTree = "<group>"; };
 		AF1E10830DA8C6EA00CE7196 /* MMovie_Codec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovie_Codec.m; sourceTree = "<group>"; };
+		AF1EF6ED0FE2220E0038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AF1EF6EE0FE2221D0038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AF1EF6EF0FE2222D0038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = sk; path = sk.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		AF1EF6F00FE2224A0038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = sk; path = sk.lproj/Playlist.nib; sourceTree = "<group>"; };
+		AF1EF6F10FE222590038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = sk; path = sk.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AF2546800E40AC4500889018 /* MSubtitle_Render.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitle_Render.m; sourceTree = "<group>"; };
 		AF25C26D0D93EF6000AE9226 /* Action.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Action.tiff; path = Images/Action.tiff; sourceTree = "<group>"; };
 		AF25C26E0D93EF6000AE9226 /* ActionPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = ActionPressed.tiff; path = Images/ActionPressed.tiff; sourceTree = "<group>"; };
@@ -1088,6 +1093,7 @@
 				German,
 				Korean,
 				Turkish,
+				sk,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Movist */;
 			projectDirPath = "";
@@ -1347,6 +1353,7 @@
 				089C165DFE840E0CC02AAC07 /* English */,
 				AFC7D44D0C371C4C00F5EA5C /* Korean */,
 				AFCA763D0F4B99E6008DBDCD /* Turkish */,
+				AF1EF6ED0FE2220E0038E2A0 /* sk */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1357,6 +1364,7 @@
 				29B97319FDCFA39411CA2CEA /* English */,
 				AFC7D42E0C37138500F5EA5C /* Korean */,
 				AFCA76390F4B99A8008DBDCD /* Turkish */,
+				AF1EF6EF0FE2222D0038E2A0 /* sk */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -1367,6 +1375,7 @@
 				AF07D2150BE71FD400D7EC30 /* English */,
 				AFC7D4330C37160300F5EA5C /* Korean */,
 				AFCA763B0F4B99CB008DBDCD /* Turkish */,
+				AF1EF6F10FE222590038E2A0 /* sk */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
@@ -1377,6 +1386,7 @@
 				AF76EF170BF60AE2000995C9 /* English */,
 				AFC7D4300C3715A500F5EA5C /* Korean */,
 				AFCA763A0F4B99BA008DBDCD /* Turkish */,
+				AF1EF6F00FE2224A0038E2A0 /* sk */,
 			);
 			name = Playlist.nib;
 			sourceTree = "<group>";
@@ -1387,6 +1397,7 @@
 				AFC7D3A80C37084800F5EA5C /* English */,
 				AFC7D3DE0C370FD100F5EA5C /* Korean */,
 				AFCA763C0F4B99E0008DBDCD /* Turkish */,
+				AF1EF6EE0FE2221D0038E2A0 /* sk */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
