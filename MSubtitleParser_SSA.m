@@ -105,6 +105,9 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
     else {
         sr = *rangePtr;
     }
+    if ([styles characterAtIndex:NSMaxRange(sr) - 1] == '\r') {
+        sr.length--;    // remove last '\r'
+    }
     NSString* s = [styles substringWithRange:sr];
     NSArray* as = [s componentsSeparatedByString:@","];
     NSMutableArray* format = [NSMutableArray arrayWithCapacity:[as count]];
@@ -263,6 +266,15 @@ static float movieTimeFromString(NSString* string)
     while (format = [e nextObject]) {
         if ([format isEqualToString:@"Text"]) {
             // text may be the last formatted string.
+            // remove last '\r' and '\n'.
+            unichar c;
+            while (0 < range.length) {
+                c = [string characterAtIndex:NSMaxRange(range) - 1];
+                if (c != '\r' && c != '\n') {
+                    break;
+                }
+                range.length--;
+            }
             text = [string substringWithRange:range];
         }
         else {
