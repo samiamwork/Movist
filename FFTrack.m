@@ -122,6 +122,7 @@ AVPacket s_flushPacket;
     if (![self initContext:errorCode]) {
         return FALSE;
     }
+    _dataPoppingStarted = FALSE;
 
     return TRUE;
 }
@@ -143,6 +144,8 @@ AVPacket s_flushPacket;
 
 - (BOOL)isEnabled { return _enabled; }
 - (void)setEnabled:(BOOL)enabled { _enabled = enabled; }
+
+- (BOOL)isDataPoppingStarted { return _dataPoppingStarted; }
 
 - (void)putPacket:(AVPacket*)packet {}
 

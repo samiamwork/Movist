@@ -493,7 +493,7 @@ static BOOL s_first = TRUE;
     int dataSize, decodedSize;
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-#ifdef __BIG_ENDIAN__
+#if 1 // def __BIG_ENDIAN__
         decodedSize = avcodec_decode_audio2(context,
                                             audioBuf, &dataSize,
                                             packetPtr, packetSize);
@@ -522,18 +522,19 @@ static BOOL s_first = TRUE;
     if (requestSize != 6144) {
         //TRACE(@"request audio data size %d", requestSize);
     }
-    
+    _dataPoppingStarted = TRUE;
     if (![self isEnabled] || 
         [_movie quitRequested] ||
         [_movie reservedCommand] != COMMAND_NONE ||
+        [_movie isPlayLocked] ||
         [_movie command] != COMMAND_PLAY ||
         [_rawDataQueue isEmpty]) {
         memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
         //TRACE(@"no audio data, queue(%f)", [_rawDataQueue current]);
         [_movie audioTrack:self avFineTuningTime:(double)0];
+        _dataPoppingStarted = FALSE;
         return;
     }
-    
     
     double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
     double currentTime = hostTime - [_movie hostTime0point];
@@ -547,6 +548,7 @@ static BOOL s_first = TRUE;
                 memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
                 [_movie audioTrack:self avFineTuningTime:0];
                 //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, audioTime, dt);
+                _dataPoppingStarted = FALSE;
                 return;
             }
             dt = 0;
@@ -555,6 +557,7 @@ static BOOL s_first = TRUE;
             memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
             [_movie audioTrack:self avFineTuningTime:0];
             //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, audioTime, dt);
+            _dataPoppingStarted = FALSE;
             return;
         }
     }
@@ -570,6 +573,7 @@ static BOOL s_first = TRUE;
     else {
         [_rawDataQueue getData:(UInt8*)(audioBuf.mData)];
     }
+    _dataPoppingStarted = FALSE;
 }
 
 - (void)clearDigitalDataQueue

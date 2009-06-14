@@ -355,7 +355,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     //TRACE(@"dts = %lld * %lf = %lf", packet->dts, PTS_TO_SEC, 1. * packet->dts * PTS_TO_SEC);
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-#ifdef __BIG_ENDIAN__
+#if 1 // def __BIG_ENDIAN__
         decodedSize = avcodec_decode_audio2(context,
                                             _audioDataBuf, &dataSize,
                                             packetPtr, packetSize);
@@ -442,7 +442,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     if (AUDIO_BUF_SIZE < requestSize) {
         TRACE(@"AUDIO_BUF_SIZE(%d) < requestSize(%d)", AUDIO_BUF_SIZE, requestSize);
         return;
-        assert(requestSize < AUDIO_BUF_SIZE);
+        //assert(requestSize < AUDIO_BUF_SIZE);
     }
 
     AUDIO_DATA_TYPE* dst[MAX_AUDIO_CHANNEL_SIZE];
@@ -451,17 +451,21 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         assert(ioData->mBuffers[i].mDataByteSize == 4 * frameNumber);
         assert(ioData->mBuffers[i].mNumberChannels == 1);
     }
+    _dataPoppingStarted = TRUE;
     if (![self isEnabled] ||
         [_movie quitRequested] ||
         [_movie reservedCommand] != COMMAND_NONE ||
+        [_movie isPlayLocked] ||
         [_movie command] != COMMAND_PLAY ||
+        0 == [_movie hostTime0point] ||
         [_dataQueue dataSize] < requestSize) {
         [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
         [_dataQueue getFirstTime:&_nextDecodedTime];
         [_movie audioTrack:self avFineTuningTime:0];
-        //double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
-        //double currentTime = hostTime - [_movie hostTime0point];
-        //TRACE(@"currentTime(%f) audioTime %f make empty", currentTime, _nextDecodedTime);
+        double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
+        double currentTime = hostTime - [_movie hostTime0point];
+        TRACE(@"currentTime(%f) audioTime %f make empty", currentTime, _nextDecodedTime);
+        _dataPoppingStarted = FALSE;
         return;
     }
     
@@ -471,12 +475,14 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     
     double dt = _nextDecodedTime - currentTime;
     if (dt < -0.2 || 0.2 < dt) {
-        if (dt < 0 && currentTime < [_dataQueue lastTime]) {
+        if (dt < 0) {
             [_dataQueue removeDataDuring:-dt channelNumber:channelNumber time:&_nextDecodedTime];
+            TRACE(@"remove dt:%f", dt);
             if ([_dataQueue dataSize] < requestSize) {
                 [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
                 [_movie audioTrack:self avFineTuningTime:0];
-                //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+                TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+                _dataPoppingStarted = FALSE;
                 return;
             }
             dt = 0;
@@ -484,7 +490,8 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         else {
             [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
             [_movie audioTrack:self avFineTuningTime:0];
-            //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+            TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+            _dataPoppingStarted = FALSE;
             return;
         }
     }
@@ -513,6 +520,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
             //dst[1][i] += dst[5][i] + (dst[2][i] + dst[3][i]) / 2;
         }
     }
+    _dataPoppingStarted = FALSE;
 }
 
 @end

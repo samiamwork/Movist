@@ -58,6 +58,7 @@ enum {
     int _reservedCommand;
     NSConditionLock* _commandLock;
     //NSLock* _avSyncMutex;
+    BOOL _playLocked;
     NSLock* _frameReadMutex;
     NSLock* _trackMutex;
     BOOL _running;
@@ -105,6 +106,7 @@ enum {
 
 - (int)command;
 - (int)reservedCommand;
+- (BOOL)isPlayLocked;
 - (BOOL)isRunning;
 - (BOOL)quitRequested;
 

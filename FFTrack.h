@@ -64,6 +64,7 @@ extern AVPacket s_flushPacket;
     MMovie_FFmpeg* _movie;
     BOOL _enabled;
     BOOL _running;
+    BOOL _dataPoppingStarted;
 }
 
 - (void)setMovie:(MMovie_FFmpeg*)movie;
@@ -76,6 +77,7 @@ extern AVPacket s_flushPacket;
 - (void)setEnabled:(BOOL)enabled;
 
 - (void)putPacket:(AVPacket*)packet;
+- (BOOL)isDataPoppingStarted;
 
 @end
 
@@ -94,6 +96,7 @@ extern AVPacket s_flushPacket;
     BOOL _needKeyFrame;
     BOOL _useFrameDrop;
     BOOL _seeked;
+    BOOL _decodeStarted;
     BOOL _needPtsAdjust;
     double _frameInterval;
     double _nextFrameTime;
@@ -106,6 +109,7 @@ extern AVPacket s_flushPacket;
 - (BOOL)isIndexComplete;
 - (BOOL)isQueueEmpty;
 - (BOOL)isQueueFull;
+- (BOOL)isDecodeStarted;
 - (void)clearQueue;
 - (void)seek:(double)time;
 - (void)enablePtsAdjust:(BOOL)enable;

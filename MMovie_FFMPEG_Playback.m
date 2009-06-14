@@ -41,6 +41,7 @@
     _commandLock = [[NSConditionLock alloc] initWithCondition:WAITING_FOR_COMMAND];
     //_avSyncMutex = [[NSLock alloc] init];
     _frameReadMutex = [[NSLock alloc] init];
+    _playLocked = FALSE;
 
     _rate = DEFAULT_PLAY_RATE;
     _playAfterSeek = FALSE;
@@ -211,16 +212,43 @@
     //_seekTime = _reservedSeekTime;
 }
 
-- (void)seekFunc
+- (void)lockPlay
 {
-    _seekTime = _reservedSeekTime;
-    TRACE(@"%s seek to %g", __PRETTY_FUNCTION__, _seekTime);
-    if (_indexedDuration < _duration &&
-        _indexedDuration < _seekTime) {
-        TRACE(@"not indexed time => repositioning to indexed-duration");
-        _seekTime = _indexedDuration;
-    }
+    _playLocked = true;
 
+    NSEnumerator* enumerator = [_videoTracks objectEnumerator];
+    MTrack* track = [enumerator nextObject];
+    while (track) {
+        if ([(FFVideoTrack*)[track impl] isDecodeStarted] ||
+            [(FFVideoTrack*)[track impl] isDataPoppingStarted]) {
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
+            continue;
+        }
+        track = [enumerator nextObject];
+    }
+    enumerator = [_audioTracks objectEnumerator];
+    track = [enumerator nextObject];
+    while (track) {
+        if ([(FFAudioTrack*)[track impl] isDataPoppingStarted]) {
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.001]];
+            continue;
+        }
+        track = [enumerator nextObject];
+    }
+}
+
+- (void)unlockPlay
+{
+    _playLocked = false;
+}
+
+- (BOOL)isPlayLocked
+{
+    return _playLocked;
+}
+
+- (void)clearAVData
+{
     MTrack* track;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
@@ -233,7 +261,23 @@
             [(FFAudioTrack*)[track impl] clearQueue];
         }
     }
+}
 
+
+- (void)seekFunc
+{
+    _seekTime = _reservedSeekTime;
+    TRACE(@"%s seek to %g", __PRETTY_FUNCTION__, _seekTime);
+    if (_indexedDuration < _duration &&
+        _indexedDuration < _seekTime) {
+        TRACE(@"not indexed time => repositioning to indexed-duration");
+        _seekTime = _indexedDuration;
+    }
+    
+    [self lockPlay];
+    [self clearAVData];
+    [self unlockPlay];
+ 
     _dispatchNextImage = TRUE;
 
     if ([self duration] < _seekTime) {

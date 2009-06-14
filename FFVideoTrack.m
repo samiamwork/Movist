@@ -116,7 +116,7 @@
 #endif
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
 
-#define _EXPERIMENTAL_AV_SYNC
+//#define _EXPERIMENTAL_AV_SYNC
 
 @interface ImageQueue : NSObject
 {
@@ -302,6 +302,7 @@
     _useFrameDrop = _stream->r_frame_rate.num / _stream->r_frame_rate.den > 30;
     _frameInterval = 1. * _stream->r_frame_rate.den / _stream->r_frame_rate.num;
     _seeked = FALSE;
+    _decodeStarted = FALSE;
     _nextFrameTime = 0;
     _nextFramePts = 0;
 
@@ -358,6 +359,11 @@
 #endif
 }
 
+- (BOOL)isDecodeStarted
+{
+    return _decodeStarted;
+}
+
 - (void)seek:(double)time
 {
     _seeked = TRUE;
@@ -396,7 +402,7 @@
     }
 
     int gotFrame;
-#ifdef __BIG_ENDIAN__
+#if 1 // def __BIG_ENDIAN__
     int bytesDecoded = avcodec_decode_video(_stream->codec, _frame,
                                              &gotFrame, packet->data, packet->size);
 #else
@@ -497,21 +503,25 @@
     NSAutoreleasePool* pool;
     while (![_movie quitRequested]) {
         pool = [[NSAutoreleasePool alloc] init];
+        _decodeStarted = TRUE;
         if ([_imageQueue capacity] - 3 <= [_imageQueue count] ||
+            [_movie isPlayLocked] ||
             ![_movie canDecodeVideo]) {
+            _decodeStarted = FALSE;
             [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
-            [pool release];
             continue;
         }
         double frameTime = [self decodePacket];
         if (frameTime < 0) {
             [pool release];
+            _decodeStarted = FALSE;
             continue;
         }
         AVFrame* frame = [_imageQueue back];
         [self convertImage:frame];
         [_imageQueue enqueue:frame time:frameTime];
         [_movie videoTrack:self decodedTime:frameTime];
+        _decodeStarted = FALSE;
         [pool release];
     }
     _running = FALSE;
@@ -546,10 +556,16 @@
                     currentTime:(double*)currentTime
                  hostTime0point:(double*)hostTime0point
 {
+    _dataPoppingStarted = TRUE;
+    if ([_movie isPlayLocked]) {
+        _dataPoppingStarted = FALSE;
+        return 0;
+    }
     [_imageQueue lock];
 	if (![self isNewImageAvailable:hostTime
 					hostTime0point:hostTime0point]) {
         [_imageQueue unlock];
+        _dataPoppingStarted = FALSE;
 		return 0;
 	}
 
@@ -570,6 +586,7 @@
 
     [_imageQueue dequeue];
     [_imageQueue unlock];
+    _dataPoppingStarted = FALSE;
     return bufferRef;
 }
 
