@@ -10,8 +10,8 @@ CFLAGS="-I$PREFIX/include $EXTRA_CFLAGS"
 LDFLAGS="-L$PREFIX/lib"
 
 FFMPEG_VERSION=0.5
-FFMPEG_REVISION=18971
-FFMPEG_SWSCALE_REVISION=29320
+FFMPEG_REVISION=19076
+FFMPEG_SWSCALE_REVISION=29344
 FFMPEG_REVISION_PPC=11914
 FFMPEG_SWSCALE_REVISION_PPC=25987
 
@@ -30,18 +30,19 @@ FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-ffplay"
 rm -rf ffmpeg
 
 #ffmpeg 0.5
-#if [ ! -e "ffmpeg-$FFMPEG_VERSION.tar.bz2" ]; then
-#	curl -L -O http://www.ffmpeg.org/releases/ffmpeg-$FFMPEG_VERSION.tar.bz2
-#fi
-#tar xvfj ffmpeg-$FFMPEG_VERSION.tar.bz2
-#mv ffmpeg-$FFMPEG_VERSION ffmpeg
+if [ ! -e "ffmpeg-$FFMPEG_VERSION.tar.bz2" ]; then
+	curl -L -O http://www.ffmpeg.org/releases/ffmpeg-$FFMPEG_VERSION.tar.bz2
+fi
+tar xvfj ffmpeg-$FFMPEG_VERSION.tar.bz2
+mv ffmpeg-$FFMPEG_VERSION ffmpeg
 
-svn co svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
+#svn co svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 
 #svn co -r $FFMPEG_REVISION svn://svn.mplayerhq.hu/ffmpeg/trunk ffmpeg
 #(cd ffmpeg/libswscale && svn up -r $FFMPEG_SWSCALE_REVISION)
 #(cd ffmpeg&& patch -p0 < ../Patches/ffmpeg-macosx-intel-mmx.patch)
 
+#(cd ffmpeg && svn up)
 
 ########## INTEL ###########
 
