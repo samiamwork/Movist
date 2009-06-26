@@ -496,7 +496,12 @@
 {
     double hostTime = (double)timeStamp->hostTime / _hostTimeFreq;
     [_trackMutex lock];
-    if (!_mainVideoTrack || !_dispatchNextImage) {
+    if (!_mainVideoTrack) {
+        [_trackMutex unlock];
+        return 0;
+    }
+    if (!_dispatchNextImage) {
+        _hostTime0point = hostTime - _currentTime;
         [_trackMutex unlock];
         return 0;
     }
@@ -509,6 +514,9 @@
         _hostTime0point -= _avFineTuningTime;
         [[NSNotificationCenter defaultCenter]
          postNotificationName:MMovieCurrentTimeNotification object:self];
+    }
+    else if (_command == COMMAND_NONE) {
+        _hostTime0point = hostTime - _currentTime;
     }
     [_trackMutex unlock];
     return image;
