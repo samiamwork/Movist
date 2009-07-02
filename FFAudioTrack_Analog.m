@@ -462,9 +462,9 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
         [_dataQueue getFirstTime:&_nextDecodedTime];
         [_movie audioTrack:self avFineTuningTime:0];
-        double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
-        double currentTime = hostTime - [_movie hostTime0point];
-        TRACE(@"currentTime(%f) audioTime %f make empty", currentTime, _nextDecodedTime);
+        //double hostTime = 1. * timeStamp->mHostTime / [_movie hostTimeFreq];
+        //double currentTime = hostTime - [_movie hostTime0point];
+        //TRACE(@"currentTime(%f) audioTime %f make empty", currentTime, _nextDecodedTime);
         _dataPoppingStarted = FALSE;
         return;
     }
@@ -477,11 +477,11 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     if (dt < -0.2 || 0.2 < dt) {
         if (dt < 0) {
             [_dataQueue removeDataDuring:-dt channelNumber:channelNumber time:&_nextDecodedTime];
-            TRACE(@"remove dt:%f", dt);
+            //TRACE(@"remove dt:%f", dt);
             if ([_dataQueue dataSize] < requestSize) {
                 [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
                 [_movie audioTrack:self avFineTuningTime:0];
-                TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+                //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
                 _dataPoppingStarted = FALSE;
                 return;
             }
@@ -490,7 +490,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         else {
             [self makeEmpty:dst channelNumber:channelNumber bufSize:frameNumber];
             [_movie audioTrack:self avFineTuningTime:0];
-            TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
+            //TRACE(@"currentTime(%f) audioTime %f dt:%f", currentTime, _nextDecodedTime, dt);
             _dataPoppingStarted = FALSE;
             return;
         }

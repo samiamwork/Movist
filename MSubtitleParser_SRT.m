@@ -290,6 +290,11 @@ SRTTag MMakeSRTTag(int type, int location, int length, NSString* attr)
     }
 
     NSRange cr = [self rangeOfString:@">" rangePtr:range];
+    if (cr.location == NSNotFound) {
+        range->location = [self length];
+        range->length = 0;
+        return MMakeSRTTag(TAG_NONE, NSNotFound, 0, nil);
+    }
 
     // find tag name
     int i, c = ([self characterAtIndex:or.location + 1] == '/') ? 1 : 0;
