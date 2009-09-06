@@ -85,6 +85,8 @@
             [name drawInRect:rc];
         }
     }
+    [name release];
+
     // container mark
     if ([self hasSubContents]) {
         rc.size.height = rect.size.height / 3;

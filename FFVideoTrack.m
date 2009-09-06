@@ -391,6 +391,7 @@
 
     if (packet->stream_index != _streamIndex) {
         TRACE(@"%s invalid stream_index %d", __PRETTY_FUNCTION__, packet->stream_index);
+        av_free_packet(packet);
         return -1;
     }
     assert(packet->stream_index == _streamIndex);
@@ -486,6 +487,12 @@
     [_movie videoTrack:self decodedTime:frameTime];
     [pool release];
 #else
+
+//    AVPacket pkt = *packet;
+//    av_dup_packet(&pkt);
+//    [_packetQueue putPacket:&pkt];
+//    av_free_packet(packet);
+
     av_dup_packet(packet);
     [_packetQueue putPacket:packet];
 #endif
@@ -509,6 +516,7 @@
             ![_movie canDecodeVideo]) {
             _decodeStarted = FALSE;
             [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
+            [pool release];
             continue;
         }
         double frameTime = [self decodePacket];

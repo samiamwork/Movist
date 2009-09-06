@@ -339,6 +339,7 @@ int compareSubtitleURLs(id url1, id url2, void* context)
     if (_currentItem == nil) {
         _currentItem = item;    // auto-select
     }
+    [item release];
 
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     [nc postNotificationName:MPlaylistUpdatedNotification object:self];

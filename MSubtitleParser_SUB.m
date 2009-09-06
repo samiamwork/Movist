@@ -121,7 +121,6 @@
                 if (0 < spudec->width && 0 < spudec->height) {
                     pool = [[NSAutoreleasePool alloc] init];
                     [subtitle addImage:[self imageWithSpudec:spudec]
-                             baseWidth:spudec->width
                              beginTime:spudec->start_pts / 90 / 1000.f
                                endTime:spudec->end_pts   / 90 / 1000.f];
                     [pool release];

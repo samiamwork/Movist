@@ -176,11 +176,18 @@
         if (!subs) {
             someError = TRUE;
         }
-        else if (0 < [subs count]) {
+        else if (cfEncoding == kCFStringEncodingInvalidId && 0 == [subs count]) {
+            subs = [self subtitleFromURL:url withEncoding:kCFStringEncodingUTF8 error:error];
+            if (!subs || 0 == [subs count]) {
+                subs = [self subtitleFromURL:url withEncoding:kCFStringEncodingUTF16 error:error];
+            }
+        }
+
+        if (subs && 0 < [subs count]) {
             [subtitles addObjectsFromArray:subs];
         }
     }
-    return (someError && 0 == [subtitles count]) ? nil : subtitles;
+    return (0 < [subtitles count]) ? subtitles : (someError) ? nil : subtitles;
 }
 
 - (NSString*)subtitleInfoMessageString
@@ -491,7 +498,7 @@
     NSError* error;
     NSArray* subtitles = [self subtitleFromURLs:subtitleURLs withEncoding:encoding error:&error];
     if (!subtitles) {
-        NSString* s;
+        NSString* s = @"";
         NSURL* subtitleURL;
         NSEnumerator* e = [subtitleURLs objectEnumerator];
         while (subtitleURL = [e nextObject]) {

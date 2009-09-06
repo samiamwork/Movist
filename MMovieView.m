@@ -191,6 +191,7 @@
         //[self updateRemoveGreenBox];
     }
     [self clearOSD];
+    [self updateOSDImageBaseWidth];
     [self updateLetterBoxHeight];
     [self updateMovieRect:TRUE];
     _lastFpsCheckTime = 0.0;

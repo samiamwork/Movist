@@ -33,11 +33,11 @@
              initWithString:string beginTime:beginTime endTime:endTime] autorelease];
 }
 
-+ (id)itemWithImage:(NSImage*)image baseWidth:(float)baseWidth
++ (id)itemWithImage:(NSImage*)image
           beginTime:(float)beginTime endTime:(float)endTime
 {
-    return [[[MSubtitleItem alloc] initWithImage:image baseWidth:baseWidth
-                                       beginTime:beginTime endTime:endTime] autorelease];
+    return [[[MSubtitleItem alloc]
+             initWithImage:image beginTime:beginTime endTime:endTime] autorelease];
 }
 
 - (id)initWithString:(NSAttributedString*)string
@@ -52,13 +52,12 @@
     return self;
 }
 
-- (id)initWithImage:(NSImage*)image baseWidth:(float)baseWidth
+- (id)initWithImage:(NSImage*)image
           beginTime:(float)beginTime endTime:(float)endTime
 {
     //TRACE(@"%s (%g ~ %g)", __PRETTY_FUNCTION__, beginTime, endTime);
     if (self = [super init]) {
         _image = [image retain];
-        _imageBaseWidth = baseWidth;
         _beginTime = beginTime;
         _endTime = endTime;
         _texLock = [[NSLock alloc] init];
@@ -103,8 +102,7 @@
         [_texLock lock];
         [_texImage release];
         _texImage = (_string) ? [[movieOSD makeTexImageForString:_string] retain] :
-                    (_image)  ? [[movieOSD makeTexImageForImage:_image
-                                                      baseWidth:_imageBaseWidth] retain] : nil;
+                    (_image)  ? [[movieOSD makeTexImageForImage:_image] retain] : nil;
         _texStamp = stamp;
         //TRACE(@"%s stamp=%d: [%@~%@] %@", __PRETTY_FUNCTION__, _texStamp,
         //      NSStringFromMovieTime(_beginTime), NSStringFromMovieTime(_endTime),

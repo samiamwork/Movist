@@ -166,8 +166,8 @@ static BOOL _useQuickTimeSubtitles = FALSE;
                         kICMImageDescriptionPropertyID_CleanApertureDisplayDimensions,
                         sizeof(fp), &fp, 0)) {
             NSSize size = NSMakeSize(FixedToFloat(fp.x), FixedToFloat(fp.y));
-            if (displaySize.width  == size.width ||     // check invalid value
-                displaySize.height == size.height) {
+            if (displaySize.width  != size.width ||     // check invalid value
+                displaySize.height != size.height) {
                 displaySize = size;
             }
         }
@@ -176,8 +176,8 @@ static BOOL _useQuickTimeSubtitles = FALSE;
                         kICMImageDescriptionPropertyID_EncodedPixelsDimensions,
                         sizeof(fp), &fp, 0)) {
             NSSize size = NSMakeSize(FixedToFloat(fp.x), FixedToFloat(fp.y));
-            if (encodedSize.width  == size.width ||     // check invalid value
-                encodedSize.height == size.height) {
+            if (encodedSize.width  != size.width ||     // check invalid value
+                encodedSize.height != size.height) {
                 encodedSize = size;
             }
         }

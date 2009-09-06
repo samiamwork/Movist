@@ -117,9 +117,10 @@
 - (float)adjustedLineHeight:(float)movieWidth;
 - (float)adjustedLineSpacing:(float)movieWidth;
 - (NSImage*)makeTexImageForString:(NSAttributedString*)string;
-- (NSImage*)makeTexImageForImage:(NSImage*)image baseWidth:(float)baseWidth;
+- (NSImage*)makeTexImageForImage:(NSImage*)image;
 - (BOOL)setString:(NSAttributedString*)string;
-- (BOOL)setImage:(NSImage*)image baseWidth:(float)baseWidth;
+- (BOOL)setImage:(NSImage*)image;
+- (BOOL)setImageBaseWidth:(float)baseWidth;
 - (void)clearContent;
 
 #pragma mark drawing

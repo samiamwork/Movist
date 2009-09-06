@@ -123,6 +123,7 @@ enum {
     [cell setMenu:menu];
     [cell selectItemAtIndex:-1];    // deselct all
     [cell performClickWithFrame:rect inView:[sender superview]];
+    [menu release];
 }
 
 - (IBAction)codecBindingActions:(id)sender

@@ -537,6 +537,7 @@
             NSRectFill(rect);
         }
     }
+    rect = NSIntegralRect(rect);
     [track setFlipped:flipped];
     [track drawAtPoint:rect.origin fromRect:NSZeroRect
              operation:NSCompositeSourceOver fraction:1.0];
@@ -547,7 +548,7 @@
     NSRect rect = [super knobRectFlipped:flipped];
     rect.origin.x -= ([_knobImage size].width - rect.size.width) / 2;
     rect.origin.y += _knobOffset;
-    return rect;
+    return NSIntegralRect(rect);
 }
 
 - (void)drawKnob:(NSRect)knobRect

@@ -133,7 +133,7 @@
     }
 
     // adjust track rect
-    rect.origin.y += (rect.size.height - [_lImage size].height) / 2;
+    rect.origin.y += (int)((rect.size.height - [_lImage size].height) / 2);
     rect.size.height = [_lImage size].height;
     if (!_rounded) {
         rect.origin.x += _knobSize / 2;
@@ -194,7 +194,7 @@
     float x = [self positionOfTime:[self floatValue]];
     NSRect rect = [[self controlView] bounds];
     rect.origin.x = x - _knobSize / 2 - 1;
-    rect.origin.y += (rect.size.height - _knobSize) / 2;
+    rect.origin.y += (int)((rect.size.height - _knobSize) / 2);
     rect.size.width = _knobSize;
     rect.size.height= _knobSize;
     return rect;

@@ -134,10 +134,13 @@ rar_open(const char *const filename, const char *const mode)
 static int
 rar_close(rar_stream_t *stream)
 {
-    if (stream->file)
-	return fclose(stream->file);
-    free(stream->data);
-    return 0;
+    int ret = 0;
+    if (stream->file) {
+        ret = fclose(stream->file);
+    }
+    //free(stream->data);
+    free(stream);
+    return ret;
 }
 
 static int
@@ -1215,6 +1218,11 @@ vobsub_close(void *this)
 {
     vobsub_t *vob = (vobsub_t *)this;
     if (vob->spu_streams) {
+        int i;
+        for (i = 0; i < vob->spu_streams_size; i++) {
+            free(vob->spu_streams[i].id);
+        }
+        
 	while (vob->spu_streams_size--)
 	    packet_queue_destroy(vob->spu_streams + vob->spu_streams_size);
 	free(vob->spu_streams);

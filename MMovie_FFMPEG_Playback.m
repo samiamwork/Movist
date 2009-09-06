@@ -29,7 +29,7 @@
 
 @implementation MMovie_FFmpeg (Playback)
 
-- (BOOL)initPlayback:(int*)errorCode;
+- (BOOL)initPlayback:(int*)errorCode
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     _quitRequested = FALSE;
@@ -81,6 +81,8 @@
     }
     TRACE(@"%s waiting done.", __PRETTY_FUNCTION__);
 
+    [_frameReadMutex release];
+    //[_avSyncMutex release];
     [_commandLock release];
 }
 
@@ -169,6 +171,7 @@
             return TRUE;
         }
     }
+    av_free_packet(&packet);
     return TRUE;
 }
 

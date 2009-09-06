@@ -22,6 +22,7 @@
 
 #import "MMovieView.h"
 
+#import "MMovie.h"
 #import "MMovieOSD.h"
 #import "AppController.h"   // for NSApp's delegate
 
@@ -67,7 +68,7 @@
 
     _iconOSD = [[MMovieOSD alloc] init];
     [_iconOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
-    [_iconOSD setImage:[NSImage imageNamed:@"Movist"] baseWidth:0];
+    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
     [_iconOSD setHPosition:OSD_HPOSITION_CENTER];
     [_iconOSD setVPosition:OSD_VPOSITION_CENTER];
     return TRUE;
@@ -178,12 +179,20 @@
     [_errorOSD clearContent];
 }
 
+- (void)updateOSDImageBaseWidth
+{
+    float width = (_movie) ? [_movie adjustedSizeByAspectRatio].width : 0;
+    [_subtitleOSD[0] setImageBaseWidth:width];
+    [_subtitleOSD[1] setImageBaseWidth:width];
+    [_subtitleOSD[2] setImageBaseWidth:width];
+}
+
 - (void)showLogo
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_drawLock lock];
 
-    [_iconOSD setImage:[NSImage imageNamed:@"Movist"] baseWidth:0];
+    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
 
     [_drawLock unlock];
 }
@@ -193,7 +202,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_drawLock lock];
 
-    [_iconOSD setImage:nil baseWidth:0];
+    [_iconOSD setImage:nil];
 
     [_drawLock unlock];
 }

@@ -457,7 +457,7 @@ enum {  // for _updateMask
     }
 
     // set attributes : font & shadow should be applied before calculating size
-    NSMutableAttributedString* s = [string mutableCopy];
+    NSMutableAttributedString* s = [[string mutableCopy] autorelease];
     [_paragraphStyle setLineSpacing:AUTO_SIZE(_lineSpacing, _autoSizeWidth)];
     [s applyFont:_font textColor:_textColor strokeColor:_strokeColor
      strokeWidth:_strokeWidth paragraphStyle:_paragraphStyle];
@@ -485,7 +485,7 @@ enum {  // for _updateMask
     return [img autorelease];
 }
 
-- (NSImage*)makeTexImageForImage:(NSImage*)image baseWidth:(float)baseWidth
+- (NSImage*)makeTexImageForImage:(NSImage*)image
 {
     if (!image) {
         return nil;
@@ -499,8 +499,9 @@ enum {  // for _updateMask
 
     NSSize size;
     NSSize imageSize = [image size];
-    if (0 < baseWidth) {
-        size.width = imageSize.width * _movieRect.size.width / baseWidth;
+    if (0 < _imageBaseWidth) {
+        size.width = imageSize.width * _movieRect.size.width / _imageBaseWidth;
+        size.width *= MAX(10.0, _fontSize) / 24.0;
         size.height = imageSize.height * size.width / imageSize.width;
     }
     else if (imageSize.width < _movieRect.size.width &&
@@ -545,10 +546,19 @@ enum {  // for _updateMask
     return FALSE;
 }
 
-- (BOOL)setImage:(NSImage*)image baseWidth:(float)baseWidth
+- (BOOL)setImage:(NSImage*)image
 {
     if (![_image isEqualTo:image]) {
         [image retain], [_image release], _image = image;
+        _updateMask |= UPDATE_TEX_IMAGE;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+- (BOOL)setImageBaseWidth:(float)baseWidth
+{
+    if (_imageBaseWidth != baseWidth) {
         _imageBaseWidth = baseWidth;
         _updateMask |= UPDATE_TEX_IMAGE;
         return TRUE;
@@ -728,8 +738,7 @@ enum {  // for _updateMask
             [self setTexImage:[self makeTexImageForString:_string]];
         }
         else if (_image) {
-            [self setTexImage:[self makeTexImageForImage:_image
-                                               baseWidth:_imageBaseWidth]];
+            [self setTexImage:[self makeTexImageForImage:_image]];
         }
         else {
             [self setTexImage:nil];

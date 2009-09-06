@@ -253,6 +253,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     while (track = [enumerator nextObject]) {
         [(FFAudioTrack*)[track impl] cleanupTrack];
     }
+    [_trackMutex release];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

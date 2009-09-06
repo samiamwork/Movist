@@ -154,6 +154,7 @@
 - (void)drawOSD;
 - (void)drawDragHighlight;
 - (void)clearOSD;
+- (void)updateOSDImageBaseWidth;
 
 - (void)showLogo;
 - (void)hideLogo;

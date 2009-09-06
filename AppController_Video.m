@@ -343,6 +343,7 @@
         if (![self isFullScreen] && ![self isDesktopBackground]) {
             [self resizeWithMagnification:1.0];
         }
+        [_movieView updateOSDImageBaseWidth];
         [_movieView updateLetterBoxHeight];
         [_movieView updateMovieRect:TRUE];
         [self updateAspectRatioMenu];

@@ -320,7 +320,9 @@
 - (void)addNavListWithParentItem:(FullNavItem*)parentItem items:(NSArray*)items
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_listArray addObject:[[FullNavList alloc] initWithParentItem:parentItem items:items]];
+    FullNavList* list = [[FullNavList alloc] initWithParentItem:parentItem items:items];
+    [_listArray addObject:list];
+    [list release];
     [self updateListUI];
 }
 

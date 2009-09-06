@@ -79,7 +79,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _messageHideTimer = nil;
 
-    [_messageOSD setString:[[NSAttributedString alloc] initWithString:@""]];
+    [_messageOSD setString:[[[NSAttributedString alloc] initWithString:@""] autorelease]];
     [self redisplay];
 }
 

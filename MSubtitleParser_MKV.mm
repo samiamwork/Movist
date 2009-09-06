@@ -520,19 +520,23 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
 
         if (_level0->IsFiniteSize() && endOfLevel0 <= _file->getFilePointer()) {
             delete _level1, _level1 = 0;
+            [pool release];
             break;
         }
 
         if (0 < _upperLevel) {
             if (0 < --_upperLevel) {
+                [pool release];
                 break;
             }
             delete _level1, _level1 = 0;
             _level1 = _level2;
+            [pool release];
             continue;
         }
         else if (_upperLevel < 0) {
             if (++_upperLevel < 0) {
+                [pool release];
                 break;
             }
         }
@@ -554,6 +558,7 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
                 // else (no subtitle), then need not read more.
                 TRACE(@"no subtitle found");
             }
+            [pool release];
             break;
         }
         [pool release], pool = nil;

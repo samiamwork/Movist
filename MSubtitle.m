@@ -194,7 +194,8 @@
         else if (endTime < [item endTime]) {
             [item setBeginTime:endTime];
 
-            item = [MSubtitleItem itemWithString:[[item string] copy]
+            NSMutableString* s = [[item string] copy];
+            item = [MSubtitleItem itemWithString:[s autorelease]
                                        beginTime:beginTime endTime:endTime];
             [item appendString:NEW_LINE];
             [item appendString:string];
@@ -209,18 +210,19 @@
     else if ([item beginTime] < beginTime) {
         float bt = [item beginTime];
         [item setBeginTime:beginTime];
-        item = [MSubtitleItem itemWithString:[[item string] copy]
+        NSMutableString* s = [[item string] copy];
+        item = [MSubtitleItem itemWithString:[s autorelease]
                                    beginTime:bt endTime:beginTime];
         [_items insertObject:item atIndex:index];
         [self addString:string beginTime:beginTime endTime:endTime];
     }
 }
 
-- (void)addImage:(NSImage*)image baseWidth:(float)baseWidth
+- (void)addImage:(NSImage*)image
        beginTime:(float)beginTime endTime:(float)endTime
 {
-    [_items addObject:[MSubtitleItem itemWithImage:image baseWidth:baseWidth
-                                         beginTime:beginTime endTime:endTime]];
+    [_items addObject:
+     [MSubtitleItem itemWithImage:image beginTime:beginTime endTime:endTime]];
 }
 
 - (void)checkEndTimes

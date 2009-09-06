@@ -838,9 +838,13 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
 
     NSScreen* screen;
     NSWindow* window;
+    NSRect screenRect;
     NSEnumerator* enumerator = [_screens objectEnumerator];
     while (screen = [enumerator nextObject]) {
-        window = [[NSWindow alloc] initWithContentRect:[screen frame]
+        screenRect = [screen frame];
+        screenRect.origin.x = 0;
+        screenRect.origin.y = 0;
+        window = [[NSWindow alloc] initWithContentRect:screenRect
                                              styleMask:NSBorderlessWindowMask
                                                backing:NSBackingStoreBuffered
                                                  defer:FALSE screen:screen];
