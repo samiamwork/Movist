@@ -85,6 +85,7 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
 - (void)dealloc
 {
     [_formats release];
+    [_styles release];
     [super dealloc];
 }
 

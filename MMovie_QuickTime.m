@@ -166,8 +166,9 @@ static BOOL _useQuickTimeSubtitles = FALSE;
                         kICMImageDescriptionPropertyID_CleanApertureDisplayDimensions,
                         sizeof(fp), &fp, 0)) {
             NSSize size = NSMakeSize(FixedToFloat(fp.x), FixedToFloat(fp.y));
-            if (displaySize.width  != size.width ||     // check invalid value
-                displaySize.height != size.height) {
+            if ((size.width < 10000 && size.height < 10000) &&
+                (displaySize.width  != size.width ||     // check invalid value
+                 displaySize.height != size.height)) {
                 displaySize = size;
             }
         }
@@ -176,8 +177,9 @@ static BOOL _useQuickTimeSubtitles = FALSE;
                         kICMImageDescriptionPropertyID_EncodedPixelsDimensions,
                         sizeof(fp), &fp, 0)) {
             NSSize size = NSMakeSize(FixedToFloat(fp.x), FixedToFloat(fp.y));
-            if (encodedSize.width  != size.width ||     // check invalid value
-                encodedSize.height != size.height) {
+            if ((size.width < 10000 && size.height < 10000) &&
+                (encodedSize.width  != size.width ||     // check invalid value
+                 encodedSize.height != size.height)) {
                 encodedSize = size;
             }
         }
@@ -234,6 +236,7 @@ static BOOL _useQuickTimeSubtitles = FALSE;
     }
     [self cleanupPerianSubtitle];
     if (!qtMovie) {
+        [self release];
         return nil;
     }
     NSSize movieSize = [[qtMovie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
@@ -241,6 +244,7 @@ static BOOL _useQuickTimeSubtitles = FALSE;
         *error = [NSError errorWithDomain:[MMovie_QuickTime name]
                                      code:ERROR_INVALID_VIDEO_DIMENSION
                                  userInfo:nil];
+        [self release];
         return nil;
     }
 

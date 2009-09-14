@@ -261,11 +261,23 @@
                 [items addObject:[[[FullNavDirectoryItem alloc]
                                             initWithPath:path name:name] autorelease]];
             }
+            path = [@"~/Music/iTunes/iTunes Media/Movies" stringByExpandingTildeInPath];
+            if ([fileManager fileExistsAtPath:path]) {
+                NSString* name = NSLocalizedString(@"iTunes Movies", nil);
+                [items addObject:[[[FullNavDirectoryItem alloc]
+                                   initWithPath:path name:name] autorelease]];
+            }
         }
 
         // iTunes TV shows folder
         if ([defaults boolForKey:MFullNavShowiTunesTVShowsKey]) {
             path = [@"~/Music/iTunes/iTunes Music/TV shows" stringByExpandingTildeInPath];
+            if ([fileManager fileExistsAtPath:path]) {
+                NSString* name = NSLocalizedString(@"iTunes TV Shows", nil);
+                [items addObject:[[[FullNavDirectoryItem alloc]
+                                   initWithPath:path name:name] autorelease]];
+            }
+            path = [@"~/Music/iTunes/iTunes Media/TV shows" stringByExpandingTildeInPath];
             if ([fileManager fileExistsAtPath:path]) {
                 NSString* name = NSLocalizedString(@"iTunes TV Shows", nil);
                 [items addObject:[[[FullNavDirectoryItem alloc]
@@ -280,6 +292,12 @@
                 NSString* name = NSLocalizedString(@"iTunes Video Podcast", nil);
                 [items addObject:[[[FullNavDirectoryItem alloc]
                                             initWithPath:path name:name] autorelease]];
+            }
+            path = [@"~/Music/iTunes/iTunes Media/Podcast" stringByExpandingTildeInPath];
+            if ([fileManager fileExistsAtPath:path]) {
+                NSString* name = NSLocalizedString(@"iTunes Video Podcast", nil);
+                [items addObject:[[[FullNavDirectoryItem alloc]
+                                   initWithPath:path name:name] autorelease]];
             }
         }
         [self addNavListWithParentItem:nil items:items];

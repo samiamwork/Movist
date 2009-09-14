@@ -391,7 +391,6 @@
 
     if (packet->stream_index != _streamIndex) {
         TRACE(@"%s invalid stream_index %d", __PRETTY_FUNCTION__, packet->stream_index);
-        av_free_packet(packet);
         return -1;
     }
     assert(packet->stream_index == _streamIndex);

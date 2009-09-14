@@ -491,15 +491,15 @@
     [_detailsOutlineView reloadData];
     [_detailsOutlineView setAction:@selector(detailsOutlineViewAction:)];
 
-    if (isSystemLeopard()) {
-        [_detailsOutlineView expandItem:nil expandChildren:TRUE];
-    }
-    else {
+    if (isSystemTiger()) {
         CategoryNode* node;
         NSEnumerator* enumerator = [_detailsCategories objectEnumerator];
         while (node = [enumerator nextObject]) {
             [_detailsOutlineView expandItem:node];
         }
+    }
+    else {
+        [_detailsOutlineView expandItem:nil expandChildren:TRUE];
     }
 }
 
