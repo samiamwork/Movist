@@ -279,6 +279,9 @@ int compareSubtitleURLs(id url1, id url2, void* context)
         count = [contents count];
     }
     else if (option != OPTION_ONLY) {
+        const char* p = [fileManager fileSystemRepresentationWithPath:filename];
+        filename = [fileManager stringWithFileSystemRepresentation:p length:strlen(p)];
+
         NSString* directory = [filename stringByDeletingLastPathComponent];
         NSString* movieFilename = [filename lastPathComponent];
 

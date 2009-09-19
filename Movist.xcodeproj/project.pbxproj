@@ -422,6 +422,11 @@
 		AF5143140C3C252C00BDACB7 /* FSSeekSliderLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderLeft.tiff; path = Images/FSSeekSliderLeft.tiff; sourceTree = "<group>"; };
 		AF5143150C3C252C00BDACB7 /* FSSeekSliderRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderRight.tiff; path = Images/FSSeekSliderRight.tiff; sourceTree = "<group>"; };
 		AF5143160C3C252C00BDACB7 /* FSSeekSliderCenter.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderCenter.tiff; path = Images/FSSeekSliderCenter.tiff; sourceTree = "<group>"; };
+		AF51AD10106466A600989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Russian; path = Russian.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AF51AD11106466CA00989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Russian; path = Russian.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AF51AD2A1064675900989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		AF51AD2C1064676800989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/Playlist.nib; sourceTree = "<group>"; };
+		AF51AD2D1064677100989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AF5A29420C2CEC0D00483AEB /* AppController_Open.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Open.m; sourceTree = "<group>"; };
 		AF5A29920C2CF05000483AEB /* AppController_Subtitle.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Subtitle.m; sourceTree = "<group>"; };
 		AF5A29960C2CF14A00483AEB /* AppController_Playlist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Playlist.m; sourceTree = "<group>"; };
@@ -1094,6 +1099,7 @@
 				Korean,
 				Turkish,
 				sk,
+				Russian,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Movist */;
 			projectDirPath = "";
@@ -1354,6 +1360,7 @@
 				AFC7D44D0C371C4C00F5EA5C /* Korean */,
 				AFCA763D0F4B99E6008DBDCD /* Turkish */,
 				AF1EF6ED0FE2220E0038E2A0 /* sk */,
+				AF51AD10106466A600989D78 /* Russian */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1365,6 +1372,7 @@
 				AFC7D42E0C37138500F5EA5C /* Korean */,
 				AFCA76390F4B99A8008DBDCD /* Turkish */,
 				AF1EF6EF0FE2222D0038E2A0 /* sk */,
+				AF51AD2A1064675900989D78 /* Russian */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -1376,6 +1384,7 @@
 				AFC7D4330C37160300F5EA5C /* Korean */,
 				AFCA763B0F4B99CB008DBDCD /* Turkish */,
 				AF1EF6F10FE222590038E2A0 /* sk */,
+				AF51AD2D1064677100989D78 /* Russian */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
@@ -1387,6 +1396,7 @@
 				AFC7D4300C3715A500F5EA5C /* Korean */,
 				AFCA763A0F4B99BA008DBDCD /* Turkish */,
 				AF1EF6F00FE2224A0038E2A0 /* sk */,
+				AF51AD2C1064676800989D78 /* Russian */,
 			);
 			name = Playlist.nib;
 			sourceTree = "<group>";
@@ -1398,6 +1408,7 @@
 				AFC7D3DE0C370FD100F5EA5C /* Korean */,
 				AFCA763C0F4B99E0008DBDCD /* Turkish */,
 				AF1EF6EE0FE2221D0038E2A0 /* sk */,
+				AF51AD11106466CA00989D78 /* Russian */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
