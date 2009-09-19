@@ -156,6 +156,7 @@
         return nil;
     }
 
+    const char* s;
     MSubtitle* subtitle;
     int i, count = vobsub_get_indexes_count(_vobsub);
     for (i = 0; i < count; i++) {
@@ -163,10 +164,11 @@
             _spudec[i] = calloc(1, sizeof(spudec_handle_t));
             memcpy(_spudec[i], _spudec[0], sizeof(spudec_handle_t));
         }
+        s = vobsub_get_id(_vobsub, i);
         subtitle = [[[MSubtitle alloc] initWithURL:_subtitleURL] autorelease];
         [subtitle setType:@"VOBSUB"];
-        [subtitle setName:[NSString stringWithCString:vobsub_get_id(_vobsub, i)
-                                             encoding:NSASCIIStringEncoding]];
+        [subtitle setName:(!s) ? NSLocalizedString(@"Unnamed", 0) :
+         [NSString stringWithCString:s encoding:NSASCIIStringEncoding]];
         [subtitle setTrackName:NSLocalizedString(@"External Subtitle", nil)];
         [subtitle setEmbedded:FALSE];
         [_subtitles addObject:subtitle];
