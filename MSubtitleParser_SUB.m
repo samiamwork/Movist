@@ -115,8 +115,11 @@
     spudec_handle_t* spudec = (spudec_handle_t*)_spudec[index];
     while (0 <= (size = vobsub_get_next_packet(_vobsub, index, (void*)&packet, &pts100))) {
         spudec_assemble(spudec, (unsigned char*)packet, size, pts100);
-        if (spudec->queue_head) {
+        while (spudec->queue_head) {
             spudec_heartbeat(spudec, spudec->queue_head->start_pts);
+            if (spudec->end_pts == UINT_MAX) {
+                spudec->end_pts = spudec->start_pts + (2 * 90 * 1000);
+            }
             if (spudec_changed(spudec)) {
                 if (0 < spudec->width && 0 < spudec->height) {
                     pool = [[NSAutoreleasePool alloc] init];
