@@ -40,6 +40,7 @@ enum {
     TAG_FONT_OPEN,      TAG_FONT_CLOSE,
     TAG_I_OPEN,         TAG_I_CLOSE,
     TAG_B_OPEN,         TAG_B_CLOSE,
+    TAG_EM_OPEN,        TAG_EM_CLOSE,
 };
 
 #define isContentsTag(tagType)  (TAG_BR <= tagType)
@@ -272,6 +273,8 @@ NSString* MSubtitleParserOptionKey_SMI_replaceNewLineWithBR = @"replaceNewLineWi
                     case TAG_I_CLOSE    : italic = FALSE;                       break;
                     case TAG_B_OPEN     : bold = TRUE;                          break;
                     case TAG_B_CLOSE    : bold = FALSE;                         break;
+                    case TAG_EM_OPEN    :                                       break;
+                    case TAG_EM_CLOSE   :                                       break;
                 }
             }
         }
@@ -465,6 +468,7 @@ SMITag MMakeSMITag(int type, int location, int length, NSString* attr)
         { @"FONT",  TAG_FONT_OPEN,  TAG_FONT_CLOSE },
         { @"I",     TAG_I_OPEN,     TAG_I_CLOSE },
         { @"B",     TAG_B_OPEN,     TAG_B_CLOSE },
+        { @"EM",    TAG_EM_OPEN,    TAG_EM_CLOSE },
     };
     int tag = TAG_UNKNOWN;
     for (i = 0; i < sizeof(nameType) / sizeof(nameType[0]); i++) {
