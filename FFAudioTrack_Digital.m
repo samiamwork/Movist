@@ -489,17 +489,16 @@ static BOOL s_first = TRUE;
     // ?????? mkv ????????? ?????? ????????? decoding ??? ????????? ?????? packet ??? dts ?????? ????????? ??????.
     UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
-    int16_t audioBuf[AVCODEC_MAX_AUDIO_FRAME_SIZE];
     int dataSize, decodedSize;
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
 #if 1 // def __BIG_ENDIAN__
         decodedSize = avcodec_decode_audio2(context,
-                                            audioBuf, &dataSize,
+                                            _audioDataBuf, &dataSize,
                                             packetPtr, packetSize);
 #else
         decodedSize = avcodec_decode_audio3(context,
-                                            audioBuf, &dataSize,
+                                            _audioDataBuf, &dataSize,
                                             packet);
 #endif
         if (decodedSize < 0) { 

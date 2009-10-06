@@ -287,8 +287,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     unsigned int queueCapacity = AVCODEC_MAX_AUDIO_FRAME_SIZE * 20 * 5;
     _dataQueue = [[AudioDataQueue alloc] initWithCapacity:queueCapacity];
     AVCodecContext* context = _stream->codec;
-	_audioDataBufNotAligned = malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE + 16);
-	_audioDataBuf = (int16_t*)(((int)_audioDataBufNotAligned) / 16 * 16);
     [_dataQueue setBitRate:sizeof(int16_t) * context->sample_rate * context->channels];
     _nextDecodedTime = 0;
     _nextAudioPts = 0;
@@ -312,8 +310,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     [_dataQueue clear];
     [_dataQueue release];
     _dataQueue = 0;
-	free(_audioDataBufNotAligned);
-	_audioDataBuf = 0;
     _running = FALSE;
 }
 
