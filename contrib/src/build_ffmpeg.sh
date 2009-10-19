@@ -23,7 +23,8 @@ FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-encoders --disable-muxers --di
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-gpl --enable-postproc"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-pthreads"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-libfaad"
-FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-ffplay"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-swscale"
+#FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-ffplay"
 
 ########## SOURCE ##########
 

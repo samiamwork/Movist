@@ -94,7 +94,7 @@ faad2: $(CONTRIB_SRC_PATH)faad2-$(FAAD_VERSION).tar.gz
 	$(EXTRACT_GZ)
 
 .faad2: faad2
-	(cd $(CONTRIB_SRC_PATH)$< ; ./bootstrap)
+	(cd $(CONTRIB_SRC_PATH)$< ; sh ./bootstrap)
 	($(CONTRIB_SRC_PATH)/$</configure $(HOSTCONF) --disable-shared --prefix=$(PREFIX) --without-bmp --without-xmms --without-drm --without-mpeg4ip && make -C libfaad && make -C libfaad install)
 	touch $@
 

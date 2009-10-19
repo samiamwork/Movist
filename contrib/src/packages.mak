@@ -30,7 +30,7 @@ SF=http://heanet.dl.sourceforge.net/sourceforge
 VIDEOLAN=http://download.videolan.org/pub/videolan
 A52DEC_VERSION=0.7.4
 A52DEC_URL=$(VIDEOLAN)/testing/contrib/a52dec-$(A52DEC_VERSION).tar.gz
-FAAD_VERSION=2.6.1
+FAAD_VERSION=2.7
 FAAD_URL=$(SF)/faac/faad2-$(FAAD_VERSION).tar.gz
 LAME_VERSION=3.97
 LAME_URL=$(SF)/lame/lame-$(LAME_VERSION).tar.gz
@@ -44,4 +44,4 @@ FFMPEG_URL=$(SF)/ffmpeg/ffmpeg-$(FFMPEG_VERSION).tar.gz
 FFMPEG_SVN=svn://svn.mplayerhq.hu/ffmpeg/trunk
 
 # Definition of contributed packages
-darwin_packages:.faad2 .matroska .a52
+darwin_packages:.faad2 .matroska
