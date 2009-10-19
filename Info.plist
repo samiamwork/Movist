@@ -402,9 +402,9 @@
 	<key>CFBundleSignature</key>
 	<string>mvst</string>
 	<key>CFBundleVersion</key>
-	<string>0.6.5</string>
+	<string>0.6.6</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.6.5</string>
+	<string>0.6.6</string>
 	<key>LSHasLocalizedDisplayName</key>
 	<true/>
 	<key>NSMainNibFile</key>
