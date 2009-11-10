@@ -45,6 +45,7 @@
     float _saturationValue;
     float _contrastValue;
     float _hueValue;
+    BOOL _needsCoreImage;
 
     MMovie* _movie;
 
@@ -73,7 +74,7 @@
     int _viewDragAction;
     int _captureFormat;
     BOOL _includeLetterBoxOnCapture;
-    //BOOL _removeGreenBoxByUser;
+    BOOL _removeGreenBoxSetting;
     BOOL _removeGreenBox;
 
     // capture
@@ -139,7 +140,7 @@
 - (void)setContrast:(float)contrast;
 - (void)setHue:(float)hue;
 - (void)setRemoveGreenBox:(BOOL)remove;
-//- (void)updateRemoveGreenBox;
+- (void)updateRemoveGreenBox;
 
 @end
 

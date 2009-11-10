@@ -24,6 +24,7 @@
 #import "Movist.h"
 
 #include <CoreVideo/CVOpenGLTexture.h>
+#include <CoreVideo/CVOpenGLTextureCache.h>
 #include <AudioUnit/AudioUnit.h>
 
 #ifdef __BIG_ENDIAN__
@@ -93,6 +94,7 @@ extern AVPacket s_flushPacket;
     AVFrame* _frame;   // for decoding
     ImageQueue* _imageQueue;
     struct SwsContext* _scalerContext;
+    CVOpenGLTextureCacheRef _textureCache;
     BOOL _needKeyFrame;
     BOOL _useFrameDrop;
     BOOL _seeked;
@@ -106,6 +108,9 @@ extern AVPacket s_flushPacket;
 + (id)videoTrackWithAVStream:(AVStream*)stream index:(int)index;
 
 - (BOOL)initTrack:(int*)errorCode videoQueueCapacity:(int)videoQueueCapacity;
+- (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
+             pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
+                   error:(NSError**)error;
 - (BOOL)isIndexComplete;
 - (BOOL)isQueueEmpty;
 - (BOOL)isQueueFull;

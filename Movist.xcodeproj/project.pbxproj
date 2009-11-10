@@ -45,6 +45,7 @@
 		AF0865020DBCF0320008CC92 /* HUDSegmentedLeft.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864FC0DBCF0320008CC92 /* HUDSegmentedLeft.tiff */; };
 		AF0865040DBCF0320008CC92 /* HUDSegmentedMid.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0864FE0DBCF0320008CC92 /* HUDSegmentedMid.tiff */; };
 		AF0865060DBCF0320008CC92 /* HUDSegmentedRight.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0865000DBCF0320008CC92 /* HUDSegmentedRight.tiff */; };
+		AF0C1B3210A6BE5700773156 /* ColorConversions.c in Sources */ = {isa = PBXBuildFile; fileRef = AF0C1B3010A6BE5700773156 /* ColorConversions.c */; };
 		AF0C4F100C5CAC9900199932 /* AppController_Remote.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */; };
 		AF0C51270C5CDB5800199932 /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C511A0C5CDB5800199932 /* AppleRemote.m */; };
 		AF0C51280C5CDB5800199932 /* GlobalKeyboardDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0C511C0C5CDB5800199932 /* GlobalKeyboardDevice.m */; };
@@ -300,6 +301,8 @@
 		AF0864FC0DBCF0320008CC92 /* HUDSegmentedLeft.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedLeft.tiff; path = Images/HUDSegmentedLeft.tiff; sourceTree = "<group>"; };
 		AF0864FE0DBCF0320008CC92 /* HUDSegmentedMid.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedMid.tiff; path = Images/HUDSegmentedMid.tiff; sourceTree = "<group>"; };
 		AF0865000DBCF0320008CC92 /* HUDSegmentedRight.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDSegmentedRight.tiff; path = Images/HUDSegmentedRight.tiff; sourceTree = "<group>"; };
+		AF0C1B3010A6BE5700773156 /* ColorConversions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ColorConversions.c; sourceTree = "<group>"; };
+		AF0C1B3110A6BE5700773156 /* ColorConversions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorConversions.h; sourceTree = "<group>"; };
 		AF0C4F0F0C5CAC9800199932 /* AppController_Remote.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Remote.m; sourceTree = "<group>"; };
 		AF0C51190C5CDB5800199932 /* AppleRemote.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = AppleRemote.h; path = AppleRemote/AppleRemote.h; sourceTree = "<group>"; };
 		AF0C511A0C5CDB5800199932 /* AppleRemote.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = AppleRemote.m; path = AppleRemote/AppleRemote.m; sourceTree = "<group>"; };
@@ -1036,6 +1039,8 @@
 				2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */,
 				2CC012020DC484910020241D /* FFAudioTrack_Digital.m */,
 				AF1E05370DA790A700CE7196 /* FFVideoTrack.m */,
+				AF0C1B3010A6BE5700773156 /* ColorConversions.c */,
+				AF0C1B3110A6BE5700773156 /* ColorConversions.h */,
 				AF1E05260DA77F3D00CE7196 /* FFIndexer.h */,
 				AF1E05270DA77F3D00CE7196 /* FFIndexer.m */,
 				AF494D840B902DB400EDDB8A /* MMovie_FFMPEG.h */,
@@ -1347,6 +1352,7 @@
 				AF0247690F1389E7007339EB /* MSubtitleParser_SSA.m in Sources */,
 				AFB7D77E0FBB2CEF006BC714 /* vobsub.c in Sources */,
 				AFB7D77F0FBB2CEF006BC714 /* spudec.c in Sources */,
+				AF0C1B3210A6BE5700773156 /* ColorConversions.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1447,6 +1453,8 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
@@ -1491,6 +1499,7 @@
 					ppc,
 					i386,
 				);
+				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				PREBINDING = NO;

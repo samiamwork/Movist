@@ -24,6 +24,8 @@
 #import "FFTrack.h"
 #import "MMovie_FFmpeg.h"
 
+#import "ColorConversions.h"
+
 @interface PacketQueue : NSObject
 {
     AVPacket* _packet;
@@ -114,12 +116,14 @@
 #else
     #define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
 #endif
+//#undef RGB_PIXEL_FORMAT
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
 
 //#define _EXPERIMENTAL_AV_SYNC
 
 @interface ImageQueue : NSObject
 {
+    CVPixelBufferRef* _pixelBuffer;
 	AVFrame** _frame;
 	double* _time;
     unsigned int _capacity;
@@ -139,26 +143,35 @@
 		return 0;
 	}
 
+    _pixelBuffer = (CVPixelBufferRef*)malloc(sizeof(CVPixelBufferRef) * capacity);
     _frame = (AVFrame**)malloc(sizeof(AVFrame*) * capacity);
     _time = (double*)malloc(sizeof(double) * capacity);
 	_capacity = capacity;
     _front = _rear = 0;
     _full = FALSE;
-    
-    int i;
+
+    int bufWidth = width/* + 37;
+    if (bufWidth < 512) {
+        bufWidth = 512 + 37;
+    }*/;
+    int bufSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , height);
+    int i, ret;
     for (i = 0; i < _capacity; i++) {
         _frame[i] = avcodec_alloc_frame();
         if (_frame[i] == 0) {
             TRACE(@"ERROR_FFMPEG_FRAME_ALLOCATE_FAILED");
             return FALSE;
-        }    
-        int bufWidth = width + 37;
-        if (bufWidth < 512) {
-            bufWidth = 512 + 37;
         }
-        int bufSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , height);
         avpicture_fill((AVPicture*)_frame[i], malloc(bufSize),
                        RGB_PIXEL_FORMAT, bufWidth, height);
+
+        ret = CVPixelBufferCreateWithBytes(0, width, height, k2vuyPixelFormat,
+                                           _frame[i]->data[0], _frame[i]->linesize[0],
+                                           0, 0, 0, &_pixelBuffer[i]);
+        if (ret != kCVReturnSuccess) {
+            TRACE(@"kCVPixelBufferCreateWithBytes() failed : %d", ret);
+            return FALSE;
+        }
     }
     _mutex = [[NSRecursiveLock alloc] init];
     return self;
@@ -170,11 +183,13 @@
     int i;
     for (i = 0; i < _capacity; i++) {
         if (_frame[i]) {
+            CVOpenGLTextureRelease(_pixelBuffer[i]);
             free(_frame[i]->data[0]);
             av_free(_frame[i]);
             _frame[i] = 0;
         }
     }
+    free(_pixelBuffer);
     free(_frame);
     free(_time);
     [super dealloc];
@@ -215,6 +230,11 @@
 - (AVFrame*)back 
 { 
     return _frame[_rear]; 
+}
+
+- (CVPixelBufferRef)pixelBuffer
+{
+    return _pixelBuffer[_front];
 }
 
 - (double)time 
@@ -315,6 +335,29 @@
     return TRUE;
 }
 
+- (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
+             pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
+                   error:(NSError**)error
+{
+    CVReturn cvRet = CVOpenGLTextureCacheCreate(0, 0,
+                                                [openGLContext CGLContextObj],
+                                                [openGLPixelFormat CGLPixelFormatObj],
+                                                0, &_textureCache);
+	if (cvRet != kCVReturnSuccess) {
+        //TRACE(@"CVOpenGLTextureCacheCreate() failed: %d", cvRet);
+        if (error) {
+            NSDictionary* dict =
+            [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:cvRet]
+                                        forKey:@"returnCode"];
+            *error = [NSError errorWithDomain:@"FFVideoTrack"
+                                         code:ERROR_VISUAL_CONTEXT_CREATE_FAILED
+                                     userInfo:dict];
+        }
+        return FALSE;
+    }
+    return TRUE;
+}
+
 - (void)cleanupTrack
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -326,6 +369,10 @@
     if (_frame) {
         av_free(_frame);
         _frame = 0;
+    }
+    if (_textureCache) {
+        CVOpenGLTextureCacheRelease(_textureCache);
+        _textureCache = nil;
     }
     [_imageQueue release];
 #ifndef _EXPERIMENTAL_AV_SYNC
@@ -447,6 +494,15 @@
 
 - (BOOL)convertImage:(AVFrame*) frame
 {
+#if 1
+    unsigned width = [_movie encodedSize].width;
+    unsigned height = [_movie encodedSize].height;
+    OSType qtPixFmt = ColorConversionDstForPixFmt(_stream->codec->pix_fmt);
+    ColorConversionFuncs f;
+    ColorConversionFindFor(&f, _stream->codec->pix_fmt, _frame, qtPixFmt);
+    
+    f.convert(_frame, frame->data[0], frame->linesize[0], width, height);
+#else
     // sw-scaler should be used under GPL only!
     int ret = sws_scale(_scalerContext,
                         _frame->data, _frame->linesize,
@@ -456,7 +512,7 @@
         TRACE(@"%s sws_scale() failed : %d", __PRETTY_FUNCTION__, ret);
         return FALSE;
     }
-    
+#endif
     return TRUE;
 }
 
@@ -576,25 +632,42 @@
 		return 0;
 	}
 
+#define _DROP_FRAME_DISPLAY
+#if defined(_DROP_FRAME_DISPLAY)
+    int i = 0;
+    CVPixelBufferRef pixelBuffer;
+    do {
+        i++;
+        pixelBuffer = [_imageQueue pixelBuffer];
+        *currentTime = [_imageQueue time];
+        [_imageQueue dequeue];
+    } while ([self isNewImageAvailable:hostTime hostTime0point:hostTime0point]);
+
+    CVOpenGLTextureRef texture;
+    int ret = CVOpenGLTextureCacheCreateTextureFromImage(0, _textureCache,
+                                                         pixelBuffer, 0, &texture);
+    if (ret != kCVReturnSuccess) {
+        TRACE(@"CVOpenGLTextureCacheCreateTextureFromImage() failed : %d", ret);
+    }
+    //CVOpenGLTextureCacheFlush(_textureCache, 0);
+#else
     *currentTime = [_imageQueue time];
 
-    CVPixelBufferRef bufferRef = 0;
-    NSSize size = [_movie encodedSize];
-    AVFrame* frame = [_imageQueue front];
-    int ret = CVPixelBufferCreateWithBytes(0, size.width, size.height,
-                                           kYUVSPixelFormat,    // k32ARGBPixelFormat
-                                           frame->data[0], 
-                                           frame->linesize[0],
-                                           0, 0, 0, // pixelBufferReleaseCallback, self, 0,
-                                           &bufferRef);
+    CVOpenGLTextureRef texture;
+    int ret = CVOpenGLTextureCacheCreateTextureFromImage(0, _textureCache,
+                                                         [_imageQueue pixelBuffer],
+                                                         0, &texture);
     if (ret != kCVReturnSuccess) {
-        TRACE(@"CVPixelBufferCreateWithBytes() failed : %d", ret);
+        TRACE(@"CVOpenGLTextureCacheCreateTextureFromImage() failed : %d", ret);
     }
+    //CVOpenGLTextureCacheFlush(_textureCache, 0);
 
     [_imageQueue dequeue];
+#endif
     [_imageQueue unlock];
     _dataPoppingStarted = FALSE;
-    return bufferRef;
+
+    return texture;
 }
 
 @end

@@ -163,6 +163,25 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     return self;
 }
 
+- (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
+             pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
+                   error:(NSError**)error
+{
+    //TRACE(@"%s", __PRETTY_FUNCTION__);
+    MTrack* track;
+    FFVideoTrack* videoTrack;
+    NSEnumerator* enumerator = [_videoTracks objectEnumerator];
+    while (track = [enumerator nextObject]) {
+        videoTrack = (FFVideoTrack*)[track impl];
+        if (![videoTrack setOpenGLContext:openGLContext
+                              pixelFormat:openGLPixelFormat
+                                    error:error]) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 - (void)cleanup
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);

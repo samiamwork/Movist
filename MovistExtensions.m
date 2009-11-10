@@ -425,17 +425,6 @@
         HIWindowChangeAvailability(windowRef, kHIWindowExposeHidden, 0);
     }
     HIWindowChangeAvailability(windowRef, 0, kHIWindowExposeHidden);
-    /*
-    if (isSystemLeopard()) {
-        if (alwaysOnTop) {
-            HIWindowChangeAvailability(windowRef, kHIWindowVisibleInAllSpaces, 0);
-        }
-        else {
-            HIWindowChangeAvailability(windowRef, 0, kHIWindowVisibleInAllSpaces);
-        }
-        [self orderFront:self];
-    }
-     */
 }
 
 @end

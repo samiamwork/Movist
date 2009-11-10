@@ -57,6 +57,7 @@
     _captureFormat = CAPTURE_FORMAT_PNG;
     _includeLetterBoxOnCapture = TRUE;
     _removeGreenBox = FALSE;
+    _needsCoreImage = FALSE;
 
     // drag-and-drop
     [self registerForDraggedTypes:MOVIST_DRAG_TYPES];
@@ -188,7 +189,7 @@
         CIVector* vector = [CIVector vectorWithX:1.0 Y:1.0
                             Z:es.width - 2.0 W:es.height - 2.0];
         [_cropFilter setValue:vector forKey:@"inputRectangle"];
-        //[self updateRemoveGreenBox];
+        [self updateRemoveGreenBox];
     }
     [self clearOSD];
     [self updateOSDImageBaseWidth];

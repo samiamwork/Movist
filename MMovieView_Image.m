@@ -162,37 +162,72 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         glClear(GL_COLOR_BUFFER_BIT);
     }
     else {
-        CIImage* img = [CIImage imageWithCVImageBuffer:_image];
-        if (_removeGreenBox) {
-            [_cropFilter setValue:img forKey:@"inputImage"];
-            img = [_cropFilter valueForKey:@"outputImage"];
-        }
-        if (_brightnessValue != DEFAULT_BRIGHTNESS ||
-            _saturationValue != DEFAULT_SATURATION ||
-            _contrastValue   != DEFAULT_CONTRAST) {
-            [_colorFilter setValue:img forKey:@"inputImage"];
-            img = [_colorFilter valueForKey:@"outputImage"];
-        }
-        if (_hueValue != DEFAULT_HUE) {
-            [_hueFilter setValue:img forKey:@"inputImage"];
-            img = [_hueFilter valueForKey:@"outputImage"];
-        }
         if (_imageRect.size.width == 0) {
             [self updateImageRect];
         }
-        [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
+    #define _DRAW_IMAGE_WITH_GL
+    #if defined(_DRAW_IMAGE_WITH_GL)
+        if (_needsCoreImage) {
+    #endif
+            //NSDate* begin = [NSDate date];
+            CIImage* img = [CIImage imageWithCVImageBuffer:_image];
+            if (_removeGreenBox) {
+                [_cropFilter setValue:img forKey:@"inputImage"];
+                img = [_cropFilter valueForKey:@"outputImage"];
+            }
+            if (_brightnessValue != DEFAULT_BRIGHTNESS ||
+                _saturationValue != DEFAULT_SATURATION ||
+                _contrastValue   != DEFAULT_CONTRAST) {
+                [_colorFilter setValue:img forKey:@"inputImage"];
+                img = [_colorFilter valueForKey:@"outputImage"];
+            }
+            if (_hueValue != DEFAULT_HUE) {
+                [_hueFilter setValue:img forKey:@"inputImage"];
+                img = [_hueFilter valueForKey:@"outputImage"];
+            }
+            [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
+            //float dt = -[begin timeIntervalSinceNow];
+            //TRACE(@"draw with core-image (%.1f sec)", dt);
+    #if defined(_DRAW_IMAGE_WITH_GL)
+        }
+        else {
+            //NSDate* begin = [NSDate date];
+            glEnable(GL_TEXTURE_RECTANGLE_EXT);
+            GLenum target = CVOpenGLTextureGetTarget(_image);
+            GLuint name = CVOpenGLTextureGetName(_image);
 
+            CGRect b = _movieRect;
+            float bl[2], br[2], tl[2], tr[2];
+            CVOpenGLTextureGetCleanTexCoords(_image, bl, br, tr, tl);
+
+            glEnable(target);
+            glBindTexture(target, name);
+            glBegin(GL_QUADS);
+            glTexCoord2f(tl[0], tl[1]); glVertex2f(CGRectGetMinX(b), CGRectGetMaxY(b));
+            glTexCoord2f(tr[0], tr[1]); glVertex2f(CGRectGetMaxX(b), CGRectGetMaxY(b));
+            glTexCoord2f(br[0], br[1]); glVertex2f(CGRectGetMaxX(b), CGRectGetMinY(b));
+            glTexCoord2f(bl[0], bl[1]); glVertex2f(CGRectGetMinX(b), CGRectGetMinY(b));
+            glEnd();
+            glDisable(target);
+            glDisable(GL_TEXTURE_RECTANGLE_EXT);
+            //float dt = -[begin timeIntervalSinceNow];
+            //TRACE(@"draw with OpenGL     (%.1f sec)", dt);
+        }
+    #endif
         // clear extra area
         NSRect bounds = [self bounds];
-        if (!NSEqualRects(bounds, *(NSRect*)&_movieRect)) {
+        if (NSMinX(bounds) != CGRectGetMinX(_movieRect) ||
+            NSMinY(bounds) != CGRectGetMinY(_movieRect) ||
+            NSMaxX(bounds) != CGRectGetMaxX(_movieRect) ||
+            NSMaxY(bounds) != CGRectGetMaxY(_movieRect)) {
             glColor3f(0.0f, 0.0f, 0.0f);
             glBegin(GL_QUADS);
                 float vl = NSMinX(bounds), vr = NSMaxX(bounds);
                 float vb = NSMinY(bounds), vt = NSMaxY(bounds);
-                float rl = NSMinX(*(NSRect*)&_movieRect);
-                float rr = NSMaxX(*(NSRect*)&_movieRect);
-                float rb = NSMinY(*(NSRect*)&_movieRect);
-                float rt = NSMaxY(*(NSRect*)&_movieRect);
+                float rl = CGRectGetMinX(_movieRect);
+                float rr = CGRectGetMaxX(_movieRect);
+                float rb = CGRectGetMinY(_movieRect);
+                float rt = CGRectGetMaxY(_movieRect);
                 if (bounds.size.height != _movieRect.size.height) {
                     // lower letter-box
                     glVertex2f(vl, vb), glVertex2f(vl, rb);
@@ -406,6 +441,15 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (float)contrast   { return _contrastValue; }
 - (float)hue        { return _hueValue; }
 
+- (void)updateNeedsCoreImage
+{
+    _needsCoreImage = _removeGreenBox ||
+                      _brightnessValue != DEFAULT_BRIGHTNESS ||
+                      _saturationValue != DEFAULT_SATURATION ||
+                      _contrastValue   != DEFAULT_CONTRAST ||
+                      _hueValue != DEFAULT_HUE;
+}
+
 - (void)setBrightness:(float)brightness
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
@@ -414,6 +458,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     brightness = normalizedFloat2(adjustToRange(brightness, MIN_BRIGHTNESS, MAX_BRIGHTNESS));
     [_colorFilter setValue:[NSNumber numberWithFloat:brightness] forKey:@"inputBrightness"];
     _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
+    [self updateNeedsCoreImage];
     [self redisplay];
 
     [_drawLock unlock];
@@ -427,6 +472,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     saturation = normalizedFloat2(adjustToRange(saturation, MIN_SATURATION, MAX_SATURATION));
     [_colorFilter setValue:[NSNumber numberWithFloat:saturation] forKey:@"inputSaturation"];
     _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
+    [self updateNeedsCoreImage];
     [self redisplay];
 
     [_drawLock unlock];
@@ -440,6 +486,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     contrast = normalizedFloat2(adjustToRange(contrast, MIN_CONTRAST, MAX_CONTRAST));
     [_colorFilter setValue:[NSNumber numberWithFloat:contrast] forKey:@"inputContrast"];
     _contrastValue = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
+    [self updateNeedsCoreImage];
     [self redisplay];
 
     [_drawLock unlock];
@@ -453,6 +500,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     hue = normalizedFloat2(adjustToRange(hue, MIN_HUE, MAX_HUE));
     [_hueFilter setValue:[NSNumber numberWithFloat:hue] forKey:@"inputAngle"];
     _hueValue = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
+    [self updateNeedsCoreImage];
     [self redisplay];
 
     [_drawLock unlock];
@@ -460,24 +508,17 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)setRemoveGreenBox:(BOOL)remove
 {
-    _removeGreenBox = remove;
-    [self updateMovieRect:TRUE];
-    /*
-    _removeGreenBoxByUser = remove;
+    _removeGreenBoxSetting = remove;
     [self updateRemoveGreenBox];
-    [self updateMovieRect:TRUE];
-    */
 }
-/*
+
 - (void)updateRemoveGreenBox
 {
-    //_removeGreenBox = FALSE;    // need not for using FFmpeg.
-    _removeGreenBox = TRUE;     // need not for using FFmpeg.
-                                // but, this will reduce screen flickering.
-                                // I don't know why it has such effect. -_-
-    if (_movie && [_movie isMemberOfClass:[MMovie_QuickTime class]]) {
-        _removeGreenBox = _removeGreenBoxByUser;
-    }
+    // need not for using FFmpeg.
+    _removeGreenBox = [_movie isMemberOfClass:[MMovie_QuickTime class]] ?
+                                                _removeGreenBoxSetting : FALSE;
+    [self updateNeedsCoreImage];
+    [self updateMovieRect:TRUE];
 }
-*/
+
 @end
