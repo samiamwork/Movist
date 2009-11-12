@@ -410,9 +410,9 @@
                               key:MUsePlayPanelKey],
        [BoolNode boolNodeWithName:LABEL(@"Floating Playlist")
                               key:MFloatingPlaylistKey],
-       [BoolNode boolNodeWithName:LABEL(@"Goto Begginning When Reopen Movie")
+       [BoolNode boolNodeWithName:LABEL(@"Go to Beginning When Reopening Movie")
                               key:MGotoBegginingWhenReopenMovieKey],
-       [BoolNode boolNodeWithName:LABEL(@"Goto Begginning When Open Subtitle")
+       [BoolNode boolNodeWithName:LABEL(@"Go to Beginning When Opening Subtitle")
                               key:MGotoBegginingWhenOpenSubtitleKey],
        [SelectNode selectNodeWithName:LABEL(@"Movie Resize Center")
                                   key:MMovieResizeCenterKey

@@ -142,8 +142,8 @@
 "Auto Show Dock in Full Screen" = "Tam Ekranda Dock u Otomatik Göster";
 "Use Play-Panel in Full Screen" = "Tam Ekranda Oynatma Panelini Göster";
 "Floating Playlist" = "Akıcı Oynatma Listesi";
-"Goto Begginning When Reopen Movie" = "Film Tekrar Açıldığında Başa Dön";
-"Goto Begginning When Open Subtitle" = "Altyazı Açıldığında Başa Dön";
+"Go to Beginning When Reopening Movie" = "Film Tekrar Açıldığında Başa Dön";
+"Go to Beginning When Opening Subtitle" = "Altyazı Açıldığında Başa Dön";
 "Movie Resize Center" = "Yeniden Boyutlandırma Merkezi";
 "Title Center" = "Başlık Ortada";
 "Title Left" = "Başlık Solda";

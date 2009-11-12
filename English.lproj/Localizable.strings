@@ -142,8 +142,8 @@
 "Auto Show Dock in Full Screen" = "Auto Show Dock in Full Screen";
 "Use Play-Panel in Full Screen" = "Use Play-Panel in Full Screen";
 "Floating Playlist" = "Floating Playlist";
-"Goto Begginning When Reopen Movie" = "Goto Begginning When Reopen Movie";
-"Goto Begginning When Open Subtitle" = "Goto Begginning When Open Subtitle";
+"Go to Beginning When Reopening Movie" = "Go to Beginning When Reopening Movie";
+"Go to Beginning When Opening Subtitle" = "Go to Beginning When Opening Subtitle";
 "Movie Resize Center" = "Movie Resize Center";
 "Title Center" = "Title Center";
 "Title Left" = "Title Left";
