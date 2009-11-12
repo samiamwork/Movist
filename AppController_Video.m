@@ -50,12 +50,23 @@
 - (void)resizeWithMagnification:(float)magnification
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, magnification);
-    if (_movie && ![self isFullScreen]) {
-        NSSize size = [_movie adjustedSizeByAspectRatio];
-        if (magnification != 1.0) {
-            size.width  *= magnification;
-            size.height *= magnification;
-        }
+    if (!_movie) {
+        return;
+    }
+
+    NSSize size = [_movie adjustedSizeByAspectRatio];
+    if (magnification != 1.0) {
+        size.width  *= magnification;
+        size.height *= magnification;
+    }
+    BOOL subtitleVisible = [_movieView subtitleVisible];
+    [_seekSlider hideMouseTimeToolTip];
+    [_movieView setSubtitleVisible:FALSE];
+
+    if ([self isFullScreen]) {
+        [_movieView setFullScreenMovieSize:size];
+    }
+    else {
         int align = ALIGN_WINDOW_TITLE_CENTER;
         switch ([_defaults integerForKey:MMovieResizeCenterKey]) {
             case MOVIE_RESIZE_CENTER_TM : align = ALIGN_WINDOW_TITLE_CENTER;  break;
@@ -69,18 +80,19 @@
         if ([[_mainWindow screen] visibleFrame].size.height < frame.size.height) {
             frame = [_mainWindow frameRectForScreen];
         }
-        BOOL subtitleVisible = [_movieView subtitleVisible];
-        [_seekSlider hideMouseTimeToolTip];
-        [_movieView setSubtitleVisible:FALSE];
         [_mainWindow setFrame:frame display:TRUE animate:TRUE];
-        [_movieView setSubtitleVisible:subtitleVisible];
     }
+
+    [_movieView setSubtitleVisible:subtitleVisible];
 }
 
 - (void)resizeToScreen
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self isFullScreen]) {
+    if ([self isFullScreen]) {
+        [_movieView setFullScreenMovieSize:NSZeroSize];
+    }
+    else {
         NSRect frame = [_mainWindow frameRectForScreen];
 
         BOOL subtitleVisible = [_movieView subtitleVisible];

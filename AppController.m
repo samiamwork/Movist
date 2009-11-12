@@ -775,10 +775,8 @@ NSString* videoCodecName(int codecId);
     }
     
     // Movie
-    if ([menuItem action] == @selector(movieSizeAction:)) {
-        return _movie && ![self isFullScreen] && ![self isDesktopBackground];
-    }
-    if ([menuItem action] == @selector(fullScreenAction:) ||
+    if ([menuItem action] == @selector(movieSizeAction:) ||
+        [menuItem action] == @selector(fullScreenAction:) ||
         [menuItem action] == @selector(fullScreenFillAction:)) {
         return (_movie != nil);
     }

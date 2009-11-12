@@ -186,8 +186,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                 img = [_hueFilter valueForKey:@"outputImage"];
             }
             [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
-            //float dt = -[begin timeIntervalSinceNow];
-            //TRACE(@"draw with core-image (%.1f sec)", dt);
+            //TRACE(@"draw with core-image (%.1f sec)", -[begin timeIntervalSinceNow]);
     #if defined(_DRAW_IMAGE_WITH_GL)
         }
         else {
@@ -210,8 +209,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
             glEnd();
             glDisable(target);
             glDisable(GL_TEXTURE_RECTANGLE_EXT);
-            //float dt = -[begin timeIntervalSinceNow];
-            //TRACE(@"draw with OpenGL     (%.1f sec)", dt);
+            //TRACE(@"draw with OpenGL     (%.1f sec)", -[begin timeIntervalSinceNow]);
         }
     #endif
         // clear extra area
@@ -326,9 +324,11 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         NSRect mr = [self calcMovieRectForBoundingRect:[self bounds]];
         _movieRect = *(CGRect*)&mr;
 
-        // in full-screen, auto-size-width should be screen-width.
-        float asw = [[NSApp delegate] isFullScreen] ? bounds.size.width : 0;
-
+        float asw = 0;
+        if ([[NSApp delegate] isFullScreen] &&
+            NSEqualSizes(_movieSize, NSZeroSize)) {
+            asw = NSWidth(bounds);
+        }
         [_iconOSD setViewBounds:bounds movieRect:mr autoSizeWidth:asw];
         [_messageOSD setViewBounds:bounds movieRect:mr autoSizeWidth:asw];
         int i;
@@ -351,18 +351,47 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_drawLock unlock];
 }
 
-- (float)calcLetterBoxHeight:(NSRect)movieRect
+- (float)calcLetterBoxHeightForMovieSize:(NSSize)movieSize
+                            boundingSize:(NSSize)boundingSize
 {
     if (_letterBoxHeight == LETTER_BOX_HEIGHT_SAME || _indexOfSubtitleInLBOX < 0) {
-        return 0.0;
+        return (boundingSize.height - movieSize.height) / 2;
     }
 
     MMovieOSD* subtitleOSD = _subtitleOSD[_indexOfSubtitleInLBOX];
-    float lineHeight = [subtitleOSD adjustedLineHeight:movieRect.size.width];
-    float lineSpacing = [subtitleOSD adjustedLineSpacing:movieRect.size.width];
-    int lines = _letterBoxHeight - LETTER_BOX_HEIGHT_1_LINE + 1;
+    float lineHeight = [subtitleOSD adjustedLineHeight:movieSize.width];
+    float lineSpacing = [subtitleOSD adjustedLineSpacing:movieSize.width];
     // FIXME: how to apply line-spacing for line-height?  it's estimated roughly...
-    return lines * (lineHeight + lineSpacing / 2) + _subtitleScreenMargin;
+    #define LINE_HEIGHT (lineHeight + lineSpacing / 2)
+
+    int lines = _letterBoxHeight - LETTER_BOX_HEIGHT_1_LINE + 1;
+    float height = lines * LINE_HEIGHT + _subtitleScreenMargin;
+    while (boundingSize.height < movieSize.height + height) {
+        height -= LINE_HEIGHT;
+    }
+    float midHeight = (boundingSize.height - movieSize.height) / 2;
+    return MAX(height, midHeight);
+}
+
+- (NSRect)_calcMovieRectForBoundingRect:(NSRect)boundingRect
+{
+    NSRect rect;
+    rect.origin = boundingRect.origin;
+
+    NSSize bs = boundingRect.size;
+    NSSize ms = [_movie adjustedSizeByAspectRatio];
+    if (bs.width / bs.height < ms.width / ms.height) {
+        rect.size.width = bs.width;
+        rect.size.height = rect.size.width * ms.height / ms.width;
+        rect.origin.y += [self calcLetterBoxHeightForMovieSize:rect.size
+                                                  boundingSize:bs];
+    }
+    else {
+        rect.size.height = bs.height;
+        rect.size.width = rect.size.height * ms.width / ms.height;
+        rect.origin.x += (bs.width - rect.size.width) / 2;
+    }
+    return rect;
 }
 
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect
@@ -371,45 +400,27 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     if ([[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
         boundingRect = [self underScannedRect:boundingRect];
     }
-    
-    if (([[NSApp delegate] isFullScreen] || [[NSApp delegate] isDesktopBackground]) &&
-        _fullScreenFill != FS_FILL_NEVER) {
-        return boundingRect;
-    }
-    else {
-        NSRect rect;
-        rect.origin = boundingRect.origin;
-        
-        NSSize bs = boundingRect.size;
-        NSSize ms = [_movie adjustedSizeByAspectRatio];
-        if (bs.width / bs.height < ms.width / ms.height) {
-            rect.size.width = bs.width;
-            rect.size.height = rect.size.width * ms.height / ms.width;
-            
-            float letterBoxMinHeight = [self calcLetterBoxHeight:rect];
-            float letterBoxHeight = (bs.height - rect.size.height) / 2;
-            if (letterBoxHeight < letterBoxMinHeight) {
-                if (bs.height < rect.size.height + letterBoxMinHeight) {
-                    letterBoxHeight = bs.height - rect.size.height;
-                }
-                else if (bs.height < rect.size.height + letterBoxMinHeight * 2) {
-                    letterBoxHeight = letterBoxMinHeight;
-                }
+
+    if ([[NSApp delegate] isFullScreen] || [[NSApp delegate] isDesktopBackground]) {
+        if (!NSEqualSizes(_movieSize, NSZeroSize)) {
+            if (NSWidth(boundingRect)  < _movieSize.width ||
+                NSHeight(boundingRect) < _movieSize.height) {
+                return [self _calcMovieRectForBoundingRect:boundingRect];
             }
-            /*
-            else if (0 < letterBoxMinHeight) {
-                letterBoxHeight = letterBoxMinHeight;
+            else {
+                NSRect rect = boundingRect;
+                rect.size = _movieSize;
+                rect.origin.x += (NSWidth(boundingRect)  - _movieSize.width)  / 2;
+                rect.origin.y += [self calcLetterBoxHeightForMovieSize:rect.size
+                                                          boundingSize:boundingRect.size];
+                return rect;
             }
-             */
-            rect.origin.y += letterBoxHeight;
         }
-        else {
-            rect.size.height = bs.height;
-            rect.size.width = rect.size.height * ms.width / ms.height;
-            rect.origin.x += (bs.width - rect.size.width) / 2;
+        else if (_fullScreenFill != FS_FILL_NEVER) {
+            return boundingRect;
         }
-        return rect;
     }
+    return [self _calcMovieRectForBoundingRect:boundingRect];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -420,6 +431,12 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (float)fullScreenUnderScan { return _fullScreenUnderScan; }
 - (void)setFullScreenFill:(int)fill { _fullScreenFill = fill; }
 - (void)setFullScreenUnderScan:(float)underScan { _fullScreenUnderScan = underScan; }
+
+- (void)setFullScreenMovieSize:(NSSize)size
+{
+    _movieSize = size;
+    [self updateMovieRect:TRUE];
+}
 
 - (NSRect)underScannedRect:(NSRect)rect
 {

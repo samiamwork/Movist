@@ -240,6 +240,8 @@
     BOOL remake = FALSE;
     if (attrs->mask & SUBTITLE_ATTRIBUTE_FONT) {
         if ([_subtitleOSD[index] setFontName:attrs->fontName size:attrs->fontSize]) {
+            [self updateLetterBoxHeight];
+            [self updateMovieRect:FALSE];
             remake = TRUE;
         }
         [_auxSubtitleOSD[index] setFontName:attrs->fontName size:attrs->fontSize];
