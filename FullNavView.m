@@ -289,13 +289,13 @@
         if ([defaults boolForKey:MFullNavShowiTunesPodcastsKey]) {
             path = [@"~/Music/iTunes/iTunes Music/Podcast" stringByExpandingTildeInPath];
             if ([fileManager fileExistsAtPath:path]) {
-                NSString* name = NSLocalizedString(@"iTunes Video Podcast", nil);
+                NSString* name = NSLocalizedString(@"iTunes Video Podcasts", nil);
                 [items addObject:[[[FullNavDirectoryItem alloc]
                                             initWithPath:path name:name] autorelease]];
             }
-            path = [@"~/Music/iTunes/iTunes Media/Podcast" stringByExpandingTildeInPath];
+            path = [@"~/Music/iTunes/iTunes Media/Podcasts" stringByExpandingTildeInPath];
             if ([fileManager fileExistsAtPath:path]) {
-                NSString* name = NSLocalizedString(@"iTunes Video Podcast", nil);
+                NSString* name = NSLocalizedString(@"iTunes Video Podcasts", nil);
                 [items addObject:[[[FullNavDirectoryItem alloc]
                                    initWithPath:path name:name] autorelease]];
             }
