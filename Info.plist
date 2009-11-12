@@ -88,6 +88,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>m2ts</string>
+				<string>mts</string>
 				<string>ts</string>
 				<string>tp</string>
 				<string>trp</string>
