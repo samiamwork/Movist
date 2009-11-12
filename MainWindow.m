@@ -147,6 +147,18 @@
     if ([NSApp keyWindow] == self) {
         [super performClose:sender];
     }
+    else if ([[NSApp delegate] isFullScreen]) {
+        [[NSApp delegate] endFullScreen];
+        [super performClose:sender];
+    }
+    else if ([[NSApp delegate] isDesktopBackground]) {
+        [[NSApp delegate] endDesktopBackground];
+        [super performClose:sender];
+    }
+    else if ([[NSApp delegate] isFullNavigation]) {
+        [[NSApp delegate] endFullNavigation];
+        [super performClose:sender];
+    }
     else {
         [[NSApp keyWindow] performClose:sender];
     }
