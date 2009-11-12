@@ -228,6 +228,9 @@
             if ([[NSApp delegate] isFullScreen]) {
                 [[NSApp delegate] fullScreenAction:self];
             }
+            else if ([[NSApp delegate] isDesktopBackground]) {
+                [[NSApp delegate] desktopBackgroundAction:self];
+            }
             else if (_movie) {
                 [[NSApp delegate] closeMovie];
                 [self showLogo];
