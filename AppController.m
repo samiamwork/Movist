@@ -724,12 +724,14 @@ NSString* videoCodecName(int codecId);
                 }
             }
         }
-        if ([menuItem action] == @selector(fullScreenAction:) ||
-            [menuItem action] == @selector(fullScreenFillAction:)) {
+        if ([menuItem action] == @selector(fullScreenAction:)) {
+            return _movie && ![self playlistWindowVisible];
+        }
+        if ([menuItem action] == @selector(fullScreenFillAction:)) {
             return (_movie != nil);
         }
         if ([menuItem action] == @selector(desktopBackgroundAction:)) {
-            return _movie && ![self isFullScreen];
+            return _movie && ![self playlistWindowVisible] && ![self isFullScreen];
         }
         if ([NSApp keyWindow] == [_playlistController window] &&
             [menuItem action] == @selector(playlistAction:)) {
