@@ -66,6 +66,7 @@
 - (void)dealloc
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [self clear];
     free(_packet);
     [_mutex release];
     [super dealloc];
@@ -77,6 +78,10 @@
 - (void)clear 
 { 
     [_mutex lock];
+    unsigned int i;
+    for (i = _front; i != _rear; i = (i + 1) % _capacity) {
+        av_free_packet(&_packet[i]);
+    }
     _rear = _front; 
     [_mutex unlock];
 }
@@ -150,10 +155,10 @@
     _front = _rear = 0;
     _full = FALSE;
 
-    int bufWidth = width/* + 37;
+    int bufWidth = width + 37;
     if (bufWidth < 512) {
         bufWidth = 512 + 37;
-    }*/;
+    };
     int bufSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , height);
     int i, ret;
     for (i = 0; i < _capacity; i++) {
@@ -438,6 +443,9 @@
 
     if (packet->stream_index != _streamIndex) {
         TRACE(@"%s invalid stream_index %d", __PRETTY_FUNCTION__, packet->stream_index);
+        if (packet->data != s_flushPacket.data) {
+            av_free_packet(packet);
+        }
         return -1;
     }
     assert(packet->stream_index == _streamIndex);
@@ -542,12 +550,6 @@
     [_movie videoTrack:self decodedTime:frameTime];
     [pool release];
 #else
-
-//    AVPacket pkt = *packet;
-//    av_dup_packet(&pkt);
-//    [_packetQueue putPacket:&pkt];
-//    av_free_packet(packet);
-
     av_dup_packet(packet);
     [_packetQueue putPacket:packet];
 #endif
@@ -632,6 +634,7 @@
 		return 0;
 	}
 
+    //NSDate* begin = [NSDate date];
 #define _DROP_FRAME_DISPLAY
 #if defined(_DROP_FRAME_DISPLAY)
     int i = 0;
@@ -664,6 +667,8 @@
 
     [_imageQueue dequeue];
 #endif
+    //TRACE(@"nextImage (%.1f sec)", -[begin timeIntervalSinceNow]);
+
     [_imageQueue unlock];
     _dataPoppingStarted = FALSE;
 

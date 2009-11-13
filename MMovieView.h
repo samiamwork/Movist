@@ -39,6 +39,7 @@
     CIFilter* _hueFilter;
     CIFilter* _cropFilter;  // for removing green box
 	CVOpenGLTextureRef _image;
+    NSSize _movieSize;
     CGRect _movieRect;
     CGRect _imageRect;
     float _brightnessValue; // for performance
@@ -129,6 +130,7 @@
 - (float)fullScreenUnderScan;
 - (void)setFullScreenFill:(int)fill;
 - (void)setFullScreenUnderScan:(float)underScan;
+- (void)setFullScreenMovieSize:(NSSize)size;
 - (NSRect)underScannedRect:(NSRect)rect;
 
 - (float)brightness;
