@@ -155,10 +155,13 @@
     _front = _rear = 0;
     _full = FALSE;
 
-    int bufWidth = width + 37;
-    if (bufWidth < 512) {
-        bufWidth = 512 + 37;
-    };
+    int bufWidth = width;
+    if (isSystemTiger()) {
+        bufWidth += 37;
+        if (bufWidth < 512) {
+            bufWidth = 512 + 37;
+        }
+    }
     int bufSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , height);
     int i, ret;
     for (i = 0; i < _capacity; i++) {
