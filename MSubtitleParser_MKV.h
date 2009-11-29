@@ -37,7 +37,7 @@ class StdIOCallback64;
 #endif
 
 @class MSubtitleParser_SUB;
-@class MSubtitleParser_SRT;
+@class MSubtitleParser_TXT;
 @class MSubtitleParser_SSA;
 
 @interface MSubtitleParser_MKV : MSubtitleParser
@@ -58,7 +58,7 @@ class StdIOCallback64;
 #endif
 
     //MSubtitleParser_SUB* _parser_SUB;
-    MSubtitleParser_SRT* _parser_SRT;
+    MSubtitleParser_TXT* _parser_TXT;
     MSubtitleParser_SSA* _parser_SSA;
 
     BOOL _quitRequested;

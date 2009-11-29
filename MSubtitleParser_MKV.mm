@@ -23,7 +23,7 @@
 #import "MSubtitleParser_MKV.h"
 
 #import "MSubtitleParser_SUB.h"
-#import "MSubtitleParser_SRT.h"
+#import "MSubtitleParser_TXT.h"
 #import "MSubtitleParser_SSA.h"
 
 #import "ebml/StdIOCallback.h"
@@ -92,7 +92,7 @@ static NSMutableDictionary* s_parsers = nil;    // [subtitleURL : parser]
     if (self = [super initWithURL:subtitleURL]) {
         _subtitles = [[NSMutableDictionary alloc] initWithCapacity:1];
         //_parser_SUB = [[MSubtitleParser_SUB alloc] initWithURL:nil];
-        _parser_SRT = [[MSubtitleParser_SRT alloc] initWithURL:nil];
+        _parser_TXT = [[MSubtitleParser_TXT alloc] initWithURL:nil];
         _parser_SSA = [[MSubtitleParser_SSA alloc] initWithURL:nil];
         _quitRequested = FALSE;
     }
@@ -102,7 +102,7 @@ static NSMutableDictionary* s_parsers = nil;    // [subtitleURL : parser]
 - (void)dealloc
 {
     [_parser_SSA release];
-    [_parser_SRT release];
+    [_parser_TXT release];
     //[_parser_SUB release];
     [_subtitles release];
     [super dealloc];
@@ -351,7 +351,7 @@ struct master_sorter_t {
                     NSString* s = [NSString stringWithUTF8String:text];
                     if ([type isEqualToString:@"UTF8"] ||
                         [type isEqualToString:@"USF"]) {
-                        string = [_parser_SRT parseSubtitleString:s];
+                        string = [_parser_TXT parseSubtitleString:s];
                     }
                     else if ([type isEqualToString:@"SSA"] ||
                              [type isEqualToString:@"ASS"]) {

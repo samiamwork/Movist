@@ -28,7 +28,6 @@
 #import "MMovie_FFmpeg.h"
 #import "MMovie_QuickTime.h"
 #import "MSubtitleParser_SMI.h"
-#import "MSubtitleParser_SRT.h"
 #import "MSubtitleParser_TXT.h"
 #import "MSubtitleParser_SSA.h"
 #import "MSubtitleParser_MKV.h"
