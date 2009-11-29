@@ -39,6 +39,7 @@
 }
 
 NSString* MSubtitleParserOptionKey_stringEncoding = @"stringEncoding";
+NSString* MSubtitleParserOptionKey_movieFps = @"movieFps";
 
 - (NSArray*)parseWithOptions:(NSDictionary*)options error:(NSError**)error
 {

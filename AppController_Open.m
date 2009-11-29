@@ -109,32 +109,17 @@
         return nil;
     }
 
-    // find parser for subtitle's path extension
     NSString* path = [subtitleURL path];
     NSString* ext = [[path pathExtension] lowercaseString];
-    Class parserClass = ([ext isEqualToString:@"smi"] ||
-                         [ext isEqualToString:@"sami"])? [MSubtitleParser_SMI class] :
-                        ([ext isEqualToString:@"srt"]) ? [MSubtitleParser_SRT class] :
-                        ([ext isEqualToString:@"txt"]) ? [MSubtitleParser_TXT class] :
-                        ([ext isEqualToString:@"ssa"] ||
-                         [ext isEqualToString:@"ass"]) ? [MSubtitleParser_SSA class] :
-                        ([ext isEqualToString:@"mkv"] ||
-                         [ext isEqualToString:@"mks"]) ? [MSubtitleParser_MKV class] :
-                        ([ext isEqualToString:@"sub"] ||
-                         [ext isEqualToString:@"rar"]) ? [MSubtitleParser_SUB class] :
-                                                         Nil;
-    if (!parserClass) {
-        *error = [NSError errorWithDomain:[NSApp localizedAppName] code:1 userInfo:0];
-        return nil;
-    }
-
     if (cfEncoding == kCFStringEncodingInvalidId) {
         cfEncoding = [_defaults integerForKey:MSubtitleEncodingKey];
     }
 
-    // parse subtitles
+    // find parser for subtitle's path extension
+    Class parserClass;
     NSDictionary* options = nil;
-    if (parserClass == [MSubtitleParser_SMI class]) {
+    if ([ext isEqualToString:@"smi"] || [ext isEqualToString:@"sami"]) {
+        parserClass = [MSubtitleParser_SMI class];
         NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
         NSNumber* replaceNLWithBR = [_defaults objectForKey:MSubtitleReplaceNLWithBRKey];
         options = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -142,26 +127,31 @@
                    replaceNLWithBR, MSubtitleParserOptionKey_SMI_replaceNewLineWithBR,
                    nil];
     }
-    else if (parserClass == [MSubtitleParser_SRT class] ||
-             parserClass == [MSubtitleParser_SSA class]) {
+    else if ([ext isEqualToString:@"srt"] || [ext isEqualToString:@"txt"]) {
+        parserClass = [MSubtitleParser_TXT class];
+		NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
+		NSNumber* movieFps = [NSNumber numberWithFloat:[_movie fps]];
+		options = [NSDictionary dictionaryWithObjectsAndKeys:
+                   stringEncoding, MSubtitleParserOptionKey_stringEncoding,
+				   movieFps, MSubtitleParserOptionKey_movieFps,
+				   nil];
+    }
+    else if ([ext isEqualToString:@"ssa"] || [ext isEqualToString:@"ass"]) {
+        parserClass = [MSubtitleParser_SSA class];
         NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
         options = [NSDictionary dictionaryWithObjectsAndKeys:
                    stringEncoding, MSubtitleParserOptionKey_stringEncoding,
                    nil];
     }
-    else if (parserClass == [MSubtitleParser_TXT class]) {
-        MMovieInfo movieInfo;
-		NSURL* movieURL = [_movie url];
-		[MMovie getMovieInfo:&movieInfo forMovieURL:movieURL error:nil];
-		NSString* movieFps = [NSString stringWithFormat: @"%f", movieInfo.fps];
-		NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
-		options = [NSDictionary dictionaryWithObjectsAndKeys:
-                   stringEncoding, MSubtitleParserOptionKey_stringEncoding,
-				   movieFps, @"movieFps",
-				   nil];
+    else if ([ext isEqualToString:@"mkv"] || [ext isEqualToString:@"mks"]) {
+        parserClass = [MSubtitleParser_MKV class];
     }
-    else if (parserClass == [MSubtitleParser_SUB class]) {
-        // no options for SUB
+    else if ([ext isEqualToString:@"sub"] || [ext isEqualToString:@"rar"]) {
+        parserClass = [MSubtitleParser_SUB class];
+    }
+    else {
+        *error = [NSError errorWithDomain:[NSApp localizedAppName] code:1 userInfo:0];
+        return nil;
     }
 
     MSubtitleParser* parser = [[[parserClass alloc] initWithURL:subtitleURL] autorelease];

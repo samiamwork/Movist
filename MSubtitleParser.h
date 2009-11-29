@@ -44,3 +44,4 @@
 @end
 
 extern NSString* MSubtitleParserOptionKey_stringEncoding;
+extern NSString* MSubtitleParserOptionKey_movieFps;

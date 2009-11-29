@@ -20,7 +20,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-// author: macnow@hoax.pl
+// based on MSubtitleParser_SRT for SubRip and
+// added patch of macnow@hoax.pl for MicroDVD, MPL2 and TMPlayer.
 
 #import "Movist.h"
 
@@ -30,10 +31,18 @@
 {
     NSString* _source;
     NSRange _sourceRange;
-	
+
     NSCharacterSet* _fontDelimSet;
-	
+
     NSMutableArray* _subtitles;
+
+    float _fps;                             // for MicroDVD
+    BOOL _replacePipeCharacterWithNewLine;  // for MicroDVD and TMPlayer.
+
+    // used only in -parseString:options:error:.
+    NSMutableString* _ms;
+    float _beginTime;
+    float _endTime;
 }
 
 - (NSArray*)parseString:(NSString*)string options:(NSDictionary*)options

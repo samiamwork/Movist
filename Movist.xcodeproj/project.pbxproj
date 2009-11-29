@@ -28,7 +28,6 @@
 		AF0204AC0C31D01F008F7D03 /* FSPlayPressed.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF0204A80C31D01F008F7D03 /* FSPlayPressed.tiff */; };
 		AF0247280F137C79007339EB /* libmatroska.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AF0247270F137C79007339EB /* libmatroska.a */; };
 		AF0247690F1389E7007339EB /* MSubtitleParser_SSA.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0247680F1389E7007339EB /* MSubtitleParser_SSA.m */; };
-		AF0344520C71E0E400915EAB /* MSubtitleParser_SRT.m in Sources */ = {isa = PBXBuildFile; fileRef = AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */; };
 		AF03F1870BDE3E2D0066B086 /* MMovieOSD.m in Sources */ = {isa = PBXBuildFile; fileRef = AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */; };
 		AF0439910BEA14EA0016091F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF0439900BEA14EA0016091F /* Carbon.framework */; };
 		AF05B3740C31780F00E56B25 /* Default.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF05B3720C31780F00E56B25 /* Default.tiff */; };
@@ -181,6 +180,8 @@
 		AF8DC2B00F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AF8DC2AF0F0E4F630072A830 /* HUDCheckBoxOffDisabled.tiff */; };
 		AF9569820BFEEABF002A60BE /* Movist.m in Sources */ = {isa = PBXBuildFile; fileRef = AF9569810BFEEABF002A60BE /* Movist.m */; };
 		AF9653350F1094A70018A37A /* MSubtitleParser_MKV.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF9653340F1094A70018A37A /* MSubtitleParser_MKV.mm */; };
+		AF98017210BDA5A4000E471A /* MSubtitleParser_TXT.m in Sources */ = {isa = PBXBuildFile; fileRef = AF98017110BDA5A4000E471A /* MSubtitleParser_TXT.m */; };
+		AF98017E10BDA93F000E471A /* CSRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = AF98017D10BDA93F000E471A /* CSRegex.m */; };
 		AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */; };
 		AFA843C90D1DA8D500D4805C /* AppController_AudioDigital.m in Sources */ = {isa = PBXBuildFile; fileRef = AFA843C80D1DA8D500D4805C /* AppController_AudioDigital.m */; };
 		AFA999DD0DACDFE800E49D6E /* HUDClose.tiff in Resources */ = {isa = PBXBuildFile; fileRef = AFA999DA0DACDFE800E49D6E /* HUDClose.tiff */; };
@@ -281,7 +282,6 @@
 		AF0247270F137C79007339EB /* libmatroska.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmatroska.a; path = contrib/lib/libmatroska.a; sourceTree = "<group>"; };
 		AF0247670F1389E7007339EB /* MSubtitleParser_SSA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_SSA.h; sourceTree = "<group>"; };
 		AF0247680F1389E7007339EB /* MSubtitleParser_SSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SSA.m; sourceTree = "<group>"; };
-		AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_SRT.m; sourceTree = "<group>"; };
 		AF03F1850BDE3E2D0066B086 /* MMovieOSD.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = MMovieOSD.h; sourceTree = "<group>"; };
 		AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = MMovieOSD.m; sourceTree = "<group>"; };
 		AF0439900BEA14EA0016091F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
@@ -369,7 +369,6 @@
 		AF3568F40CF1D6AB00C0621A /* FullNavListView.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = FullNavListView.h; sourceTree = "<group>"; };
 		AF3568F50CF1D6AB00C0621A /* FullNavListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullNavListView.m; sourceTree = "<group>"; };
 		AF37E1490D20BA4300F572C4 /* MSubtitleParser_SMI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_SMI.h; sourceTree = "<group>"; };
-		AF37E14A0D20BA4300F572C4 /* MSubtitleParser_SRT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_SRT.h; sourceTree = "<group>"; };
 		AF3C3A370D92A5FA0064CA28 /* FSNextMovie.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSNextMovie.tiff; path = Images/FSNextMovie.tiff; sourceTree = "<group>"; };
 		AF3C3A390D92A6050064CA28 /* FSPrevMovie.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSPrevMovie.tiff; path = Images/FSPrevMovie.tiff; sourceTree = "<group>"; };
 		AF3C3A3B0D92A61C0064CA28 /* MainNextMovie.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = MainNextMovie.tiff; path = Images/MainNextMovie.tiff; sourceTree = "<group>"; };
@@ -476,6 +475,10 @@
 		AF9569810BFEEABF002A60BE /* Movist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = Movist.m; sourceTree = "<group>"; };
 		AF9653330F1094A70018A37A /* MSubtitleParser_MKV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_MKV.h; sourceTree = "<group>"; };
 		AF9653340F1094A70018A37A /* MSubtitleParser_MKV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MSubtitleParser_MKV.mm; sourceTree = "<group>"; };
+		AF98017010BDA5A4000E471A /* MSubtitleParser_TXT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSubtitleParser_TXT.h; sourceTree = "<group>"; };
+		AF98017110BDA5A4000E471A /* MSubtitleParser_TXT.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitleParser_TXT.m; sourceTree = "<group>"; };
+		AF98017C10BDA93F000E471A /* CSRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSRegex.h; sourceTree = "<group>"; };
+		AF98017D10BDA93F000E471A /* CSRegex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSRegex.m; sourceTree = "<group>"; };
 		AFA41E0C0D18E956009DBF15 /* UpdateChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateChecker.h; sourceTree = "<group>"; };
 		AFA41E0D0D18E956009DBF15 /* UpdateChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UpdateChecker.m; sourceTree = "<group>"; };
 		AFA843C80D1DA8D500D4805C /* AppController_AudioDigital.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController_AudioDigital.m; sourceTree = "<group>"; };
@@ -828,14 +831,16 @@
 				AF1852B00D83FC180017D0A5 /* MSubtitleParser.m */,
 				AF37E1490D20BA4300F572C4 /* MSubtitleParser_SMI.h */,
 				AF1C720B0BDCF4C60056BAB8 /* MSubtitleParser_SMI.m */,
-				AF37E14A0D20BA4300F572C4 /* MSubtitleParser_SRT.h */,
-				AF0344510C71E0E400915EAB /* MSubtitleParser_SRT.m */,
 				AF0247670F1389E7007339EB /* MSubtitleParser_SSA.h */,
 				AF0247680F1389E7007339EB /* MSubtitleParser_SSA.m */,
 				AFCD04C00DBA39B300348AB0 /* MSubtitleParser_SUB.h */,
 				AFCD04C10DBA39B400348AB0 /* MSubtitleParser_SUB.m */,
 				AF9653330F1094A70018A37A /* MSubtitleParser_MKV.h */,
 				AF9653340F1094A70018A37A /* MSubtitleParser_MKV.mm */,
+				AF98017010BDA5A4000E471A /* MSubtitleParser_TXT.h */,
+				AF98017110BDA5A4000E471A /* MSubtitleParser_TXT.m */,
+				AF98017C10BDA93F000E471A /* CSRegex.h */,
+				AF98017D10BDA93F000E471A /* CSRegex.m */,
 				AFB7D77B0FBB2CEF006BC714 /* vobsub.h */,
 				AFB7D77A0FBB2CEF006BC714 /* vobsub.c */,
 				AFB7D77D0FBB2CEF006BC714 /* spudec.h */,
@@ -1039,8 +1044,8 @@
 				2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */,
 				2CC012020DC484910020241D /* FFAudioTrack_Digital.m */,
 				AF1E05370DA790A700CE7196 /* FFVideoTrack.m */,
-				AF0C1B3010A6BE5700773156 /* ColorConversions.c */,
 				AF0C1B3110A6BE5700773156 /* ColorConversions.h */,
+				AF0C1B3010A6BE5700773156 /* ColorConversions.c */,
 				AF1E05260DA77F3D00CE7196 /* FFIndexer.h */,
 				AF1E05270DA77F3D00CE7196 /* FFIndexer.m */,
 				AF494D840B902DB400EDDB8A /* MMovie_FFMPEG.h */,
@@ -1321,7 +1326,6 @@
 				AF0C512B0C5CDB5800199932 /* MultiClickRemoteBehavior.m in Sources */,
 				AF0C512C0C5CDB5800199932 /* RemoteControl.m in Sources */,
 				AF0C512D0C5CDB5800199932 /* RemoteControlContainer.m in Sources */,
-				AF0344520C71E0E400915EAB /* MSubtitleParser_SRT.m in Sources */,
 				AF3568F60CF1D6AB00C0621A /* FullNavItems.m in Sources */,
 				AF3568F70CF1D6AB00C0621A /* FullNavListView.m in Sources */,
 				AFA41E0E0D18E956009DBF15 /* UpdateChecker.m in Sources */,
@@ -1353,6 +1357,8 @@
 				AFB7D77E0FBB2CEF006BC714 /* vobsub.c in Sources */,
 				AFB7D77F0FBB2CEF006BC714 /* spudec.c in Sources */,
 				AF0C1B3210A6BE5700773156 /* ColorConversions.c in Sources */,
+				AF98017210BDA5A4000E471A /* MSubtitleParser_TXT.m in Sources */,
+				AF98017E10BDA93F000E471A /* CSRegex.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
