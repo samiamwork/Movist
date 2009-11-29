@@ -29,6 +29,7 @@
 #import "MMovie_QuickTime.h"
 #import "MSubtitleParser_SMI.h"
 #import "MSubtitleParser_SRT.h"
+#import "MSubtitleParser_TXT.h"
 #import "MSubtitleParser_SSA.h"
 #import "MSubtitleParser_MKV.h"
 #import "MSubtitleParser_SUB.h"
@@ -113,8 +114,8 @@
     NSString* ext = [[path pathExtension] lowercaseString];
     Class parserClass = ([ext isEqualToString:@"smi"] ||
                          [ext isEqualToString:@"sami"])? [MSubtitleParser_SMI class] :
-                        ([ext isEqualToString:@"srt"] ||
-                         [ext isEqualToString:@"txt"]) ? [MSubtitleParser_SRT class] :
+                        ([ext isEqualToString:@"srt"]) ? [MSubtitleParser_SRT class] :
+                        ([ext isEqualToString:@"txt"]) ? [MSubtitleParser_TXT class] :
                         ([ext isEqualToString:@"ssa"] ||
                          [ext isEqualToString:@"ass"]) ? [MSubtitleParser_SSA class] :
                         ([ext isEqualToString:@"mkv"] ||
@@ -147,6 +148,17 @@
         options = [NSDictionary dictionaryWithObjectsAndKeys:
                    stringEncoding, MSubtitleParserOptionKey_stringEncoding,
                    nil];
+    }
+    else if (parserClass == [MSubtitleParser_TXT class]) {
+        MMovieInfo movieInfo;
+		NSURL* movieURL = [_movie url];
+		[MMovie getMovieInfo:&movieInfo forMovieURL:movieURL error:nil];
+		NSString* movieFps = [NSString stringWithFormat: @"%f", movieInfo.fps];
+		NSNumber* stringEncoding = [NSNumber numberWithInt:cfEncoding];
+		options = [NSDictionary dictionaryWithObjectsAndKeys:
+                   stringEncoding, MSubtitleParserOptionKey_stringEncoding,
+				   movieFps, @"movieFps",
+				   nil];
     }
     else if (parserClass == [MSubtitleParser_SUB class]) {
         // no options for SUB
