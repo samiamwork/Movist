@@ -165,12 +165,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         if (_imageRect.size.width == 0) {
             [self updateImageRect];
         }
-    #define _DRAW_IMAGE_WITH_GL
-    #if defined(_DRAW_IMAGE_WITH_GL)
+        // draw image
+        CIImage* img = [CIImage imageWithCVImageBuffer:_image];
         if (_needsCoreImage) {
-    #endif
-            //NSDate* begin = [NSDate date];
-            CIImage* img = [CIImage imageWithCVImageBuffer:_image];
             if (_removeGreenBox) {
                 [_cropFilter setValue:img forKey:@"inputImage"];
                 img = [_cropFilter valueForKey:@"outputImage"];
@@ -185,33 +182,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
                 [_hueFilter setValue:img forKey:@"inputImage"];
                 img = [_hueFilter valueForKey:@"outputImage"];
             }
-            [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
-            //TRACE(@"draw with core-image (%.1f sec)", -[begin timeIntervalSinceNow]);
-    #if defined(_DRAW_IMAGE_WITH_GL)
         }
-        else {
-            //NSDate* begin = [NSDate date];
-            glEnable(GL_TEXTURE_RECTANGLE_EXT);
-            GLenum target = CVOpenGLTextureGetTarget(_image);
-            GLuint name = CVOpenGLTextureGetName(_image);
+        [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
 
-            CGRect b = _movieRect;
-            float bl[2], br[2], tl[2], tr[2];
-            CVOpenGLTextureGetCleanTexCoords(_image, bl, br, tr, tl);
-
-            glEnable(target);
-            glBindTexture(target, name);
-            glBegin(GL_QUADS);
-            glTexCoord2f(tl[0], tl[1]); glVertex2f(CGRectGetMinX(b), CGRectGetMaxY(b));
-            glTexCoord2f(tr[0], tr[1]); glVertex2f(CGRectGetMaxX(b), CGRectGetMaxY(b));
-            glTexCoord2f(br[0], br[1]); glVertex2f(CGRectGetMaxX(b), CGRectGetMinY(b));
-            glTexCoord2f(bl[0], bl[1]); glVertex2f(CGRectGetMinX(b), CGRectGetMinY(b));
-            glEnd();
-            glDisable(target);
-            glDisable(GL_TEXTURE_RECTANGLE_EXT);
-            //TRACE(@"draw with OpenGL     (%.1f sec)", -[begin timeIntervalSinceNow]);
-        }
-    #endif
         // clear extra area
         NSRect bounds = [self bounds];
         if (NSMinX(bounds) != CGRectGetMinX(_movieRect) ||
