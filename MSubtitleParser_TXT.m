@@ -226,20 +226,28 @@ typedef struct _TXTTag {
 
     SEL parseTokenStringSelector;
     if ([_source matchedByPattern:@"^{"]) {
+        [subtitle setName:@"MicroDVD"];
         parseTokenStringSelector = @selector(parseTokenString_MicroDVD:);
         _replacePipeCharacterWithNewLine = TRUE;
     }
     else if ([_source matchedByPattern:@"^\\["]) {
+        [subtitle setName:@"MPL2"];
         parseTokenStringSelector = @selector(parseTokenString_MPL2:);
         _replacePipeCharacterWithNewLine = TRUE;
     }
     else if ([_source matchedByPattern:@"^[0-9]"]) {
         NSRange r = [_source tokenRangeForDelimiterSet:set rangePtr:&_sourceRange];
         if ([self isIndexString:[_source substringWithRange:r]]) {
+            NSString* ext = [[_subtitleURL path] pathExtension];
+            if (NSOrderedSame == [ext caseInsensitiveCompare:@"srt"]) {
+                [subtitle setType:@"SRT"];
+            }
+            [subtitle setName:@"SubRip"];
             parseTokenStringSelector = @selector(parseTokenString_SRT:);
             _replacePipeCharacterWithNewLine = FALSE;
         }
         else {
+            [subtitle setName:@"TMPlayer"];
             parseTokenStringSelector = @selector(parseTokenString_TMPlayer:);
             _replacePipeCharacterWithNewLine = TRUE;
         }
