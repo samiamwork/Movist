@@ -21,16 +21,12 @@
 
 
 #include <Carbon/Carbon.h>
-#ifdef __BIG_ENDIAN__
-    #include <ffmpeg/avcodec.h>
-#else
-    #include <libavcodec/avcodec.h>
-#endif
+#include <libavcodec/avcodec.h>
 
-#if defined(__i386__) && !defined(__llvm__)
-#define FASTCALL __attribute__((fastcall))
-#else
+#ifndef __i386__
 #define FASTCALL
+#else
+#define FASTCALL __attribute__((fastcall))
 #endif
 
 typedef void ColorConversionFunc(AVFrame *inPicture, UInt8 *outBaseAddr, int outRowBytes, unsigned outWidth, unsigned outHeight) FASTCALL;

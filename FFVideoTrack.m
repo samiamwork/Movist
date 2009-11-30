@@ -24,8 +24,6 @@
 #import "FFTrack.h"
 #import "MMovie_FFmpeg.h"
 
-#import "ColorConversions.h"
-
 @interface PacketQueue : NSObject
 {
     AVPacket* _packet;
@@ -116,11 +114,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-#ifdef __BIG_ENDIAN__
-    #define RGB_PIXEL_FORMAT    PIX_FMT_YUV422
-#else
-    #define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
-#endif
+#define RGB_PIXEL_FORMAT    PIX_FMT_YUYV422
 //#undef RGB_PIXEL_FORMAT
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
 
@@ -162,6 +156,7 @@
             bufWidth = 512 + 37;
         }
     }
+    bufWidth = (bufWidth + 31) / 32 * 32;
     int bufSize = avpicture_get_size(RGB_PIXEL_FORMAT, bufWidth , height);
     int i, ret;
     for (i = 0; i < _capacity; i++) {
@@ -310,6 +305,10 @@
         return FALSE;
     }
 
+#if 1
+    OSType qtPixFmt = ColorConversionDstForPixFmt(_stream->codec->pix_fmt);
+    ColorConversionFindFor(&_colorConvFunc, _stream->codec->pix_fmt, _frame, qtPixFmt);
+#else
     // init sw-scaler context
     _scalerContext = sws_getContext(width, height, context->pix_fmt,
                                     width, height, RGB_PIXEL_FORMAT,
@@ -319,6 +318,7 @@
         *errorCode = ERROR_FFMPEG_SW_SCALER_INIT_FAILED;
         return FALSE;
     }
+#endif
 
     // init playback
 #ifndef _EXPERIMENTAL_AV_SYNC
@@ -460,13 +460,8 @@
     }
 
     int gotFrame;
-#if 1 // def __BIG_ENDIAN__
-    int bytesDecoded = avcodec_decode_video(_stream->codec, _frame,
-                                             &gotFrame, packet->data, packet->size);
-#else
     int bytesDecoded = avcodec_decode_video2(_stream->codec, _frame,
                                             &gotFrame, packet);
-#endif
     av_free_packet(packet);
     if (bytesDecoded < 0) {
         TRACE(@"%s error while decoding frame", __PRETTY_FUNCTION__);
@@ -508,11 +503,7 @@
 #if 1
     unsigned width = [_movie encodedSize].width;
     unsigned height = [_movie encodedSize].height;
-    OSType qtPixFmt = ColorConversionDstForPixFmt(_stream->codec->pix_fmt);
-    ColorConversionFuncs f;
-    ColorConversionFindFor(&f, _stream->codec->pix_fmt, _frame, qtPixFmt);
-    
-    f.convert(_frame, frame->data[0], frame->linesize[0], width, height);
+    _colorConvFunc.convert(_frame, frame->data[0], frame->linesize[0], width, height);
 #else
     // sw-scaler should be used under GPL only!
     int ret = sws_scale(_scalerContext,
@@ -655,7 +646,7 @@
     if (ret != kCVReturnSuccess) {
         TRACE(@"CVOpenGLTextureCacheCreateTextureFromImage() failed : %d", ret);
     }
-    //CVOpenGLTextureCacheFlush(_textureCache, 0);
+    CVOpenGLTextureCacheFlush(_textureCache, 0);
 #else
     *currentTime = [_imageQueue time];
 
@@ -666,7 +657,7 @@
     if (ret != kCVReturnSuccess) {
         TRACE(@"CVOpenGLTextureCacheCreateTextureFromImage() failed : %d", ret);
     }
-    //CVOpenGLTextureCacheFlush(_textureCache, 0);
+    CVOpenGLTextureCacheFlush(_textureCache, 0);
 
     [_imageQueue dequeue];
 #endif

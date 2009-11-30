@@ -351,15 +351,9 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     //TRACE(@"dts = %lld * %lf = %lf", packet->dts, PTS_TO_SEC, 1. * packet->dts * PTS_TO_SEC);
     while (0 < packetSize) {
         dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-#if 1 // def __BIG_ENDIAN__
-        decodedSize = avcodec_decode_audio2(context,
-                                            _audioDataBuf, &dataSize,
-                                            packetPtr, packetSize);
-#else
         decodedSize = avcodec_decode_audio3(context,
                                             _audioDataBuf, &dataSize,
                                             packet);
-#endif
         if (decodedSize < 0) { 
             TRACE(@"decodedSize < 0");
             break;

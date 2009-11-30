@@ -23,7 +23,7 @@ mkdir -p "$BUILDDIR"
 cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
 
 # ffmpeg
-cd "$CONTRIB_SRC_PATH" && sh build_ffmpeg.sh
+cd "$CONTRIB_SRC_PATH" && sh build_ffmpeg_mt.sh
 
 # universal
 cd "$SRCROOT" && sh make_univlib.sh

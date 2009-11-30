@@ -19,11 +19,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "ColorConversions.h"
 #include <QuickTime/QuickTime.h>
 #include <Accelerate/Accelerate.h>
-#include "ColorConversions.h"
 //#include "Codecprintf.h"
 //#include "CommonUtils.h"
+#include <stdio.h>
 
 /*
  Converts (without resampling) from ffmpeg pixel formats to the ones QT accepts
@@ -509,9 +510,9 @@ static FASTCALL void ClearY422(UInt8 *baseAddr, int rowBytes, unsigned width, un
 OSType ColorConversionDstForPixFmt(enum PixelFormat ffPixFmt)
 {
 	switch (ffPixFmt) {
-		case PIX_FMT_RGB555LE:
-		case PIX_FMT_RGB555BE:
-			return k16BE555PixelFormat;
+		//case PIX_FMT_RGB555LE:
+		//case PIX_FMT_RGB555BE:
+		//	return k16BE555PixelFormat;
 		case PIX_FMT_BGR24:
 			return k24RGBPixelFormat; //XXX try k24BGRPixelFormat
 		case PIX_FMT_RGB24:
@@ -564,14 +565,14 @@ int ColorConversionFindFor(ColorConversionFuncs *funcs, enum PixelFormat ffPixFm
 			funcs->clear = ClearRGB24;
 			funcs->convert = RGB24toRGB24;
 			break;
-		case PIX_FMT_RGB555LE:
-			funcs->clear = ClearRGB16;
-			funcs->convert = RGB16LEtoRGB16;
-			break;
-		case PIX_FMT_RGB555BE:
-			funcs->clear = ClearRGB16;
-			funcs->convert = RGB16toRGB16;
-			break;
+		//case PIX_FMT_RGB555LE:
+		//	funcs->clear = ClearRGB16;
+		//	funcs->convert = RGB16LEtoRGB16;
+		//	break;
+		//case PIX_FMT_RGB555BE:
+		//	funcs->clear = ClearRGB16;
+		//	funcs->convert = RGB16toRGB16;
+		//	break;
 		case PIX_FMT_YUV410P:
 			funcs->clear = ClearY422;
 			funcs->convert = Y410toY422;
@@ -590,3 +591,18 @@ int ColorConversionFindFor(ColorConversionFuncs *funcs, enum PixelFormat ffPixFm
 	
 	return noErr;
 }
+
+int IsAltivecSupported()
+{
+	static int altivec = -1;
+
+	if (altivec == -1) {
+		long response = 0;
+		int err = Gestalt(gestaltPowerPCProcessorFeatures, &response);
+
+		altivec = !err && ((response & (1 << gestaltPowerPCHasVectorInstructions)) != 0);
+	}
+
+	return altivec;
+}
+

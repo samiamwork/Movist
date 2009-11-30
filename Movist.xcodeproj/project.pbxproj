@@ -16,7 +16,6 @@
 		2CFA586A0DB3496B0084BFB6 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58620DB3496B0084BFB6 /* libavutil.a */; };
 		2CFA586B0DB3496B0084BFB6 /* libfaad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58630DB3496B0084BFB6 /* libfaad.a */; };
 		2CFA586C0DB3496B0084BFB6 /* libpostproc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58640DB3496B0084BFB6 /* libpostproc.a */; };
-		2CFA586D0DB3496B0084BFB6 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58650DB3496B0084BFB6 /* libswscale.a */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -269,7 +268,6 @@
 		2CFA58620DB3496B0084BFB6 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = contrib/lib/libavutil.a; sourceTree = "<group>"; };
 		2CFA58630DB3496B0084BFB6 /* libfaad.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfaad.a; path = contrib/lib/libfaad.a; sourceTree = "<group>"; };
 		2CFA58640DB3496B0084BFB6 /* libpostproc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpostproc.a; path = contrib/lib/libpostproc.a; sourceTree = "<group>"; };
-		2CFA58650DB3496B0084BFB6 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = contrib/lib/libswscale.a; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Movist_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movist_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Movist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movist.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -592,7 +590,6 @@
 				2CFA586A0DB3496B0084BFB6 /* libavutil.a in Frameworks */,
 				2CFA586B0DB3496B0084BFB6 /* libfaad.a in Frameworks */,
 				2CFA586C0DB3496B0084BFB6 /* libpostproc.a in Frameworks */,
-				2CFA586D0DB3496B0084BFB6 /* libswscale.a in Frameworks */,
 				AF0247280F137C79007339EB /* libmatroska.a in Frameworks */,
 				2CB96DA40F1CCF1C00C14189 /* libebml.a in Frameworks */,
 			);
@@ -725,7 +722,6 @@
 				2CFA58620DB3496B0084BFB6 /* libavutil.a */,
 				2CFA58630DB3496B0084BFB6 /* libfaad.a */,
 				2CFA58640DB3496B0084BFB6 /* libpostproc.a */,
-				2CFA58650DB3496B0084BFB6 /* libswscale.a */,
 			);
 			name = FFmpeg;
 			sourceTree = "<group>";

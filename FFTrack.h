@@ -26,16 +26,11 @@
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <CoreVideo/CVOpenGLTextureCache.h>
 #include <AudioUnit/AudioUnit.h>
+#include "ColorConversions.h"
 
-#ifdef __BIG_ENDIAN__
-    #import <ffmpeg/avcodec.h>
-    #import <ffmpeg/avformat.h>
-    #import <ffmpeg/swscale.h>
-#else
-    #import <libavcodec/avcodec.h>
-    #import <libavformat/avformat.h>
-    #import <libswscale/swscale.h>
-#endif
+#import <libavcodec/avcodec.h>
+#import <libavformat/avformat.h>
+//#import <libswscale/swscale.h>
 
 @interface FFContext : NSObject
 {
@@ -93,6 +88,7 @@ extern AVPacket s_flushPacket;
     PacketQueue* _packetQueue;
     AVFrame* _frame;   // for decoding
     ImageQueue* _imageQueue;
+    ColorConversionFuncs _colorConvFunc;
     struct SwsContext* _scalerContext;
     CVOpenGLTextureCacheRef _textureCache;
     BOOL _needKeyFrame;
