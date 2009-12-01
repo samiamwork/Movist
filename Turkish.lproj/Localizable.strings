@@ -164,6 +164,7 @@
 "Include Letter Box on Capture" = "Yakalanana Kenar Boşluğu Ekle";
 "Remove Green Box" = "Yeşil Kutuyu Kaldır";
 "Video Queue Capacity (8~99)" = "Video Queue Capacity (8~99)";
+"Use Fast Decoding" = "Use Fast Decoding";
 
 /* Preferences: advanced - details: subtitle */
 "Use QuickTime/Perian Subtitles" = "QuickTime/Perian Altyazısını Kullan";

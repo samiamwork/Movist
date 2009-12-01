@@ -103,7 +103,8 @@ extern AVPacket s_flushPacket;
 
 + (id)videoTrackWithAVStream:(AVStream*)stream index:(int)index;
 
-- (BOOL)initTrack:(int*)errorCode videoQueueCapacity:(int)videoQueueCapacity;
+- (BOOL)initTrack:(int*)errorCode videoQueueCapacity:(int)videoQueueCapacity
+                                     useFastDecoding:(BOOL)useFastDecoding;
 - (BOOL)setOpenGLContext:(NSOpenGLContext*)openGLContext
              pixelFormat:(NSOpenGLPixelFormat*)openGLPixelFormat
                    error:(NSError**)error;

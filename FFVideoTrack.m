@@ -284,6 +284,7 @@
 }
 
 - (BOOL)initTrack:(int*)errorCode videoQueueCapacity:(int)videoQueueCapacity
+                                     useFastDecoding:(BOOL)useFastDecoding
 {
     _enabled = FALSE;
     _running = FALSE;
@@ -293,6 +294,11 @@
     AVCodecContext* context = _stream->codec;
     float width = context->coded_width;
     float height= context->coded_height;
+
+    // FIXME: temp. impl for convenience.
+    if (useFastDecoding) {
+        context->flags2 |= CODEC_FLAG2_FAST;
+    }
 
     if (![super initTrack:errorCode]) {
         return FALSE;

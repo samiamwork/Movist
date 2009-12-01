@@ -210,13 +210,15 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     int videoQueueCapacity = [defaults integerForKey:MVideoQueueCapacityKey];
+    BOOL useFastDecoding = [defaults integerForKey:MUseFastDecodingKey];
 
     MTrack* track;
     FFVideoTrack* vTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
     while (track = (MTrack*)[enumerator nextObject]) {
         vTrack = (FFVideoTrack*)[track impl];
-        if ([vTrack initTrack:errorCode videoQueueCapacity:videoQueueCapacity]) {
+        if ([vTrack initTrack:errorCode videoQueueCapacity:videoQueueCapacity
+                                           useFastDecoding:useFastDecoding]) {
             if (!_mainVideoTrack) {
                 _mainVideoTrack = vTrack;
             }

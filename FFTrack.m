@@ -60,9 +60,12 @@
         context->flags |= CODEC_FLAG_EMU_EDGE;
     }
     context->idct_algo = FF_IDCT_AUTO;
-    if (0/*fast*/) {
+    /* this is already set
+       by initTrack:videoQueueCapacity:useFastDecoding: in FFVideoTrack.m.
+    if (fast) {
         context->flags2 |= CODEC_FLAG2_FAST;
     }
+     */
     context->skip_frame = AVDISCARD_DEFAULT;
     context->skip_idct = AVDISCARD_DEFAULT;
     context->skip_loop_filter = AVDISCARD_DEFAULT;

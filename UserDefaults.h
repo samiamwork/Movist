@@ -116,6 +116,7 @@ extern NSString* MViewDragActionKey;
 extern NSString* MCaptureFormatKey;
 extern NSString* MIncludeLetterBoxOnCaptureKey;
 extern NSString* MRemoveGreenBoxKey;
+extern NSString* MUseFastDecodingKey;
 extern NSString* MVideoQueueCapacityKey;
 #pragma mark prefs: advanced - details: audio
 #pragma mark prefs: advanced - details: subtitle

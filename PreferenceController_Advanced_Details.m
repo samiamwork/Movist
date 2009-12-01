@@ -457,6 +457,8 @@
                               key:MIncludeLetterBoxOnCaptureKey],
        [BoolNode boolNodeWithName:LABEL(@"Remove Green Box")
                               key:MRemoveGreenBoxKey],
+       [BoolNode boolNodeWithName:LABEL(@"Use Fast Decoding")
+                              key:MUseFastDecodingKey],
        [IntNode intNodeWithName:LABEL_R(@"Video Queue Capacity (8~99)")
                             key:MVideoQueueCapacityKey minValue:8 maxValue:99],
        nil]]];
