@@ -236,8 +236,16 @@ typedef struct _TXTTag {
         _replacePipeCharacterWithNewLine = TRUE;
     }
     else if ([_source matchedByPattern:@"^[0-9]"]) {
-        NSRange r = [_source tokenRangeForDelimiterSet:set rangePtr:&_sourceRange];
-        if ([self isIndexString:[_source substringWithRange:r]]) {
+        NSRange sourceRange = _sourceRange;
+        NSRange r = [_source tokenRangeForDelimiterSet:set rangePtr:&sourceRange];
+        NSString* s = [_source substringWithRange:r];
+        BOOL isSRT = [self isIndexString:s];
+        if (!isSRT) {   // check if "begin => end" without index in SRT style.
+            float beginTime = -1, endTime = -1;
+            [self parse_TIMES:s beginTime:&beginTime endTime:&endTime];
+            isSRT = (0 <= beginTime && 0 <= endTime);
+        }
+        if (isSRT) {
             NSString* ext = [[_subtitleURL path] pathExtension];
             if (NSOrderedSame == [ext caseInsensitiveCompare:@"srt"]) {
                 [subtitle setType:@"SRT"];

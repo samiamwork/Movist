@@ -46,7 +46,6 @@
     float _saturationValue;
     float _contrastValue;
     float _hueValue;
-    BOOL _needsCoreImage;
 
     MMovie* _movie;
 

@@ -57,7 +57,6 @@
     _captureFormat = CAPTURE_FORMAT_PNG;
     _includeLetterBoxOnCapture = TRUE;
     _removeGreenBox = FALSE;
-    _needsCoreImage = FALSE;
 
     // drag-and-drop
     [self registerForDraggedTypes:MOVIST_DRAG_TYPES];

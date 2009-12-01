@@ -21,7 +21,7 @@
 //
 
 #import "MMovieView.h"
-#import "MMovie_QuickTime.h"
+#import "MMovie_FFMPEG.h"
 #import "MMovieOSD.h"
 #import "MSubtitle.h"
 #import "AppController.h"   // for NSApp's delegate
@@ -167,21 +167,19 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         }
         // draw image
         CIImage* img = [CIImage imageWithCVImageBuffer:_image];
-        if (_needsCoreImage) {
-            if (_removeGreenBox) {
-                [_cropFilter setValue:img forKey:@"inputImage"];
-                img = [_cropFilter valueForKey:@"outputImage"];
-            }
-            if (_brightnessValue != DEFAULT_BRIGHTNESS ||
-                _saturationValue != DEFAULT_SATURATION ||
-                _contrastValue   != DEFAULT_CONTRAST) {
-                [_colorFilter setValue:img forKey:@"inputImage"];
-                img = [_colorFilter valueForKey:@"outputImage"];
-            }
-            if (_hueValue != DEFAULT_HUE) {
-                [_hueFilter setValue:img forKey:@"inputImage"];
-                img = [_hueFilter valueForKey:@"outputImage"];
-            }
+        if (_removeGreenBox) {
+            [_cropFilter setValue:img forKey:@"inputImage"];
+            img = [_cropFilter valueForKey:@"outputImage"];
+        }
+        if (_brightnessValue != DEFAULT_BRIGHTNESS ||
+            _saturationValue != DEFAULT_SATURATION ||
+            _contrastValue   != DEFAULT_CONTRAST) {
+            [_colorFilter setValue:img forKey:@"inputImage"];
+            img = [_colorFilter valueForKey:@"outputImage"];
+        }
+        if (_hueValue != DEFAULT_HUE) {
+            [_hueFilter setValue:img forKey:@"inputImage"];
+            img = [_hueFilter valueForKey:@"outputImage"];
         }
         [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
 
@@ -431,15 +429,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (float)contrast   { return _contrastValue; }
 - (float)hue        { return _hueValue; }
 
-- (void)updateNeedsCoreImage
-{
-    _needsCoreImage = _removeGreenBox ||
-                      _brightnessValue != DEFAULT_BRIGHTNESS ||
-                      _saturationValue != DEFAULT_SATURATION ||
-                      _contrastValue   != DEFAULT_CONTRAST ||
-                      _hueValue != DEFAULT_HUE;
-}
-
 - (void)setBrightness:(float)brightness
 {
     //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
@@ -448,7 +437,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     brightness = normalizedFloat2(adjustToRange(brightness, MIN_BRIGHTNESS, MAX_BRIGHTNESS));
     [_colorFilter setValue:[NSNumber numberWithFloat:brightness] forKey:@"inputBrightness"];
     _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
-    [self updateNeedsCoreImage];
     [self redisplay];
 
     [_drawLock unlock];
@@ -462,7 +450,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     saturation = normalizedFloat2(adjustToRange(saturation, MIN_SATURATION, MAX_SATURATION));
     [_colorFilter setValue:[NSNumber numberWithFloat:saturation] forKey:@"inputSaturation"];
     _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
-    [self updateNeedsCoreImage];
     [self redisplay];
 
     [_drawLock unlock];
@@ -476,7 +463,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     contrast = normalizedFloat2(adjustToRange(contrast, MIN_CONTRAST, MAX_CONTRAST));
     [_colorFilter setValue:[NSNumber numberWithFloat:contrast] forKey:@"inputContrast"];
     _contrastValue = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
-    [self updateNeedsCoreImage];
     [self redisplay];
 
     [_drawLock unlock];
@@ -490,7 +476,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     hue = normalizedFloat2(adjustToRange(hue, MIN_HUE, MAX_HUE));
     [_hueFilter setValue:[NSNumber numberWithFloat:hue] forKey:@"inputAngle"];
     _hueValue = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
-    [self updateNeedsCoreImage];
     [self redisplay];
 
     [_drawLock unlock];
@@ -504,10 +489,9 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)updateRemoveGreenBox
 {
-    // need not for using FFmpeg.
-    _removeGreenBox = [_movie isMemberOfClass:[MMovie_QuickTime class]] ?
+    // need for FFmpeg only.
+    _removeGreenBox = [_movie isMemberOfClass:[MMovie_FFmpeg class]] ?
                                                 _removeGreenBoxSetting : FALSE;
-    [self updateNeedsCoreImage];
     [self updateMovieRect:TRUE];
 }
 
