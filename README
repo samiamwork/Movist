@@ -7,7 +7,8 @@ Movist README
 
 * FFmpeg is imported as external library.
   FFmpeg is licensed under the GNU Lesser General Public License (LGPL).
-  See http://ffmpeg.mplayerhq.hu/index.html.
+  See http://ffmpeg.mplayerhq.hu/index.html
+  And see also http://gitorious.org/ffmpeg/ffmpeg-mt
 
 * Matroska is imported as external libaray.
   Matroska is licensed under the GNU Lesser General Public License (LGPL).
