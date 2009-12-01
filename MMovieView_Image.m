@@ -21,7 +21,7 @@
 //
 
 #import "MMovieView.h"
-#import "MMovie_FFMPEG.h"
+#import "MMovie_QuickTime.h"
 #import "MMovieOSD.h"
 #import "MSubtitle.h"
 #import "AppController.h"   // for NSApp's delegate
@@ -489,8 +489,8 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)updateRemoveGreenBox
 {
-    // need for FFmpeg only.
-    _removeGreenBox = [_movie isMemberOfClass:[MMovie_FFmpeg class]] ?
+    // needs for QuickTime only.
+    _removeGreenBox = [_movie isMemberOfClass:[MMovie_QuickTime class]] ?
                                                 _removeGreenBoxSetting : FALSE;
     [self updateMovieRect:TRUE];
 }
