@@ -9,8 +9,20 @@ Movist README
   FFmpeg is licensed under the GNU Lesser General Public License (LGPL).
   See http://ffmpeg.mplayerhq.hu/index.html.
 
+* Matroska is imported as external libaray.
+  Matroska is licensed under the GNU Lesser General Public License (LGPL).
+  See http://www.matroska.org/
+
+* FAAD2 is licensed under the GPLv2 license.
+  See http://www.audiocoding.com/faad2.html
+
 * AppleRemote is created by Martin Kahr and distributed under the
   MIT-style license. Read the file AppleRemote/license.txt.
+  See http://martinkahr.com/source-code/index.html 
+
+* ColorConversions is part of Perian which is licensed under the 
+  GNU Lesser General Public License (LGPL).
+  See http://perian.org
 
 * Some useful implementations are copied & modified from lots of
   open source projects such as VLC and MPlayer,
