@@ -1,0 +1,56 @@
+index 8bf9721..1674c1f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -23,7 +23,7 @@ ALLMANPAGES = $(addsuffix .1, $(BASENAMES))
+ FFLIBS-$(CONFIG_AVFILTER) += avfilter
+ FFLIBS-$(CONFIG_POSTPROC) += postproc
+ 
+-FFLIBS := avdevice avformat avcodec avutil swscale
++FFLIBS := avdevice avformat avcodec avutil
+ 
+ DATA_FILES := $(wildcard $(SRC_DIR)/ffpresets/*.ffpreset)
+ 
+index 613edad..66ed87f 100755
+--- a/configure
++++ b/configure
+@@ -1878,7 +1878,7 @@ esac
+ 
+ enable $arch $subarch
+ enabled spic && enable pic
+-check_cpp_condition stdlib.h "defined(__PIC__) || defined(__pic__) || defined(PIC)" && enable pic
++#check_cpp_condition stdlib.h "defined(__PIC__) || defined(__pic__) || defined(PIC)" && enable pic
+ 
+ # OS specific
+ case $target_os in
+@@ -2731,7 +2731,7 @@ get_version(){
+     eval echo "${lcname}_VERSION_MAJOR=\$${name}_VERSION_MAJOR" >> config.mak
+ }
+ 
+-get_version LIBSWSCALE  libswscale/swscale.h
++#get_version LIBSWSCALE  libswscale/swscale.h
+ get_version LIBPOSTPROC libpostproc/postprocess.h
+ get_version LIBAVCODEC  libavcodec/avcodec.h
+ get_version LIBAVDEVICE libavdevice/avdevice.h
+@@ -2806,8 +2806,6 @@ if enabled source_path_used; then
+         libavutil
+         libavutil/$arch
+         libpostproc
+-        libswscale
+-        libswscale/$arch
+         tests
+         tools
+     "
+@@ -2822,7 +2820,6 @@ if enabled source_path_used; then
+         libavformat/Makefile
+         libavutil/Makefile
+         libpostproc/Makefile
+-        libswscale/Makefile
+     "
+     for dir in $DIRS ; do
+         mkdir -p $dir
+@@ -2882,4 +2879,4 @@ enabled avfilter &&
+     pkgconfig_generate libavfilter "FFmpeg video filtering library" "$LIBAVFILTER_VERSION" "$extralibs" "libavutil = $LIBAVUTIL_VERSION"
+ enabled postproc &&
+     pkgconfig_generate libpostproc "FFmpeg post processing library" "$LIBPOSTPROC_VERSION"
+-pkgconfig_generate libswscale "FFmpeg image rescaling library" "$LIBSWSCALE_VERSION" "" "libavutil = $LIBAVUTIL_VERSION"
++#pkgconfig_generate libswscale "FFmpeg image rescaling library" "$LIBSWSCALE_VERSION" "" "libavutil = $LIBAVUTIL_VERSION"

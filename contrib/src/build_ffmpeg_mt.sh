@@ -16,10 +16,12 @@ FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-pthreads"
 ########## SOURCE ##########
 
 if [ -d "ffmpeg-mt" ]; then 
-	(cd ffmpeg-mt && git pull)
+	echo "ffmpeg-mt"
+	#(cd ffmpeg-mt && git pull)
 else
 	git clone git://gitorious.org/~astrange/ffmpeg/ffmpeg-mt.git
-	git clone git://git.ffmpeg.org/libswscale/ ffmpeg-mt/libswscale
+	#git clone git://git.ffmpeg.org/libswscale/ ffmpeg-mt/libswscale
+	(cd ffmpeg-mt && patch -p1 < ../Patches/ffmpegmt-disablelibswscale-disablepic.patch)
 fi
 
 ########## INTEL ###########
