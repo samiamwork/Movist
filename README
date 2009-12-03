@@ -10,8 +10,7 @@ Movist README
   See http://ffmpeg.mplayerhq.hu/index.html
   And see also http://gitorious.org/ffmpeg/ffmpeg-mt
 
-* Matroska is imported as external libaray.
-  Matroska is licensed under the GNU Lesser General Public License (LGPL).
+* Matroska is licensed under the GNU Lesser General Public License (LGPL).
   See http://www.matroska.org/
 
 * FAAD2 is licensed under the GPLv2 license.
@@ -48,5 +47,5 @@ and build it.
 
 * Developers:
   Yong-Hoe Kim   Mail: cocoable@gmail.com, iChat: dckim2@mac.com
-  Cheol Joo      Mail: moosoy@gmail.com,   iChat: moosoy@mac.com
+  Cheol Ju       Mail: moosoy@gmail.com,   iChat: moosoy@mac.com
 
