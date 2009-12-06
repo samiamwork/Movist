@@ -344,7 +344,8 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 
     UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
-    int dataSize, decodedSize, pts, nextPts;
+    int dataSize, decodedSize;
+    int64_t pts, nextPts;
     double decodedTime;
     BOOL newPacket = true;
 
