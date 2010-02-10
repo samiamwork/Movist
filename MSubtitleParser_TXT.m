@@ -302,6 +302,9 @@ typedef struct _TXTTag {
     NSArray* sub = [string substringsCapturedByPattern:@"{([0-9]+)}{([0-9]+)}(.*)"];
     _beginTime = [[sub objectAtIndex:1] floatValue] / _fps;
     _endTime   = [[sub objectAtIndex:2] floatValue] / _fps;
+    if ([[sub objectAtIndex:2] intValue] == 0) {
+        _endTime = -1;  // incomplete format -> {start}{}text
+    }
     _ms = [NSMutableString stringWithString:[sub objectAtIndex:3]];
     [self parseSubtitleString:_ms beginTime:_beginTime endTime:_endTime];
 }
@@ -311,6 +314,9 @@ typedef struct _TXTTag {
     NSArray* sub = [string substringsCapturedByPattern:@"\\[([0-9]+)\\]\\[([0-9]+)\\](.*)"];
     _beginTime = [[sub objectAtIndex:1] floatValue] / 10.0f;
     _endTime   = [[sub objectAtIndex:2] floatValue] / 10.0f;
+    if ([[sub objectAtIndex:2] intValue] == 0) {
+        _endTime = -1;  // incomplete format -> [start][]text
+    }
     _ms = [NSMutableString stringWithString:[sub objectAtIndex:3]];
     [self parseSubtitleString:_ms beginTime:_beginTime endTime:_endTime];
 }

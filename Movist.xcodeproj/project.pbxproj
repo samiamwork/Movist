@@ -316,6 +316,11 @@
 		AF0C51240C5CDB5800199932 /* RemoteControl.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControl.m; path = AppleRemote/RemoteControl.m; sourceTree = "<group>"; };
 		AF0C51250C5CDB5800199932 /* RemoteControlContainer.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = RemoteControlContainer.h; path = AppleRemote/RemoteControlContainer.h; sourceTree = "<group>"; };
 		AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControlContainer.m; path = AppleRemote/RemoteControlContainer.m; sourceTree = "<group>"; };
+		AF1379EF112307EC0000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AF1379F0112307FB0000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AF1379F1112308120000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		AF1379F2112308220000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/Playlist.nib; sourceTree = "<group>"; };
+		AF1379F31123082B0000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AF166D2B0DD882FA0066166E /* OutlineCategoryMid.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = OutlineCategoryMid.tiff; path = Images/OutlineCategoryMid.tiff; sourceTree = "<group>"; };
 		AF16C7F70C296F7400AC0A4B /* ControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = ControlPanel.h; sourceTree = "<group>"; };
 		AF16C7F80C296F7400AC0A4B /* ControlPanel.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = ControlPanel.m; sourceTree = "<group>"; };
@@ -1106,6 +1111,7 @@
 				Turkish,
 				sk,
 				Russian,
+				zh_TW,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Movist */;
 			projectDirPath = "";
@@ -1369,6 +1375,7 @@
 				AFCA763D0F4B99E6008DBDCD /* Turkish */,
 				AF1EF6ED0FE2220E0038E2A0 /* sk */,
 				AF51AD10106466A600989D78 /* Russian */,
+				AF1379EF112307EC0000B429 /* zh_TW */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1381,6 +1388,7 @@
 				AFCA76390F4B99A8008DBDCD /* Turkish */,
 				AF1EF6EF0FE2222D0038E2A0 /* sk */,
 				AF51AD2A1064675900989D78 /* Russian */,
+				AF1379F1112308120000B429 /* zh_TW */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -1393,6 +1401,7 @@
 				AFCA763B0F4B99CB008DBDCD /* Turkish */,
 				AF1EF6F10FE222590038E2A0 /* sk */,
 				AF51AD2D1064677100989D78 /* Russian */,
+				AF1379F31123082B0000B429 /* zh_TW */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
@@ -1405,6 +1414,7 @@
 				AFCA763A0F4B99BA008DBDCD /* Turkish */,
 				AF1EF6F00FE2224A0038E2A0 /* sk */,
 				AF51AD2C1064676800989D78 /* Russian */,
+				AF1379F2112308220000B429 /* zh_TW */,
 			);
 			name = Playlist.nib;
 			sourceTree = "<group>";
@@ -1417,6 +1427,7 @@
 				AFCA763C0F4B99E0008DBDCD /* Turkish */,
 				AF1EF6EE0FE2221D0038E2A0 /* sk */,
 				AF51AD11106466CA00989D78 /* Russian */,
+				AF1379F0112307FB0000B429 /* zh_TW */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
