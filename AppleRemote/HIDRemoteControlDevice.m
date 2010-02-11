@@ -278,6 +278,14 @@ cleanup:
 		
 	NSNumber* buttonId = [[self cookieToButtonMapping] objectForKey: cookieString];
 	if (buttonId != nil) {
+        switch ([buttonId intValue]) {
+            case k2009RemoteButtonPlay:
+            case k2009RemoteButtonMiddlePlay:
+                buttonId = [NSNumber numberWithInt:kRemoteButtonPlay];
+                break;
+            default:
+                break;
+		}
 		[self sendRemoteButtonEvent: [buttonId intValue] pressedDown: (sumOfValues>0)];
 	} else {
 		// let's see if a number of events are stored in the cookie string. this does

@@ -62,6 +62,9 @@ typedef enum _RemoteControlEventIdentifier {
 	
 	// special events (not supported by all devices)	
 	kRemoteControl_Switched			=1<<13,
+
+    k2009RemoteButtonPlay			=1<<14,
+    k2009RemoteButtonMiddlePlay		=1<<15,
 } RemoteControlEventIdentifier;
 
 @interface NSObject(RemoteControlDelegate)
