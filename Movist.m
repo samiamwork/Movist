@@ -339,7 +339,7 @@ void initSubtitleEncodingMenu(NSMenu* menu, SEL action)
         //kCFStringEncodingISOLatin9,
         //kCFStringEncodingMacRomanLatin1,
         //kCFStringEncodingDOSLatin1,
-        //kCFStringEncodingWindowsLatin1,
+        kCFStringEncodingWindowsLatin1,
         //kCFStringEncodingNextStepLatin,
         //kCFStringEncodingMacVT100,
         //kCFStringEncodingASCII,
