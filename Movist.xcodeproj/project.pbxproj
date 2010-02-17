@@ -547,6 +547,11 @@
 		AFCD05F60DBB000200348AB0 /* HUDCheckBoxOn.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOn.tiff; path = Images/HUDCheckBoxOn.tiff; sourceTree = "<group>"; };
 		AFCD05F70DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOnPressed.tiff; path = Images/HUDCheckBoxOnPressed.tiff; sourceTree = "<group>"; };
 		AFCD39510E0454AA00963D8E /* FullScreener_Transition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullScreener_Transition.m; sourceTree = "<group>"; };
+		AFD3F2D2112BBDC40099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt_BR; path = pt_BR.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AFD3F2D3112BBDD00099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt_BR; path = pt_BR.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AFD3F2D4112BBDD60099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt_BR; path = pt_BR.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		AFD3F2D5112BBDDC0099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt_BR; path = pt_BR.lproj/Playlist.nib; sourceTree = "<group>"; };
+		AFD3F2D6112BBDE40099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt_BR; path = pt_BR.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFEE863C0C0C807D00EABE1D /* Movist.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Movist.icns; sourceTree = "<group>"; };
 		AFEF1EBA0BF8A5160047D887 /* Playlist.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = Playlist.h; sourceTree = "<group>"; };
 		AFEF1EBB0BF8A5160047D887 /* Playlist.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = Playlist.m; sourceTree = "<group>"; };
@@ -1112,6 +1117,7 @@
 				sk,
 				Russian,
 				zh_TW,
+				pt_BR,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Movist */;
 			projectDirPath = "";
@@ -1376,6 +1382,7 @@
 				AF1EF6ED0FE2220E0038E2A0 /* sk */,
 				AF51AD10106466A600989D78 /* Russian */,
 				AF1379EF112307EC0000B429 /* zh_TW */,
+				AFD3F2D2112BBDC40099F2DE /* pt_BR */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1389,6 +1396,7 @@
 				AF1EF6EF0FE2222D0038E2A0 /* sk */,
 				AF51AD2A1064675900989D78 /* Russian */,
 				AF1379F1112308120000B429 /* zh_TW */,
+				AFD3F2D4112BBDD60099F2DE /* pt_BR */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -1402,6 +1410,7 @@
 				AF1EF6F10FE222590038E2A0 /* sk */,
 				AF51AD2D1064677100989D78 /* Russian */,
 				AF1379F31123082B0000B429 /* zh_TW */,
+				AFD3F2D6112BBDE40099F2DE /* pt_BR */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
@@ -1415,6 +1424,7 @@
 				AF1EF6F00FE2224A0038E2A0 /* sk */,
 				AF51AD2C1064676800989D78 /* Russian */,
 				AF1379F2112308220000B429 /* zh_TW */,
+				AFD3F2D5112BBDDC0099F2DE /* pt_BR */,
 			);
 			name = Playlist.nib;
 			sourceTree = "<group>";
@@ -1428,6 +1438,7 @@
 				AF1EF6EE0FE2221D0038E2A0 /* sk */,
 				AF51AD11106466CA00989D78 /* Russian */,
 				AF1379F0112307FB0000B429 /* zh_TW */,
+				AFD3F2D3112BBDD00099F2DE /* pt_BR */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
