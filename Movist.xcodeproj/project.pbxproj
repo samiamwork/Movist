@@ -533,6 +533,11 @@
 		AFC7D4300C3715A500F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFC7D4330C37160300F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFC7D44D0C371C4C00F5EA5C /* Korean */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Korean; path = Korean.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AFC85A98113C92640061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		AFC85A99113C92710061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		AFC85A9A113C92780061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pl; path = pl.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		AFC85A9B113C927E0061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pl; path = pl.lproj/Playlist.nib; sourceTree = "<group>"; };
+		AFC85A9C113C92840061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pl; path = pl.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFCA76390F4B99A8008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AFCA763A0F4B99BA008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFCA763B0F4B99CB008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/Preferences.nib; sourceTree = "<group>"; };
@@ -1118,6 +1123,7 @@
 				Russian,
 				zh_TW,
 				pt_BR,
+				pl,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Movist */;
 			projectDirPath = "";
@@ -1383,6 +1389,7 @@
 				AF51AD10106466A600989D78 /* Russian */,
 				AF1379EF112307EC0000B429 /* zh_TW */,
 				AFD3F2D2112BBDC40099F2DE /* pt_BR */,
+				AFC85A98113C92640061A934 /* pl */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1397,6 +1404,7 @@
 				AF51AD2A1064675900989D78 /* Russian */,
 				AF1379F1112308120000B429 /* zh_TW */,
 				AFD3F2D4112BBDD60099F2DE /* pt_BR */,
+				AFC85A9A113C92780061A934 /* pl */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -1411,6 +1419,7 @@
 				AF51AD2D1064677100989D78 /* Russian */,
 				AF1379F31123082B0000B429 /* zh_TW */,
 				AFD3F2D6112BBDE40099F2DE /* pt_BR */,
+				AFC85A9C113C92840061A934 /* pl */,
 			);
 			name = Preferences.nib;
 			sourceTree = "<group>";
@@ -1425,6 +1434,7 @@
 				AF51AD2C1064676800989D78 /* Russian */,
 				AF1379F2112308220000B429 /* zh_TW */,
 				AFD3F2D5112BBDDC0099F2DE /* pt_BR */,
+				AFC85A9B113C927E0061A934 /* pl */,
 			);
 			name = Playlist.nib;
 			sourceTree = "<group>";
@@ -1439,6 +1449,7 @@
 				AF51AD11106466CA00989D78 /* Russian */,
 				AF1379F0112307FB0000B429 /* zh_TW */,
 				AFD3F2D3112BBDD00099F2DE /* pt_BR */,
+				AFC85A99113C92710061A934 /* pl */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
