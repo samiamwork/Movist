@@ -77,11 +77,8 @@
         size_t oldlen = 4;
         if (sysctlbyname("hw.activecpu", &cpuCount, &oldlen, NULL, 0) == 0) {
             if (1 < cpuCount) {
-                if (2 < cpuCount) {
-                    cpuCount = 2;
-                }
-                context->thread_count = cpuCount;
-               	avcodec_thread_init(context, cpuCount);
+                context->thread_count = 2;
+                avcodec_thread_init(context, context->thread_count);
             }
         }
     }
