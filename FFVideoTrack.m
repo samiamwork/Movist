@@ -399,7 +399,8 @@
 
 - (BOOL)isIndexComplete
 {
-    return (1 < _stream->nb_index_entries);
+    return _stream->nb_index_entries == _stream->nb_frames ||
+           128 < _stream->nb_index_entries;
 }
 
 - (BOOL)isQueueEmpty
