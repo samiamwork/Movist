@@ -8,10 +8,15 @@ MACOSX_SDK="/Developer/SDKs/MacOSX10.4u.sdk"
 FFMPEG_CONF_COMMON=
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-ffserver --disable-ffmpeg --disable-ffplay"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-encoders --disable-muxers --disable-network"
-FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-debug"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-ffprobe --disable-avdevice"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-debug --disable-doc"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-gpl --enable-postproc"
-FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-libfaad"
+#FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-libfaad"
+#FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-hardcoded-tables"
+#FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-runtime-cpudetect"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-swscale"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-pthreads"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --cc=gcc-4.0"
 
 ########## SOURCE ##########
 
@@ -51,7 +56,7 @@ EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=10.4 -mmacosx-v
 CFLAGS="-I$PREFIX/include $EXTRA_CFLAGS"
 LDFLAGS="-L$PREFIX/lib"
 
-FFMPEG_CONF_PPC="--enable-cross-compile --arch=ppc"
+FFMPEG_CONF_PPC="--enable-cross-compile --arch=ppc --target-os=darwin"
 FFMPEG_CFLAGS_PPC="-arch ppc -mcpu=G3 -mtune=G5 -fstrict-aliasing -funroll-loops -falign-loops=16 -mmultiple"
 FFMPEG_LDFLAGS_PPC="-arch ppc"
 

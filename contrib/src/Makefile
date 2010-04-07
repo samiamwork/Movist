@@ -118,15 +118,15 @@ libebml: $(CONTRIB_SRC_PATH)libebml-$(EBML_VERSION).tar.bz2
 
 .matroska: libmatroska libebml
 	(cd $(CONTRIB_SRC_PATH)libebml/make/linux && \
-		make clean && \
-		make prefix=$(PREFIX) && \
-		make install prefix=$(PREFIX) && \
-		make install_headers prefix=$(PREFIX))
-	(cd $(CONTRIB_SRC_PATH)libmatroska/make/linux && \
-		make clean && \
-		make prefix=$(PREFIX) && \
-		make install prefix=$(PREFIX) && \
-		make install_headers prefix=$(PREFIX))
+		make clean CXX=$(CXX) && \
+		make prefix=$(PREFIX) CXX=$(CXX) && \
+		make install prefix=$(PREFIX) CXX=$(CXX) && \
+		make install_headers prefix=$(PREFIX) CXX=$(CXX) )
+	(cd $(CONTRIB_SRC_PATH)libmatroska/make/linux CXX=$(CXX) && \
+		make clean CXX=$(CXX) && \
+		make prefix=$(PREFIX) CXX=$(CXX) && \
+		make install prefix=$(PREFIX) CXX=$(CXX) && \
+		make install_headers prefix=$(PREFIX) CXX=$(CXX) )
 
 # ***************************************************************************
 # libsdl

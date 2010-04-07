@@ -72,6 +72,8 @@ case $HOST in
 # ENVP defines the oldest environment on which the program will be able to run
 		PREFIX="`pwd`/ppc"
         SDK_TARGET=10.4
+		CC=gcc-4.0
+		CXX=g++-4.0
         echo "SDK_TARGET = ${SDK_TARGET}" >> config.mak
         echo "ENVP = MACOSX_DEPLOYMENT_TARGET=${SDK_TARGET}" >> config.mak
         echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.4u.sdk" >> config.mak
@@ -89,6 +91,8 @@ case $HOST in
     i686-apple-darwin8)
 		PREFIX="`pwd`/i386"
         SDK_TARGET=10.4
+		CC=gcc-4.0
+		CXX=g++-4.0
         echo "SDK_TARGET = ${SDK_TARGET}" >> config.mak
         echo "HAVE_DARWIN_OS_ON_INTEL = 1" >> config.mak
         echo "ENVP = MACOSX_DEPLOYMENT_TARGET=${SDK_TARGET}" >> config.mak
@@ -108,6 +112,8 @@ case $HOST in
 # Mac OS X 10.5 with Xcode 3, specific rules apply
 		PREFIX="`pwd`/ppc"
         SDK_TARGET=10.4
+		CC=gcc-4.0
+		CXX=g++-4.0
         echo "SDK_TARGET = ${SDK_TARGET}" >> config.mak
         echo "ENVP = MACOSX_DEPLOYMENT_TARGET=${SDK_TARGET}" >> config.mak
         echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.4u.sdk" >> config.mak
@@ -132,6 +138,8 @@ case $HOST in
     i686-apple-darwin9)
 		PREFIX="`pwd`/i386"
         SDK_TARGET=10.4
+		CC=gcc-4.0
+		CXX=g++-4.0
         MIN_LD_VERSION_WITH_TEXT_RELOCATION=81
         echo "SDK_TARGET = ${SDK_TARGET}" >> config.mak
         echo "HAVE_DARWIN_OS_ON_INTEL = 1" >> config.mak

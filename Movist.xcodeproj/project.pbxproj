@@ -11,10 +11,8 @@
 		2CC012030DC484910020241D /* FFAudioTrack_Digital.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CC012020DC484910020241D /* FFAudioTrack_Digital.m */; };
 		2CDF931B0DC4D1360069B195 /* FFAudioTrack_Analog.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */; };
 		2CFA58670DB3496B0084BFB6 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA585F0DB3496B0084BFB6 /* libavcodec.a */; };
-		2CFA58680DB3496B0084BFB6 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58600DB3496B0084BFB6 /* libavdevice.a */; };
 		2CFA58690DB3496B0084BFB6 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58610DB3496B0084BFB6 /* libavformat.a */; };
 		2CFA586A0DB3496B0084BFB6 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58620DB3496B0084BFB6 /* libavutil.a */; };
-		2CFA586B0DB3496B0084BFB6 /* libfaad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58630DB3496B0084BFB6 /* libfaad.a */; };
 		2CFA586C0DB3496B0084BFB6 /* libpostproc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CFA58640DB3496B0084BFB6 /* libpostproc.a */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
@@ -263,10 +261,8 @@
 		2CC012020DC484910020241D /* FFAudioTrack_Digital.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFAudioTrack_Digital.m; sourceTree = "<group>"; };
 		2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFAudioTrack_Analog.m; sourceTree = "<group>"; };
 		2CFA585F0DB3496B0084BFB6 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = contrib/lib/libavcodec.a; sourceTree = "<group>"; };
-		2CFA58600DB3496B0084BFB6 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = contrib/lib/libavdevice.a; sourceTree = "<group>"; };
 		2CFA58610DB3496B0084BFB6 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = contrib/lib/libavformat.a; sourceTree = "<group>"; };
 		2CFA58620DB3496B0084BFB6 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = contrib/lib/libavutil.a; sourceTree = "<group>"; };
-		2CFA58630DB3496B0084BFB6 /* libfaad.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libfaad.a; path = contrib/lib/libfaad.a; sourceTree = "<group>"; };
 		2CFA58640DB3496B0084BFB6 /* libpostproc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpostproc.a; path = contrib/lib/libpostproc.a; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Movist_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movist_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -600,10 +596,8 @@
 				AFFE5EE70C341EAE00516510 /* AudioUnit.framework in Frameworks */,
 				AFFE5EE80C341EAE00516510 /* CoreAudio.framework in Frameworks */,
 				2CFA58670DB3496B0084BFB6 /* libavcodec.a in Frameworks */,
-				2CFA58680DB3496B0084BFB6 /* libavdevice.a in Frameworks */,
 				2CFA58690DB3496B0084BFB6 /* libavformat.a in Frameworks */,
 				2CFA586A0DB3496B0084BFB6 /* libavutil.a in Frameworks */,
-				2CFA586B0DB3496B0084BFB6 /* libfaad.a in Frameworks */,
 				2CFA586C0DB3496B0084BFB6 /* libpostproc.a in Frameworks */,
 				AF0247280F137C79007339EB /* libmatroska.a in Frameworks */,
 				2CB96DA40F1CCF1C00C14189 /* libebml.a in Frameworks */,
@@ -732,10 +726,8 @@
 			isa = PBXGroup;
 			children = (
 				2CFA585F0DB3496B0084BFB6 /* libavcodec.a */,
-				2CFA58600DB3496B0084BFB6 /* libavdevice.a */,
 				2CFA58610DB3496B0084BFB6 /* libavformat.a */,
 				2CFA58620DB3496B0084BFB6 /* libavutil.a */,
-				2CFA58630DB3496B0084BFB6 /* libfaad.a */,
 				2CFA58640DB3496B0084BFB6 /* libpostproc.a */,
 			);
 			name = FFmpeg;
