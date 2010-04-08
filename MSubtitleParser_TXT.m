@@ -299,7 +299,7 @@ typedef struct _TXTTag {
 
 - (void)parseTokenString_MicroDVD:(NSString*)string
 {
-    NSArray* sub = [string substringsCapturedByPattern:@"{([0-9]+)}{([0-9]+)}(.*)"];
+    NSArray* sub = [string substringsCapturedByPattern:@"{([0-9]+)}{([0-9]*)}(.*)"];
     _beginTime = [[sub objectAtIndex:1] floatValue] / _fps;
     _endTime   = [[sub objectAtIndex:2] floatValue] / _fps;
     if ([[sub objectAtIndex:2] intValue] == 0) {
@@ -311,7 +311,7 @@ typedef struct _TXTTag {
 
 - (void)parseTokenString_MPL2:(NSString*)string
 {
-    NSArray* sub = [string substringsCapturedByPattern:@"\\[([0-9]+)\\]\\[([0-9]+)\\](.*)"];
+    NSArray* sub = [string substringsCapturedByPattern:@"\\[([0-9]+)\\]\\[([0-9]*)\\](.*)"];
     _beginTime = [[sub objectAtIndex:1] floatValue] / 10.0f;
     _endTime   = [[sub objectAtIndex:2] floatValue] / 10.0f;
     if ([[sub objectAtIndex:2] intValue] == 0) {
