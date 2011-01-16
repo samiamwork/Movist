@@ -1,0 +1,12 @@
+.DS_Store
+*.pbxuser
+*.perspectivev3
+build
+contrib/i386
+contrib/lib
+contrib/ppc
+contrib/config.mak
+contrib/src/ffmpeg-mt
+contrib/src/libebml
+contrib/src/libmatroska
+contrib/src/*.tar.bz2
