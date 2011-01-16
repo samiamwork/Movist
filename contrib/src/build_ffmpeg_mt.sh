@@ -34,7 +34,7 @@ fi
 PREFIX="$(cd ..;pwd)/i386"
 EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=${SDK_TARGET} -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
 CFLAGS="-I${MACOSX_SDK}/usr/include -I$PREFIX/include $EXTRA_CFLAGS"
-LDFLAGS="-L$PREFIX/lib"
+LDFLAGS="-L$PREFIX/lib -isysroot ${MACOSX_SDK} -mmacosx-version-min=10.4"
 PATH="$PREFIX/bin:$PATH"
 
 FFMPEG_CONF_INTEL="--cpu=pentium-m"
@@ -54,7 +54,7 @@ make clean && make && make install-libs && make install-headers)
 PREFIX="$(cd ..;pwd)/ppc"
 EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=10.4 -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
 CFLAGS="-I$PREFIX/include $EXTRA_CFLAGS"
-LDFLAGS="-L$PREFIX/lib"
+LDFLAGS="-L$PREFIX/lib -isysroot ${MACOSX_SDK} -mmacosx-version-min=10.4"
 
 FFMPEG_CONF_PPC="--enable-cross-compile --arch=ppc --target-os=darwin"
 FFMPEG_CFLAGS_PPC="-arch ppc -mcpu=G3 -mtune=G5 -fstrict-aliasing -funroll-loops -falign-loops=16 -mmultiple"
