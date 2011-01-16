@@ -34,9 +34,9 @@ FAAD_VERSION=2.7
 FAAD_URL=$(SF)/faac/faad2-$(FAAD_VERSION).tar.gz
 LAME_VERSION=3.97
 LAME_URL=$(SF)/lame/lame-$(LAME_VERSION).tar.gz
-EBML_VERSION=0.7.8
+EBML_VERSION=1.0.0
 EBML_URL=http://dl.matroska.org/downloads/libebml/libebml-$(EBML_VERSION).tar.bz2
-MATROSKA_VERSION=0.8.1
+MATROSKA_VERSION=1.0.0
 MATROSKA_URL=http://dl.matroska.org/downloads/libmatroska/libmatroska-$(MATROSKA_VERSION).tar.bz2
 
 FFMPEG_VERSION=0.4.8
