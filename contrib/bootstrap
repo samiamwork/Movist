@@ -108,6 +108,26 @@ case $HOST in
 	    fi
         echo "PATH = /bin:/usr/bin:/usr/local/bin" >> config.mak
         ;;
+    i686-apple-darwin10)
+		PREFIX="`pwd`/x86_64"
+        SDK_TARGET=10.4
+		CC=gcc-4.0
+		CXX=g++-4.0
+        echo "SDK_TARGET = ${SDK_TARGET}" >> config.mak
+        echo "HAVE_DARWIN_OS_ON_INTEL = 1" >> config.mak
+        echo "ENVP = MACOSX_DEPLOYMENT_TARGET=${SDK_TARGET}" >> config.mak
+        echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.4u.sdk" >> config.mak
+        CFLAGS_TUNING=" -march=pentium-m -mtune=prescott"
+        CFLAGS_TUNING=" -march=pentium-m "
+        EXTRA_CFLAGS=" -isysroot \${MACOSX_SDK} -D\${ENVP} -mmacosx-version-min=\${SDK_TARGET}"
+		if expr "$BUILD" : 'powerpc-apple-darwin.*' > /dev/null ; then
+			CROSS_COMPILE="1"
+	        EXTRA_LDFLAGS=" -arch x86_64 -Wl,-isysroot,\${MACOSX_SDK}"
+		else
+	        EXTRA_LDFLAGS=" -arch x86_64 -Wl,-syslibroot,\${MACOSX_SDK}"
+	    fi
+        echo "PATH = /bin:/usr/bin:/usr/local/bin" >> config.mak
+        ;;
     powerpc-apple-darwin9)
 # Mac OS X 10.5 with Xcode 3, specific rules apply
 		PREFIX="`pwd`/ppc"

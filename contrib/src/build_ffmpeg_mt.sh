@@ -49,6 +49,26 @@ FFMPEG_LDFLAGS="$LDFLAGS $FFMPEG_LDFLAGS_INTEL"
 ./configure $FFMPEG_CONF --prefix=$PREFIX --extra-cflags="$FFMPEG_CFLAGS" --extra-ldflags="$FFMPEG_LDFLAGS" && \
 make clean && make && make install-libs && make install-headers)
 
+########## INTEL x86_64 ###########
+
+#PREFIX="$(cd ..;pwd)/x86_64"
+#EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=${SDK_TARGET} -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
+#CFLAGS="-I${MACOSX_SDK}/usr/include -I$PREFIX/include $EXTRA_CFLAGS"
+#LDFLAGS="-L$PREFIX/lib -isysroot ${MACOSX_SDK} -mmacosx-version-min=10.4"
+#PATH="$PREFIX/bin:$PATH"
+#
+#FFMPEG_CONF_INTEL="--cpu=pentium-m"
+#FFMPEG_CFLAGS_INTEL="-mtune=nocona -fstrict-aliasing -frerun-cse-after-loop -fweb -falign-loops=16"
+#FFMPEG_LDFLAGS_INTEL="-arch x86_64"
+#
+#FFMPEG_CONF="$FFMPEG_CONF_COMMON $FFMPEG_CONF_INTEL"
+#FFMPEG_CFLAGS="$CFLAGS $FFMPEG_CFLAGS_INTEL"
+#FFMPEG_LDFLAGS="$LDFLAGS $FFMPEG_LDFLAGS_INTEL"
+#
+#(cd ffmpeg-mt && \
+#./configure $FFMPEG_CONF --prefix=$PREFIX --extra-cflags="$FFMPEG_CFLAGS" --extra-ldflags="$FFMPEG_LDFLAGS" && \
+#make clean && make && make install-libs && make install-headers)
+
 ##########  PPC  ###########
 
 PREFIX="$(cd ..;pwd)/ppc"

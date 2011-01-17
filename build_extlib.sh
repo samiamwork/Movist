@@ -6,6 +6,7 @@ export CONTRIB_SRC_PATH="$CONTRIB_PATH/src/"
 
 if [ "$1" = "clean" ]; then
 	rm -rf $CONTRIB_PATH/build $CONTRIB_PATH/i386 $CONTRIB_PATH/ppc \
+	       $CONTRIB_PATH/x86_64 \
 	       $CONTRIB_PATH/lib
 	exit 0
 fi
@@ -15,6 +16,12 @@ BUILDDIR="$CONTRIB_PATH/build/i386"
 cd "$CONTRIB_PATH" && sh bootstrap i686-apple-darwin8
 mkdir -p "$BUILDDIR"
 cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
+
+# x86_64
+#BUILDDIR="$CONTRIB_PATH/build/x86_64"
+#cd "$CONTRIB_PATH" && sh bootstrap i686-apple-darwin10
+#mkdir -p "$BUILDDIR"
+#cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
 
 # ppc 
 BUILDDIR="$CONTRIB_PATH/build/ppc"
