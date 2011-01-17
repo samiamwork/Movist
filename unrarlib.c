@@ -2515,9 +2515,9 @@ void SetCryptKeys(char *Password)
     {
       N2=(unsigned char)CRCTab[(Psw[I+1]+J)&0xFF];
       for (K=1, N1=(unsigned char)CRCTab[(Psw[I]-J)&0xFF];
-           (N1!=N2) && (N1 < 256);      /* I had to add "&& (N1 < 256)",    */
-           N1++, K++)                   /* because the system crashed with  */
-          {                             /* encrypted RARs                   */
+           (N1!=N2);
+           N1++, K++)
+          {
 #ifdef _USE_ASM
 
 #ifdef _WIN_32
