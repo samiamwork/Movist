@@ -23,6 +23,8 @@
 #import "UpdateChecker.h"
 #import "MSubtitle.h"   // for NSString (MSubtitleParser) extension
 
+NSString* kMovistHomepageURLString = @"http://github.com/samiamwork/Movist/downloads";
+
 @implementation UpdateChecker
 
 - (id)init
@@ -31,6 +33,7 @@
     if (self = [super init]) {
         NSDictionary* infoDict = [[NSBundle mainBundle] infoDictionary];
         CURRENT_VERSION = [[infoDict objectForKey:@"CFBundleVersion"] retain];
+		_homepageURL = [[NSURL alloc] initWithString:kMovistHomepageURLString];
     }
     return self;
 }
@@ -39,7 +42,7 @@
 {
     [CURRENT_VERSION release];
     [_downloadURL release];
-    [_homepageURL release];
+	[_homepageURL release];
     [_newVersion release];
 
     [super dealloc];
@@ -52,118 +55,64 @@
 - (NSURL*)homepageURL { return _homepageURL; }
 - (NSURL*)downloadURL { return _downloadURL; }
 
-- (NSString*)tdStringInString:(NSString*)string rangePtr:(NSRange*)range
-                      tdRange:(NSRange*)tdRange
-{
-    // find <td ...> ~ </td> in html table
-    NSRange r1 = [string rangeOfString:@"<td" rangePtr:range];
-    if (r1.location == NSNotFound) {
-        return nil;
-    }
-    NSRange r2 = [string rangeOfString:@"</td>" rangePtr:range];
-    if (r1.location == NSNotFound) {
-        return nil;
-    }
-    tdRange->location = r1.location + 3;
-    tdRange->length = r2.location - r1.location;
-    return [string substringWithRange:*tdRange];
-}
-
 - (int)checkUpdate:(NSError**)error
 {
-    NSString* address = @"http://code.google.com/p/movist/downloads/list";
-    NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:address]
+	NSString* address = @"http://theidiotprojectdownloads.s3.amazonaws.com/latest";
+	NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:address]
                                          options:NSMappedRead | NSUncachedRead
                                            error:error];
     if (!data || [data length] == 0) {
         return UPDATE_CHECK_FAILED;
     }
 
-    [_newVersion release], _newVersion = nil;
-    [_homepageURL release], _homepageURL = nil;
+    [_newVersion release];
+	_newVersion = nil;
 
     NSString* string = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSRange range = NSMakeRange(0, [string length]);
+	NSArray* parts = [string componentsSeparatedByString:@" "];
+	[string release];
+	if(parts == nil || [parts count] != 2)
+	{
+		return UPDATE_CHECK_FAILED;
+	}
+	NSString* versionString = [parts objectAtIndex:0];
+	NSString* downloadString = [[parts objectAtIndex:1] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-    NSRange r, r1, r2, tdr;
-    NSString* tds, *version;
-    NSString* newVersion = CURRENT_VERSION;
-    NSString* homepageURLString = nil;
-    NSString* downloadURLString = nil;
-    while (TRUE) {
-        tds = [self tdStringInString:string rangePtr:&range tdRange:&tdr];
-        if (!tds) {
-            break;  // no more data
-        }
-        //TRACE(@"substring=\"%@\"", tds);
+	if([versionString isEqualToString:CURRENT_VERSION])
+	{
+		return NO_UPDATE_AVAILABLE;
+	}
+	NSArray* thisVersionValues = [CURRENT_VERSION componentsSeparatedByString:@"."];
+	NSArray* newVersionValues = [versionString componentsSeparatedByString:@"."];
+	int i;
+	int dotCount = [thisVersionValues count] < [newVersionValues count] ? [thisVersionValues count] : [newVersionValues count];
+	for(i = 0; i < dotCount; i++)
+	{
+		int thisValue = [(NSString*)[thisVersionValues objectAtIndex:i] intValue];
+		int newValue = [(NSString*)[newVersionValues objectAtIndex:i] intValue];
+		if(thisValue > newValue)
+		{
+			return NO_UPDATE_AVAILABLE;
+		}
+		else if(thisValue < newValue)
+		{
+			_downloadURL = [[NSURL URLWithString:downloadString] retain];
+			_newVersion = [versionString retain];
+			return NEW_VERSION_AVAILABLE;
+		}
+	}
+	// If the number of dots in the version differs between the two versions
+	// assume the one with more dots is more recent (since they've been determined equal so far).
+	if([thisVersionValues count] < [newVersionValues count])
+	{
+		_downloadURL = [[NSURL URLWithString:downloadString] retain];
+		return NEW_VERSION_AVAILABLE;
+	}
+	else if([thisVersionValues count] > [newVersionValues count])
+	{
+		return NO_UPDATE_AVAILABLE;
+	}
 
-        // find filename string
-        tdr.location = 0;
-        r1 = [tds rangeOfString:@"Movist_v" range:tdr];
-        if (r1.location == NSNotFound) {
-            continue;
-        }
-        r2 = [tds rangeOfString:@".zip" range:tdr];
-        if (r2.location == NSNotFound) {
-            r2 = [tds rangeOfString:@".dmg" range:tdr];
-            if (r2.location == NSNotFound) {
-                continue;
-            }
-        }
-
-        // find version string
-        r.location = NSMaxRange(r1);
-        r.length = r2.location - r.location;
-        version = [tds substringWithRange:r];
-        if ([version caseInsensitiveCompare:newVersion] <= 0) {
-            continue;
-        }
-
-        // find homepage URL
-        r1 = [tds rangeOfString:@"http://" range:tdr];
-        if (r1.location == NSNotFound) {
-            continue;
-        }
-        r2 = [tds rangeOfString:@"</a>" range:tdr];
-        if (r2.location == NSNotFound) {
-            continue;
-        }
-        r.location = r1.location;
-        r.length = r2.location - r1.location;
-        homepageURLString = [tds substringWithRange:r];
-        newVersion = version;
-
-        // find download URL
-        tds = [self tdStringInString:string rangePtr:&range tdRange:&tdr];
-        if (!tds) {
-            break;  // no more data
-        }
-        //TRACE(@"substring=\"%@\"", tds);
-
-        tdr = NSMakeRange(0, [tds length]);
-        r1 = [tds rangeOfString:@"http://" range:tdr];
-        if (r1.location == NSNotFound) {
-            continue;
-        }
-        r2 = [tds rangeOfString:@"\" " range:tdr];
-        if (r2.location == NSNotFound) {
-            continue;
-        }
-        r.location = r1.location;
-        r.length = r2.location - r1.location;
-        downloadURLString = [tds substringWithRange:r];
-    }
-
-    [string release];
-
-    if (homepageURLString) {
-        //TRACE(@"new version=\"%@\", homepage=\"%@\", download=\"%@\"",
-        //      newVersion, homepageURLString, downloadURLString);
-        _newVersion = [newVersion retain];
-        _homepageURL = [[NSURL URLWithString:homepageURLString] retain];
-        _downloadURL = [[NSURL URLWithString:downloadURLString] retain];
-        return NEW_VERSION_AVAILABLE;
-    }
     return NO_UPDATE_AVAILABLE;
 }
 
