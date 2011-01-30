@@ -31,6 +31,7 @@ enum {
     TAG_I_OPEN,     TAG_I_CLOSE,
     TAG_C,
     TAG_R,
+	TAG_COMMENT,
 };
 
 typedef struct _SSATag {
@@ -230,6 +231,8 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
                         italic = _defaultItalic;
                         color = _defaultColor;
                         break;
+					case TAG_COMMENT:
+						break;
                 }
             }
         }
@@ -439,7 +442,7 @@ SSATag MMakeSSATag(int type, int location, int length, NSString* attr)
 - (SSATag)ssaTagWithRangePtr:(NSRange*)range delimSet:(NSCharacterSet*)delimSet
 {
     //TRACE(@"%s %@ (%@)", __PRETTY_FUNCTION__, NSStringFromRange(*range), delimSet);
-    NSRange or = [self rangeOfString:@"{\\" rangePtr:range];
+    NSRange or = [self rangeOfString:@"{" rangePtr:range];
     if (or.location == NSNotFound) {
         range->location = [self length];
         range->length = 0;
@@ -450,6 +453,12 @@ SSATag MMakeSSATag(int type, int location, int length, NSString* attr)
     if (cr.location == NSNotFound) {
         return MMakeSSATag(TAG_UNKNOWN, NSNotFound, 0, nil);
     }
+
+	NSRange slashTag = [self rangeOfString:@"\\" range:NSMakeRange(or.location, NSMaxRange(cr) - or.location)];
+	or.length = NSMaxRange(slashTag) - or.location;
+	if (slashTag.location == NSNotFound) {
+		return MMakeSSATag(TAG_COMMENT, or.location, NSMaxRange(cr) - or.location, nil);
+	}
 
     // find tag name & attributes
     NSRange ar;
