@@ -70,6 +70,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     int i;
     char buf[256];
     AVStream* stream;
+	AVMetadataTag *t;
     for (i = 0; i < formatContext->nb_streams; i++) {
         stream = formatContext->streams[i];
         [s setString:@""];
@@ -78,8 +79,9 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         if (formatContext->iformat->flags & AVFMT_SHOW_IDS) {
             [s appendFormat:@"[0x%x]", stream->id];
         }
-        if (stream->language[0] != '\0') {
-            [s appendFormat:@"(%s)", stream->language];
+		t = av_metadata_get(stream->metadata, "language", NULL, 0);
+        if (t->value[0] != '\0') {
+            [s appendFormat:@"(%s)", t->value];
         }
         
         avcodec_string(buf, sizeof(buf), stream->codec, 1);
