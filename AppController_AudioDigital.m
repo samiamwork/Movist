@@ -31,9 +31,9 @@
 #import <CoreAudio/CoreAudio.h>
 
 static BOOL audioDeviceSupportsDigital(AudioStreamID* streamID);
-static void registerAudioDeviceListener(AudioDevicePropertyListenerProc proc, void* data);
-static OSStatus audioDeviceListener(AudioDeviceID device, UInt32 channel, Boolean isInput,
-                                    AudioDevicePropertyID inPropertyID, void* clientData);
+static void registerAudioDeviceListener(AudioObjectPropertyListenerProc proc, void* data);
+static OSStatus audioDeviceListener(AudioObjectID device, UInt32 inNumberOfAddresses,
+									const AudioObjectPropertyAddress inAddresses[], void* inClientData);
 static AudioStreamID _audioStreamID;
 
 @implementation AppController (AudioDigital)
@@ -75,9 +75,12 @@ static AudioStreamID _audioStreamID;
             OSStatus err;
             UInt32 paramSize = sizeof(AudioStreamBasicDescription);
             AudioStreamBasicDescription format;
-            err = AudioStreamGetProperty(_audioStreamID, 0,
-                                         kAudioStreamPropertyPhysicalFormat,
-                                         &paramSize, &format);
+			AudioObjectPropertyAddress propertyAddress = {
+				kAudioStreamPropertyPhysicalFormat,
+				kAudioObjectPropertyScopeGlobal,
+				kAudioObjectPropertyElementMaster
+			};
+			err = AudioObjectGetPropertyData(_audioStreamID, &propertyAddress, 0, NULL, &paramSize, &format);
             if (err != noErr) {
                 TRACE(@"could not get the stream format: [%4.4s]\n", (char*)&err);
                 return FALSE;
@@ -94,10 +97,7 @@ static AudioStreamID _audioStreamID;
                 }
             }
             // set as current format
-            err = AudioStreamSetProperty(_audioStreamID, 0, 0,
-                                         kAudioStreamPropertyPhysicalFormat,
-                                         sizeof(AudioStreamBasicDescription),
-                                         &format);
+			err = AudioObjectSetPropertyData(_audioStreamID, &propertyAddress, 0, NULL, sizeof(AudioStreamBasicDescription), &format);
             if (err != noErr) {
                 TRACE(@"could not set the stream format: [%4.4s]\n", (char *)&err);
                 return FALSE;
@@ -145,8 +145,12 @@ static BOOL audioDeviceSupportsDigital(AudioStreamID* streamID)
     UInt32 paramSize = sizeof(AudioDeviceID);
     AudioDeviceID audioDev = 0;
     OSStatus err;
-    err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-                                   &paramSize, &audioDev);
+	AudioObjectPropertyAddress propertyAddress = {
+		kAudioHardwarePropertyDefaultOutputDevice,
+		kAudioObjectPropertyScopeGlobal,
+		kAudioObjectPropertyElementMaster
+	};
+	err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &paramSize, &audioDev);
     if (err != noErr) {
         TRACE(@"could not get default audio device: [%4.4s]\n", (char *)&err);
         return FALSE;
@@ -154,19 +158,16 @@ static BOOL audioDeviceSupportsDigital(AudioStreamID* streamID)
     
     /* Retrieve the length of the device name. */
     paramSize = 0;
-    err = AudioDeviceGetPropertyInfo(audioDev, 0, 0,
-                                     kAudioDevicePropertyDeviceName,
-                                     &paramSize, NULL);
-    if (err != noErr) {
+	propertyAddress.mSelector = kAudioDevicePropertyDeviceName;
+	err = AudioObjectGetPropertyDataSize(audioDev, &propertyAddress, 0, NULL, &paramSize);
+	if (err != noErr) {
         TRACE(@"could not get default audio device name length: [%4.4s]\n", (char *)&err);
         return FALSE;
     }
     
     /* Retrieve the name of the device. */
     char* psz_name = (char *)malloc(paramSize);
-    err = AudioDeviceGetProperty(audioDev, 0, 0,
-                                 kAudioDevicePropertyDeviceName,
-                                 &paramSize, psz_name);
+	err = AudioObjectGetPropertyData(audioDev, &propertyAddress, 0, NULL, &paramSize, psz_name);
     if (err != noErr) {
         TRACE(@"could not get default audio device name: [%4.4s]\n", (char *)&err);
         return FALSE;
@@ -181,40 +182,45 @@ static BOOL audioDeviceSupportsDigital(AudioStreamID* streamID)
     return isDigital;
 }
 
-static void registerAudioDeviceListener(AudioDevicePropertyListenerProc proc, void* data)
+static void registerAudioDeviceListener(AudioObjectPropertyListenerProc proc, void* data)
 {
     /* Find the ID of the default Device. */
     UInt32 paramSize = sizeof(AudioDeviceID);
     AudioDeviceID audioDev = 0;
-    OSStatus err = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-                                            &paramSize, &audioDev);
+	AudioObjectPropertyAddress propertyAddress = {
+		kAudioHardwarePropertyDefaultOutputDevice,
+		kAudioObjectPropertyScopeGlobal,
+		kAudioObjectPropertyElementMaster
+	};
+	OSStatus err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &paramSize, &audioDev);
     if (err != noErr) {
         TRACE(@"could not get default audio device: [%4.4s]\n", (char *)&err);
         return;
     }
     /* add callback func */
-    err = AudioDeviceAddPropertyListener(audioDev, kAudioPropertyWildcardChannel,
-                                         0, kAudioDevicePropertyDeviceHasChanged,
-                                         proc, data);
+	propertyAddress.mSelector = kAudioDevicePropertyDeviceHasChanged;
+	propertyAddress.mScope    = kAudioObjectPropertyScopeGlobal;
+	err = AudioObjectAddPropertyListener(audioDev, &propertyAddress, proc, data);
     if (err != noErr) {
         TRACE(@"AudioDeviceAddPropertyListener failed: [%4.4s]\n", (char *)&err);
     }
 }
 
-static OSStatus audioDeviceListener(AudioDeviceID device, UInt32 channel, Boolean isInput,
-                                    AudioDevicePropertyID inPropertyID, void* clientData)
+static OSStatus audioDeviceListener(AudioObjectID device, UInt32 inNumberOfAddresses,
+									const AudioObjectPropertyAddress inAddresses[], void* inClientData)
 {
-    switch (inPropertyID) {
-        case kAudioDevicePropertyDeviceHasChanged: {
+	int i;
+	for (i = 0; i < inNumberOfAddresses; ++i)
+	{
+		if(inAddresses[i].mSelector == kAudioDevicePropertyDeviceHasChanged)
+		{
             //TRACE(@"got notify kAudioDevicePropertyDeviceHasChanged.\n");
             NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-            [(AppController*)clientData audioDeviceChanged];
+            [(AppController*)inClientData audioDeviceChanged];
             [pool release];
             break;
         }
-        default:
-            break;
-    }
+	}
     return noErr;
 }
 
@@ -227,11 +233,14 @@ static int AudioStreamSupportsDigital(AudioStreamID i_stream_id)
     UInt32 paramSize;
     AudioStreamBasicDescription *p_format_list = NULL;
     int i, i_formats, b_return = FALSE;
-    
+	AudioObjectPropertyAddress propertyAddress = {
+		kAudioStreamPropertyPhysicalFormats,
+		kAudioObjectPropertyScopeGlobal,
+		kAudioObjectPropertyElementMaster
+	};
+
     /* Retrieve all the stream formats supported by each output stream. */
-    err = AudioStreamGetPropertyInfo(i_stream_id, 0,
-                                     kAudioStreamPropertyPhysicalFormats,
-                                     &paramSize, NULL);
+	err = AudioObjectGetPropertyDataSize(i_stream_id, &propertyAddress, 0, NULL, &paramSize);
     if (err != noErr) {
         TRACE(@"could not get number of streamformats: [%4.4s]\n", (char *)&err);
         return FALSE;
@@ -243,10 +252,8 @@ static int AudioStreamSupportsDigital(AudioStreamID i_stream_id)
         TRACE(@"could not malloc the memory\n" );
         return FALSE;
     }
-    
-    err = AudioStreamGetProperty(i_stream_id, 0,
-                                 kAudioStreamPropertyPhysicalFormats,
-                                 &paramSize, p_format_list);
+
+	err = AudioObjectGetPropertyData(i_stream_id, &propertyAddress, 0, NULL, &paramSize, p_format_list);
     if (err != noErr) {
         TRACE(@"could not get the list of streamformats: [%4.4s]\n", (char *)&err);
         free(p_format_list);
@@ -273,11 +280,14 @@ static int AudioDeviceSupportsDigital(AudioDeviceID i_dev_id, AudioStreamID* str
     UInt32 paramSize = 0;
     AudioStreamID* p_streams = NULL;
     int i = 0, i_streams = 0;
+	AudioObjectPropertyAddress propertyAddress = {
+		kAudioDevicePropertyStreams,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementMaster
+	};
 
     /* Retrieve all the output streams. */
-    err = AudioDeviceGetPropertyInfo(i_dev_id, 0, FALSE,
-                                     kAudioDevicePropertyStreams,
-                                     &paramSize, NULL);
+	err = AudioObjectGetPropertyDataSize(i_dev_id, &propertyAddress, 0, NULL, &paramSize);
     if (err != noErr) {
         TRACE(@"could not get number of streams: [%4.4s]\n", (char*)&err);
         return FALSE;
@@ -290,9 +300,7 @@ static int AudioDeviceSupportsDigital(AudioDeviceID i_dev_id, AudioStreamID* str
         return FALSE;
     }
 
-    err = AudioDeviceGetProperty(i_dev_id, 0, FALSE,
-                                 kAudioDevicePropertyStreams,
-                                 &paramSize, p_streams);
+	err = AudioObjectGetPropertyData(i_dev_id, &propertyAddress, 0, NULL, &paramSize, p_streams);
     if (err != noErr) {
         TRACE(@"could not get number of streams: [%4.4s]\n", (char*)&err);
         free(p_streams);

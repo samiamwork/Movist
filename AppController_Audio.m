@@ -38,8 +38,14 @@
     // get device
     AudioDeviceID device;
     UInt32 size = sizeof(device);
-    if (noErr != AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-                                          &size, &device)) {
+
+	AudioObjectPropertyAddress propertyAddress = {
+		kAudioHardwarePropertyDefaultOutputDevice,
+		kAudioObjectPropertyScopeGlobal,
+		kAudioObjectPropertyElementMaster
+	};
+	if (noErr != AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &size, &device))
+	{
         TRACE(@"audio-volume error get device");
         return -1;
     }
@@ -47,33 +53,46 @@
     // try get master volume (channel 0)
     float volume;
     size = sizeof(volume);
-    if (noErr == AudioDeviceGetProperty(device, 0, 0,
-                                        kAudioDevicePropertyVolumeScalar,
-                                        &size, &volume)) {  //kAudioDevicePropertyVolumeScalarToDecibels
-        return normalizedFloat2(adjustToRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
+	propertyAddress = (AudioObjectPropertyAddress){
+		kAudioDevicePropertyVolumeScalar,
+		kAudioDevicePropertyScopeOutput,
+		0
+	};
+	if (noErr == AudioObjectGetPropertyData(device, &propertyAddress, 0, NULL, &size, &volume))
+	{
+		//kAudioDevicePropertyVolumeScalarToDecibels
+		return normalizedFloat2(adjustToRange(volume, MIN_SYSTEM_VOLUME, MAX_SYSTEM_VOLUME));
     }
 
     // otherwise, try seperate channels
     UInt32 channels[2];
     size = sizeof(channels);
-    if (noErr != AudioDeviceGetProperty(device, 0, 0,
-                                        kAudioDevicePropertyPreferredChannelsForStereo,
-                                        &size, &channels)) {
+	propertyAddress = (AudioObjectPropertyAddress){
+		kAudioDevicePropertyPreferredChannelsForStereo,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
+	if (noErr != AudioObjectGetPropertyData(device, &propertyAddress, 0, NULL, &size, &channels[0]))
+	{
         TRACE(@"error getting channel-numbers");
         return -1;
     }
 
     float volumes[2];
     size = sizeof(float);
-    if (noErr != AudioDeviceGetProperty(device, channels[0], 0,
-                                        kAudioDevicePropertyVolumeScalar,
-                                        &size, &volumes[0])) {
+	propertyAddress = (AudioObjectPropertyAddress){
+		kAudioDevicePropertyVolumeScalar,
+		kAudioDevicePropertyScopeOutput,
+		channels[0]
+	};
+	if (noErr != AudioObjectGetPropertyData(device, &propertyAddress, 0, NULL, &size, &volumes[0]))
+	{
         TRACE(@"error getting volume of channel %d", channels[0]);
         return -1;
     }
-    if (noErr != AudioDeviceGetProperty(device, channels[1], 0,
-                                        kAudioDevicePropertyVolumeScalar,
-                                        &size, &volumes[1])) {
+	propertyAddress.mElement = channels[1];
+	if (noErr != AudioObjectGetPropertyData(device, &propertyAddress, 0, NULL, &size, &volumes[1]))
+	{
         TRACE(@"error getting volume of channel %d", channels[1]);
         return -1;
     }
@@ -88,8 +107,13 @@
     // get default device
     AudioDeviceID device;
     UInt32 size = sizeof(device);
-    if (noErr != AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-                                          &size, &device)) {
+	AudioObjectPropertyAddress propertyAddress = {
+		kAudioHardwarePropertyDefaultOutputDevice,
+		kAudioObjectPropertyScopeGlobal,
+		kAudioObjectPropertyElementMaster
+	};
+    if (noErr != AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &size, &device))
+	{
         TRACE(@"audio-volume error get device");
         return;
     }
@@ -97,37 +121,47 @@
     // try set master-channel (0) volume
     Boolean canset = false;
     size = sizeof(canset);
-    if (noErr == AudioDeviceGetPropertyInfo(device, 0, false,
-                                            kAudioDevicePropertyVolumeScalar,
-                                            &size, &canset) && canset) {
+	propertyAddress = (AudioObjectPropertyAddress){
+		kAudioDevicePropertyVolumeScalar,
+		kAudioDevicePropertyScopeOutput,
+		0
+	};
+	if (noErr == AudioObjectIsPropertySettable(device, &propertyAddress, &canset))
+	{
         size = sizeof(volume);
-        AudioDeviceSetProperty(device, 0, 0, false,
-                               kAudioDevicePropertyVolumeScalar,
-                               size, &volume);
+		AudioObjectSetPropertyData(device, &propertyAddress, 0, NULL, size, &volume);
         return;
     }
 
     // else, try seperate channes
     UInt32 channels[2];
     size = sizeof(channels);
-    if (noErr != AudioDeviceGetProperty(device, 0, false,
-                                        kAudioDevicePropertyPreferredChannelsForStereo,
-                                        &size,&channels)) {
+	propertyAddress = (AudioObjectPropertyAddress){
+		kAudioDevicePropertyPreferredChannelsForStereo,
+		kAudioDevicePropertyScopeOutput,
+		kAudioObjectPropertyElementWildcard
+	};
+	if (noErr != AudioObjectGetPropertyData(device, &propertyAddress, 0, NULL, &size, &channels[0]))
+	{
         TRACE(@"error getting channel-numbers");
         return;
     }
 
     // set volume
     size = sizeof(float);
-    if (noErr != AudioDeviceSetProperty(device, 0, channels[0], false,
-                                        kAudioDevicePropertyVolumeScalar,
-                                        size, &volume)) {
+	propertyAddress = (AudioObjectPropertyAddress){
+		kAudioDevicePropertyVolumeScalar,
+		kAudioDevicePropertyScopeOutput,
+		channels[0]
+	};
+	if (noErr != AudioObjectSetPropertyData(device, &propertyAddress, 0, NULL, size, &volume))
+	{
         TRACE(@"error setting volume of channel %d", channels[0]);
     }
-    if (noErr != AudioDeviceSetProperty(device, 0, channels[1], false,
-                                        kAudioDevicePropertyVolumeScalar,
-                                        size, &volume)) {
-        TRACE(@"error setting volume of channel %d", channels[1]);
+	propertyAddress.mElement = channels[1];
+    if (noErr != AudioObjectSetPropertyData(device, &propertyAddress, 0, NULL, size, &volume))
+	{
+		TRACE(@"error setting volume of channel %d", channels[1]);
     }
 }
 
