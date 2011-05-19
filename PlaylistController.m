@@ -141,7 +141,7 @@
         [_playlist insertFiles:[panel filenames] atIndex:row];
         [self updateUI];
 
-        [_tableView selectRow:row byExtendingSelection:FALSE];
+		[_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
     }
 
     if (alwaysOnTop) {
@@ -159,7 +159,7 @@
         [self updateUI];
 
         firstRow = MIN(firstRow, [_playlist count] - 1);
-        [_tableView selectRow:firstRow byExtendingSelection:FALSE];
+		[_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:firstRow] byExtendingSelection:NO];
     }
 }
 

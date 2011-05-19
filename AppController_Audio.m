@@ -321,14 +321,14 @@
     int i = 0;
     MTrack* track;
     NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
-    while (track = [enumerator nextObject]) {
+    while ((track = [enumerator nextObject])) {
         if (![set containsIndex:i++]/* && [track isEnabled]*/) {
             [track setEnabled:FALSE];
         }
     }
     i = 0;
     enumerator = [[_movie audioTracks] objectEnumerator];
-    while (track = [enumerator nextObject]) {
+    while ((track = [enumerator nextObject])) {
         if ([set containsIndex:i++]/* && ![track isEnabled]*/) {
             [track setEnabled:TRUE];
         }
@@ -384,7 +384,7 @@
         int i = 0;
         MTrack* track;
         NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
-        while (track = [enumerator nextObject]) {
+        while ((track = [enumerator nextObject])) {
             if ([track isEnabled]) {
                 break;
             }
@@ -456,7 +456,7 @@
 {
     NSMenuItem* item, *upItem, *altUpItem, *downItem, *altDownItem;
     NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
-    while (item = [e nextObject]) {
+    while ((item = [e nextObject])) {
         if ([item action] == @selector(volumeAction:)) {
             switch ([item tag]) {
                 case +1 : upItem = item;        break;

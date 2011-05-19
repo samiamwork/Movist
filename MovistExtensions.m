@@ -290,13 +290,13 @@
     if ([subview isKindOfClass:[NSTabView class]]) {
         NSTabViewItem* tabItem;
         NSEnumerator* enumerator = [[(NSTabView*)subview tabViewItems] objectEnumerator];
-        while (tabItem = [enumerator nextObject]) {
+        while ((tabItem = [enumerator nextObject])) {
             [self initHUDSubview:[tabItem view]];
         }
     }
     else {
         NSEnumerator* enumerator = [[subview subviews] objectEnumerator];
-        while (subview = [enumerator nextObject]) {
+        while ((subview = [enumerator nextObject])) {
             [self initHUDSubview:subview];
         }
     }
@@ -399,7 +399,7 @@
     NSViewAnimation* animation = [[NSViewAnimation alloc] initWithViewAnimations:array];
     [animation setAnimationBlockingMode:NSAnimationBlocking];
     [animation setDuration:duration];
-    [animation setDelegate:self];
+    [animation setDelegate:(NSWindow<NSAnimationDelegate>*)self];
     [animation startAnimation];
     [animation release];
 }
@@ -441,7 +441,7 @@
     if (![ext isEqualToString:@""]) {
         NSString* type;
         NSEnumerator* enumerator = [extensions objectEnumerator];
-        while (type = [enumerator nextObject]) {
+        while ((type = [enumerator nextObject])) {
             if ([type caseInsensitiveCompare:ext] == NSOrderedSame) {
                 return TRUE;
             }
@@ -662,7 +662,8 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
 
 - (NSString*)pathContentOfLinkAtPath:(NSString*)path
 {
-    NSString* linkPath = [self pathContentOfSymbolicLinkAtPath:path];
+	NSError* err = nil;
+	NSString* linkPath = [self destinationOfSymbolicLinkAtPath:path error:&err];
     if (!linkPath) {
         linkPath = [self pathContentOfAliasAtPath:path];
     }
@@ -704,7 +705,8 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
     if (((FileInfo*)catalogInfo.finderInfo)->finderFlags & kIsInvisible) {
         return FALSE;
     }
-    NSString* hiddenFile = [NSString stringWithContentsOfFile:@"/.hidden"];
+	NSError* err = nil;
+	NSString* hiddenFile = [NSString stringWithContentsOfFile:@"/.hidden" encoding:NSUTF8StringEncoding error:&err];
     NSArray* dotHiddens = [hiddenFile componentsSeparatedByString:@"\n"];
     if ([dotHiddens containsObject:[path lastPathComponent]] ||
         [path isEqualToString:@"/Network"] ||
@@ -719,7 +721,8 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
 
 - (NSArray*)sortedDirectoryContentsAtPath:(NSString*)path
 {
-    NSMutableArray* contents = [[self directoryContentsAtPath:path] mutableCopy];
+	NSError* err = nil;
+	NSMutableArray* contents = [[self contentsOfDirectoryAtPath:path error:&err] mutableCopy];
     [contents sortUsingSelector:@selector(caseInsensitiveNumericCompare:)];
     return [contents autorelease];
 }
@@ -767,7 +770,7 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
     NSString* bundleTypeName;
     NSArray* types = [dict objectForKey:@"CFBundleDocumentTypes"];
     NSEnumerator* typeEnumerator = [types objectEnumerator];
-    while (type = [typeEnumerator nextObject]) {
+    while ((type = [typeEnumerator nextObject])) {
         bundleTypeName = [type objectForKey:@"CFBundleTypeName"];
         if ([bundleTypeName hasPrefix:prefix]) {
             [exts addObjectsFromArray:[type objectForKey:@"CFBundleTypeExtensions"]];
@@ -795,7 +798,7 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
 
 - (id)initWithScreens:(NSArray*)screens
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _screens = [screens retain];
     }
     return self;
@@ -829,7 +832,7 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
     NSWindow* window;
     NSRect screenRect;
     NSEnumerator* enumerator = [_screens objectEnumerator];
-    while (screen = [enumerator nextObject]) {
+    while ((screen = [enumerator nextObject])) {
         screenRect = [screen frame];
         screenRect.origin.x = 0;
         screenRect.origin.y = 0;
@@ -867,7 +870,7 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
     else {
         NSWindow* window;
         NSEnumerator* enumerator = [_fadeWindows objectEnumerator];
-        while (window = [enumerator nextObject]) {
+        while ((window = [enumerator nextObject])) {
             [window setAlphaValue:1.0];
         }
     }
@@ -885,7 +888,7 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
 
         NSWindow* window;
         NSEnumerator* enumerator = [_fadeWindows objectEnumerator];
-        while (window = [enumerator nextObject]) {
+        while ((window = [enumerator nextObject])) {
             [animations addObject:
              [NSDictionary dictionaryWithObjectsAndKeys:
                             window, NSViewAnimationTargetKey,
@@ -903,7 +906,7 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
 
     NSWindow* window;
     NSEnumerator* enumerator = [_fadeWindows objectEnumerator];
-    while (window = [enumerator nextObject]) {
+    while ((window = [enumerator nextObject])) {
         [window orderOut:self];
     }
 }

@@ -237,9 +237,10 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
                           (id)colorSpace, kCIContextOutputColorSpace,
                           (id)colorSpace, kCIContextWorkingColorSpace, nil];
-    _ciContext = [[CIContext contextWithCGLContext:[[self openGLContext] CGLContextObj]
-                                       pixelFormat:[[self pixelFormat] CGLPixelFormatObj]
-                                           options:dict] retain];
+	_ciContext = [[CIContext contextWithCGLContext:[[self openGLContext] CGLContextObj]
+									   pixelFormat:[[self pixelFormat] CGLPixelFormatObj]
+										colorSpace:colorSpace
+										   options:dict] retain];
     CGColorSpaceRelease(colorSpace);
     
     _colorFilter = [[CIFilter filterWithName:@"CIColorControls"] retain];

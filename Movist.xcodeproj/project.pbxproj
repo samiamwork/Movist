@@ -1467,6 +1467,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/$(arch)/include";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -1476,10 +1477,11 @@
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libbz2.dylib",
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libz.dylib",
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libbz2.dylib",
 				);
 				PRODUCT_NAME = Movist;
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -1502,6 +1504,7 @@
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/$(arch)/include";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -1510,10 +1513,11 @@
 					"$(SRCROOT)/contrib/lib",
 				);
 				OTHER_LDFLAGS = (
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libz.dylib",
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk/usr/lib/libbz2.dylib",
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libz.dylib",
+					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libbz2.dylib",
 				);
 				PRODUCT_NAME = Movist;
+				SDKROOT = macosx;
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

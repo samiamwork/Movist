@@ -40,7 +40,7 @@
 - (id)initWithURL:(NSURL*)url
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, type);
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _url = [url retain];
         _name = [NSLocalizedString(@"Unnamed", nil) retain];
         _language = [NSLocalizedString(@"Unknown Language", nil) retain];
@@ -103,7 +103,7 @@
                                    options:NSCaseInsensitiveSearch].location != NSNotFound)
     NSString* identifier;
     NSEnumerator* e = [defaultLangIDs objectEnumerator];
-    while (identifier = [e nextObject]) {
+    while ((identifier = [e nextObject])) {
         if (CHECK_SUBSTRING(_name, identifier) ||
             CHECK_SUBSTRING(_language, identifier) ||
             CHECK_SUBSTRING(_extraInfo, identifier)) {
@@ -114,7 +114,7 @@
 }
 
 - (BOOL)isEmpty { return ([_items count] == 0); }
-- (float)beginTime { return [self isEmpty] ? 0 : [[_items objectAtIndex:0] beginTime]; }
+- (float)beginTime { return [self isEmpty] ? 0 : [(MSubtitleItem*)[_items objectAtIndex:0] beginTime]; }
 - (float)endTime   { return [self isEmpty] ? 0 : [[_items lastObject] endTime]; }
 
 - (BOOL)isEnabled { return _enabled; }
@@ -233,7 +233,7 @@
         item = [_items objectAtIndex:i];
         if ([item endTime] < 0.0) {
             if (i < count - 1) {
-                [item setEndTime:[[_items objectAtIndex:i + 1] beginTime]];
+                [item setEndTime:[(MSubtitleItem*)[_items objectAtIndex:i + 1] beginTime]];
             }
             else {
                 [item setEndTime:[item beginTime] + 5.0];
@@ -308,7 +308,7 @@
     if (index < 0) {
         index = 0;
     }
-    return [[_items objectAtIndex:index] beginTime] + 0.1;
+    return [(MSubtitleItem*)[_items objectAtIndex:index] beginTime] + 0.1;
 }
 
 - (float)nextSubtitleTime:(float)time
@@ -317,7 +317,7 @@
     if (index < 0) {
         index = [_items count] - 1;
     }
-    return [[_items objectAtIndex:index] beginTime] + 0.1;
+    return [(MSubtitleItem*)[_items objectAtIndex:index] beginTime] + 0.1;
 }
 
 @end

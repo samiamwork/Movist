@@ -121,8 +121,8 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         return nil;
     }
 
-    if (self = [super initWithURL:url movieInfo:movieInfo
-                  digitalAudioOut:digitalAudioOut error:error]) {
+    if ((self = [super initWithURL:url movieInfo:movieInfo
+                  digitalAudioOut:digitalAudioOut error:error])) {
         _formatContext = movieInfo->formatContext;
         traceAVFormatContext(_formatContext);
 
@@ -171,7 +171,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     MTrack* track;
     FFVideoTrack* videoTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
-    while (track = [enumerator nextObject]) {
+    while ((track = [enumerator nextObject])) {
         videoTrack = (FFVideoTrack*)[track impl];
         if (![videoTrack setOpenGLContext:openGLContext
                               pixelFormat:openGLPixelFormat
@@ -215,7 +215,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     MTrack* track;
     FFVideoTrack* vTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
-    while (track = (MTrack*)[enumerator nextObject]) {
+    while ((track = (MTrack*)[enumerator nextObject])) {
         vTrack = (FFVideoTrack*)[track impl];
         if ([vTrack initTrack:errorCode videoQueueCapacity:videoQueueCapacity
                                            useFastDecoding:useFastDecoding]) {
@@ -235,7 +235,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     BOOL passThrough = FALSE;
     FFAudioTrack* aTrack;
     enumerator = [_audioTracks objectEnumerator];
-    while (track = (MTrack*)[enumerator nextObject]) {
+    while ((track = (MTrack*)[enumerator nextObject])) {
         aTrack = (FFAudioTrack*)[track impl];
         passThrough = digitalAudioOut && [aTrack isAc3Dts];
         if (![aTrack initTrack:errorCode passThrough:passThrough]) {
@@ -260,7 +260,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     MTrack* track;
     FFVideoTrack* videoTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
-    while (track = [enumerator nextObject]) {
+    while ((track = [enumerator nextObject])) {
         videoTrack = (FFVideoTrack*)[track impl];
         [_trackMutex lock];
         if (videoTrack == _mainVideoTrack) {
@@ -271,7 +271,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     }
 
     enumerator = [_audioTracks objectEnumerator];
-    while (track = [enumerator nextObject]) {
+    while ((track = [enumerator nextObject])) {
         [(FFAudioTrack*)[track impl] cleanupTrack];
     }
     [_trackMutex release];
@@ -298,7 +298,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         FFVideoTrack* vTrack = (FFVideoTrack*)[track impl];
         if (vTrack == _mainVideoTrack) {
             NSEnumerator* enumerator = [_videoTracks objectEnumerator];
-            while (vTrack = [enumerator nextObject]) {
+            while ((vTrack = [enumerator nextObject])) {
                 if ([vTrack isEnabled]) {
                     break;
                 }
@@ -313,7 +313,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         FFAudioTrack* aTrack = (FFAudioTrack*)[track impl];
         if (aTrack == _mainAudioTrack) {
             NSEnumerator* enumerator = [_audioTracks objectEnumerator];
-            while (aTrack = [enumerator nextObject]) {
+            while ((aTrack = [enumerator nextObject])) {
                 if ([aTrack isEnabled]) {
                     break;
                 }
@@ -343,7 +343,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 {
     NSEnumerator* enumerator = [_audioTracks objectEnumerator];
     FFAudioTrack* aTrack;
-    while (aTrack = (FFAudioTrack*)[[enumerator nextObject] impl]) {
+    while ((aTrack = (FFAudioTrack*)[[enumerator nextObject] impl])) {
         [aTrack setVolume:volume];
     }
     [super setVolume:volume];
@@ -354,7 +354,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     NSEnumerator* enumerator = [_audioTracks objectEnumerator];
     FFAudioTrack* aTrack;
     float volume = muted ? 0 : _volume;
-    while (aTrack = (FFAudioTrack*)[[enumerator nextObject] impl]) {
+    while ((aTrack = (FFAudioTrack*)[[enumerator nextObject] impl])) {
         [aTrack setVolume:volume];
     }
     [super setMuted:muted];

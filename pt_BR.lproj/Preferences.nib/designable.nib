@@ -2,17 +2,43 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">10C540</string>
-		<string key="IBDocument.InterfaceBuilderVersion">740</string>
-		<string key="IBDocument.AppKitVersion">1038.25</string>
-		<string key="IBDocument.HIToolboxVersion">458.00</string>
+		<string key="IBDocument.SystemVersion">10J869</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1305</string>
+		<string key="IBDocument.AppKitVersion">1038.35</string>
+		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">740</string>
+			<string key="NS.object.0">1305</string>
 		</object>
-		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
+		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="576"/>
+			<string>NSColorWell</string>
+			<string>NSMenuItem</string>
+			<string>NSSliderCell</string>
+			<string>NSMenu</string>
+			<string>NSButton</string>
+			<string>NSScroller</string>
+			<string>NSTableHeaderView</string>
+			<string>NSCustomObject</string>
+			<string>NSSlider</string>
+			<string>NSTableView</string>
+			<string>NSCustomView</string>
+			<string>NSTextField</string>
+			<string>NSNumberFormatter</string>
+			<string>NSWindowTemplate</string>
+			<string>NSTextFieldCell</string>
+			<string>NSStepperCell</string>
+			<string>NSButtonCell</string>
+			<string>NSTableColumn</string>
+			<string>NSBox</string>
+			<string>NSPopUpButtonCell</string>
+			<string>NSOutlineView</string>
+			<string>NSView</string>
+			<string>NSScrollView</string>
+			<string>NSTabViewItem</string>
+			<string>NSPopUpButton</string>
+			<string>NSStepper</string>
+			<string>NSTabView</string>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -23,9 +49,7 @@
 			<object class="NSArray" key="dict.sortedKeys" id="0">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 			</object>
-			<object class="NSMutableArray" key="dict.values">
-				<bool key="EncodedWithXMLCoder">YES</bool>
-			</object>
+			<reference key="dict.values" ref="0"/>
 		</object>
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="681654424">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -41,23 +65,23 @@
 			<object class="NSWindowTemplate" id="851243362">
 				<int key="NSWindowStyleMask">3</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{96, 737}, {296, 172}}</string>
+				<string key="NSWindowRect">{{700, 700}, {296, 172}}</string>
 				<int key="NSWTFlags">1886912512</int>
 				<string key="NSWindowTitle">환경설정</string>
 				<string key="NSWindowClass">NSPanel</string>
 				<object class="NSMutableString" key="NSViewClass">
 					<characters key="NS.bytes">View</characters>
 				</object>
-				<string key="NSWindowContentMaxSize">{1.79769e+308, 1.79769e+308}</string>
 				<object class="NSView" key="NSWindowView" id="118448998">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
-					<string key="NSFrameSize">{296, 172}</string>
+					<string key="NSFrame">{{7, 11}, {296, 172}}</string>
 					<reference key="NSSuperview"/>
 					<reference key="NSWindow"/>
+					<reference key="NSNextKeyView"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
-				<string key="NSMaxSize">{1.79769e+308, 1.79769e+308}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
+				<string key="NSMaxSize">{1e+13, 1e+13}</string>
 			</object>
 			<object class="NSCustomView" id="524859474">
 				<nil key="NSNextResponder"/>
@@ -238,17 +262,15 @@
 														<boolean value="YES"/>
 														<object class="NSAttributedString" id="1035741816">
 															<string key="NSString">0</string>
-															<object class="NSDictionary" key="NSAttributes" id="345496669">
+															<object class="NSDictionary" key="NSAttributes" id="386639531">
 																<bool key="EncodedWithXMLCoder">YES</bool>
 																<reference key="dict.sortedKeys" ref="0"/>
-																<object class="NSMutableArray" key="dict.values">
-																	<bool key="EncodedWithXMLCoder">YES</bool>
-																</object>
+																<reference key="dict.values" ref="0"/>
 															</object>
 														</object>
-														<string>,</string>
-														<integer value="1000"/>
 														<string>.</string>
+														<integer value="1000"/>
+														<string>,</string>
 														<object class="NSDecimalNumberPlaceholder" id="636146410">
 															<int key="NS.exponent">3</int>
 															<int key="NS.length">1</int>
@@ -280,13 +302,13 @@
 												</object>
 												<object class="NSAttributedString" key="NS.nan">
 													<string key="NSString">NaN</string>
-													<reference key="NSAttributes" ref="345496669"/>
+													<reference key="NSAttributes" ref="386639531"/>
 												</object>
 												<reference key="NS.min" ref="538274845"/>
 												<reference key="NS.max" ref="636146410"/>
 												<nil key="NS.rounding"/>
-												<string key="NS.decimal">,</string>
-												<string key="NS.thousand">.</string>
+												<string key="NS.decimal">.</string>
+												<string key="NS.thousand">,</string>
 												<bool key="NS.hasthousands">NO</bool>
 												<bool key="NS.localized">YES</bool>
 												<bool key="NS.allowsfloats">YES</bool>
@@ -375,11 +397,11 @@
 														<boolean value="YES"/>
 														<object class="NSAttributedString" id="886198580">
 															<string key="NSString">0</string>
-															<reference key="NSAttributes" ref="345496669"/>
+															<reference key="NSAttributes" ref="386639531"/>
 														</object>
-														<string>,</string>
-														<integer value="1000"/>
 														<string>.</string>
+														<integer value="1000"/>
+														<string>,</string>
 														<object class="NSDecimalNumberPlaceholder" id="276234624">
 															<int key="NS.exponent">3</int>
 															<int key="NS.length">1</int>
@@ -411,13 +433,13 @@
 												</object>
 												<object class="NSAttributedString" key="NS.nan">
 													<string key="NSString">NaN</string>
-													<reference key="NSAttributes" ref="345496669"/>
+													<reference key="NSAttributes" ref="386639531"/>
 												</object>
 												<reference key="NS.min" ref="146612175"/>
 												<reference key="NS.max" ref="276234624"/>
 												<nil key="NS.rounding"/>
-												<string key="NS.decimal">,</string>
-												<string key="NS.thousand">.</string>
+												<string key="NS.decimal">.</string>
+												<string key="NS.thousand">,</string>
 												<bool key="NS.hasthousands">NO</bool>
 												<bool key="NS.localized">YES</bool>
 												<bool key="NS.allowsfloats">YES</bool>
@@ -496,11 +518,11 @@
 														<boolean value="YES"/>
 														<object class="NSAttributedString" id="707010356">
 															<string key="NSString">0</string>
-															<reference key="NSAttributes" ref="345496669"/>
+															<reference key="NSAttributes" ref="386639531"/>
 														</object>
-														<string>,</string>
-														<integer value="1000"/>
 														<string>.</string>
+														<integer value="1000"/>
+														<string>,</string>
 														<object class="NSDecimalNumberPlaceholder" id="143132156">
 															<int key="NS.exponent">3</int>
 															<int key="NS.length">1</int>
@@ -532,13 +554,13 @@
 												</object>
 												<object class="NSAttributedString" key="NS.nan">
 													<string key="NSString">NaN</string>
-													<reference key="NSAttributes" ref="345496669"/>
+													<reference key="NSAttributes" ref="386639531"/>
 												</object>
 												<reference key="NS.min" ref="1008751457"/>
 												<reference key="NS.max" ref="143132156"/>
 												<nil key="NS.rounding"/>
-												<string key="NS.decimal">,</string>
-												<string key="NS.thousand">.</string>
+												<string key="NS.decimal">.</string>
+												<string key="NS.thousand">,</string>
 												<bool key="NS.hasthousands">NO</bool>
 												<bool key="NS.localized">YES</bool>
 												<bool key="NS.allowsfloats">YES</bool>
@@ -1276,11 +1298,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="1016574376">
 											<string key="NSString">0,0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0</string>
 										<string>0.0</string>
 										<boolean value="NO"/>
@@ -1296,7 +1318,7 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<object class="NSDecimalNumberPlaceholder" key="NS.min" id="528545019">
 									<int key="NS.exponent">0</int>
@@ -1308,8 +1330,8 @@
 								</object>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -2314,6 +2336,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{13, 114}, {226, 34}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="923208517"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="692419895">
 											<int key="NSCellFlags">67239424</int>
@@ -2330,6 +2354,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{241, 125}, {183, 26}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="322865885"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSPopUpButtonCell" key="NSCell" id="372261702">
 											<int key="NSCellFlags">-2076049856</int>
@@ -2403,6 +2429,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{13, 88}, {226, 34}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="206631349"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="572069939">
 											<int key="NSCellFlags">67239424</int>
@@ -2419,6 +2447,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{241, 99}, {183, 26}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="956120896"/>
 										<int key="NSTag">1</int>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSPopUpButtonCell" key="NSCell" id="906200351">
@@ -2493,6 +2523,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{13, 80}, {226, 17}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="49693721"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="636462487">
 											<int key="NSCellFlags">67239424</int>
@@ -2509,6 +2541,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{242, 69}, {181, 25}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="352703271"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSSliderCell" key="NSCell" id="151176345">
 											<int key="NSCellFlags">67501824</int>
@@ -2537,6 +2571,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{235, 47}, {32, 17}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="690700489"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="167899834">
 											<int key="NSCellFlags">67239424</int>
@@ -2557,6 +2593,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{401, 53}, {29, 11}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="825453859"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="977730968">
 											<int key="NSCellFlags">67239424</int>
@@ -2573,6 +2611,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{346, 53}, {29, 11}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="916855165"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="1017580727">
 											<int key="NSCellFlags">67239424</int>
@@ -2589,6 +2629,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{296, 53}, {29, 11}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="509989033"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="924013623">
 											<int key="NSCellFlags">67239424</int>
@@ -2605,6 +2647,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{13, 157}, {226, 17}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="113353482"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="693962880">
 											<int key="NSCellFlags">67239424</int>
@@ -2621,6 +2665,8 @@
 										<int key="NSvFlags">256</int>
 										<string key="NSFrame">{{241, 151}, {183, 26}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView" ref="129617426"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSPopUpButtonCell" key="NSCell" id="762591534">
 											<int key="NSCellFlags">-2076049856</int>
@@ -2694,6 +2740,8 @@
 										<int key="NSvFlags">268</int>
 										<string key="NSFrame">{{242, 11}, {226, 19}}</string>
 										<reference key="NSSuperview" ref="696200160"/>
+										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSButtonCell" key="NSCell" id="697941611">
 											<int key="NSCellFlags">-2080244224</int>
@@ -2702,7 +2750,7 @@
 											<reference key="NSSupport" ref="963011607"/>
 											<reference key="NSControlView" ref="825453859"/>
 											<int key="NSButtonFlags">1211912703</int>
-											<int key="NSButtonFlags2">130</int>
+											<int key="NSButtonFlags2">2</int>
 											<object class="NSCustomResource" key="NSNormalImage">
 												<string key="NSClassName">NSImage</string>
 												<string key="NSResourceName">NSSwitch</string>
@@ -2717,10 +2765,14 @@
 								</object>
 								<string key="NSFrame">{{2, 2}, {483, 186}}</string>
 								<reference key="NSSuperview" ref="1065883494"/>
+								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView" ref="1069489638"/>
 							</object>
 						</object>
 						<string key="NSFrame">{{17, 16}, {487, 203}}</string>
 						<reference key="NSSuperview" ref="241886815"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="696200160"/>
 						<string key="NSOffsets">{0, 0}</string>
 						<object class="NSTextFieldCell" key="NSTitleCell">
 							<int key="NSCellFlags">67239424</int>
@@ -2742,6 +2794,8 @@
 				</object>
 				<string key="NSFrameSize">{521, 239}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
+				<reference key="NSNextKeyView" ref="1065883494"/>
 				<object class="NSMutableString" key="NSClassName">
 					<characters key="NS.bytes">NSView</characters>
 				</object>
@@ -3006,11 +3060,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="448358324">
 											<string key="NSString">0,0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0</string>
 										<string>0.0</string>
 										<boolean value="NO"/>
@@ -3026,13 +3080,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -3098,11 +3152,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="315907308">
 											<string key="NSString">0,0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0</string>
 										<string>0.0</string>
 										<boolean value="NO"/>
@@ -3118,13 +3172,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -3190,11 +3244,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="1006606797">
 											<string key="NSString">0,0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0</string>
 										<string>0.0</string>
 										<boolean value="NO"/>
@@ -3210,13 +3264,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -3330,11 +3384,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="144800852">
 											<string key="NSString">0,0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0</string>
 										<string>0.0</string>
 										<boolean value="NO"/>
@@ -3350,13 +3404,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -3438,11 +3492,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="619641177">
 											<string key="NSString">0,0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0</string>
 										<string>0.0</string>
 										<boolean value="NO"/>
@@ -3458,13 +3512,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -3546,11 +3600,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="486526578">
 											<string key="NSString">0,0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0</string>
 										<string>0.0</string>
 										<boolean value="NO"/>
@@ -3566,13 +3620,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -3690,11 +3744,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="37236160">
 											<string key="NSString">0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<object class="NSDecimalNumberPlaceholder" id="874674695">
 											<int key="NS.exponent">2</int>
 											<int key="NS.length">1</int>
@@ -3726,13 +3780,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="983064316"/>
 								<reference key="NS.max" ref="874674695"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -3832,11 +3886,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="855728863">
 											<string key="NSString">0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0</string>
 										<string>0</string>
 										<boolean value="NO"/>
@@ -3852,13 +3906,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -4005,11 +4059,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="405991012">
 											<string key="NSString">0,0%</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0%</string>
 										<string>0.0%</string>
 										<boolean value="NO"/>
@@ -4025,13 +4079,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -4071,11 +4125,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="550790864">
 											<string key="NSString">0,0%</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0%</string>
 										<string>0.0%</string>
 										<boolean value="NO"/>
@@ -4091,13 +4145,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -4202,11 +4256,11 @@
 										<boolean value="YES"/>
 										<object class="NSAttributedString" id="961704433">
 											<string key="NSString">0,0</string>
-											<reference key="NSAttributes" ref="345496669"/>
+											<reference key="NSAttributes" ref="386639531"/>
 										</object>
-										<string>,</string>
-										<integer value="1000"/>
 										<string>.</string>
+										<integer value="1000"/>
+										<string>,</string>
 										<string>-0.0</string>
 										<string>0.0</string>
 										<boolean value="NO"/>
@@ -4222,13 +4276,13 @@
 								</object>
 								<object class="NSAttributedString" key="NS.nan">
 									<string key="NSString">NaN</string>
-									<reference key="NSAttributes" ref="345496669"/>
+									<reference key="NSAttributes" ref="386639531"/>
 								</object>
 								<reference key="NS.min" ref="528545019"/>
 								<reference key="NS.max" ref="528545019"/>
 								<nil key="NS.rounding"/>
-								<string key="NS.decimal">,</string>
-								<string key="NS.thousand">.</string>
+								<string key="NS.decimal">.</string>
+								<string key="NS.thousand">,</string>
 								<bool key="NS.hasthousands">NO</bool>
 								<bool key="NS.localized">YES</bool>
 								<bool key="NS.allowsfloats">YES</bool>
@@ -7968,6 +8022,8 @@
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="NSArray" key="dict.sortedKeys">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>-1.IBPluginDependency</string>
+					<string>-2.IBPluginDependency</string>
 					<string>-3.IBPluginDependency</string>
 					<string>-3.ImportedFromIB2</string>
 					<string>1039.IBPluginDependency</string>
@@ -8536,6 +8592,8 @@
 				</object>
 				<object class="NSMutableArray" key="dict.values">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<boolean value="YES"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -9106,17 +9164,13 @@
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<reference key="dict.sortedKeys" ref="0"/>
-				<object class="NSMutableArray" key="dict.values">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-				</object>
+				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="activeLocalization"/>
 			<object class="NSMutableDictionary" key="localizations">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<reference key="dict.sortedKeys" ref="0"/>
-				<object class="NSMutableArray" key="dict.values">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-				</object>
+				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
 			<int key="maxID">3444</int>
@@ -9128,63 +9182,8 @@
 					<string key="className">AdvancedDetailsTableColumn</string>
 					<string key="superclassName">NSTableColumn</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">FirstResponder</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSApplication</string>
-					<string key="superclassName">NSResponder</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSCell</string>
-					<string key="superclassName">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSControl</string>
-					<string key="superclassName">NSView</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSObject</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSTextField</string>
-					<string key="superclassName">NSControl</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
-					</object>
-				</object>
-				<object class="IBPartialClassDescription">
-					<string key="className">NSWindow</string>
-					<string key="superclassName">NSResponder</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/AdvancedDetailsTableColumn.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -9261,6 +9260,175 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>alwaysOnTopAction:</string>
+							<string>alwaysOnTopOnPlayingAction:</string>
+							<string>autoPlayOnFullScreenAction:</string>
+							<string>autodetectDigitalAudioOutAction:</string>
+							<string>autodetectMovieSeriesAction:</string>
+							<string>checkUpdateNowAction:</string>
+							<string>codecBindingAction:</string>
+							<string>deactivateScreenSaverAction:</string>
+							<string>fileBindingAction:</string>
+							<string>fullNavOnStartupAction:</string>
+							<string>fullNavUseAction:</string>
+							<string>fullScreenBlackScreensAction:</string>
+							<string>fullScreenEffectAction:</string>
+							<string>fullScreenFillAction:</string>
+							<string>fullScreenUnderScanAction:</string>
+							<string>letterBoxHeightAction:</string>
+							<string>openingViewAction:</string>
+							<string>quitWhenWindowCloseAction:</string>
+							<string>rememberLastPlayAction:</string>
+							<string>seekIntervalAction:</string>
+							<string>showFullNavItemsAction:</string>
+							<string>subtitleAttributesAction:</string>
+							<string>subtitleAutoFontSizeAction:</string>
+							<string>subtitleAutoFontSizeCharsAction:</string>
+							<string>subtitleEnableAction:</string>
+							<string>subtitleEncodingAction:</string>
+							<string>subtitleFontAction:</string>
+							<string>subtitlePositionAction:</string>
+							<string>subtitleScreenMarginAction:</string>
+							<string>supportAppleRemoteAction:</string>
+							<string>updateCheckIntervalAction:</string>
+							<string>updateSystemVolumeAction:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">alwaysOnTopAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">alwaysOnTopOnPlayingAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">autoPlayOnFullScreenAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">autodetectDigitalAudioOutAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">autodetectMovieSeriesAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">checkUpdateNowAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">codecBindingAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">deactivateScreenSaverAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">fileBindingAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">fullNavOnStartupAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">fullNavUseAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">fullScreenBlackScreensAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">fullScreenEffectAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">fullScreenFillAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">fullScreenUnderScanAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">letterBoxHeightAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openingViewAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">quitWhenWindowCloseAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">rememberLastPlayAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">seekIntervalAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">showFullNavItemsAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">subtitleAttributesAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">subtitleAutoFontSizeAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">subtitleAutoFontSizeCharsAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">subtitleEnableAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">subtitleEncodingAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">subtitleFontAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">subtitlePositionAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">subtitleScreenMarginAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">supportAppleRemoteAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">updateCheckIntervalAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">updateSystemVolumeAction:</string>
+								<string key="candidateClassName">id</string>
+							</object>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="outlets">
@@ -9420,14 +9588,394 @@
 							<string>NSView</string>
 						</object>
 					</object>
+					<object class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>_advancedPane</string>
+							<string>_advancedTabView</string>
+							<string>_alwaysOnTopButton</string>
+							<string>_alwaysOnTopOnPlayingButton</string>
+							<string>_audioPane</string>
+							<string>_autoPlayOnFullScreenButton</string>
+							<string>_autodetectDigitalAudioOutButton</string>
+							<string>_autodetectMovieSeriesButton</string>
+							<string>_codecBindingTableView</string>
+							<string>_deactivateScreenSaverButton</string>
+							<string>_detailsOutlineView</string>
+							<string>_fileBindingTableView</string>
+							<string>_fullNavOnStartupButton</string>
+							<string>_fullNavUseButton</string>
+							<string>_fullScreenBlackScreensButton</string>
+							<string>_fullScreenEffectPopUpButton</string>
+							<string>_fullScreenFillForStdMoviePopUpButton</string>
+							<string>_fullScreenFillForWideMoviePopUpButton</string>
+							<string>_fullScreenUnderScanSlider</string>
+							<string>_generalPane</string>
+							<string>_lastUpdateCheckTimeTextField</string>
+							<string>_letterBoxHeightPopUpButton</string>
+							<string>_openingViewPopUpButton</string>
+							<string>_quitWhenWindowCloseButton</string>
+							<string>_rememberLastPlayButton</string>
+							<string>_seekInterval0Stepper</string>
+							<string>_seekInterval0TextField</string>
+							<string>_seekInterval1Stepper</string>
+							<string>_seekInterval1TextField</string>
+							<string>_seekInterval2Stepper</string>
+							<string>_seekInterval2TextField</string>
+							<string>_showiTunesMoviesButton</string>
+							<string>_showiTunesPodcastsButton</string>
+							<string>_showiTunesTVShowsButton</string>
+							<string>_subtitleAutoFontSizeButton</string>
+							<string>_subtitleAutoFontSizeLabelTextField</string>
+							<string>_subtitleAutoFontSizeStepper</string>
+							<string>_subtitleAutoFontSizeTextField</string>
+							<string>_subtitleDataView</string>
+							<string>_subtitleEnableButton</string>
+							<string>_subtitleEncodingPopUpButton</string>
+							<string>_subtitleFontButton</string>
+							<string>_subtitleHMarginSlider</string>
+							<string>_subtitleHMarginTextField</string>
+							<string>_subtitleLineSpacingSlider</string>
+							<string>_subtitleLineSpacingTextField</string>
+							<string>_subtitlePane</string>
+							<string>_subtitlePositionPopUpButton</string>
+							<string>_subtitleScreenMarginSlider</string>
+							<string>_subtitleScreenMarginTextField</string>
+							<string>_subtitleShadowBlurSlider</string>
+							<string>_subtitleShadowBlurTextField</string>
+							<string>_subtitleShadowColorWell</string>
+							<string>_subtitleShadowDarknessSlider</string>
+							<string>_subtitleShadowDarknessTextField</string>
+							<string>_subtitleShadowOffsetSlider</string>
+							<string>_subtitleShadowOffsetTextField</string>
+							<string>_subtitleShadowOpacitySlider</string>
+							<string>_subtitleShadowOpacityTextField</string>
+							<string>_subtitleStrokeColorWell</string>
+							<string>_subtitleStrokeOpacitySlider</string>
+							<string>_subtitleStrokeOpacityTextField</string>
+							<string>_subtitleStrokeWidthSlider</string>
+							<string>_subtitleStrokeWidthTextField</string>
+							<string>_subtitleTabView</string>
+							<string>_subtitleTextColorWell</string>
+							<string>_subtitleTextOpacitySlider</string>
+							<string>_subtitleTextOpacityTextField</string>
+							<string>_subtitleVMarginSlider</string>
+							<string>_subtitleVMarginTextField</string>
+							<string>_supportAppleRemoteButton</string>
+							<string>_updateCheckIntervalPopUpButton</string>
+							<string>_updateSystemVolumeButton</string>
+							<string>_videoPane</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_advancedPane</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_advancedTabView</string>
+								<string key="candidateClassName">NSTabView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_alwaysOnTopButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_alwaysOnTopOnPlayingButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_audioPane</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_autoPlayOnFullScreenButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_autodetectDigitalAudioOutButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_autodetectMovieSeriesButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_codecBindingTableView</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_deactivateScreenSaverButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_detailsOutlineView</string>
+								<string key="candidateClassName">NSOutlineView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_fileBindingTableView</string>
+								<string key="candidateClassName">NSTableView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_fullNavOnStartupButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_fullNavUseButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_fullScreenBlackScreensButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_fullScreenEffectPopUpButton</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_fullScreenFillForStdMoviePopUpButton</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_fullScreenFillForWideMoviePopUpButton</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_fullScreenUnderScanSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_generalPane</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_lastUpdateCheckTimeTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_letterBoxHeightPopUpButton</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_openingViewPopUpButton</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_quitWhenWindowCloseButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_rememberLastPlayButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_seekInterval0Stepper</string>
+								<string key="candidateClassName">NSStepper</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_seekInterval0TextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_seekInterval1Stepper</string>
+								<string key="candidateClassName">NSStepper</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_seekInterval1TextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_seekInterval2Stepper</string>
+								<string key="candidateClassName">NSStepper</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_seekInterval2TextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_showiTunesMoviesButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_showiTunesPodcastsButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_showiTunesTVShowsButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleAutoFontSizeButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleAutoFontSizeLabelTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleAutoFontSizeStepper</string>
+								<string key="candidateClassName">NSStepper</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleAutoFontSizeTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleDataView</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleEnableButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleEncodingPopUpButton</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleFontButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleHMarginSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleHMarginTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleLineSpacingSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleLineSpacingTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitlePane</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitlePositionPopUpButton</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleScreenMarginSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleScreenMarginTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowBlurSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowBlurTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowColorWell</string>
+								<string key="candidateClassName">NSColorWell</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowDarknessSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowDarknessTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowOffsetSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowOffsetTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowOpacitySlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleShadowOpacityTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleStrokeColorWell</string>
+								<string key="candidateClassName">NSColorWell</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleStrokeOpacitySlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleStrokeOpacityTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleStrokeWidthSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleStrokeWidthTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleTabView</string>
+								<string key="candidateClassName">NSTabView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleTextColorWell</string>
+								<string key="candidateClassName">NSColorWell</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleTextOpacitySlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleTextOpacityTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleVMarginSlider</string>
+								<string key="candidateClassName">NSSlider</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_subtitleVMarginTextField</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_supportAppleRemoteButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_updateCheckIntervalPopUpButton</string>
+								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_updateSystemVolumeButton</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">_videoPane</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+						</object>
+					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
-						<string key="majorKey">IBUserSource</string>
-						<string key="minorKey"/>
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/PreferenceController.h</string>
 					</object>
 				</object>
 			</object>
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
+		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
 			<integer value="1050" key="NS.object.0"/>
@@ -9437,7 +9985,23 @@
 			<integer value="3000" key="NS.object.0"/>
 		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
-		<string key="IBDocument.LastKnownRelativeProjectPath">../Movist.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
+		<object class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
+			<bool key="EncodedWithXMLCoder">YES</bool>
+			<object class="NSArray" key="dict.sortedKeys">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>Action</string>
+				<string>NSMenuCheckmark</string>
+				<string>NSMenuMixedState</string>
+				<string>NSSwitch</string>
+			</object>
+			<object class="NSMutableArray" key="dict.values">
+				<bool key="EncodedWithXMLCoder">YES</bool>
+				<string>{32, 23}</string>
+				<string>{9, 8}</string>
+				<string>{7, 2}</string>
+				<string>{15, 15}</string>
+			</object>
+		</object>
 	</data>
 </archive>

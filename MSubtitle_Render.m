@@ -287,7 +287,7 @@
     float interval, seekTime = [[_items objectAtIndex:_seekIndex] endTime];
     // release in release-range over _forwardRenderInterval.
     for (i = _releaseBeginIndex; i <= _releaseEndIndex; i++) {
-        interval = DIFF_TIME(seekTime, [[_items objectAtIndex:i] beginTime]);
+        interval = DIFF_TIME(seekTime, [(MSubtitleItem*)[_items objectAtIndex:i] beginTime]);
         if (_forwardRenderInterval < interval) {
             break;
         }
@@ -297,7 +297,7 @@
 
     // make between _seekIndex to _releaseEndIndex
     _releaseBeginIndex = _seekIndex;
-    seekTime = [[_items objectAtIndex:_seekIndex] beginTime];
+    seekTime = [(MSubtitleItem*)[_items objectAtIndex:_seekIndex] beginTime];
     [self makeTexImagesFrom:_seekIndex to:_releaseEndIndex baseTime:seekTime];
 
     //TRACE(@"%s release-range=[%d]~[%d]", __PRETTY_FUNCTION__,
@@ -309,7 +309,7 @@
     //TRACE(@"%s remaking for beyond forward seek : %d", __PRETTY_FUNCTION__, _seekIndex);
 
     int i;
-    float interval, seekTime = [[_items objectAtIndex:_seekIndex] beginTime];
+    float interval, seekTime = [(MSubtitleItem*)[_items objectAtIndex:_seekIndex] beginTime];
     // release in release-range over _backwardRenderInterval.
     for (i = _releaseEndIndex; _releaseBeginIndex <= i; i--) {
         interval = DIFF_TIME([[_items objectAtIndex:i] endTime], seekTime);
@@ -333,7 +333,7 @@
     //TRACE(@"%s remaking for inside release range : %d", __PRETTY_FUNCTION__, index);
 
     int i;
-    float interval, time = [[_items objectAtIndex:index] beginTime];
+    float interval, time = [(MSubtitleItem*)[_items objectAtIndex:index] beginTime];
     // release before index over _backwardRenderInterval.
     for (i = index; _releaseBeginIndex <= i; i--) {
         interval = DIFF_TIME([[_items objectAtIndex:i] endTime], time);

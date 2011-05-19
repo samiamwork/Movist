@@ -26,7 +26,7 @@
 @class MainWindow;
 @class MMovieView;
 
-@interface PreferenceController : NSWindowController
+@interface PreferenceController : NSWindowController<NSToolbarDelegate>
 {
     // general
     IBOutlet NSView* _generalPane;

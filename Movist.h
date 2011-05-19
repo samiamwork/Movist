@@ -418,10 +418,14 @@ extern NSString* MPlaylistItemDataType;
 #pragma mark -
 #pragma mark utilities
 
+void detectOperatingSystem();
 BOOL isSystemTiger();
 BOOL isSystemLeopard();
 
+#ifdef kHIWindowVisibleInAllSpaces
+#undef kHIWindowVisibleInAllSpaces
 #define kHIWindowVisibleInAllSpaces     (1 << 8)
+#endif
 
 NSArray* movistDragTypes();
 

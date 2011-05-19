@@ -52,7 +52,7 @@ NSString* videoCodecName(int codecId);
 - (id)init
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _playlist = [[Playlist alloc] init];
         _audioTrackIndexSet = [[NSMutableIndexSet alloc] init];
         _subtitleNameSet = [[NSMutableSet alloc] init];
@@ -123,7 +123,7 @@ NSString* videoCodecName(int codecId);
     // modify menu-item shortcuts with shift modifier.
     NSMenuItem* item;
     NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
-    while (item = [e nextObject]) {
+    while ((item = [e nextObject])) {
         if ([item action] == @selector(rateAction:) && [item tag] == 0) {
             [item setKeyEquivalent:@"\\"];
             [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
@@ -131,7 +131,7 @@ NSString* videoCodecName(int codecId);
         }
     }
     e = [[_subtitleMenu itemArray] objectEnumerator];
-    while (item = [e nextObject]) {
+    while ((item = [e nextObject])) {
         if ([item action] == @selector(subtitleSyncAction:) && [item tag] == 0) {
             [item setKeyEquivalent:@"="];
             [item setKeyEquivalentModifierMask:NSControlKeyMask | NSShiftKeyMask];

@@ -25,7 +25,7 @@
 @class MMovieView;
 @class FSSeekSlider;
 
-@interface PlayPanel : NSPanel
+@interface PlayPanel : NSPanel<NSWindowDelegate>
 {
     IBOutlet MMovieView* _movieView;
     IBOutlet NSTextField* _titleTextField;

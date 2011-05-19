@@ -253,7 +253,7 @@ struct master_sorter_t {
                     if (is_id(_level3, KaxTrackName)) {
                         KaxTrackName& name = *static_cast<KaxTrackName*>(_level3);
                         char s[256];
-                        sprintf(s, "%s", ((const UTFstring&)name).c_str());
+                        sprintf(s, "%ls", ((const UTFstring&)name).c_str());
                         [subtitle setName:[NSString stringWithUTF8String:s]];
                         TRACE_ELEMENT(_level3, 3, @"Name: %@", [subtitle name]);
                     }
@@ -274,7 +274,7 @@ struct master_sorter_t {
                     else if (is_id(_level3, KaxCodecName)) {
                         KaxCodecName& codecName = *static_cast<KaxCodecName*>(_level3);
                         char s[256];
-                        sprintf(s, "%s", ((const UTFstring&)codecName).c_str());
+                        sprintf(s, "%ls", ((const UTFstring&)codecName).c_str());
                         TRACE(@"CodecName: %s", s);
                     }
                     else if (is_id(_level3, KaxCodecPrivate)) {

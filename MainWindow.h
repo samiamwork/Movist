@@ -26,7 +26,7 @@
 @class MMovieView;
 @class MainSeekSlider;
 
-@interface MainWindow : NSWindow
+@interface MainWindow : NSWindow<NSWindowDelegate>
 {
     IBOutlet MMovieView* _movieView;
     IBOutlet MainSeekSlider* _seekSlider;

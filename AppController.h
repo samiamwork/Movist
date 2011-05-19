@@ -44,7 +44,7 @@
 @class FullScreener;
 @class PlayPanel;
 
-@interface AppController : NSObject
+@interface AppController : NSObject<NSWindowDelegate>
 {
     MultiClickRemoteBehavior* _remoteControlBehavior;
     RemoteControlContainer* _remoteControlContainer;

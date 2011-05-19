@@ -26,7 +26,7 @@
 @class FullNavItem;
 @class FullNavList;
 
-@interface FullNavListView : NSView
+@interface FullNavListView : NSView<NSAnimationDelegate>
 {
     FullNavList* _list;
     float _itemHeight;

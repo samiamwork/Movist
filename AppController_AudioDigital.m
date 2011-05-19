@@ -86,7 +86,7 @@ static AudioStreamID _audioStreamID;
             format.mSampleRate = 48000.000000;    // 48.000 kHz by default
             MTrack* track;
             NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
-            while (track = [enumerator nextObject]) {
+            while ((track = [enumerator nextObject])) {
                 // use sample-rate of first enabled audio track
                 if ([track isEnabled] && [track audioSampleRate] != 0) {
                     format.mSampleRate = [track audioSampleRate];
