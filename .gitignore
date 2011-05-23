@@ -5,6 +5,7 @@ xcuserdata
 build
 contrib/i386
 contrib/lib
+contrib/x86_64
 contrib/ppc
 contrib/config.mak
 contrib/src/ffmpeg-mt

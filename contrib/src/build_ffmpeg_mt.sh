@@ -1,9 +1,9 @@
-#/bin/sh
+#/bin/bash -x
 set -e 
 set -v
 
-SDK_TARGET="10.4"
-MACOSX_SDK="/Developer/SDKs/MacOSX10.4u.sdk"
+SDK_TARGET="10.6"
+MACOSX_SDK="/Developer/SDKs/MacOSX10.6.sdk"
 
 FFMPEG_CONF_COMMON=
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-ffserver --disable-ffmpeg --disable-ffplay"
@@ -16,7 +16,7 @@ FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-gpl --enable-postproc"
 #FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-runtime-cpudetect"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --disable-swscale"
 FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --enable-pthreads"
-FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --cc=gcc-4.0"
+FFMPEG_CONF_COMMON="$FFMPEG_CONF_COMMON --cc=gcc-4.2"
 
 ########## SOURCE ##########
 
@@ -34,12 +34,33 @@ fi
 PREFIX="$(cd ..;pwd)/i386"
 EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=${SDK_TARGET} -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
 CFLAGS="-I${MACOSX_SDK}/usr/include -I$PREFIX/include $EXTRA_CFLAGS"
-LDFLAGS="-L$PREFIX/lib -isysroot ${MACOSX_SDK} -mmacosx-version-min=10.4"
+LDFLAGS="-L$PREFIX/lib -isysroot ${MACOSX_SDK} -mmacosx-version-min=10.6"
 PATH="$PREFIX/bin:$PATH"
 
 FFMPEG_CONF_INTEL="--cpu=pentium-m"
-FFMPEG_CFLAGS_INTEL="-mtune=nocona -fstrict-aliasing -frerun-cse-after-loop -fweb -falign-loops=16"
+FFMPEG_CFLAGS_INTEL="-arch i386 -mtune=nocona -fstrict-aliasing -frerun-cse-after-loop -fweb -falign-loops=16"
 FFMPEG_LDFLAGS_INTEL="-arch i386"
+
+FFMPEG_CONF="$FFMPEG_CONF_COMMON $FFMPEG_CONF_INTEL"
+FFMPEG_CFLAGS="$CFLAGS $FFMPEG_CFLAGS_INTEL"
+FFMPEG_LDFLAGS="$LDFLAGS $FFMPEG_LDFLAGS_INTEL"
+
+echo ./configure $FFMPEG_CONF --prefix=$PREFIX --extra-cflags="$FFMPEG_CFLAGS" --extra-ldflags="$FFMPEG_LDFLAGS"
+(cd ffmpeg-mt && \
+./configure $FFMPEG_CONF --prefix=$PREFIX --extra-cflags="$FFMPEG_CFLAGS" --extra-ldflags="$FFMPEG_LDFLAGS" && \
+make clean && make && make install-libs && make install-headers)
+
+########## INTEL x86_64 ###########
+
+PREFIX="$(cd ..;pwd)/x86_64"
+EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=${SDK_TARGET} -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
+CFLAGS="-I${MACOSX_SDK}/usr/include -I$PREFIX/include $EXTRA_CFLAGS"
+LDFLAGS="-L$PREFIX/lib -isysroot ${MACOSX_SDK} -mmacosx-version-min=10.6"
+PATH="$PREFIX/bin:$PATH"
+
+FFMPEG_CONF_INTEL="--cpu=core2"
+FFMPEG_CFLAGS_INTEL="-arch x86_64 -mtune=nocona -fstrict-aliasing -frerun-cse-after-loop -fweb -falign-loops=16"
+FFMPEG_LDFLAGS_INTEL="-arch x86_64"
 
 FFMPEG_CONF="$FFMPEG_CONF_COMMON $FFMPEG_CONF_INTEL"
 FFMPEG_CFLAGS="$CFLAGS $FFMPEG_CFLAGS_INTEL"
@@ -49,41 +70,21 @@ FFMPEG_LDFLAGS="$LDFLAGS $FFMPEG_LDFLAGS_INTEL"
 ./configure $FFMPEG_CONF --prefix=$PREFIX --extra-cflags="$FFMPEG_CFLAGS" --extra-ldflags="$FFMPEG_LDFLAGS" && \
 make clean && make && make install-libs && make install-headers)
 
-########## INTEL x86_64 ###########
+##########  PPC  ###########
 
-#PREFIX="$(cd ..;pwd)/x86_64"
-#EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=${SDK_TARGET} -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
-#CFLAGS="-I${MACOSX_SDK}/usr/include -I$PREFIX/include $EXTRA_CFLAGS"
+#PREFIX="$(cd ..;pwd)/ppc"
+#EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=10.4 -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
+#CFLAGS="-I$PREFIX/include $EXTRA_CFLAGS"
 #LDFLAGS="-L$PREFIX/lib -isysroot ${MACOSX_SDK} -mmacosx-version-min=10.4"
-#PATH="$PREFIX/bin:$PATH"
-#
-#FFMPEG_CONF_INTEL="--cpu=pentium-m"
-#FFMPEG_CFLAGS_INTEL="-mtune=nocona -fstrict-aliasing -frerun-cse-after-loop -fweb -falign-loops=16"
-#FFMPEG_LDFLAGS_INTEL="-arch x86_64"
-#
-#FFMPEG_CONF="$FFMPEG_CONF_COMMON $FFMPEG_CONF_INTEL"
-#FFMPEG_CFLAGS="$CFLAGS $FFMPEG_CFLAGS_INTEL"
-#FFMPEG_LDFLAGS="$LDFLAGS $FFMPEG_LDFLAGS_INTEL"
-#
+
+#FFMPEG_CONF_PPC="--enable-cross-compile --arch=ppc --target-os=darwin"
+#FFMPEG_CFLAGS_PPC="-arch ppc -mcpu=G3 -mtune=G5 -fstrict-aliasing -funroll-loops -falign-loops=16 -mmultiple"
+#FFMPEG_LDFLAGS_PPC="-arch ppc"
+
+#FFMPEG_CONF="$FFMPEG_CONF_COMMON $FFMPEG_CONF_PPC"
+#FFMPEG_CFLAGS="$CFLAGS $FFMPEG_CFLAGS_PPC"
+#FFMPEG_LDFLAGS="$LDFLAGS $FFMPEG_LDFLAGS_PPC"
+
 #(cd ffmpeg-mt && \
 #./configure $FFMPEG_CONF --prefix=$PREFIX --extra-cflags="$FFMPEG_CFLAGS" --extra-ldflags="$FFMPEG_LDFLAGS" && \
 #make clean && make && make install-libs && make install-headers)
-
-##########  PPC  ###########
-
-PREFIX="$(cd ..;pwd)/ppc"
-EXTRA_CFLAGS="-isysroot ${MACOSX_SDK} -DMACOSX_DEPLOYMENT_TARGET=10.4 -mmacosx-version-min=${SDK_TARGET} -isystem $PREFIX/include"
-CFLAGS="-I$PREFIX/include $EXTRA_CFLAGS"
-LDFLAGS="-L$PREFIX/lib -isysroot ${MACOSX_SDK} -mmacosx-version-min=10.4"
-
-FFMPEG_CONF_PPC="--enable-cross-compile --arch=ppc --target-os=darwin"
-FFMPEG_CFLAGS_PPC="-arch ppc -mcpu=G3 -mtune=G5 -fstrict-aliasing -funroll-loops -falign-loops=16 -mmultiple"
-FFMPEG_LDFLAGS_PPC="-arch ppc"
-
-FFMPEG_CONF="$FFMPEG_CONF_COMMON $FFMPEG_CONF_PPC"
-FFMPEG_CFLAGS="$CFLAGS $FFMPEG_CFLAGS_PPC"
-FFMPEG_LDFLAGS="$LDFLAGS $FFMPEG_LDFLAGS_PPC"
-
-(cd ffmpeg-mt && \
-./configure $FFMPEG_CONF --prefix=$PREFIX --extra-cflags="$FFMPEG_CFLAGS" --extra-ldflags="$FFMPEG_LDFLAGS" && \
-make clean && make && make install-libs && make install-headers)

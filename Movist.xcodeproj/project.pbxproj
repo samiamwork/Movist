@@ -1481,7 +1481,7 @@
 					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libbz2.dylib",
 				);
 				PRODUCT_NAME = Movist;
-				SDKROOT = macosx;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -1517,7 +1517,7 @@
 					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libbz2.dylib",
 				);
 				PRODUCT_NAME = Movist;
-				SDKROOT = macosx;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;

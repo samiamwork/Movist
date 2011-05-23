@@ -18,16 +18,16 @@ mkdir -p "$BUILDDIR"
 cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
 
 # x86_64
-#BUILDDIR="$CONTRIB_PATH/build/x86_64"
-#cd "$CONTRIB_PATH" && sh bootstrap i686-apple-darwin10
-#mkdir -p "$BUILDDIR"
-#cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
-
-# ppc 
-BUILDDIR="$CONTRIB_PATH/build/ppc"
-cd "$CONTRIB_PATH" && sh bootstrap powerpc-apple-darwin8
+BUILDDIR="$CONTRIB_PATH/build/x86_64"
+cd "$CONTRIB_PATH" && sh bootstrap i686-apple-darwin10
 mkdir -p "$BUILDDIR"
 cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
+
+# ppc 
+#BUILDDIR="$CONTRIB_PATH/build/ppc"
+#cd "$CONTRIB_PATH" && sh bootstrap powerpc-apple-darwin8
+#mkdir -p "$BUILDDIR"
+#cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
 
 # ffmpeg
 cd "$CONTRIB_SRC_PATH" && sh build_ffmpeg_mt.sh

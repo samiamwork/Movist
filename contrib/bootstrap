@@ -90,15 +90,15 @@ case $HOST in
         ;;
     i686-apple-darwin8)
 		PREFIX="`pwd`/i386"
-        SDK_TARGET=10.4
-		CC=gcc-4.0
-		CXX=g++-4.0
+        SDK_TARGET=10.6
+		CC=gcc-4.2
+		CXX=g++-4.2
         echo "SDK_TARGET = ${SDK_TARGET}" >> config.mak
         echo "HAVE_DARWIN_OS_ON_INTEL = 1" >> config.mak
         echo "ENVP = MACOSX_DEPLOYMENT_TARGET=${SDK_TARGET}" >> config.mak
-        echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.4u.sdk" >> config.mak
-        CFLAGS_TUNING=" -march=pentium-m -mtune=prescott"
-        CFLAGS_TUNING=" -march=pentium-m "
+        echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.6.sdk" >> config.mak
+        CFLAGS_TUNING=" -arch i386 -mtune=prescott"
+        CFLAGS_TUNING=" -arch i386"
         EXTRA_CFLAGS=" -isysroot \${MACOSX_SDK} -D\${ENVP} -mmacosx-version-min=\${SDK_TARGET}"
 		if expr "$BUILD" : 'powerpc-apple-darwin.*' > /dev/null ; then
 			CROSS_COMPILE="1"
@@ -110,15 +110,15 @@ case $HOST in
         ;;
     i686-apple-darwin10)
 		PREFIX="`pwd`/x86_64"
-        SDK_TARGET=10.4
-		CC=gcc-4.0
-		CXX=g++-4.0
+        SDK_TARGET=10.6
+		CC=gcc-4.2
+		CXX=g++-4.2
         echo "SDK_TARGET = ${SDK_TARGET}" >> config.mak
         echo "HAVE_DARWIN_OS_ON_INTEL = 1" >> config.mak
         echo "ENVP = MACOSX_DEPLOYMENT_TARGET=${SDK_TARGET}" >> config.mak
-        echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.4u.sdk" >> config.mak
-        CFLAGS_TUNING=" -march=pentium-m -mtune=prescott"
-        CFLAGS_TUNING=" -march=pentium-m "
+        echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.6.sdk" >> config.mak
+        CFLAGS_TUNING=" -arch x86_64 -mtune=prescott"
+        CFLAGS_TUNING=" -arch x86_64"
         EXTRA_CFLAGS=" -isysroot \${MACOSX_SDK} -D\${ENVP} -mmacosx-version-min=\${SDK_TARGET}"
 		if expr "$BUILD" : 'powerpc-apple-darwin.*' > /dev/null ; then
 			CROSS_COMPILE="1"
@@ -157,9 +157,9 @@ case $HOST in
         ;;
     i686-apple-darwin9)
 		PREFIX="`pwd`/i386"
-        SDK_TARGET=10.4
-		CC=gcc-4.0
-		CXX=g++-4.0
+        SDK_TARGET=10.6
+		CC=gcc-4.2
+		CXX=g++-4.2
         MIN_LD_VERSION_WITH_TEXT_RELOCATION=81
         echo "SDK_TARGET = ${SDK_TARGET}" >> config.mak
         echo "HAVE_DARWIN_OS_ON_INTEL = 1" >> config.mak
@@ -168,7 +168,7 @@ case $HOST in
             echo "NO_TEXT_RELOCATION = 1" >> config.mak
         fi
         echo "ENVP = MACOSX_DEPLOYMENT_TARGET=${SDK_TARGET}" >> config.mak
-        echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.4u.sdk" >> config.mak
+        echo "MACOSX_SDK = /Developer/SDKs/MacOSX10.6.sdk" >> config.mak
         CFLAGS_TUNING=" -march=pentium-m -mtune=prescott"
         CFLAGS_TUNING=" -march=pentium-m "
         EXTRA_CFLAGS=" -isysroot \${MACOSX_SDK} -D\${ENVP} -mmacosx-version-min=\${SDK_TARGET}"
