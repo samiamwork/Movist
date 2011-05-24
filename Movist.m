@@ -143,7 +143,7 @@ NSArray* URLsFromFilenames(NSArray* filenames)
     
     NSString* filename;
     NSEnumerator* e = [filenames objectEnumerator];
-    while (filename = [e nextObject]) {
+    while ((filename = [e nextObject])) {
         [URLs addObject:[NSURL fileURLWithPath:filename]];
     }
     return URLs;
@@ -170,7 +170,6 @@ NSString* codecName(int codecId)
         CASE_CODEC_STRING(DIV6);
         CASE_CODEC_STRING(DIVX);
         CASE_CODEC_STRING(DX50);
-        CASE_CODEC_STRING(XVID);
         CASE_CODEC_STRING(MP4V);
         CASE_CODEC_STRING(MPG4);
         CASE_CODEC_STRING(MP42);
@@ -288,7 +287,7 @@ unsigned int dragActionFromPasteboard(NSPasteboard* pboard, BOOL defaultPlay)
         NSArray* subtitleExts = [MSubtitle fileExtensions];
         NSString* filename;
         NSEnumerator* e = [filenames objectEnumerator];
-        while (filename = [e nextObject]) {
+        while ((filename = [e nextObject])) {
             if (![filename hasAnyExtension:subtitleExts]) {
                 break;
             }

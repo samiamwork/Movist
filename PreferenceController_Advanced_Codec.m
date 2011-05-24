@@ -36,7 +36,7 @@
         MCODEC_ID(MPEG1),MCODEC_ID(MPEG2),MCODEC_ID(MPEG4),
         MCODEC_ID(DIV1), MCODEC_ID(DIV2), MCODEC_ID(DIV3), MCODEC_ID(DIV4),
         MCODEC_ID(DIV5), MCODEC_ID(DIV6), MCODEC_ID(DIVX), MCODEC_ID(DX50),
-        MCODEC_ID(XVID), MCODEC_ID(MP4V), MCODEC_ID(MPG4), MCODEC_ID(MP42),
+        MCODEC_ID(MP4V), MCODEC_ID(MPG4), MCODEC_ID(MP42),
         MCODEC_ID(MP43), MCODEC_ID(MP4S), MCODEC_ID(M4S2), MCODEC_ID(AP41),
         MCODEC_ID(RMP4), MCODEC_ID(SEDG), MCODEC_ID(FMP4), MCODEC_ID(BLZ0),
         MCODEC_ID(H263), MCODEC_ID(H264), MCODEC_ID(AVC1), MCODEC_ID(X264),
@@ -142,7 +142,7 @@ enum {
         NSNumber* num;
         NSDictionary* dict = [_defaults dictionaryForKey:MDefaultCodecBindingKey];
         NSEnumerator* enumerator = [[dict allKeys] objectEnumerator];
-        while (num = [enumerator nextObject]) {
+        while ((num = [enumerator nextObject])) {
             if ([num intValue] / MCODEC_MPEG4 == 1) {  // all MPEG4s are in 100 ~ 199.
                 [set addIndex:[num intValue]];
             }

@@ -59,8 +59,8 @@ typedef struct {
         return 0;
     }
 
-    if (self = [super initWithAVStream:_indexContext->streams[streamIndex]
-                                 index:streamIndex]) {
+    if ((self = [super initWithAVStream:_indexContext->streams[streamIndex]
+                                 index:streamIndex])) {
         _movie = [movie retain];
         _formatContext = formatContext;
         _frameReadMutex = [frameReadMutex retain];
@@ -113,10 +113,10 @@ typedef struct {
         [_frameReadMutex lock];
         av_add_index_entry(_formatContext->streams[packet.stream_index], 
                            packet.pos - 8, packet.dts, packet.size, 0,
-                           (packet.flags & PKT_FLAG_KEY) ? AVINDEX_KEYFRAME : 0);
+                           (packet.flags & AV_PKT_FLAG_KEY) ? AVINDEX_KEYFRAME : 0);
         [_frameReadMutex unlock];
         if (packet.stream_index == [self streamIndex]) {
-            if (packet.flags & PKT_FLAG_KEY) {
+            if (packet.flags & AV_PKT_FLAG_KEY) {
                 AVStream* stream = _formatContext->streams[packet.stream_index];
                 _indexingTime = packet.dts * av_q2d(stream->time_base);
                 TRACE(@"current %f", packet.dts * av_q2d(stream->time_base));

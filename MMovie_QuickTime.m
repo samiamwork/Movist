@@ -260,7 +260,7 @@ static BOOL _useQuickTimeSubtitles = FALSE;
         QTTrack* qtTrack;
         int vi = 0, ai = 0;
         NSEnumerator* enumerator = [[_qtMovie tracks] objectEnumerator];
-        while (qtTrack = [enumerator nextObject]) {
+        while ((qtTrack = [enumerator nextObject])) {
             mediaType = [qtTrack attributeForKey:QTTrackMediaTypeAttribute];
             if ([mediaType isEqualToString:QTMediaTypeVideo] ||
                 [mediaType isEqualToString:QTMediaTypeMPEG]/* ||

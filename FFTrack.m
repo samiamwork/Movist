@@ -23,6 +23,8 @@
 
 #import "FFTrack.h"
 #import "MMovie_FFmpeg.h"
+#include <sys/types.h>
+#include <sys/sysctl.h>
 
 @implementation FFContext
 
@@ -33,7 +35,7 @@
 
 - (id)initWithAVStream:(AVStream*)stream index:(int)index
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _streamIndex = index;
         _stream = stream;
     }
@@ -72,13 +74,12 @@
     context->error_recognition = FF_ER_CAREFUL;
     context->error_concealment = 3;
 	
-    if (context->codec_type == CODEC_TYPE_VIDEO) {
+    if (context->codec_type == AVMEDIA_TYPE_VIDEO) {
         int cpuCount;
         size_t oldlen = 4;
         if (sysctlbyname("hw.activecpu", &cpuCount, &oldlen, NULL, 0) == 0) {
             if (1 < cpuCount) {
                 context->thread_count = 2;
-                avcodec_thread_init(context, context->thread_count);
             }
         }
     }

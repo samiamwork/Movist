@@ -270,7 +270,7 @@ enum {
         MCODEC_DIV6,            // DivX MPEG-4 V3.x
         MCODEC_DIVX,            // DivX MPEG-4 V4.x
         MCODEC_DX50,            // DivX MPEG-4 V5.x
-        MCODEC_XVID     = 120,  // Xvid MPEG-4
+	  //MCODEC_XVID     = 120,  // Xvid MPEG-4 (removed from FFMPEG)
         MCODEC_MP4V     = 130,  // Apple MPEG-4
         MCODEC_MPG4     = 140,  // Microsoft MPEG-4 V1
         MCODEC_MP42,            // Microsoft MPEG-4 V2

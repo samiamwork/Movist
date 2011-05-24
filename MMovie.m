@@ -32,7 +32,7 @@
 
 - (id)initWithImpl:(id)impl
 {
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _impl = [impl retain];
         _codecId = MCODEC_ETC_;
     }
@@ -247,7 +247,7 @@
         MTrack* track;
         int number = 1;
         NSEnumerator* enumerator = [tracks objectEnumerator];
-        while (track = [enumerator nextObject]) {
+        while ((track = [enumerator nextObject])) {
             [track setName:[defaultName stringByAppendingFormat:@" %d", number++]];
         }
     }
@@ -288,14 +288,14 @@
     NSMutableArray* audioTracks = [NSMutableArray arrayWithCapacity:1];
     for (i = 0; i < formatContext->nb_streams; i++) {
         stream = formatContext->streams[i];
-        if (stream->codec->codec_type == CODEC_TYPE_VIDEO) {
+        if (stream->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
             track = [self videoTrackWithAVStream:stream streamIndex:i];
             [videoTracks addObject:track];
             if (!fps && 0 < [track fps]) {
                 fps = [track fps];
             }
         }
-        else if (stream->codec->codec_type == CODEC_TYPE_AUDIO) {
+        else if (stream->codec->codec_type == AVMEDIA_TYPE_AUDIO) {
             track = [self audioTrackWithAVStream:stream streamIndex:i];
             [audioTracks addObject:track];
             if ([track codecId] == MCODEC_AC3) {
@@ -346,7 +346,7 @@
     if (![MMovie checkMovieURL:url error:error]) {
         return nil;
     }
-    if (self = [super init]) {
+    if ((self = [super init])) {
         _url = [url retain];
         _videoTracks = [movieInfo->videoTracks retain];
         _audioTracks = [movieInfo->audioTracks retain];

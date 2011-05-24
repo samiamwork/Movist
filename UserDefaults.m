@@ -272,7 +272,6 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
             CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIV6),
             CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DIVX),
             CODEC_BINDING(DECODER_FFMPEG,   MCODEC_DX50),
-            CODEC_BINDING(DECODER_FFMPEG,   MCODEC_XVID),
             CODEC_BINDING(DECODER_QUICKTIME,MCODEC_MP4V),
             CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MPG4),
             CODEC_BINDING(DECODER_FFMPEG,   MCODEC_MP42),
@@ -337,7 +336,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
         TRACE(@"codecId=%d ==> default-decoder=%d", codecId, decoder);
         id key;
         NSEnumerator* enumerator = [[dict allKeys] objectEnumerator];
-        while (key = [enumerator nextObject]) {
+        while ((key = [enumerator nextObject])) {
             [dict setObject:object forKey:key];
         }
     }

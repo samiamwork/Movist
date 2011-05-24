@@ -109,7 +109,6 @@
         CASE_FFCODEC_______(QDRAW);
         CASE_FFCODEC_______(VIXL);
         CASE_FFCODEC_______(QPEG);
-        CASE_FFCODEC_MCODEC(XVID,            XVID);
         CASE_FFCODEC_______(PNG);
         CASE_FFCODEC_______(PPM);
         CASE_FFCODEC_______(PBM);
@@ -174,7 +173,6 @@
         else IF_FFCODEC_MCODEC(@"DIV6", DIV6);
         else IF_FFCODEC_MCODEC(@"DIVX", DIVX);
         else IF_FFCODEC_MCODEC(@"DX50", DX50);
-        else IF_FFCODEC_MCODEC(@"XVID", XVID);
         else IF_FFCODEC_MCODEC(@"mp4v", MP4V);
         else IF_FFCODEC_MCODEC(@"MPG4", MPG4);
         else IF_FFCODEC_MCODEC(@"MP42", MP42);
