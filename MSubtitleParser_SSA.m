@@ -74,7 +74,7 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
 
 - (id)initWithURL:(NSURL*)subtitleURL
 {
-    if (self = [super initWithURL:subtitleURL]) {
+    if ((self = [super initWithURL:subtitleURL])) {
         _styles = [[NSMutableDictionary alloc] initWithCapacity:1];
         _defaultColor = nil;
         _defaultBold = FALSE;
@@ -114,7 +114,7 @@ NSString* const STYLE_KEY_BOLD      = @"Bold";
     NSArray* as = [s componentsSeparatedByString:@","];
     NSMutableArray* format = [NSMutableArray arrayWithCapacity:[as count]];
     NSEnumerator* e = [as objectEnumerator];
-    while (s = [e nextObject]) {
+    while ((s = [e nextObject])) {
         ms = [NSMutableString stringWithString:s];
         [ms removeLeftWhitespaces];
         [ms removeRightWhitespaces];
@@ -267,7 +267,7 @@ static float movieTimeFromString(NSString* string)
     NSRange range = NSMakeRange(0, [string length]);
     NSString* s, *format, *style, *text;
     NSEnumerator* e = [_formats objectEnumerator];
-    while (format = [e nextObject]) {
+    while ((format = [e nextObject])) {
         if ([format isEqualToString:@"Text"]) {
             // text may be the last formatted string.
             // remove last '\r' and '\n'.
