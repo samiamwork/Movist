@@ -80,7 +80,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
             [s appendFormat:@"[0x%x]", stream->id];
         }
 		t = av_metadata_get(stream->metadata, "language", NULL, 0);
-        if (t->value[0] != '\0') {
+        if (t != NULL && t->value[0] != '\0') {
             [s appendFormat:@"(%s)", t->value];
         }
         
