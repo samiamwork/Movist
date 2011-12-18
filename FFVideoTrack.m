@@ -30,7 +30,7 @@
     unsigned int _capacity;
     unsigned int _front;
     unsigned int _rear;
-    NSLock* _mutex;
+    NSRecursiveLock* _mutex;
 }
 
 - (id)initWithCapacity:(unsigned int)capacity;
@@ -129,7 +129,7 @@
     unsigned int _front;
     unsigned int _rear;
     BOOL _full;
-    NSLock* _mutex;
+    NSRecursiveLock* _mutex;
 }
 @end
 

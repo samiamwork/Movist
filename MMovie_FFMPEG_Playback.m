@@ -128,7 +128,7 @@
 {
     FFVideoTrack* vTrack;
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
-    while (vTrack = (FFVideoTrack*)[[enumerator nextObject] impl]) {
+    while ((vTrack = (FFVideoTrack*)[[enumerator nextObject] impl])) {
         if ([vTrack isQueueFull]) {
             return TRUE;
         }
@@ -150,7 +150,7 @@
     _needKeyFrame = FALSE;
 
     enumerator = [_videoTracks objectEnumerator];
-    while (vTrack = (FFVideoTrack*)[[enumerator nextObject] impl]) {
+    while ((vTrack = (FFVideoTrack*)[[enumerator nextObject] impl])) {
         if ([vTrack isEnabled] && [vTrack streamIndex] == packet.stream_index) {
             [vTrack putPacket:&packet];
             //TRACE(@"[%s] frame id %d flag %d pts %lld dts %lld pos %lld", __PRETTY_FUNCTION__, 
@@ -164,7 +164,7 @@
 
     FFAudioTrack* aTrack;
     enumerator = [_audioTracks objectEnumerator];
-    while (aTrack = (FFAudioTrack*)[[enumerator nextObject] impl]) {
+    while ((aTrack = (FFAudioTrack*)[[enumerator nextObject] impl])) {
         if ([aTrack isEnabled] &&
             [aTrack streamIndex] == packet.stream_index) {
             [aTrack putPacket:&packet];

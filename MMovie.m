@@ -348,8 +348,8 @@
     }
     if ((self = [super init])) {
         _url = [url retain];
-        _videoTracks = [movieInfo->videoTracks retain];
-        _audioTracks = [movieInfo->audioTracks retain];
+        _videoTracks = [movieInfo->videoTracks mutableCopy];
+        _audioTracks = [movieInfo->audioTracks mutableCopy];
         _hasAC3Codec = movieInfo->hasAC3Codec;
         _hasDTSCodec = movieInfo->hasDTSCodec;
         _startTime = movieInfo->startTime;

@@ -385,11 +385,14 @@ int compareSubtitleURLs(id url1, id url2, void* context)
         return;
     }
 
+	// If we're removing the current item, change it to the previous item
     if (_currentItem == [_array objectAtIndex:index]) {
-        if (index == [_array count] - 1) {
-            index = [_array count] - 2;
-        }
-        _currentItem = (0 <= index) ? [_array objectAtIndex:index] : nil;
+		if (index == 0 && [_array count] == 0) {
+			_currentItem = nil;
+		}
+		else {
+			_currentItem = [_array objectAtIndex:index];
+		}
     }
     [_array removeObjectAtIndex:index];
 
@@ -431,8 +434,12 @@ int compareSubtitleURLs(id url1, id url2, void* context)
 - (void)setCurrentItemAtIndex:(unsigned int)index
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, index);
-    _currentItem = (0 <= index && index < [_array count]) ?
-                                        [_array objectAtIndex:index] : nil;
+	if (index >= [_array count]) {
+		_currentItem = nil;
+	}
+	else {
+		_currentItem = [_array objectAtIndex:index];
+	}
 }
 
 - (void)setNextItem_RepeatOff:(BOOL)forward

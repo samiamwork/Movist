@@ -22,6 +22,7 @@
 
 #import "FullScreener.h"
 
+#import "MMovie.h"
 #import "MMovieView.h"
 #import "MainWindow.h"
 #import "FullWindow.h"

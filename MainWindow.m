@@ -119,7 +119,7 @@
     }
 }
 
-- (void)setLevel:(int)newLevel
+- (void)setLevel:(NSInteger)newLevel
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
     if ([[NSApp delegate] isDesktopBackground]) {

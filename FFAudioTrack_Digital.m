@@ -465,8 +465,8 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
     buffer[7] = (packetSize>> 5) & 0xFF;
     
     UInt8 p0 = packetPtr[0];
-    if ((p0 == 0xFF || p0 == 0xFE) && _bigEndian ||
-        (p0 == 0x1F || p0 == 0x7F) && !_bigEndian) {
+    if (((p0 == 0xFF || p0 == 0xFE) && _bigEndian) ||
+        ((p0 == 0x1F || p0 == 0x7F) && !_bigEndian)) {
         swab(packetPtr, buffer + 8, packetSize);
     }
     else {

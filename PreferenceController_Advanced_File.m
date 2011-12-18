@@ -24,6 +24,7 @@
 #import "UserDefaults.h"
 
 #import "MMovie.h"
+extern void _LSCopyAllApplicationURLs(NSArray**);
 
 @implementation PreferenceController (Advanced_FileBinding)
 

@@ -523,7 +523,7 @@
     }
 
     [_subtitles release];
-    _subtitles = [subtitles retain];
+    _subtitles = [subtitles mutableCopy];
     [[_playlist currentItem] setSubtitleURLs:subtitleURLs];
     [self autoenableSubtitles];
     [self updateExternalSubtitleTrackNames];
@@ -908,7 +908,7 @@
             return codecName([[[_movie audioTracks] objectAtIndex:aIndex] codecId]);
         }
         else {
-            return [[_subtitles objectAtIndex:sIndex] type];
+            return [(MSubtitle*)[_subtitles objectAtIndex:sIndex] type];
         }
     }
     else if ([identifier isEqualToString:@"format"]) {

@@ -24,6 +24,7 @@
 #import "UserDefaults.h"
 #import "FullScreener.h"
 #import "MainWindow.h"
+#import "MMovie.h"
 #import "MMovieView.h"
 
 #import "AppleRemote/MultiClickRemoteBehavior.h"
@@ -120,6 +121,8 @@
         case kRemoteButtonMinus     : [self remoteControlMinusAction:self];   break;
         case kRemoteButtonLeft_Hold : [self remoteControlLeftAction:self];    break;
         case kRemoteButtonRight_Hold: [self remoteControlRightAction:self];   break;
+		default:
+			break;
     }
 }
 
@@ -165,6 +168,8 @@
             case kRemoteButtonPlay_Hold : [self remoteControlPlayHoldAction:self];  break;
             case kRemoteButtonMenu      : [self remoteControlMenuAction:self];      break;
             case kRemoteButtonMenu_Hold : [self remoteControlMenuHoldAction:self];  break;
+			default:
+				break;
         }
     }
     // repeat-needed buttons
@@ -182,6 +187,8 @@
                 [self stopRemoteControlRepeatTimer];
             }
             break;
+		default:
+			break;
     }
 }
 

@@ -194,7 +194,7 @@
         else if (endTime < [item endTime]) {
             [item setBeginTime:endTime];
 
-            NSMutableString* s = [[item string] copy];
+            NSAttributedString* s = [[item string] copy];
             item = [MSubtitleItem itemWithString:[s autorelease]
                                        beginTime:beginTime endTime:endTime];
             [item appendString:NEW_LINE];
@@ -210,7 +210,7 @@
     else if ([item beginTime] < beginTime) {
         float bt = [item beginTime];
         [item setBeginTime:beginTime];
-        NSMutableString* s = [[item string] copy];
+        NSAttributedString* s = [[item string] copy];
         item = [MSubtitleItem itemWithString:[s autorelease]
                                    beginTime:bt endTime:beginTime];
         [_items insertObject:item atIndex:index];

@@ -23,6 +23,7 @@
 #import "PlayPanel.h"
 #import "SeekSlider.h"
 #import "AppController.h"   // NSApp's delegate
+#import "MMovieView.h"
 
 #import <Carbon/Carbon.h>   // for kHIWindowVisibleInAllSpaces
 
