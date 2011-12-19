@@ -29,8 +29,8 @@ build_libav()
 --disable-avserver \
 --disable-avplay \
 --disable-swscale \
---extra-ldflags="-L$PREFIX/lib -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.6 -Wl,-syslibroot,$THESDK " \
---extra-cflags="-isystem $PREFIX/include -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.6 -Wno-deprecated-declarations $THEOPT " \
+--extra-ldflags="-L$PREFIX/../lib -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.6 -Wl,-syslibroot,$THESDK " \
+--extra-cflags="-isystem $PREFIX/../include -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.6 -Wno-deprecated-declarations $THEOPT " \
 --enable-protocol=file \
 --prefix=$PREFIX \
 && make clean && make && make install-libs && make install-headers)
@@ -38,7 +38,7 @@ build_libav()
 
 ########## INTEL i386 ###########
 
-PREFIX="$(cd ..;pwd)/i386"
+PREFIX="$(cd ../build;pwd)/i386"
 PATH="$PREFIX/bin:$ORIGINAL_PATH"
 THEARC="i386"
 THECPU="pentium-m"
@@ -48,7 +48,7 @@ build_libav
 
 ########## INTEL x86_64 ###########
 
-PREFIX="$(cd ..;pwd)/x86_64"
+PREFIX="$(cd ../build;pwd)/x86_64"
 PATH="$PREFIX/bin:$ORIGINAL_PATH"
 THEARC="x86_64"
 THECPU="core2"
@@ -56,3 +56,6 @@ THEOPT="-mtune=core2"
 
 build_libav
 
+## Relocate headers
+
+mv $PREFIX/include/* $PREFIX/../include

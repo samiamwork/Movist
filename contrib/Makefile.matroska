@@ -1,0 +1,50 @@
+LIBEBML_VERSION:=1.0.0
+LIBEBML:=libebml-$(LIBEBML_VERSION)
+LIBEBML_ARCHIVE:=$(LIBEBML).tar.bz2
+LIBEBML_URL:=http://dl.matroska.org/downloads/libebml/$(LIBEBML_ARCHIVE)
+LIBMATROSKA_VERSION:=1.0.0
+LIBMATROSKA:=libmatroska-$(LIBMATROSKA_VERSION)
+LIBMATROSKA_ARCHIVE:=$(LIBMATROSKA).tar.bz2
+LIBMATROSKA_URL:=http://dl.matroska.org/downloads/libmatroska/$(LIBMATROSKA_ARCHIVE)
+CURL:=curl -L -O
+PREFIX:=$(CURDIR)/build
+ARCHS:=i386 x86_64
+ARCH_FLAGS:=$(addprefix -arch ,$(ARCHS))
+
+# To be exported
+CXX=g++-4.2
+CXXFLAGS=$(ARCH_FLAGS) -isystem $(PREFIX)/include
+LDFLAGS=$(ARCH_FLAGS) -L$(PREFIX)/lib
+export CXX
+export CXXFLAGS
+export LDFLAGS
+
+
+all: build/lib/libmatroska.a
+
+.PHONY: all clean
+
+clean:
+	rm -rf "$(PREFIX)"
+
+$(PREFIX):
+	mkdir -p $@
+
+build/$(LIBEBML_ARCHIVE): $(PREFIX)
+	$(CURL) $(LIBEBML_URL)
+	mv $(LIBEBML_ARCHIVE) build
+
+build/lib/libebml.a: build/$(LIBEBML_ARCHIVE)
+	tar -C build -xvf build/$(LIBEBML_ARCHIVE)
+	make -C build/$(LIBEBML)/make/linux prefix=$(PREFIX)
+	make -C build/$(LIBEBML)/make/linux install prefix=$(PREFIX)
+
+build/$(LIBMATROSKA_ARCHIVE):
+	$(CURL) $(LIBMATROSKA_URL)
+	mv $(LIBMATROSKA_ARCHIVE) build
+
+build/lib/libmatroska.a: build/lib/libebml.a build/$(LIBMATROSKA_ARCHIVE)
+	tar -C build -xvf build/$(LIBMATROSKA_ARCHIVE)
+	make -C build/$(LIBMATROSKA)/make/linux prefix=$(PREFIX)
+	make -C build/$(LIBMATROSKA)/make/linux install prefix=$(PREFIX)
+

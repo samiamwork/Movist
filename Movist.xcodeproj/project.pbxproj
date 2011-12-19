@@ -1468,12 +1468,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/$(arch)/include";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/build/include";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/contrib/lib",
+					"$(SRCROOT)/contrib/build/lib",
 				);
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
@@ -1504,12 +1504,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/$(arch)/include";
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/build/include";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/contrib/lib",
+					"$(SRCROOT)/contrib/build/lib",
 				);
 				OTHER_LDFLAGS = (
 					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libz.dylib",

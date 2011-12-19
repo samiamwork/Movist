@@ -1,37 +1,19 @@
 #/bin/sh
+set -o errexit
 
 SRCROOT="$PWD"
 export CONTRIB_PATH="$SRCROOT/contrib/"
 export CONTRIB_SRC_PATH="$CONTRIB_PATH/src/"
 
 if [ "$1" = "clean" ]; then
-	rm -rf $CONTRIB_PATH/build $CONTRIB_PATH/i386 $CONTRIB_PATH/ppc \
-	       $CONTRIB_PATH/x86_64 \
-	       $CONTRIB_PATH/lib
+	rm -rf $CONTRIB_PATH/build
 	exit 0
 fi
 
-# i386 
-BUILDDIR="$CONTRIB_PATH/build/i386"
-cd "$CONTRIB_PATH" && sh bootstrap i686-apple-darwin8
-mkdir -p "$BUILDDIR"
-cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
-if [[ $? -ne 0 ]]
-then
-	exit 1
-fi
+# build libmatroska
+make -C $CONTRIB_PATH -f Makefile.matroska
 
-# x86_64
-BUILDDIR="$CONTRIB_PATH/build/x86_64"
-cd "$CONTRIB_PATH" && sh bootstrap i686-apple-darwin10
-mkdir -p "$BUILDDIR"
-cd "$BUILDDIR" && make -f "${CONTRIB_SRC_PATH}Makefile"
-if [[ $? -ne 0 ]]
-then
-	exit 1
-fi
-
-# libav
+# build libav
 cd "$CONTRIB_SRC_PATH" && sh build_ffmpeg_mt.sh
 
 # universal

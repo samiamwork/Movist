@@ -3,12 +3,3 @@
 *.perspectivev3
 xcuserdata
 build
-contrib/i386
-contrib/lib
-contrib/x86_64
-contrib/ppc
-contrib/config.mak
-contrib/src/ffmpeg-mt
-contrib/src/libebml
-contrib/src/libmatroska
-contrib/src/*.tar.bz2
