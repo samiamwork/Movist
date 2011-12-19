@@ -14,7 +14,7 @@ fi
 make -C $CONTRIB_PATH -f Makefile.matroska
 
 # build libav
-cd "$CONTRIB_SRC_PATH" && sh build_ffmpeg_mt.sh
+cd "$CONTRIB_SRC_PATH" && sh build_libav.sh
 
 # universal
 cd "$SRCROOT" && sh make_univlib.sh
