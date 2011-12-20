@@ -30,7 +30,7 @@ clean:
 $(PREFIX):
 	mkdir -p $@
 
-build/$(LIBEBML_ARCHIVE): $(PREFIX)
+build/$(LIBEBML_ARCHIVE): | $(PREFIX)
 	$(CURL) $(LIBEBML_URL)
 	mv $(LIBEBML_ARCHIVE) build
 
