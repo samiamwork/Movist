@@ -1,6 +1,12 @@
 #/bin/bash -x
 set -e 
-set -v
+
+GUARD_FILE=build/guard_1
+if [[ -e $GUARD_FILE ]]
+then
+	echo libav is up to date
+	exit 0
+fi
 
 THESDK="/Developer/SDKs/MacOSX10.6.sdk"
 ORIGINAL_PATH="$PATH"
@@ -58,6 +64,9 @@ build_libav
 
 ## Relocate headers
 
-mv $PREFIX/include/* $PREFIX/../include
+cp -R $PREFIX/include/* $PREFIX/../include
 
 ./make_univlib.sh
+
+touch $GUARD_FILE
+
