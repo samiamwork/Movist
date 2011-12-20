@@ -14,6 +14,3 @@ make -C $CONTRIB_PATH -f Makefile.matroska
 
 # build libav
 cd "$CONTRIB_PATH" && sh build_libav.sh
-
-# universal
-cd "$SRCROOT" && sh make_univlib.sh

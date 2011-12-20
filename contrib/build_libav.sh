@@ -59,3 +59,5 @@ build_libav
 ## Relocate headers
 
 mv $PREFIX/include/* $PREFIX/../include
+
+./make_univlib.sh

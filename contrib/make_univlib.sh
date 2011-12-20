@@ -1,8 +1,6 @@
 #/bin/sh
+set -o errexit
 
-SRCROOT="$PWD"
-CONTRIB_PATH="$SRCROOT/contrib/"
-cd "$CONTRIB_PATH"
 mkdir -p build/lib
 cd build/x86_64/lib
 for aa in `ls *.a` ; do
