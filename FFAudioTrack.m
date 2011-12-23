@@ -37,8 +37,7 @@
     _enabled = FALSE;
     _running = FALSE;
     
-	_audioDataBufNotAligned = malloc(AVCODEC_MAX_AUDIO_FRAME_SIZE + 16);
-	_audioDataBuf = (int16_t*)(((int)_audioDataBufNotAligned) / 16 * 16);
+	_decodedFrame = avcodec_alloc_frame();
     
     AVCodecContext* context = _stream->codec;
     if (!_passThrough) {
@@ -57,8 +56,7 @@
     TRACE(@"%s", __PRETTY_FUNCTION__);
     assert(!_running);
 
-	free(_audioDataBufNotAligned);
-	_audioDataBuf = 0;
+	av_free(_decodedFrame);
     
     [super cleanupTrack];
 }

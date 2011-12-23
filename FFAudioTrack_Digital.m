@@ -497,12 +497,10 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
     // ?????? mkv ????????? ?????? ????????? decoding ??? ????????? ?????? packet ??? dts ?????? ????????? ??????.
     UInt8* packetPtr = packet->data;
     int packetSize = packet->size;
-    int dataSize, decodedSize;
+    int decodedSize;
+	int got_frame;
     while (0 < packetSize) {
-        dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-        decodedSize = avcodec_decode_audio3(context,
-                                            _audioDataBuf, &dataSize,
-                                            packet);
+		decodedSize = avcodec_decode_audio4(context, _decodedFrame, &got_frame, packet);
         if (decodedSize < 0) { 
             TRACE(@"decodedSize < 0");
             break;

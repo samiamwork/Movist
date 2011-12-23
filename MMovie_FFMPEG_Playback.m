@@ -24,6 +24,8 @@
 #import "MMovie_FFmpeg.h"
 #import "FFTrack.h"
 
+#import <libavutil/mathematics.h>
+
 #define WAITING_FOR_COMMAND 0
 #define DISPATCHING_COMMAND 1
 

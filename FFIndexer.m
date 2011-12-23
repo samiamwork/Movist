@@ -52,10 +52,10 @@ typedef struct {
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     const char* path = [[[movie url] path] UTF8String];
-    if (av_open_input_file(&_indexContext, path, NULL, 0, NULL) != 0) {
+	if (avformat_open_input(&_indexContext, path, NULL, NULL) != 0) {
         return 0;
     }
-    if (av_find_stream_info(_indexContext) < 0) {
+	if (avformat_find_stream_info(_indexContext, NULL) < 0) {
         return 0;
     }
 
@@ -83,7 +83,7 @@ typedef struct {
     [_movie release];
     [super dealloc];
 
-    av_close_input_file(_indexContext);
+	avformat_close_input(&_indexContext);
 }
 
 - (void)waitForFinish
@@ -101,7 +101,7 @@ typedef struct {
         if ([_movie quitRequested]) {
             break;
         }
-        if (_indexContext->file_size < _indexingPosition + _maxFrameSize * 4) {
+        if (avio_size(_indexContext->pb) < _indexingPosition + _maxFrameSize * 4) {
             _finished = TRUE;
             return;
         }
@@ -150,6 +150,8 @@ typedef struct {
     //TRACE(@"mov_end   = %lld", aviContext->movi_end);
     //TRACE(@"riff_end  = %lld", aviContext->riff_end);
     aviContext->fsize = fileSize;
+	// I'm not sure this actually does anything anymore since
+	//  there's no way to set the filesize
     _formatContext->file_size = fileSize;
 
     aviContext = (AVIContext*)(_indexContext->priv_data);

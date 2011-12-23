@@ -348,13 +348,12 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
     int64_t pts, nextPts;
     double decodedTime;
     BOOL newPacket = true;
+	int got_frame = 0;
 
     //TRACE(@"dts = %lld * %lf = %lf", packet->dts, PTS_TO_SEC, 1. * packet->dts * PTS_TO_SEC);
     while (0 < packetSize) {
-        dataSize = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-        decodedSize = avcodec_decode_audio3(context,
-                                            _audioDataBuf, &dataSize,
-                                            packet);
+		dataSize = 0;
+		decodedSize = avcodec_decode_audio4(context, _decodedFrame, &got_frame, packet);
         if (decodedSize < 0) { 
             TRACE(@"decodedSize < 0");
             break;
@@ -373,6 +372,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
                 //assert(FALSE);
             }
         }
+		dataSize = _decodedFrame->nb_samples * _stream->codec->request_channels * av_get_bytes_per_sample(_stream->codec->sample_fmt);
         if (dataSize > 0) {
             nextPts = pts +  1. * dataSize / [_dataQueue bitRate] / PTS_TO_SEC;
         }
@@ -389,7 +389,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
                 }
                 [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
             }
-            [_dataQueue putData:(UInt8*)_audioDataBuf size:dataSize time:decodedTime];
+            [_dataQueue putData:(UInt8*)_decodedFrame->data[0] size:dataSize time:decodedTime];
             _nextAudioPts = nextPts;
         }
     }

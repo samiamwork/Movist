@@ -26,6 +26,9 @@
 #import "FFIndexer.h"
 #import "UserDefaults.h"
 
+#import <libavutil/dict.h>
+#import <libavutil/mathematics.h>
+
 #if defined(DEBUG)
 void traceAVFormatContext(AVFormatContext* formatContext)
 {
@@ -70,7 +73,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     int i;
     char buf[256];
     AVStream* stream;
-	AVMetadataTag *t;
+	AVDictionaryEntry *t;
     for (i = 0; i < formatContext->nb_streams; i++) {
         stream = formatContext->streams[i];
         [s setString:@""];
@@ -79,7 +82,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         if (formatContext->iformat->flags & AVFMT_SHOW_IDS) {
             [s appendFormat:@"[0x%x]", stream->id];
         }
-		t = av_metadata_get(stream->metadata, "language", NULL, 0);
+		t = av_dict_get(stream->metadata, "language", NULL, 0);
         if (t != NULL && t->value[0] != '\0') {
             [s appendFormat:@"(%s)", t->value];
         }
@@ -195,7 +198,7 @@ void traceAVFormatContext(AVFormatContext* formatContext)
     [self cleanupPlayback];
     [self cleanupAVCodec];
 
-    av_close_input_file(_formatContext);
+	avformat_close_input(&_formatContext);
     _formatContext = 0;
     
     [super cleanup];

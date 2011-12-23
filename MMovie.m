@@ -261,7 +261,7 @@
 
     AVFormatContext* formatContext = 0;
     const char* path = [[url path] UTF8String];
-    if (av_open_input_file(&formatContext, path, NULL, 0, NULL) != 0) {
+    if (avformat_open_input(&formatContext, path, NULL, NULL) != 0) {
         if (error) {
             *error = [NSError errorWithDomain:@"Movist"
                                          code:ERROR_FFMPEG_FILE_OPEN_FAILED
@@ -269,8 +269,8 @@
         }
         return FALSE;
     }
-    if (av_find_stream_info(formatContext) < 0) {
-        av_close_input_file(formatContext);
+    if (avformat_find_stream_info(formatContext, NULL) < 0) {
+		avformat_close_input(&formatContext);
         if (error) {
             *error = [NSError errorWithDomain:@"Movist"
                                          code:ERROR_FFMPEG_STREAM_INFO_NOT_FOUND
@@ -328,7 +328,7 @@
                                 formatContext->start_time / AV_TIME_BASE;
     info->duration = (formatContext->duration == AV_NOPTS_VALUE) ? 0 :
                                 formatContext->duration / AV_TIME_BASE;
-    info->fileSize = formatContext->file_size;
+	info->fileSize = formatContext->pb ? avio_size(formatContext->pb) : 0;
     info->bitRate = formatContext->bit_rate;
     info->fps = fps;
     return TRUE;

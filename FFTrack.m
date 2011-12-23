@@ -72,7 +72,7 @@
     context->skip_idct = AVDISCARD_DEFAULT;
     context->skip_loop_filter = AVDISCARD_DEFAULT;
     context->error_recognition = FF_ER_CAREFUL;
-    context->error_concealment = 3;
+	context->error_concealment = 3;
 	
     if (context->codec_type == AVMEDIA_TYPE_VIDEO) {
         int cpuCount;
@@ -84,7 +84,7 @@
         }
     }
     
-    if (avcodec_open(context, codec) < 0) {
+    if (avcodec_open2(context, codec, NULL) < 0) {
         *errorCode = ERROR_FFMPEG_CODEC_OPEN_FAILED;
         return FALSE;
     }

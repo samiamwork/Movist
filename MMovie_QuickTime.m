@@ -250,7 +250,7 @@ static BOOL _useQuickTimeSubtitles = FALSE;
 
     if ((self = [super initWithURL:url movieInfo:movieInfo
                    digitalAudioOut:digitalAudioOut error:error])) {
-        av_close_input_file(movieInfo->formatContext);
+		avformat_close_input(&movieInfo->formatContext);
         _qtMovie = [qtMovie retain];
 
         // override video/audio tracks
