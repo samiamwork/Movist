@@ -576,7 +576,8 @@ int urarlib_list(void *rarfile, ArchiveList_struct *list)
   };
 
   /* free memory, clear password and close archive                          */
-  memset(Password,0,sizeof(Password));      /* clear password               */
+  for(char* p = Password; *p != '\0'; p++) /* clear password                */
+    *p = 0;
 #ifndef _USE_MEMORY_TO_MEMORY_DECOMPRESSION
   if (ArcPtr!=NULL){
       fclose(ArcPtr);
