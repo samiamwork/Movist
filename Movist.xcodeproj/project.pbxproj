@@ -1094,6 +1094,7 @@
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
+				3E2F006B14A662E000FD6BAD /* Set Git Revision */,
 			);
 			buildRules = (
 			);
@@ -1296,6 +1297,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3E2F006B14A662E000FD6BAD /* Set Git Revision */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set Git Revision";
+			outputPaths = (
+				$TARGET_BUILD_DIR/$WRAPPER_NAME/Contents/Info.plist,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "INFO_PLIST=$TARGET_BUILD_DIR/$WRAPPER_NAME/Contents/Info.plist\ncd $PROJECT_DIR\nGIT_REVISION=`git rev-parse --short=8 HEAD`\n\ngit diff-index --quiet HEAD\nif [ $? -ne 0 ]; then\nGIT_REVISION+=\"+\"\nfi\n\nsed -i '' s/11111111/$GIT_REVISION/ $INFO_PLIST\n";
+		};
 		3E9FE3EA14A56A0D00B5AEF1 /* build external libs */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
