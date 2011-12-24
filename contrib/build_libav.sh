@@ -1,7 +1,7 @@
 #/bin/bash -x
 set -e 
 
-GUARD_FILE=build/guard_1
+GUARD_FILE=build/guard_2
 if [[ -e $GUARD_FILE ]]
 then
 	echo libav is up to date
@@ -34,7 +34,6 @@ build_libav()
 --disable-avprobe \
 --disable-avserver \
 --disable-avplay \
---disable-swscale \
 --extra-ldflags="-L$PREFIX/../lib -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.6 -Wl,-syslibroot,$THESDK " \
 --extra-cflags="-isystem $PREFIX/../include -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.6 -Wno-deprecated-declarations $THEOPT " \
 --enable-protocol=file \

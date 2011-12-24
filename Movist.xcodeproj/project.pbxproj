@@ -15,6 +15,7 @@
 		3E9FE3E514A565D400B5AEF1 /* libebml.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3DF14A565D300B5AEF1 /* libebml.a */; };
 		3E9FE3E614A565D400B5AEF1 /* libmatroska.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3E014A565D300B5AEF1 /* libmatroska.a */; };
 		3E9FE3E714A565D400B5AEF1 /* libpostproc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3E114A565D300B5AEF1 /* libpostproc.a */; };
+		3E9FE3E914A5667300B5AEF1 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3E814A5667300B5AEF1 /* libswscale.a */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -267,6 +268,7 @@
 		3E9FE3DF14A565D300B5AEF1 /* libebml.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libebml.a; path = contrib/build/lib/libebml.a; sourceTree = "<group>"; };
 		3E9FE3E014A565D300B5AEF1 /* libmatroska.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmatroska.a; path = contrib/build/lib/libmatroska.a; sourceTree = "<group>"; };
 		3E9FE3E114A565D300B5AEF1 /* libpostproc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpostproc.a; path = contrib/build/lib/libpostproc.a; sourceTree = "<group>"; };
+		3E9FE3E814A5667300B5AEF1 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = contrib/build/lib/libswscale.a; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Movist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF010C130C0F190600CA9913 /* PlayPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = PlayPanel.h; sourceTree = "<group>"; };
@@ -603,6 +605,7 @@
 				3E9FE3E514A565D400B5AEF1 /* libebml.a in Frameworks */,
 				3E9FE3E614A565D400B5AEF1 /* libmatroska.a in Frameworks */,
 				3E9FE3E714A565D400B5AEF1 /* libpostproc.a in Frameworks */,
+				3E9FE3E914A5667300B5AEF1 /* libswscale.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,6 +736,7 @@
 				3E9FE3DF14A565D300B5AEF1 /* libebml.a */,
 				3E9FE3E014A565D300B5AEF1 /* libmatroska.a */,
 				3E9FE3E114A565D300B5AEF1 /* libpostproc.a */,
+				3E9FE3E814A5667300B5AEF1 /* libswscale.a */,
 			);
 			name = FFmpeg;
 			sourceTree = "<group>";

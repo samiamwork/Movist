@@ -311,13 +311,13 @@
         return FALSE;
     }
 
-#if 1
+#if !MOVIST_USE_SWSCALE
     OSType qtPixFmt = ColorConversionDstForPixFmt(_stream->codec->pix_fmt);
     ColorConversionFindFor(&_colorConvFunc, _stream->codec->pix_fmt, _frame, qtPixFmt);
 #else
     // init sw-scaler context
     _scalerContext = sws_getContext(width, height, context->pix_fmt,
-                                    width, height, RGB_PIXEL_FORMAT,
+                                    width, height, PIX_FMT_UYVY422,
                                     SWS_FAST_BILINEAR, 0, 0, 0);
     if (!_scalerContext) {
         TRACE(@"cannot initialize conversion context");
@@ -376,10 +376,12 @@
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
     assert(!_running);
+#	if MOVIST_USE_SWSCALE
     if (_scalerContext) {
         av_free(_scalerContext);
         _scalerContext = 0;
     }
+#	endif
     if (_frame) {
         av_free(_frame);
         _frame = 0;
@@ -507,7 +509,7 @@
 
 - (BOOL)convertImage:(AVFrame*) frame
 {
-#if 1
+#if !MOVIST_USE_SWSCALE
     unsigned width = [_movie encodedSize].width;
     unsigned height = [_movie encodedSize].height;
     _colorConvFunc.convert(_frame, frame->data[0], frame->linesize[0], width, height);

@@ -30,7 +30,12 @@
 
 #import <libavcodec/avcodec.h>
 #import <libavformat/avformat.h>
-//#import <libswscale/swscale.h>
+
+#define MOVIST_USE_SWSCALE 1
+
+#if MOVIST_USE_SWSCALE
+#import <libswscale/swscale.h>
+#endif
 
 @interface FFContext : NSObject
 {
@@ -89,7 +94,9 @@ extern AVPacket s_flushPacket;
     AVFrame* _frame;   // for decoding
     ImageQueue* _imageQueue;
     ColorConversionFuncs _colorConvFunc;
+#	if MOVIST_USE_SWSCALE
     struct SwsContext* _scalerContext;
+#	endif
     CVOpenGLTextureCacheRef _textureCache;
     BOOL _needKeyFrame;
     BOOL _useFrameDrop;
