@@ -346,6 +346,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     }
 
     [self setObject:dict forKey:MDefaultCodecBindingKey];
+	[dict release];
 }
 
 - (void)setDefaultDecoder:(int)decoder forCodecIdSet:(NSIndexSet*)codecIdSet
@@ -364,6 +365,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     free(ids);
 
     [self setObject:dict forKey:MDefaultCodecBindingKey];
+	[dict release];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

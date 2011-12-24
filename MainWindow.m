@@ -94,6 +94,7 @@
     [decoderButton setAction:@selector(reopenMovieAction:)];
     [decoderButton setToolTip:NSLocalizedString(@"Decoder", nil)];
     [superview addSubview:decoderButton];
+	[decoderButton release];
     return decoderButton;
 }
 
