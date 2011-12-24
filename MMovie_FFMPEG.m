@@ -120,9 +120,11 @@ void traceAVFormatContext(AVFormatContext* formatContext)
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, [url absoluteString]);
     if (![url isFileURL]) {
-        *error = [NSError errorWithDomain:[MMovie_FFmpeg name]
-                                     code:10000  // FIXME
-                                 userInfo:nil];
+        NSError* err = [NSError errorWithDomain:[MMovie_FFmpeg name]
+										   code:10000  // FIXME
+									   userInfo:nil];
+		if(error != NULL)
+			*error = err;
         return nil;
     }
 
@@ -134,8 +136,10 @@ void traceAVFormatContext(AVFormatContext* formatContext)
         int errorCode;
         if (![self initAVCodec:&errorCode digitalAudioOut:digitalAudioOut] ||
             ![self initPlayback:&errorCode]) {
-            *error = [NSError errorWithDomain:[MMovie_FFmpeg name]
-                                         code:errorCode userInfo:nil];
+            NSError* err = [NSError errorWithDomain:[MMovie_FFmpeg name]
+											   code:errorCode userInfo:nil];
+			if(error != NULL)
+				*error = err;
             [self release];
             return nil;
         }

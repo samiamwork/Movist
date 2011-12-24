@@ -241,9 +241,11 @@ static BOOL _useQuickTimeSubtitles = FALSE;
     }
     NSSize movieSize = [[qtMovie attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
     if (movieSize.width == 0 || movieSize.height == 0) {
-        *error = [NSError errorWithDomain:[MMovie_QuickTime name]
+        NSError* err = [NSError errorWithDomain:[MMovie_QuickTime name]
                                      code:ERROR_INVALID_VIDEO_DIMENSION
                                  userInfo:nil];
+		if(error != nil)
+			*error = err;
         [self release];
         return nil;
     }

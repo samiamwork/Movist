@@ -104,7 +104,9 @@
     }
     if (![subtitleURL isFileURL]) {
         //TRACE(@"remote subtitle is not supported yet");
-        *error = [NSError errorWithDomain:[NSApp localizedAppName] code:0 userInfo:0];
+        NSError* err = [NSError errorWithDomain:[NSApp localizedAppName] code:0 userInfo:0];
+		if(error != NULL)
+			*error = err;
         return nil;
     }
 
@@ -149,14 +151,18 @@
         parserClass = [MSubtitleParser_SUB class];
     }
     else {
-        *error = [NSError errorWithDomain:[NSApp localizedAppName] code:1 userInfo:0];
+        NSError* err = [NSError errorWithDomain:[NSApp localizedAppName] code:1 userInfo:0];
+		if(error != NULL)
+			*error = err;
         return nil;
     }
 
     MSubtitleParser* parser = [[[parserClass alloc] initWithURL:subtitleURL] autorelease];
     NSArray* subtitles = [parser parseWithOptions:options error:error];
     if (!subtitles) {
-        *error = [NSError errorWithDomain:[NSApp localizedAppName] code:2 userInfo:0];
+        NSError* err = [NSError errorWithDomain:[NSApp localizedAppName] code:2 userInfo:0];
+		if(error != NULL)
+			*error = err;
         return nil;
     }
     return subtitles;
