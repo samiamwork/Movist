@@ -10,7 +10,9 @@ if [ "$1" = "clean" ]; then
 fi
 
 # build libmatroska
+echo Build Matroska libs
 make -C $CONTRIB_PATH -f Makefile.matroska
 
 # build libav
+echo Build libav libs
 cd "$CONTRIB_PATH" && sh build_libav.sh
