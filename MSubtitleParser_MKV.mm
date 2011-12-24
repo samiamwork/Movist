@@ -303,7 +303,8 @@ struct master_sorter_t {
 {
     BOOL blockGroupPrinted = FALSE;
     MSubtitle* subtitle = nil;
-    char text[1024];
+	size_t textBufferSize = 1024;
+    char* text = (char*)malloc(textBufferSize);
 
     NSMutableAttributedString* string = nil;
     //unsigned char* image = 0;
@@ -345,6 +346,12 @@ struct master_sorter_t {
                 }
                 else {  // text based
                     DataBuffer& data = block.GetBuffer(0);  // only one!
+					if (textBufferSize <= data.Size())
+					{
+						textBufferSize *= 2;
+						free(text);
+						text = (char*)malloc(textBufferSize);
+					}
                     memcpy(text, data.Buffer(), data.Size());
                     text[data.Size()] = '\0';
 
@@ -380,6 +387,7 @@ struct master_sorter_t {
                                        (uint64(duration) * _timecodeScale % 1000000));
         }
     }
+	free(text);
 }
 
 - (void)parseCluster
