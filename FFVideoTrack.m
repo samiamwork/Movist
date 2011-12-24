@@ -56,8 +56,8 @@
         _capacity = capacity;
         _front = 0;
         _rear = 0;
+		_mutex = [[NSRecursiveLock alloc] init];
     }
-    _mutex = [[NSRecursiveLock alloc] init];
     return self;
 }
 
