@@ -32,16 +32,16 @@ Movist README
 
 2) How to Build
 
-$ svn checkout http://movist.googlecode.com/svn/trunk/ movist
-$ cd movist
-$ sh build_extlib.sh
 $ open Movist.xcodeproj
 and build it.
 
 
 3) Contact
 
-* Official Site:
+* Github:
+  https://github.com/samiamwork/Movist
+
+* Original Site:
   Project Home:   http://code.google.com/p/movist/
   Blog (Korean):  http://cocoable.tistory.com/
 
