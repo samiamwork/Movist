@@ -208,16 +208,16 @@
         [_bFilter setValue:c0 forKey:@"inputColor0"];
         [_bFilter setValue:c1 forKey:@"inputColor1"];
 
-        p0 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
-        p1 = [CIVector vectorWithX:0 Y:0];
+		p0 = [CIVector vectorWithX:0 Y:0];
+		p1 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
         _lFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_lFilter setValue:p0 forKey:@"inputPoint0"];
         [_lFilter setValue:p1 forKey:@"inputPoint1"];
         [_lFilter setValue:c0 forKey:@"inputColor0"];
         [_lFilter setValue:c1 forKey:@"inputColor1"];
 
-        p0 = [CIVector vectorWithX:0 Y:0];
-        p1 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
+		p0 = [CIVector vectorWithX:ITEM_HSCROLL_FADE_SIZE Y:0];
+		p1 = [CIVector vectorWithX:0 Y:0];
         _rFilter = [[CIFilter filterWithName:@"CILinearGradient"] retain];
         [_rFilter setValue:p0 forKey:@"inputPoint0"];
         [_rFilter setValue:p1 forKey:@"inputPoint1"];
