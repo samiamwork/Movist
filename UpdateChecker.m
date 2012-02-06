@@ -24,6 +24,7 @@
 #import "MSubtitle.h"   // for NSString (MSubtitleParser) extension
 
 NSString* kMovistHomepageURLString = @"http://github.com/samiamwork/Movist/downloads";
+NSString* const kMovistUpdateErrorDomain = @"MovistUpdateErrorDomain";
 
 @implementation UpdateChecker
 
@@ -62,6 +63,7 @@ NSString* kMovistHomepageURLString = @"http://github.com/samiamwork/Movist/downl
                                          options:NSMappedRead | NSUncachedRead
                                            error:error];
     if (!data || [data length] == 0) {
+		*error = [NSError errorWithDomain:kMovistUpdateErrorDomain code:1 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"No response received from update server", @"No response received from update server"), NSLocalizedDescriptionKey, nil]];
         return UPDATE_CHECK_FAILED;
     }
 
@@ -73,6 +75,7 @@ NSString* kMovistHomepageURLString = @"http://github.com/samiamwork/Movist/downl
 	[string release];
 	if(parts == nil || [parts count] != 2)
 	{
+		*error = [NSError errorWithDomain:kMovistUpdateErrorDomain code:1 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Could not understand update server response", @"Could not understand update server response"), NSLocalizedDescriptionKey, nil]];
 		return UPDATE_CHECK_FAILED;
 	}
 	NSString* versionString = [parts objectAtIndex:0];
