@@ -1,7 +1,7 @@
 #/bin/bash -x
 set -e 
 
-GUARD_FILE=build/guard_2
+GUARD_FILE=build/guard_3
 if [[ -e $GUARD_FILE ]]
 then
 	echo libav is up to date
