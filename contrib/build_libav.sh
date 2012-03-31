@@ -1,4 +1,4 @@
-#/bin/bash -x
+#/bin/bash --login
 set -e 
 
 GUARD_FILE=build/guard_3

@@ -1,4 +1,4 @@
-#/bin/sh
+#/bin/bash --login
 set -o errexit
 
 SRCROOT="$PWD"
