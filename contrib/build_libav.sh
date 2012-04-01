@@ -1,4 +1,4 @@
-#/bin/bash --login
+#/bin/bash
 set -e 
 
 GUARD_FILE=build/guard_3
@@ -44,20 +44,22 @@ build_libav()
 ########## INTEL i386 ###########
 
 PREFIX="$(cd build;pwd)/i386"
-PATH="$PREFIX/bin:$ORIGINAL_PATH"
+PATH="$(cd build;pwd)/bin:$PREFIX/bin:$ORIGINAL_PATH"
 THEARC="i386"
 THECPU="pentium-m"
 THEOPT=""
+export PATH
 
 build_libav
 
 ########## INTEL x86_64 ###########
 
 PREFIX="$(cd build;pwd)/x86_64"
-PATH="$PREFIX/bin:$ORIGINAL_PATH"
+PATH="$(cd build;pwd)/bin:$PREFIX/bin:$ORIGINAL_PATH"
 THEARC="x86_64"
 THECPU="core2"
 THEOPT="-mtune=core2"
+export PATH
 
 build_libav
 

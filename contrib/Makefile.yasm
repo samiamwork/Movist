@@ -1,0 +1,29 @@
+YASM_VERSION:=1.2.0
+YASM:=yasm-$(YASM_VERSION)
+YASM_ARCHIVE:=$(YASM).tar.gz
+YASM_URL:=http://www.tortall.net/projects/yasm/releases/$(YASM_ARCHIVE)
+CURL:=curl -L -O
+PREFIX:=$(CURDIR)/build
+PRODUCT:=build/bin/yasm
+
+all: $(PRODUCT)
+
+.PHONY: all clean
+
+clean:
+	rm -rf "$(PREFIX)"
+
+$(PREFIX):
+	mkdir -p $@
+
+build/$(YASM_ARCHIVE): | $(PREFIX)
+	$(CURL) $(YASM_URL)
+	mv $(YASM_ARCHIVE) build
+
+$(PRODUCT): build/$(YASM_ARCHIVE)
+	tar -C build -xvf build/$(YASM_ARCHIVE)
+	mkdir -p "$(PREFIX)/yasmbuild"
+	cd "$(PREFIX)/yasmbuild"; $(PREFIX)/$(YASM)/configure --prefix=$(PREFIX)
+	make -C "$(PREFIX)/yasmbuild"
+	make -C "$(PREFIX)/yasmbuild" install
+

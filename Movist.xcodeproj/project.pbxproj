@@ -1323,7 +1323,7 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/bin/bash -l";
+			shellPath = /bin/bash;
 			shellScript = ./build_extlib.sh;
 		};
 /* End PBXShellScriptBuildPhase section */
