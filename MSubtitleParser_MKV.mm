@@ -348,7 +348,10 @@ struct master_sorter_t {
                     DataBuffer& data = block.GetBuffer(0);  // only one!
 					if (textBufferSize <= data.Size())
 					{
-						textBufferSize *= 2;
+						while (textBufferSize <= data.Size())
+						{
+							textBufferSize *= 2;
+						}
 						free(text);
 						text = (char*)malloc(textBufferSize);
 					}
