@@ -176,7 +176,7 @@
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(cellFrame));
     if ([self isHighlighted]) {
-        [[controlView _highlightColorForCell:self] set];
+        [(NSColor*)[controlView _highlightColorForCell:self] set];
         NSRectFill(cellFrame);
     }
 
