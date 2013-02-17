@@ -525,8 +525,6 @@ OSType ColorConversionDstForPixFmt(enum PixelFormat ffPixFmt)
 			return k2vuyPixelFormat; //disables "fast YUV" path
 		case PIX_FMT_YUV422P:
 			return k2vuyPixelFormat;
-		case PIX_FMT_YUVA420P:
-			return k4444YpCbCrA8PixelFormat;
 		default:
 			return 0; // error
 	}
