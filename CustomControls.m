@@ -403,7 +403,7 @@
     _selectedTitleColor = [selectedTitleColor retain];
 }
 
-- (void)drawSegment:(int)segment inFrame:(NSRect)frame withView:(NSView*)controlView
+- (void)drawSegment:(NSInteger)segment inFrame:(NSRect)frame withView:(NSView*)controlView
 {
     NSColor* titleColor = ([self selectedSegment] == segment) ?
                                             _selectedTitleColor : _titleColor;
