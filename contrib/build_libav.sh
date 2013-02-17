@@ -17,7 +17,7 @@ build_libav()
 ./configure \
 --arch=$THEARC \
 --cpu=$THECPU \
---cc=gcc-4.2 \
+--cc=clang \
 --enable-decoders \
 --disable-vda \
 --disable-encoders \
