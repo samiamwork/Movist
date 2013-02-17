@@ -761,7 +761,8 @@
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:TRUE];
     [panel setAllowsMultipleSelection:FALSE];
-    if (NSOKButton == [panel runModalForTypes:[MMovie fileExtensions]]) {
+	[panel setAllowedFileTypes:[MMovie fileExtensions]];
+    if (NSOKButton == [panel runModal]) {
         [self openFile:[panel filename]];
     }
 
@@ -783,7 +784,8 @@
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:FALSE];
     [panel setAllowsMultipleSelection:TRUE];
-    if (NSOKButton == [panel runModalForTypes:[MSubtitle fileExtensions]]) {
+	[panel setAllowedFileTypes:[MSubtitle fileExtensions]];
+    if (NSOKButton == [panel runModal]) {
         [self openSubtitles:URLsFromFilenames([panel filenames])
                    encoding:kCFStringEncodingInvalidId];
     }
@@ -805,7 +807,8 @@
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:FALSE];
     [panel setAllowsMultipleSelection:TRUE];
-    if (NSOKButton == [panel runModalForTypes:[MSubtitle fileExtensions]]) {
+	[panel setAllowedFileTypes:[MSubtitle fileExtensions]];
+    if (NSOKButton == [panel runModal]) {
         [self addSubtitles:URLsFromFilenames([panel filenames])];
     }
 
