@@ -356,7 +356,8 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     
     id object = DECODER_OBJECT(decoder);
     int i, count = [codecIdSet count];
-    unsigned int* ids = (unsigned int*)malloc(sizeof(int) * count);
+	// TODO: we don't need to malloc to iterate
+    NSUInteger* ids = (NSUInteger*)malloc(sizeof(NSUInteger) * count);
     [codecIdSet getIndexes:ids maxCount:count inIndexRange:nil];
     for (i = 0; i < count; i++) {
         TRACE(@"codecId=%d ==> default-decoder=%d", ids[i], decoder);
