@@ -8,7 +8,8 @@ then
 	exit 0
 fi
 
-THESDK="/Developer/SDKs/MacOSX10.6.sdk"
+THESDK="/Developer/SDKs/MacOSX10.7.sdk"
+THESDK="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk"
 ORIGINAL_PATH="$PATH"
 
 build_libav()
@@ -34,8 +35,8 @@ build_libav()
 --disable-avprobe \
 --disable-avserver \
 --disable-avplay \
---extra-ldflags="-L$PREFIX/../lib -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.6 -Wl,-syslibroot,$THESDK " \
---extra-cflags="-isystem $PREFIX/../include -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.6 -Wno-deprecated-declarations $THEOPT " \
+--extra-ldflags="-L$PREFIX/../lib -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.7 -Wl,-syslibroot,$THESDK " \
+--extra-cflags="-isystem $PREFIX/../include -arch $THEARC -isystem $THESDK -mmacosx-version-min=10.7 -Wno-deprecated-declarations $THEOPT " \
 --enable-protocol=file \
 --prefix=$PREFIX \
 && make clean && make && make install-libs && make install-headers)
