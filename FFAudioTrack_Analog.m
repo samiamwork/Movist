@@ -182,20 +182,20 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         return false;
     }
 
-    ComponentDescription desc;
+    AudioComponentDescription desc;
     desc.componentType = kAudioUnitType_Output;
     desc.componentSubType = kAudioUnitSubType_DefaultOutput;
     desc.componentManufacturer = kAudioUnitManufacturer_Apple;
     desc.componentFlags = 0;
     desc.componentFlagsMask = 0;
-    Component component = FindNextComponent(0, &desc);
+	AudioComponent component = AudioComponentFindNext(0, &desc);
     if (!component) {
-        TRACE(@"FindNextComponent() failed");
+        TRACE(@"AudioComponentFindNext() failed");
         return FALSE;
     }
-    OSStatus err = OpenAComponent(component, &_audioUnit);
+	OSStatus err = AudioComponentInstanceNew(component, &_audioUnit);
     if (!component) {
-        TRACE(@"OpenAComponent() failed : %ld\n", err);
+        TRACE(@"AudioComponentInstanceNew() failed : %ld\n", err);
         return FALSE;
     }
 
@@ -297,7 +297,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         while (AudioUnitUninitialize(_audioUnit) != 0) {
             assert(FALSE);
         }
-        while (CloseComponent(_audioUnit) != 0) {
+		while (AudioComponentInstanceDispose(_audioUnit) != 0) {
             assert(FALSE);
         }
         _audioUnit = 0;
