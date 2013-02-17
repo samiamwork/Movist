@@ -299,12 +299,14 @@
                     fadePoint.y = NSMinY(r);
                     fadePoint.x = NSMinX(nr);
                     if (0 < _itemNameScrollSize) {
-                        [ciContext drawImage:[_lFilter valueForKey:@"outputImage"]
-                                     atPoint:fadePoint fromRect:fadeRect];
+						[ciContext drawImage:[_lFilter valueForKey:@"outputImage"]
+									  inRect:(CGRect){.origin = fadePoint, .size = fadeRect.size}
+									fromRect:fadeRect];
                     }
                     fadePoint.x = NSMaxX(nr) - ITEM_HSCROLL_FADE_SIZE;
                     [ciContext drawImage:[_rFilter valueForKey:@"outputImage"]
-                                 atPoint:fadePoint fromRect:fadeRect];
+								  inRect:(CGRect){.origin = fadePoint, .size = fadeRect.size}
+								fromRect:fadeRect];
                     if (_nameScrollItem != item) {
                         _nameScrollItem = item;
                         _itemNameScrollRect = nr;
@@ -318,15 +320,18 @@
     rect = [self visibleRect];
     if (rect.size.height < _itemHeight * count) {  // vertical scrollable
         NSRect fr = [self frame];
+		CGSize imageSize = (CGSize){.width = rect.size.width, .height = _itemHeight};
         if (rect.size.height < NSMaxY(fr)) {
-            [ciContext drawImage:[_tFilter valueForKey:@"outputImage"]
-                         atPoint:CGPointMake(NSMinX(rect), NSMaxY(rect) - _itemHeight)
-                        fromRect:CGRectMake(0, 0, rect.size.width, _itemHeight)];
+			CGPoint destPoint = (CGPoint){.x = NSMinX(rect), .y = NSMaxY(rect) - _itemHeight};
+			[ciContext drawImage:[_tFilter valueForKey:@"outputImage"]
+						  inRect:(CGRect){.origin = destPoint, .size = imageSize}
+						fromRect:(CGRect){.origin = CGPointZero, .size = imageSize}];
         }
         if (fr.origin.y < 0) {
-            [ciContext drawImage:[_bFilter valueForKey:@"outputImage"]
-                         atPoint:CGPointMake(NSMinX(rect), NSMinY(rect))
-                        fromRect:CGRectMake(0, 0, rect.size.width, _itemHeight)];
+			CGPoint destPoint = (CGPoint){.x = NSMinX(rect), .y = NSMinY(rect)};
+			[ciContext drawImage:[_bFilter valueForKey:@"outputImage"]
+						  inRect:(CGRect){.origin = destPoint, .size = imageSize}
+						fromRect:(CGRect){.origin = CGPointZero, .size = imageSize}];
         }
     }
 
