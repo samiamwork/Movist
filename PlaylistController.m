@@ -138,7 +138,7 @@
     [panel setAllowsMultipleSelection:TRUE];
     if (NSOKButton == [panel runModalForTypes:nil]) {
         int row = MAX(0, [[_tableView selectedRowIndexes] firstIndex]);
-        [_playlist insertFiles:[panel filenames] atIndex:row];
+        [_playlist insertURLs:[panel URLs] atIndex:row];
         [self updateUI];
 
 		[_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
