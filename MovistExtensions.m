@@ -417,14 +417,6 @@
     else {
         [self setLevel:NSNormalWindowLevel];
     }
-
-    HIWindowRef windowRef = (HIWindowRef)[self windowRef];
-    HIWindowAvailability windowAvailability = 0;
-    HIWindowGetAvailability(windowRef, &windowAvailability);
-    if (!(windowAvailability & kHIWindowExposeHidden)) {
-        HIWindowChangeAvailability(windowRef, kHIWindowExposeHidden, 0);
-    }
-    HIWindowChangeAvailability(windowRef, 0, kHIWindowExposeHidden);
 }
 
 @end
