@@ -25,6 +25,7 @@
 
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <CoreVideo/CVOpenGLTextureCache.h>
+#import  <CoreAudio/CoreAudio.h>
 #include <AudioUnit/AudioUnit.h>
 #include "ColorConversions.h"
 
