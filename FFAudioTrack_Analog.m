@@ -173,11 +173,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 
 @implementation FFAudioTrack (Analog)
 
-+ (id)audioTrackWithAVStream:(AVStream*)stream index:(int)index
-{
-    return [[[FFAudioTrack alloc] initWithAVStream:stream index:index] autorelease];
-}
-
 - (BOOL)initAudioUnit
 {
     TRACE(@"%s", __PRETTY_FUNCTION__);
