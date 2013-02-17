@@ -186,7 +186,7 @@
     return FALSE;
 }
 
-int compareSubtitleURLs(id url1, id url2, void* context)
+NSInteger compareSubtitleURLs(id url1, id url2, void* context)
 {
     NSString* path1 = [url1 absoluteString], *ext1 = [path1 pathExtension];
     NSString* path2 = [url2 absoluteString], *ext2 = [path2 pathExtension];
