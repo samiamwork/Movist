@@ -253,7 +253,7 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     #define CODEC_VALUE(ojbect)             [object intValue]
 
     #define DECODER_OBJECT(decoder)         [NSNumber numberWithInt:decoder]
-    #define CODEC_KEY(codecId)              [NSString stringWithFormat:@"%d", codecId]
+    #define CODEC_KEY(codecId)              [NSString stringWithFormat:@"%d", (int)codecId]
     //#define CODEC_KEY(codecId)              [NSNumber numberWithInt:codecId]
     // I don't know why [NSUserDefaults registerDefaults:] crashes for key of NSNumber.
 
