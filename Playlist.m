@@ -323,6 +323,15 @@ int compareSubtitleURLs(id url1, id url2, void* context)
     }
 }
 
+- (void)insertURLs:(NSArray*)fileURLs atIndex:(NSUInteger)index
+{
+	//TRACE(@"%s {%@} at %d", __PRETTY_FUNCTION__, fileURLs, (int)index);
+	for(NSURL* aURL in fileURLs)
+	{
+		index += [self insertFile:[aURL path] atIndex:index option:OPTION_ONLY];
+	}
+}
+
 - (void)insertURL:(NSURL*)movieURL atIndex:(unsigned int)index
 {
     //TRACE(@"%s \"%@\" at %d", __PRETTY_FUNCTION__, [movieURL absoluteString], index);

@@ -77,6 +77,7 @@ enum {
 - (void)addURL:(NSURL*)movieURL;
 - (int)insertFile:(NSString*)filename atIndex:(unsigned int)index option:(int)option;
 - (void)insertFiles:(NSArray*)filenames atIndex:(unsigned int)index;
+- (void)insertURLs:(NSArray*)fileURLs atIndex:(NSUInteger)index;
 - (void)insertURL:(NSURL*)movieURL atIndex:(unsigned int)index;
 - (unsigned int)moveItemsAtIndexes:(NSIndexSet*)indexes
                            toIndex:(unsigned int)index;
