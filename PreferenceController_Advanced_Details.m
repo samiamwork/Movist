@@ -588,7 +588,7 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
 
 @implementation AdvancedDetailsTableColumn
 
-- (id)dataCellForRow:(int)rowIndex
+- (id)dataCellForRow:(NSInteger)rowIndex
 {
     NSOutlineView* outlineView = (NSOutlineView*)[self tableView];
     if ([[self identifier] isEqualToString:@"setting"]) {
