@@ -155,7 +155,6 @@
     NSMenuItemCell* menuItemCell = (NSMenuItemCell*)cell;
     [self setHighlighted:[menuItemCell isHighlighted]];
     [self setMenuItem:[menuItemCell menuItem]];
-    [self setMenuView:[menuItemCell menuView]];
 }
 
 @end
