@@ -71,7 +71,7 @@
     context->skip_frame = AVDISCARD_DEFAULT;
     context->skip_idct = AVDISCARD_DEFAULT;
     context->skip_loop_filter = AVDISCARD_DEFAULT;
-    context->error_recognition = FF_ER_CAREFUL;
+    context->err_recognition = AV_EF_CRCCHECK;
 	context->error_concealment = 3;
 	
     if (context->codec_type == AVMEDIA_TYPE_VIDEO) {
