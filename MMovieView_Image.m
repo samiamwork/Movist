@@ -188,25 +188,16 @@
 
 - (BOOL)initCoreImage
 {
-    _colorFilter = [[CIFilter filterWithName:@"CIColorControls"] retain];
-    _hueFilter = [[CIFilter filterWithName:@"CIHueAdjust"] retain];
-    _cropFilter = [[CIFilter filterWithName:@"CICrop"] retain];
-    [_colorFilter setDefaults];
-    [_hueFilter setDefaults];
+	CIFilter* colorFilter = [CIFilter filterWithName:@"CIColorControls"];
+	CIFilter* hueFilter = [CIFilter filterWithName:@"CIHueAdjust"];
+	[colorFilter setDefaults];
+	[hueFilter setDefaults];
+	[colorFilter setName:@"color"];
+	[hueFilter setName:@"hue"];
 
-    _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
-    _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
-    _contrastValue   = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
-    _hueValue        = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
-    
-    return TRUE;
-}
+	_rootLayer.filters = [NSArray arrayWithObjects:colorFilter, hueFilter, nil];
 
-- (void)cleanupCoreImage
-{
-    [_cropFilter release];
-    [_hueFilter release];
-    [_colorFilter release];
+	return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -369,61 +360,40 @@
 #pragma mark -
 #pragma mark color-controls
 
-- (float)brightness { return _brightnessValue; }
-- (float)saturation { return _saturationValue; }
-- (float)contrast   { return _contrastValue; }
-- (float)hue        { return _hueValue; }
+- (float)brightness { return [[_rootLayer valueForKeyPath:@"filters.color.inputBrightness"] floatValue]; }
+- (float)saturation { return [[_rootLayer valueForKeyPath:@"filters.color.inputSaturation"] floatValue]; }
+- (float)contrast   { return [[_rootLayer valueForKeyPath:@"filters.color.inputContrast"] floatValue]; }
+- (float)hue        { return [[_rootLayer valueForKeyPath:@"filters.hue.inputAngle"] floatValue]; }
+
+- (void)setFilterInput:(NSString*)filterPath value:(CGFloat)value min:(CGFloat)min max:(CGFloat)max
+{
+	[CATransaction begin];
+	[CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
+	{
+		CGFloat normalizedValue = normalizedFloat2(adjustToRange(value, min, max));
+		[_rootLayer setValue:[NSNumber numberWithFloat:normalizedValue] forKeyPath:filterPath];
+	}
+	[CATransaction commit];
+}
 
 - (void)setBrightness:(float)brightness
 {
-    //TRACE(@"%s %g", __PRETTY_FUNCTION__, brightness);
-    [_drawLock lock];
-
-    brightness = normalizedFloat2(adjustToRange(brightness, MIN_BRIGHTNESS, MAX_BRIGHTNESS));
-    [_colorFilter setValue:[NSNumber numberWithFloat:brightness] forKey:@"inputBrightness"];
-    _brightnessValue = [[_colorFilter valueForKey:@"inputBrightness"] floatValue];
-    [self redisplay];
-
-    [_drawLock unlock];
+	[self setFilterInput:@"filters.color.inputBrightness" value:brightness min:MIN_BRIGHTNESS max:MAX_BRIGHTNESS];
 }
 
 - (void)setSaturation:(float)saturation
 {
-    //TRACE(@"%s %g", __PRETTY_FUNCTION__, saturation);
-    [_drawLock lock];
-
-    saturation = normalizedFloat2(adjustToRange(saturation, MIN_SATURATION, MAX_SATURATION));
-    [_colorFilter setValue:[NSNumber numberWithFloat:saturation] forKey:@"inputSaturation"];
-    _saturationValue = [[_colorFilter valueForKey:@"inputSaturation"] floatValue];
-    [self redisplay];
-
-    [_drawLock unlock];
+	[self setFilterInput:@"filters.color.inputSaturation" value:saturation min:MIN_SATURATION max:MAX_SATURATION];
 }
 
 - (void)setContrast:(float)contrast
 {
-    //TRACE(@"%s %g", __PRETTY_FUNCTION__, contrast);
-    [_drawLock lock];
-
-    contrast = normalizedFloat2(adjustToRange(contrast, MIN_CONTRAST, MAX_CONTRAST));
-    [_colorFilter setValue:[NSNumber numberWithFloat:contrast] forKey:@"inputContrast"];
-    _contrastValue = [[_colorFilter valueForKey:@"inputContrast"] floatValue];
-    [self redisplay];
-
-    [_drawLock unlock];
+	[self setFilterInput:@"filters.color.inputContrast" value:contrast min:MIN_CONTRAST max:MAX_CONTRAST];
 }
 
 - (void)setHue:(float)hue
 {
-    //TRACE(@"%s %g", __PRETTY_FUNCTION__, hue);
-    [_drawLock lock];
-
-    hue = normalizedFloat2(adjustToRange(hue, MIN_HUE, MAX_HUE));
-    [_hueFilter setValue:[NSNumber numberWithFloat:hue] forKey:@"inputAngle"];
-    _hueValue = [[_hueFilter valueForKey:@"inputAngle"] floatValue];
-    [self redisplay];
-
-    [_drawLock unlock];
+	[self setFilterInput:@"filters.hue.inputAngle" value:hue min:MIN_HUE max:MAX_HUE];
 }
 
 - (void)setRemoveGreenBox:(BOOL)remove

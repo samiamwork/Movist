@@ -40,11 +40,6 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _drawLock = [[NSRecursiveLock alloc] init];
 
-    if (![self initCoreImage]) {
-        // FIXME: alert...
-        return;
-    }
-
     if (![self initOSD]) {
         // FIXME: alert...
         return;
@@ -79,6 +74,7 @@
 	CGColorRelease(orange);
 	[self setLayer:_rootLayer];
 	[self setWantsLayer:YES];
+	[self initCoreImage];
 
 	_iconOSDLayer = [CALayer layer];
 	_iconOSDLayer.zPosition = 1.0;
@@ -93,7 +89,6 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self invalidateMessageHideTimer];
-    [self cleanupCoreImage];
     [_drawLock release];
 
     [self cleanupOSD];

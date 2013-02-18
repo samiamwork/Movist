@@ -34,16 +34,9 @@
 	CGDirectDisplayID _displayID;
     NSRecursiveLock* _drawLock;
 
-    CIFilter* _colorFilter;
-    CIFilter* _hueFilter;
-    CIFilter* _cropFilter;  // for removing green box
     NSSize _movieSize;
     CGRect _movieRect;
     CGRect _imageRect;
-    float _brightnessValue; // for performance
-    float _saturationValue;
-    float _contrastValue;
-    float _hueValue;
 
 	CALayer<MMovieLayer>* _movieLayer;
 	CALayer*              _rootLayer;
@@ -117,7 +110,6 @@
 - (void)drawImage;
 
 - (BOOL)initCoreImage;
-- (void)cleanupCoreImage;
 
 - (NSRect)movieRect;
 - (void)updateMovieRect:(BOOL)display;
