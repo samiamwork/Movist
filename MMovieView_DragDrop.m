@@ -45,6 +45,18 @@
     return NSDragOperationNone;
 }
 
+- (void)setDraggingVisualEffectEnabled:(BOOL)enable
+{
+	if(enable)
+	{
+		_rootLayer.borderWidth = 10.0;
+	}
+	else
+	{
+		_rootLayer.borderWidth = 0.0;
+	}
+}
+
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
@@ -55,7 +67,7 @@
     NSPasteboard* pboard = [sender draggingPasteboard];
     _dragAction = dragActionFromPasteboard(pboard, TRUE);
     if (_dragAction != DRAG_ACTION_NONE) {
-        [self redisplay];
+		[self setDraggingVisualEffectEnabled:YES];
         [NSTimer scheduledTimerWithTimeInterval:1.0
                                 target:self selector:@selector(draggingTimerElapsed:)
                                 userInfo:nil repeats:FALSE];
@@ -109,7 +121,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _dragAction = DRAG_ACTION_NONE;
-    [self redisplay];
+	[self setDraggingVisualEffectEnabled:NO];
 }
 
 - (BOOL)prepareForDragOperation:(id<NSDraggingInfo>)sender
@@ -155,7 +167,7 @@
     if ([[NSApp delegate] playlistWindowVisible]) {
         [[NSApp delegate] hidePlaylistWindow];
     }
-    [self redisplay];
+	[self setDraggingVisualEffectEnabled:NO];
 }
 
 @end
