@@ -536,21 +536,19 @@ int ColorConversionFindFor(ColorConversionFuncs *funcs, enum PixelFormat ffPixFm
 		case PIX_FMT_YUVJ420P:
 		case PIX_FMT_YUV420P:
 			funcs->clear = ClearY422;
-			
-#ifdef __ppc__
-			if (IsAltivecSupported())
-				funcs->convert = Y420toY422_ppc_altivec;
-			else
-				funcs->convert = Y420toY422_ppc_scalar;
-#else
-			//can't set this without the first real frame
-			if (ffPicture) {
-				if (ffPicture->linesize[0] % 16)
-					funcs->convert = Y420toY422_x86_scalar;
-				else
-					funcs->convert = Y420toY422_sse2;
-			}
-#endif
+
+#			if defined(__i386__) || defined(__x86_64__)
+				// 32-bit or 64-bit Intel code
+				//can't set this without the first real frame
+				if (ffPicture) {
+					if (ffPicture->linesize[0] % 16)
+						funcs->convert = Y420toY422_x86_scalar;
+					else
+						funcs->convert = Y420toY422_sse2;
+				}
+#			else
+#				error UNKNOWN ARCHITECTURE
+#			endif
 			break;
 		case PIX_FMT_BGR24:
 			funcs->clear = ClearRGB24;
@@ -590,19 +588,5 @@ int ColorConversionFindFor(ColorConversionFuncs *funcs, enum PixelFormat ffPixFm
 	}
 	
 	return noErr;
-}
-
-int IsAltivecSupported()
-{
-	static int altivec = -1;
-
-	if (altivec == -1) {
-		long response = 0;
-		int err = Gestalt(gestaltPowerPCProcessorFeatures, &response);
-
-		altivec = !err && ((response & (1 << gestaltPowerPCHasVectorInstructions)) != 0);
-	}
-
-	return altivec;
 }
 
