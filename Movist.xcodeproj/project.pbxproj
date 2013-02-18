@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		2CC012030DC484910020241D /* FFAudioTrack_Digital.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CC012020DC484910020241D /* FFAudioTrack_Digital.m */; };
 		2CDF931B0DC4D1360069B195 /* FFAudioTrack_Analog.m in Sources */ = {isa = PBXBuildFile; fileRef = 2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */; };
+		3E4EED3F15C5B561000EBFF2 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4EED3E15C5B561000EBFF2 /* AVFoundation.framework */; };
+		3E4EED4215C61141000EBFF2 /* MMovieLayer_FFMPEG.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E4EED4115C61141000EBFF2 /* MMovieLayer_FFMPEG.m */; };
+		3E4EED4415C617A6000EBFF2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4EED4315C617A6000EBFF2 /* libz.dylib */; };
+		3E4EED4615C617B0000EBFF2 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4EED4515C617B0000EBFF2 /* libbz2.dylib */; };
+		3E4EED4815C617D3000EBFF2 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4EED4715C617D3000EBFF2 /* CoreMedia.framework */; };
 		3E9FE3E214A565D400B5AEF1 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3DC14A565D300B5AEF1 /* libavcodec.a */; };
 		3E9FE3E314A565D400B5AEF1 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3DD14A565D300B5AEF1 /* libavformat.a */; };
 		3E9FE3E414A565D400B5AEF1 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3DE14A565D300B5AEF1 /* libavutil.a */; };
@@ -16,6 +21,7 @@
 		3E9FE3E614A565D400B5AEF1 /* libmatroska.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3E014A565D300B5AEF1 /* libmatroska.a */; };
 		3E9FE3E714A565D400B5AEF1 /* libpostproc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3E114A565D300B5AEF1 /* libpostproc.a */; };
 		3E9FE3E914A5667300B5AEF1 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3E814A5667300B5AEF1 /* libswscale.a */; };
+		3EDEB20716D2B84500CA8400 /* MMovieLayer_AVFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EDEB20616D2B84300CA8400 /* MMovieLayer_AVFoundation.m */; };
 		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -78,7 +84,6 @@
 		AF31CFE50B7EF99000676AC6 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF31CFE10B7EF99000676AC6 /* OpenGL.framework */; };
 		AF31CFE60B7EF99000676AC6 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF31CFE20B7EF99000676AC6 /* QTKit.framework */; };
 		AF31CFE70B7EF99000676AC6 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF31CFE30B7EF99000676AC6 /* QuartzCore.framework */; };
-		AF31CFE80B7EF99000676AC6 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF31CFE40B7EF99000676AC6 /* QuickTime.framework */; };
 		AF34929D0C48851700CBDA34 /* PreferenceController_Advanced.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3492980C48851700CBDA34 /* PreferenceController_Advanced.m */; };
 		AF34929E0C48851700CBDA34 /* PreferenceController_Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3492990C48851700CBDA34 /* PreferenceController_Audio.m */; };
 		AF34929F0C48851700CBDA34 /* PreferenceController_General.m in Sources */ = {isa = PBXBuildFile; fileRef = AF34929A0C48851700CBDA34 /* PreferenceController_General.m */; };
@@ -262,6 +267,12 @@
 		2CC012020DC484910020241D /* FFAudioTrack_Digital.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFAudioTrack_Digital.m; sourceTree = "<group>"; };
 		2CDF931A0DC4D1360069B195 /* FFAudioTrack_Analog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFAudioTrack_Analog.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* Movist_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Movist_Prefix.pch; sourceTree = "<group>"; };
+		3E4EED3E15C5B561000EBFF2 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		3E4EED4015C61141000EBFF2 /* MMovieLayer_FFMPEG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMovieLayer_FFMPEG.h; sourceTree = "<group>"; };
+		3E4EED4115C61141000EBFF2 /* MMovieLayer_FFMPEG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovieLayer_FFMPEG.m; sourceTree = "<group>"; };
+		3E4EED4315C617A6000EBFF2 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		3E4EED4515C617B0000EBFF2 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
+		3E4EED4715C617D3000EBFF2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		3E9FE3DC14A565D300B5AEF1 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = contrib/build/lib/libavcodec.a; sourceTree = "<group>"; };
 		3E9FE3DD14A565D300B5AEF1 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = contrib/build/lib/libavformat.a; sourceTree = "<group>"; };
 		3E9FE3DE14A565D300B5AEF1 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = contrib/build/lib/libavutil.a; sourceTree = "<group>"; };
@@ -269,6 +280,9 @@
 		3E9FE3E014A565D300B5AEF1 /* libmatroska.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmatroska.a; path = contrib/build/lib/libmatroska.a; sourceTree = "<group>"; };
 		3E9FE3E114A565D300B5AEF1 /* libpostproc.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpostproc.a; path = contrib/build/lib/libpostproc.a; sourceTree = "<group>"; };
 		3E9FE3E814A5667300B5AEF1 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = contrib/build/lib/libswscale.a; sourceTree = "<group>"; };
+		3EDEB1FB16D0177200CA8400 /* MMovieLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMovieLayer.h; sourceTree = "<group>"; };
+		3EDEB20516D2B84200CA8400 /* MMovieLayer_AVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMovieLayer_AVFoundation.h; sourceTree = "<group>"; };
+		3EDEB20616D2B84300CA8400 /* MMovieLayer_AVFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovieLayer_AVFoundation.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Movist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF010C130C0F190600CA9913 /* PlayPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = PlayPanel.h; sourceTree = "<group>"; };
@@ -589,13 +603,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E4EED4815C617D3000EBFF2 /* CoreMedia.framework in Frameworks */,
 				3E4EED4615C617B0000EBFF2 /* libbz2.dylib in Frameworks */,
 				3E4EED4415C617A6000EBFF2 /* libz.dylib in Frameworks */,
+				3E4EED3F15C5B561000EBFF2 /* AVFoundation.framework in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				AF31CFE50B7EF99000676AC6 /* OpenGL.framework in Frameworks */,
 				AF31CFE60B7EF99000676AC6 /* QTKit.framework in Frameworks */,
 				AF31CFE70B7EF99000676AC6 /* QuartzCore.framework in Frameworks */,
-				AF31CFE80B7EF99000676AC6 /* QuickTime.framework in Frameworks */,
 				AF0439910BEA14EA0016091F /* Carbon.framework in Frameworks */,
 				AF1D1D3A0C2836A200D239EA /* IOKit.framework in Frameworks */,
 				AFFE5EE60C341EAE00516510 /* AudioToolbox.framework in Frameworks */,
@@ -651,6 +666,11 @@
 				AF30E2A40C2EB114009DB59C /* MMovieView_Message.m */,
 				AF0853670DC635440061B8CD /* MMovieView_Capture.m */,
 				AF30E2CD0C2EB3EA009DB59C /* MMovieView_DragDrop.m */,
+				3EDEB1FB16D0177200CA8400 /* MMovieLayer.h */,
+				3EDEB20516D2B84200CA8400 /* MMovieLayer_AVFoundation.h */,
+				3EDEB20616D2B84300CA8400 /* MMovieLayer_AVFoundation.m */,
+				3E4EED4015C61141000EBFF2 /* MMovieLayer_FFMPEG.h */,
+				3E4EED4115C61141000EBFF2 /* MMovieLayer_FFMPEG.m */,
 				AF07C1B90C4BAA490007D17B /* FullScreen */,
 				AF16C7F70C296F7400AC0A4B /* ControlPanel.h */,
 				AF16C7F80C296F7400AC0A4B /* ControlPanel.m */,
@@ -674,6 +694,7 @@
 		29B97314FDCFA39411CA2CEA /* Movist */ = {
 			isa = PBXGroup;
 			children = (
+				3E4EED4715C617D3000EBFF2 /* CoreMedia.framework */,
 				3E4EED4515C617B0000EBFF2 /* libbz2.dylib */,
 				3E4EED4315C617A6000EBFF2 /* libz.dylib */,
 				080E96DDFE201D6D7F000001 /* Classes */,
@@ -715,6 +736,7 @@
 			isa = PBXGroup;
 			children = (
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
+				3E4EED3E15C5B561000EBFF2 /* AVFoundation.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				AF0439900BEA14EA0016091F /* Carbon.framework */,
@@ -1415,6 +1437,8 @@
 				AF0C1B3210A6BE5700773156 /* ColorConversions.c in Sources */,
 				AF98017210BDA5A4000E471A /* MSubtitleParser_TXT.m in Sources */,
 				AF98017E10BDA93F000E471A /* CSRegex.m in Sources */,
+				3E4EED4215C61141000EBFF2 /* MMovieLayer_FFMPEG.m in Sources */,
+				3EDEB20716D2B84500CA8400 /* MMovieLayer_AVFoundation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1502,6 +1526,7 @@
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1518,12 +1543,13 @@
 					"$(inherited)",
 					"$(SRCROOT)/contrib/build/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
 					"-isystem",
 					"\"$(SRCROOT)/contrib/build/include\"",
 				);
 				PRODUCT_NAME = Movist;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.7;
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
@@ -1532,7 +1558,7 @@
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
@@ -1552,12 +1578,13 @@
 					"$(inherited)",
 					"$(SRCROOT)/contrib/build/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
 					"-isystem",
 					"\"$(SRCROOT)/contrib/build/include\"",
 				);
 				PRODUCT_NAME = Movist;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx10.7;
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
@@ -1567,22 +1594,26 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				SDKROOT = macosx10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx10.8;
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
 		C01FCF5008A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				SDKROOT = macosx10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx10.8;
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};

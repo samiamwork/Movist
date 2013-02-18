@@ -27,18 +27,16 @@
 @class MMovie;
 @class MSubtitle;
 @class MMovieOSD;
+@protocol MMovieLayer;
 
-@interface MMovieView : NSOpenGLView
+@interface MMovieView : NSView
 {
-    CVDisplayLinkRef _displayLink;
-    CGDirectDisplayID _displayID;
+	CGDirectDisplayID _displayID;
     NSRecursiveLock* _drawLock;
 
-    CIContext* _ciContext;
     CIFilter* _colorFilter;
     CIFilter* _hueFilter;
     CIFilter* _cropFilter;  // for removing green box
-	CVOpenGLTextureRef _image;
     NSSize _movieSize;
     CGRect _movieRect;
     CGRect _imageRect;
@@ -47,7 +45,9 @@
     float _contrastValue;
     float _hueValue;
 
-    MMovie* _movie;
+	CALayer<MMovieLayer>* _movieLayer;
+	CALayer*              _rootLayer;
+	CALayer*              _iconOSDLayer;
 
     // subtitle
     MSubtitle* _subtitle[3];
@@ -96,13 +96,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
-- (void)lockDraw;
-- (void)unlockDraw;
 - (void)redisplay;
-
 - (MMovie*)movie;
 - (float)currentFps;
 - (void)setMovie:(MMovie*)movie;
+// TODO: remove these. They're just here to ease the CoreAnimation conversion process
+- (NSOpenGLContext*)openGLContext;
+- (NSOpenGLPixelFormat*)pixelFormat;
 
 @end
 
@@ -113,8 +113,6 @@
 
 - (CGDirectDisplayID)displayID;
 
-- (BOOL)initCoreVideo;
-- (void)cleanupCoreVideo;
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
 - (void)drawImage;
 
@@ -154,7 +152,6 @@
 - (void)cleanupOSD;
 
 - (void)drawOSD;
-- (void)drawDragHighlight;
 - (void)clearOSD;
 - (void)updateOSDImageBaseWidth;
 

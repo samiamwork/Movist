@@ -1,9 +1,6 @@
 //
 //  Movist
 //
-//  Copyright 2006 ~ 2008 Yong-Hoe Kim. All rights reserved.
-//      Yong-Hoe Kim  <cocoable@gmail.com>
-//
 //  This file is part of Movist.
 //
 //  Movist is free software; you can redistribute it and/or modify
@@ -20,23 +17,24 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#import "MMovie.h"
+#import <Cocoa/Cocoa.h>
+#import <QuartzCore/QuartzCore.h>
+#import "MMovieLayer.h"
 
-#import <QTKit/QTKit.h>
-#import <AVFoundation/AVFoundation.h>
+@class MMovie_FFmpeg;
 
-@interface MMovie_QuickTime : MMovie
+@interface MMovieLayer_FFMPEG : NSOpenGLLayer <MMovieLayer>
 {
-	AVPlayer* _avPlayer;
-	id        _playbackPeriodicObserver;
-    NSTimer* _indexingUpdateTimer;
+	BOOL                _configured;
+	BOOL                _movieNeedsGLContext;
+	MMovie_FFmpeg*      _movie;
+	CVOpenGLTextureRef  _image;
+	CIContext*          _ciContext;
+	CVDisplayLinkRef    _displayLink;
+	CGDirectDisplayID   _displayID;
+//	NSRecursiveLock*    _drawLock;
 }
 
-+ (NSString*)name;
-
-+ (void)setUseQuickTimeSubtitles:(BOOL)use;
-+ (void)checkA52CodecInstalled;
-+ (void)checkPerianInstalled;
-
-- (AVPlayer*)player;
+- (void)setMovie:(MMovie_FFmpeg*)newMovie;
+- (MMovie*)movie;
 @end

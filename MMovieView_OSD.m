@@ -94,21 +94,6 @@
 - (void)drawOSD
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    // set OpenGL states
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-    glEnable(GL_TEXTURE_RECTANGLE_EXT);
-    
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    NSRect frame = [self frame];
-    glScalef(2.0f / frame.size.width, -2.0f / frame.size.height, 1.0f);
-    glTranslatef(-frame.size.width / 2.0f, -frame.size.height / 2.0f, 0.0f);
-
     if ([_iconOSD hasContent]) {
         [_iconOSD drawOnScreen];
     }
@@ -129,45 +114,6 @@
     if ([_errorOSD hasContent]) {
         [_errorOSD drawOnScreen];
     }
-
-    // restore OpenGL status
-    glPopMatrix(); // GL_MODELVIEW
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-
-    glDisable(GL_TEXTURE_RECTANGLE_EXT);
-    glDisable(GL_BLEND);
-}
-
-- (void)drawDragHighlight
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-
-    NSRect rect = [self bounds];
-    float x1 = NSMinX(rect), y1 = NSMinY(rect);
-    float x2 = NSMaxX(rect), y2 = NSMaxY(rect);
-    float w = 8.0;
-    glColor4f(0.0, 0.0, 1.0, 0.25);
-    glBegin(GL_QUADS);
-        // bottom
-        glVertex2f(x1, y1);         glVertex2f(x2,     y1);
-        glVertex2f(x2, y1 + w);     glVertex2f(x1,     y1 + w);
-        // right
-        glVertex2f(x2 - w, y1 + w); glVertex2f(x2,     y1 + w);
-        glVertex2f(x2,     y2 - w); glVertex2f(x2 - w, y2 - w);
-        // top
-        glVertex2f(x1, y2 - w);     glVertex2f(x2,     y2 - w);
-        glVertex2f(x2, y2);         glVertex2f(x1,     y2);
-        // left
-        glVertex2f(x1,     y1 + w); glVertex2f(x1 + w, y1 + w);
-        glVertex2f(x1 + w, y2 - w); glVertex2f(x1,     y2 - w);
-    glEnd();
-    glColor3f(1.0, 1.0, 1.0);
-
-    glDisable(GL_BLEND);
 }
 
 - (void)clearOSD
@@ -181,7 +127,7 @@
 
 - (void)updateOSDImageBaseWidth
 {
-    float width = (_movie) ? [_movie adjustedSizeByAspectRatio].width : 0;
+    float width = (self.movie) ? [self.movie adjustedSizeByAspectRatio].width : 0;
     [_subtitleOSD[0] setImageBaseWidth:width];
     [_subtitleOSD[1] setImageBaseWidth:width];
     [_subtitleOSD[2] setImageBaseWidth:width];

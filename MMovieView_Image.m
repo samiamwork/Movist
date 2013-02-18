@@ -26,17 +26,6 @@
 #import "MSubtitle.h"
 #import "AppController.h"   // for NSApp's delegate
 
-static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
-                                          const CVTimeStamp* inNow,
-                                          const CVTimeStamp* inOutputTime,
-                                          CVOptionFlags flagsIn,
-                                          CVOptionFlags* flagsOut,
-                                          void* displayLinkContext)
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-	return [(MMovieView*)displayLinkContext updateImage:inOutputTime];
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 
@@ -44,81 +33,53 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (CGDirectDisplayID)displayID { return _displayID; }
 
-- (BOOL)initCoreVideo
-{
-    _displayID = CGMainDisplayID();
-    CVReturn cvRet = CVDisplayLinkCreateWithCGDisplay(_displayID, &_displayLink);
-    if (cvRet != kCVReturnSuccess) {
-        //TRACE(@"CVDisplayLinkCreateWithCGDisplay() failed: %d", cvRet);
-        return FALSE;
-    }
-    CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
-                                                      [[self openGLContext] CGLContextObj],
-                                                      [[self pixelFormat] CGLPixelFormatObj]);
-    CVDisplayLinkSetOutputCallback(_displayLink, &displayLinkOutputCallback, self);
-    CVDisplayLinkStart(_displayLink);
-    return TRUE;
-}
-
-- (void)cleanupCoreVideo
-{
-    if (_displayLink) {
-        CVDisplayLinkStop(_displayLink);
-        CVDisplayLinkRelease(_displayLink);
-    }
-    if (_image) {
-        CVOpenGLTextureRelease(_image);
-        _image = nil;
-    }
-}
-
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
     if ([_drawLock tryLock]) {
-        if (_movie) {
-            CVOpenGLTextureRef image = [_movie nextImage:timeStamp];
-            if (image) {
-                if (_image) {
-                    CVOpenGLTextureRelease(_image);
-                }
-                _image = image;
-                if (_subtitleVisible) {
-                    [self updateSubtitleOSDAtIndex:0];
-                    [self updateSubtitleOSDAtIndex:1];
-                    [self updateSubtitleOSDAtIndex:2];
-                }
-                if ([self canDraw]) {
-                    [self drawImage];
-                }
-                _fpsFrameCount++;
-            }
-            else if (_image && _subtitleVisible && _needsSubtitleDrawing) {
-                if (_needsSubtitleDrawing & 0x01) {
-                    [self updateSubtitleOSDAtIndex:0];
-                }
-                if (_needsSubtitleDrawing & 0x02) {
-                    [self updateSubtitleOSDAtIndex:1];
-                }
-                if (_needsSubtitleDrawing & 0x04) {
-                    [self updateSubtitleOSDAtIndex:2];
-                }
-                if ([self canDraw]) {
-                    [self drawImage];
-                }
-            }
-            // calc. fps
-            double ct = (double)timeStamp->videoTime / timeStamp->videoTimeScale;
-            _fpsElapsedTime += ABS(ct - _lastFpsCheckTime);
-            _lastFpsCheckTime = ct;
-            if (1.0 <= _fpsElapsedTime) {
-                _currentFps = (float)(_fpsFrameCount / _fpsElapsedTime);
-                _fpsElapsedTime = 0.0;
-                _fpsFrameCount = 0;
-            }
-        }
+//        if (_movie) {
+//            CVOpenGLTextureRef image = [_movie nextImage:timeStamp];
+//            if (image) {
+//                if (_image) {
+//                    CVOpenGLTextureRelease(_image);
+//                }
+//                _image = image;
+//                if (_subtitleVisible) {
+//                    [self updateSubtitleOSDAtIndex:0];
+//                    [self updateSubtitleOSDAtIndex:1];
+//                    [self updateSubtitleOSDAtIndex:2];
+//                }
+//                if ([self canDraw]) {
+//                    [self drawImage];
+//                }
+//                _fpsFrameCount++;
+//            }
+//            else if (_image && _subtitleVisible && _needsSubtitleDrawing) {
+//                if (_needsSubtitleDrawing & 0x01) {
+//                    [self updateSubtitleOSDAtIndex:0];
+//                }
+//                if (_needsSubtitleDrawing & 0x02) {
+//                    [self updateSubtitleOSDAtIndex:1];
+//                }
+//                if (_needsSubtitleDrawing & 0x04) {
+//                    [self updateSubtitleOSDAtIndex:2];
+//                }
+//                if ([self canDraw]) {
+//                    [self drawImage];
+//                }
+//            }
+//            // calc. fps
+//            double ct = (double)timeStamp->videoTime / timeStamp->videoTimeScale;
+//            _fpsElapsedTime += ABS(ct - _lastFpsCheckTime);
+//            _lastFpsCheckTime = ct;
+//            if (1.0 <= _fpsElapsedTime) {
+//                _currentFps = (float)(_fpsFrameCount / _fpsElapsedTime);
+//                _fpsElapsedTime = 0.0;
+//                _fpsFrameCount = 0;
+//            }
+//        }
         [_drawLock unlock];
     }
 
@@ -129,102 +90,96 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)updateImageRect
 {
-    assert(_image != 0);
-    _imageRect = CVImageBufferGetCleanRect(_image);
-    if (_removeGreenBox) {
-        _imageRect.origin.x++, _imageRect.size.width  -= 2;
-        _imageRect.origin.y++, _imageRect.size.height -= 2;
-    }
-    
-    if ([[NSApp delegate] isFullScreen] && _fullScreenFill == FS_FILL_CROP) {
-        NSSize bs = [self bounds].size;
-        NSSize ms = [_movie adjustedSizeByAspectRatio];
-        if (bs.width / bs.height < ms.width / ms.height) {
-            float mw = ms.width * bs.height / ms.height;
-            float dw = (mw - bs.width) * ms.width / mw;
-            _imageRect.origin.x += dw / 2;
-            _imageRect.size.width -= dw;
-        }
-        else {
-            float mh = ms.height * bs.width / ms.width;
-            float dh = (mh - bs.height) * ms.height / mh;
-            _imageRect.origin.y += dh / 2;
-            _imageRect.size.height -= dh;
-        }
-    }
+//    assert(_image != 0);
+//    _imageRect = CVImageBufferGetCleanRect(_image);
+//    if (_removeGreenBox) {
+//        _imageRect.origin.x++, _imageRect.size.width  -= 2;
+//        _imageRect.origin.y++, _imageRect.size.height -= 2;
+//    }
+//    
+//    if ([[NSApp delegate] isFullScreen] && _fullScreenFill == FS_FILL_CROP) {
+//        NSSize bs = [self bounds].size;
+//        NSSize ms = [self.movie adjustedSizeByAspectRatio];
+//        if (bs.width / bs.height < ms.width / ms.height) {
+//            float mw = ms.width * bs.height / ms.height;
+//            float dw = (mw - bs.width) * ms.width / mw;
+//            _imageRect.origin.x += dw / 2;
+//            _imageRect.size.width -= dw;
+//        }
+//        else {
+//            float mh = ms.height * bs.width / ms.width;
+//            float dh = (mh - bs.height) * ms.height / mh;
+//            _imageRect.origin.y += dh / 2;
+//            _imageRect.size.height -= dh;
+//        }
+//    }
     //TRACE(@"_imageRect=%@", NSStringFromRect(*(NSRect*)&_imageRect));
 }
 
 - (void)drawImage
 {
-    [[self openGLContext] makeCurrentContext];
-    if (!_image) {
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-    else {
+	return;
+
+    {
         if (_imageRect.size.width == 0) {
             [self updateImageRect];
         }
         // draw image
-        CIImage* img = [CIImage imageWithCVImageBuffer:_image];
-        if (_removeGreenBox) {
-            [_cropFilter setValue:img forKey:@"inputImage"];
-            img = [_cropFilter valueForKey:@"outputImage"];
-        }
-        if (_brightnessValue != DEFAULT_BRIGHTNESS ||
-            _saturationValue != DEFAULT_SATURATION ||
-            _contrastValue   != DEFAULT_CONTRAST) {
-            [_colorFilter setValue:img forKey:@"inputImage"];
-            img = [_colorFilter valueForKey:@"outputImage"];
-        }
-        if (_hueValue != DEFAULT_HUE) {
-            [_hueFilter setValue:img forKey:@"inputImage"];
-            img = [_hueFilter valueForKey:@"outputImage"];
-        }
-        [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
+//        CIImage* img = [CIImage imageWithCVImageBuffer:_image];
+//        if (_removeGreenBox) {
+//            [_cropFilter setValue:img forKey:@"inputImage"];
+//            img = [_cropFilter valueForKey:@"outputImage"];
+//        }
+//        if (_brightnessValue != DEFAULT_BRIGHTNESS ||
+//            _saturationValue != DEFAULT_SATURATION ||
+//            _contrastValue   != DEFAULT_CONTRAST) {
+//            [_colorFilter setValue:img forKey:@"inputImage"];
+//            img = [_colorFilter valueForKey:@"outputImage"];
+//        }
+//        if (_hueValue != DEFAULT_HUE) {
+//            [_hueFilter setValue:img forKey:@"inputImage"];
+//            img = [_hueFilter valueForKey:@"outputImage"];
+//        }
+//        [_ciContext drawImage:img inRect:_movieRect fromRect:_imageRect];
 
         // clear extra area
-        NSRect bounds = [self bounds];
-        if (NSMinX(bounds) != CGRectGetMinX(_movieRect) ||
-            NSMinY(bounds) != CGRectGetMinY(_movieRect) ||
-            NSMaxX(bounds) != CGRectGetMaxX(_movieRect) ||
-            NSMaxY(bounds) != CGRectGetMaxY(_movieRect)) {
-            glColor3f(0.0f, 0.0f, 0.0f);
-            glBegin(GL_QUADS);
-                float vl = NSMinX(bounds), vr = NSMaxX(bounds);
-                float vb = NSMinY(bounds), vt = NSMaxY(bounds);
-                float rl = CGRectGetMinX(_movieRect);
-                float rr = CGRectGetMaxX(_movieRect);
-                float rb = CGRectGetMinY(_movieRect);
-                float rt = CGRectGetMaxY(_movieRect);
-                if (bounds.size.height != _movieRect.size.height) {
-                    // lower letter-box
-                    glVertex2f(vl, vb), glVertex2f(vl, rb);
-                    glVertex2f(vr, rb), glVertex2f(vr, vb);
-                    // upper letter-box
-                    glVertex2f(vl, rt), glVertex2f(vl, vt);
-                    glVertex2f(vr, vt), glVertex2f(vr, rt);
-                }
-                if (bounds.size.width != _movieRect.size.width) {
-                    // left area
-                    glVertex2f(vl, rb), glVertex2f(vl, rt);
-                    glVertex2f(rl, rt), glVertex2f(rl, rb);
-                    // right area
-                    glVertex2f(rr, rb), glVertex2f(rr, rt);
-                    glVertex2f(vr, rt), glVertex2f(vr, rb);
-                }
-            glEnd();
-            glColor3f(1.0f, 1.0f, 1.0f);
-        }
+//        NSRect bounds = [self bounds];
+//        if (NSMinX(bounds) != CGRectGetMinX(_movieRect) ||
+//            NSMinY(bounds) != CGRectGetMinY(_movieRect) ||
+//            NSMaxX(bounds) != CGRectGetMaxX(_movieRect) ||
+//            NSMaxY(bounds) != CGRectGetMaxY(_movieRect)) {
+//            glColor3f(0.0f, 0.0f, 0.0f);
+//            glBegin(GL_QUADS);
+//                float vl = NSMinX(bounds), vr = NSMaxX(bounds);
+//                float vb = NSMinY(bounds), vt = NSMaxY(bounds);
+//                float rl = CGRectGetMinX(_movieRect);
+//                float rr = CGRectGetMaxX(_movieRect);
+//                float rb = CGRectGetMinY(_movieRect);
+//                float rt = CGRectGetMaxY(_movieRect);
+//                if (bounds.size.height != _movieRect.size.height) {
+//                    // lower letter-box
+//                    glVertex2f(vl, vb), glVertex2f(vl, rb);
+//                    glVertex2f(vr, rb), glVertex2f(vr, vb);
+//                    // upper letter-box
+//                    glVertex2f(vl, rt), glVertex2f(vl, vt);
+//                    glVertex2f(vr, vt), glVertex2f(vr, rt);
+//                }
+//                if (bounds.size.width != _movieRect.size.width) {
+//                    // left area
+//                    glVertex2f(vl, rb), glVertex2f(vl, rt);
+//                    glVertex2f(rl, rt), glVertex2f(rl, rb);
+//                    // right area
+//                    glVertex2f(rr, rb), glVertex2f(rr, rt);
+//                    glVertex2f(vr, rt), glVertex2f(vr, rb);
+//                }
+//            glEnd();
+//            glColor3f(1.0f, 1.0f, 1.0f);
+//        }
     }
 
     [self drawOSD];
 
-    if (_dragAction != DRAG_ACTION_NONE) {
-        [self drawDragHighlight];
-    }
-    [[self openGLContext] flushBuffer];
-    [_movie idleTask];
+    [self.movie idleTask];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -233,16 +188,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (BOOL)initCoreImage
 {
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                          (id)colorSpace, kCIContextOutputColorSpace,
-                          (id)colorSpace, kCIContextWorkingColorSpace, nil];
-	_ciContext = [[CIContext contextWithCGLContext:[[self openGLContext] CGLContextObj]
-									   pixelFormat:[[self pixelFormat] CGLPixelFormatObj]
-										colorSpace:colorSpace
-										   options:dict] retain];
-    CGColorSpaceRelease(colorSpace);
-    
     _colorFilter = [[CIFilter filterWithName:@"CIColorControls"] retain];
     _hueFilter = [[CIFilter filterWithName:@"CIHueAdjust"] retain];
     _cropFilter = [[CIFilter filterWithName:@"CICrop"] retain];
@@ -262,7 +207,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     [_cropFilter release];
     [_hueFilter release];
     [_colorFilter release];
-    [_ciContext release];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +228,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
         bounds.size.height-= _subtitleScreenMargin * 2;
     }
 
-    if (!_movie) {
+    if (!self.movie) {
         [_iconOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
         [_messageOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
     }
@@ -351,7 +295,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
     rect.origin = boundingRect.origin;
 
     NSSize bs = boundingRect.size;
-    NSSize ms = [_movie adjustedSizeByAspectRatio];
+    NSSize ms = [self.movie adjustedSizeByAspectRatio];
     if (bs.width / bs.height < ms.width / ms.height) {
         rect.size.width = bs.width;
         rect.size.height = rect.size.width * ms.height / ms.width;
@@ -491,7 +435,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 - (void)updateRemoveGreenBox
 {
     // needs for QuickTime only.
-    _removeGreenBox = [_movie isMemberOfClass:[MMovie_QuickTime class]] ?
+    _removeGreenBox = [self.movie isMemberOfClass:[MMovie_QuickTime class]] ?
                                                 _removeGreenBoxSetting : FALSE;
     [self updateMovieRect:TRUE];
 }

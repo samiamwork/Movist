@@ -21,6 +21,7 @@
 //
 
 #import "MMovieView.h"
+#import "MMovieLayer.h"
 
 #import "MMovie.h"
 #import "MSubtitle.h"
@@ -127,15 +128,15 @@
 {
     BOOL ret = TRUE;
     [_drawLock lock];
-    if (!_movie || !_subtitle[index] || ![_subtitle[index] isEnabled]) {
+    if (!self.movie || !_subtitle[index] || ![_subtitle[index] isEnabled]) {
         [_subtitleOSD[index] clearContent];
         _needsSubtitleDrawing &= ~(1 << index);
         [_auxSubtitleOSD[index] clearContent];
     }
     else {
         BOOL isRendering;
-        BOOL paused = (0 == [_movie rate]);
-        float time = [_movie currentTime] + [_subtitleOSD[index] subtitleSync];
+        BOOL paused = (0 == [self.movie rate]);
+        float time = [self.movie currentTime] + [_subtitleOSD[index] subtitleSync];
         NSImage* texImage = [_subtitle[index] texImageAtTime:time isSeek:paused
                                                  isRendering:&isRendering];
         [_subtitleOSD[index] setTexImage:texImage];
@@ -364,7 +365,7 @@
 
 - (void)updateLetterBoxHeight
 {
-    if (!_movie ||
+    if (!self.movie ||
         ((!_subtitle[0] || ![_subtitle[0] isEnabled]) &&
          (!_subtitle[1] || ![_subtitle[0] isEnabled]) &&
          (!_subtitle[2] || ![_subtitle[0] isEnabled]))) {
@@ -382,7 +383,7 @@
                 rect = [self underScannedRect:rect];
             }
             NSSize bs = rect.size;
-            NSSize ms = [_movie adjustedSizeByAspectRatio];
+            NSSize ms = [self.movie adjustedSizeByAspectRatio];
             if (bs.width / bs.height < ms.width / ms.height) {
                 float lineHeight = [subtitleOSD adjustedLineHeight:bs.width];
                 float letterBoxHeight = bs.height - (bs.width * ms.height / ms.width);
@@ -440,7 +441,7 @@
     for (i = 0; i < 3; i++) {
         if (_subtitle[i] && [_subtitle[i] isEnabled]) {
             t = [_subtitle[i] prevSubtitleTime:
-                 [_movie currentTime] + [_subtitleOSD[i] subtitleSync]];
+                 [self.movie currentTime] + [_subtitleOSD[i] subtitleSync]];
             if (prevTime < t) {
                 prevTime = t;
             }
@@ -451,12 +452,12 @@
 
 - (float)nextSubtitleTime
 {
-    float t, nextTime = [_movie duration];
+    float t, nextTime = [self.movie duration];
     int i;
     for (i = 0; i < 3; i++) {
         if (_subtitle[i] && [_subtitle[i] isEnabled]) {
             t = [_subtitle[i] nextSubtitleTime:
-                 [_movie currentTime] + [_subtitleOSD[i] subtitleSync]];
+                 [self.movie currentTime] + [_subtitleOSD[i] subtitleSync]];
             if (t < nextTime) {
                 nextTime = t;
             }

@@ -56,8 +56,9 @@
             else if (p.y < NSMinY(rc)) {    // bottom-side dock
                 p.y = NSMinY(rc) + margin;
             }
-            CGDisplayMoveCursorToPoint([_movieView displayID],
-                                       CGPointMake(p.x, NSMaxY(rc) - p.y));
+			// TODO: fix
+//            CGDisplayMoveCursorToPoint([_movieView displayID],
+//                                       CGPointMake(p.x, NSMaxY(rc) - p.y));
         }
         GetSystemUIMode(&_normalSystemUIMode, &_normalSystemUIOptions);
         if (_autoShowDock) {
@@ -73,10 +74,8 @@
 - (void)attachMovieViewToFullWindow
 {
     [_mainWindow disableScreenUpdatesUntilFlush];
-    [_movieView lockDraw];
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [_fullWindow setMovieView:_movieView];
-    [_movieView unlockDraw];
 
     if ([_fullWindow level] == DesktopWindowLevel) {
         [_fullWindow orderBack:nil];
@@ -94,13 +93,10 @@
     [_fullWindow orderOut:self];
 
     // move _movieView to _mainWindow from _fullWindow
-    [_movieView lockDraw];
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [[_mainWindow contentView] addSubview:_movieView];
     [_movieView setFrame:_movieViewRect];
     [_movieView updateMovieRect:FALSE];
-    [_movieView unlockDraw];
-    [_movieView display];
 
     [_mainWindow makeFirstResponder:_movieView];
     [_mainWindow makeKeyAndOrderFront:nil];

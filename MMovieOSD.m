@@ -60,7 +60,6 @@
         _hMargin = _vMargin = 0.0;
 
         _updateMask = 0;
-        _texName = 0;
 
         _lock = [[NSRecursiveLock alloc] init];
     }
@@ -594,46 +593,6 @@ enum {  // for _updateMask
     return FALSE;
 }
 
-- (void)makeTexture:(CGLContextObj)glContext
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (!glContext) {
-        return;
-    }
-    // at first, delete previous texture
-    if (_texName) {
-        (*glContext->disp.delete_textures)(glContext->rend, 1, &_texName);
-        _texName = 0;
-    }
-
-    if (!_texImage) {
-        return;
-    }
-
-    NSSize size = [_texImage size];
-    NSBitmapImageRep* bmp = [[NSBitmapImageRep alloc]
-                             initWithBitmapDataPlanes:0
-                             pixelsWide:(int)size.width pixelsHigh:(int)size.height
-                             bitsPerSample:8 samplesPerPixel:4 hasAlpha:TRUE
-                             isPlanar:FALSE colorSpaceName:NSCalibratedRGBColorSpace
-                             bitmapFormat:0 bytesPerRow:(int)size.width * 4 bitsPerPixel:32];
-
-    [NSGraphicsContext saveGraphicsState];
-    [NSGraphicsContext setCurrentContext:
-     [NSGraphicsContext graphicsContextWithBitmapImageRep:bmp]];
-
-    [_texImage drawAtPoint:NSMakePoint(0,0) fromRect:NSZeroRect
-                 operation:NSCompositeCopy fraction:1.0];
-
-    [NSGraphicsContext restoreGraphicsState];
-
-    // make texture
-    glGenTextures(1, &_texName);
-    glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texName);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_EXT, 0, GL_RGBA, size.width, size.height,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, [bmp bitmapData]);
-    [bmp release];
-}
 
 - (void)updateDrawingRect
 {
@@ -751,19 +710,6 @@ enum {  // for _updateMask
     if (_updateMask & UPDATE_DRAWING_RECT) {
         _updateMask &= ~UPDATE_DRAWING_RECT;
         [self updateDrawingRect];
-    }
-
-    if (_texName) {
-        glBindTexture(GL_TEXTURE_RECTANGLE_EXT, _texName);
-        glBegin(GL_QUADS);
-            NSSize size = [_texImage size];
-            float minX = NSMinX(_drawingRect), maxX = NSMaxX(_drawingRect);
-            float minY = NSMinY(_drawingRect), maxY = NSMaxY(_drawingRect);
-            glTexCoord2f(0.0,        0.0);          glVertex2f(minX, minY); // TL
-            glTexCoord2f(0.0,        size.height);  glVertex2f(minX, maxY); // BL
-            glTexCoord2f(size.width, size.height);  glVertex2f(maxX, maxY); // TR
-            glTexCoord2f(size.width, 0.0);          glVertex2f(maxX, minY); // BR
-        glEnd();
     }
 }
 

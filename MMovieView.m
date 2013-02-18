@@ -23,6 +23,9 @@
 #import "MMovieView.h"
 
 #import "MMovie.h"
+#import "MMovie_QuickTime.h"
+#import "MMovieLayer_FFMPEG.h"
+#import "MMovieLayer_AVFoundation.h"
 #import "MSubtitle.h"
 
 #import "MMovieOSD.h"
@@ -34,10 +37,6 @@
 - (void)awakeFromNib
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (![self initCoreVideo]) {
-        // FIXME: alert...
-        return;
-    }
     _drawLock = [[NSRecursiveLock alloc] init];
 
     if (![self initCoreImage]) {
@@ -67,6 +66,26 @@
                name:NSWindowDidMoveNotification object:[self window]];
     [nc addObserver:self selector:@selector(frameResized:)
                name:NSViewFrameDidChangeNotification object:self];
+
+	// add layer
+	_rootLayer = [CALayer layer];
+	CGColorRef orange = CGColorCreateGenericRGB(1.0, 0.5, 0.0, 1.0);
+	CGColorRef lightBlue = CGColorCreateGenericRGB(0.0, 0.5, 1.0, 1.0);
+	_rootLayer.backgroundColor = orange;
+	_rootLayer.layoutManager   = [CAConstraintLayoutManager layoutManager];
+	_rootLayer.borderColor     = lightBlue;
+	CGColorRelease(lightBlue);
+	CGColorRelease(orange);
+	[self setLayer:_rootLayer];
+	[self setWantsLayer:YES];
+
+	_iconOSDLayer = [CALayer layer];
+	_iconOSDLayer.zPosition = 1.0;
+	[_iconOSDLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinY relativeTo:@"superlayer" attribute:kCAConstraintMinY offset:0.0]];
+	[_iconOSDLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMaxY relativeTo:@"superlayer" attribute:kCAConstraintMaxY offset:0.0]];
+	[_iconOSDLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinX relativeTo:@"superlayer" attribute:kCAConstraintMinX offset:0.0]];
+	[_iconOSDLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMaxX relativeTo:@"superlayer" attribute:kCAConstraintMaxX offset:0.0]];
+	[_rootLayer addSublayer:_iconOSDLayer];
 }
 
 - (void)dealloc
@@ -74,14 +93,12 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self invalidateMessageHideTimer];
     [self cleanupCoreImage];
-    [self cleanupCoreVideo];
     [_drawLock release];
 
     [self cleanupOSD];
     [_subtitle[0] release];
     [_subtitle[1] release];
     [_subtitle[2] release];
-    [_movie release];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -90,85 +107,29 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark OpenGL
 
-- (void)prepareOpenGL
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    
-	GLint swapInterval = 1;
-	[[self openGLContext] setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
-    /*
-    const GLubyte* strVersion = glGetString(GL_VERSION);
-    const GLubyte* strExt = glGetString(GL_EXTENSIONS);
-    TRACE(@"GL_VERSION = \"%s\"", strVersion);
-    TRACE(@"GL_EXTENSIONS = \"%s\"", strExt);
-
-    GLboolean b;
-    b = gluCheckExtension((const GLubyte*)"GL_EXT_framebuffer_object", strExt);
-    TRACE(@"FBO = %d", b);
-
-    b = gluCheckExtension((const GLubyte*)"GL_APPLE_vertex_array_object", strExt);
-    TRACE(@"VAO = %d", b);
-
-    b = gluCheckExtension((const GLubyte*)"GL_APPLE_fence", strExt); 
-    TRACE(@"fence = %d", b);
-
-    b = gluCheckExtension((const GLubyte*)"GL_ARB_shading_language_100", strExt);
-    TRACE(@"shading = %d", b);
-     */
-}
-
-- (void)update
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
-
-    [super update];
-
-    [_drawLock unlock];
-}
-
-- (void)reshape
-{ 
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
-
-    NSRect bounds = [self bounds];
-    glViewport(0, 0, bounds.size.width, bounds.size.height);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, bounds.size.width, 0, bounds.size.height, -1.0f, 1.0f);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    [_drawLock unlock];
-}
-
-- (void)drawRect:(NSRect)rect
-{
-    //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromRect(rect));
-    if ([_drawLock tryLock]) {
-        [self drawImage];
-        [_drawLock unlock];
-    }
-}
-
-- (void)lockDraw   { [_drawLock lock]; }
-- (void)unlockDraw { [_drawLock unlock]; }
 - (void)redisplay { [self setNeedsDisplay:TRUE]; }
 
-- (BOOL)isOpaque { return TRUE; }
-- (BOOL)wantsDefaultClipping { return FALSE; }
+// TODO: remove these. They're just here to ease the CoreAnimation conversion process
+- (NSOpenGLContext*)openGLContext
+{
+	if([_movieLayer isKindOfClass:[CAOpenGLLayer class]])
+		return [(NSOpenGLLayer*)_movieLayer openGLContext];
+	return nil;
+}
+
+- (NSOpenGLPixelFormat*)pixelFormat
+{
+	if([_movieLayer isKindOfClass:[CAOpenGLLayer class]])
+		return [(NSOpenGLLayer*)_movieLayer openGLPixelFormat];
+	return nil;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark movie
 
-- (MMovie*)movie { return _movie; }
+- (MMovie*)movie { return [_movieLayer movie]; }
 - (float)currentFps { return _currentFps; }
 
 - (void)setMovie:(MMovie*)movie
@@ -176,21 +137,30 @@
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
     [_drawLock lock];
 
-    [movie retain], [_movie release], _movie = movie;
-    [self removeAllSubtitles];
-    if (_image) {
-        CVOpenGLTextureRelease(_image);
-        _image = nil;
-    }
+	[_movieLayer removeFromSuperlayer];
+	_movieLayer = nil;
 
-    if (_movie) {
-        NSSize es = [_movie encodedSize];
-        CIVector* vector = [CIVector vectorWithX:1.0 Y:1.0
-                            Z:es.width - 2.0 W:es.height - 2.0];
-        [_cropFilter setValue:vector forKey:@"inputRectangle"];
-        [self updateRemoveGreenBox];
-    }
-    [self clearOSD];
+	Class c = [movie class];
+	if(c == [MMovie_QuickTime class])
+	{
+		// use AVPlayerLayer
+		_movieLayer = [[MMovieLayer_AVFoundation alloc] init];
+	}
+	else
+	{
+		_movieLayer = [[MMovieLayer_FFMPEG alloc] init];
+	}
+	[_movieLayer setName:@"Movie"];
+	// TODO: preserve proper aspect ratio. Probably need to use our own layoutmanager
+	[_movieLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinY relativeTo:@"superlayer" attribute:kCAConstraintMinY offset:0.0]];
+	[_movieLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMaxY relativeTo:@"superlayer" attribute:kCAConstraintMaxY offset:0.0]];
+	[_movieLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinX relativeTo:@"superlayer" attribute:kCAConstraintMinX offset:0.0]];
+	[_movieLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMaxX relativeTo:@"superlayer" attribute:kCAConstraintMaxX offset:0.0]];
+	[_rootLayer addSublayer:[_movieLayer autorelease]];
+	[_movieLayer setMovie:movie];
+
+    [self removeAllSubtitles];
+	[self clearOSD];
     [self updateOSDImageBaseWidth];
     [self updateLetterBoxHeight];
     [self updateMovieRect:TRUE];
@@ -219,7 +189,7 @@
             break;
         case NSCarriageReturnCharacter :    // return : toggle full-screen
         case NSEnterCharacter :             // enter (in keypad)
-            if (_movie) {
+            if ([_movieLayer movie]) {
                 [[NSApp delegate] fullScreenAction:self];
             }
             break;
@@ -230,7 +200,7 @@
             else if ([[NSApp delegate] isDesktopBackground]) {
                 [[NSApp delegate] desktopBackgroundAction:self];
             }
-            else if (_movie) {
+            else if ([_movieLayer movie]) {
                 [[NSApp delegate] closeMovie];
                 [self showLogo];
             }
@@ -258,7 +228,7 @@
         case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1 atIndex:0];   break;
         case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0 atIndex:0];   break;
 
-        case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];          break;
+        case 'm' : case 'M' : [[NSApp delegate] setMuted:![[_movieLayer movie] muted]];          break;
 
         case 'i' : case 'I' : [self saveCurrentImage:shiftPressed];                 break;
     }
@@ -297,7 +267,6 @@
     NSNumber* screenNumber = [deviceDesc objectForKey:@"NSScreenNumber"];
     CGDirectDisplayID displayID = (CGDirectDisplayID)[screenNumber intValue];
     if (displayID && displayID != _displayID) {
-        CVDisplayLinkSetCurrentCGDisplay(_displayLink, displayID);
         _displayID = displayID;
         TRACE(@"main window moved: display changed");
         [self updateLetterBoxHeight];

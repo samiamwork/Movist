@@ -60,7 +60,6 @@
     float _autoSizeWidth;
     unsigned int _updateMask;   // bit-mask of UPDATE_*
     NSImage* _texImage;         // final rendered image for texture
-    GLuint _texName;            // OpenGL texture name for _texImage
 
     // for convenience
     NSAttributedString* _string;

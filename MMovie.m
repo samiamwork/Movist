@@ -22,6 +22,7 @@
 
 #import "MMovie.h"
 #import "FFTrack.h"
+#import <AVFoundation/AVFoundation.h> // Needed to get the AVAssetTrack in the MTrack setEnabled: hack
 
 @implementation MTrack
 
@@ -75,7 +76,15 @@
 - (BOOL)isEnabled { return [_impl isEnabled]; }
 - (void)setEnabled:(BOOL)enabled
 {
-    [_impl setEnabled:enabled];
+	if([_impl isKindOfClass:[AVAssetTrack class]])
+	{
+		// TODO: fix this
+		// Enabled state of AVAssetTrack is readonly
+	}
+	else
+	{
+		[_impl setEnabled:enabled];
+	}
 
     if (enabled) {
         [_movie trackEnabled:self];

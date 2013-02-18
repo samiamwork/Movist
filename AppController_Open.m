@@ -302,8 +302,7 @@
     // open movie
     NSError* error;
     MMovie* movie = [self movieFromURL:movieURL withMovieClass:movieClass error:&error];
-    if (!movie || ![movie setOpenGLContext:[_movieView openGLContext]
-                               pixelFormat:[_movieView pixelFormat] error:&error]) {
+    if (!movie) {
         [self closeMovie];
         if ([self isFullScreen]) {
             NSString* s = [movieURL isFileURL] ? [movieURL path] : [movieURL absoluteString];
