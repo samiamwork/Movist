@@ -516,7 +516,7 @@
 #else
     // sw-scaler should be used under GPL only!
     int ret = sws_scale(_scalerContext,
-                        _frame->data, _frame->linesize,
+                        (const uint8_t* const*)_frame->data, _frame->linesize,
                         0, [_movie encodedSize].height,
                         frame->data, frame->linesize);
     if (ret < 0) {
