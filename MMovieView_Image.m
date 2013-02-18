@@ -396,18 +396,4 @@
 	[self setFilterInput:@"filters.hue.inputAngle" value:hue min:MIN_HUE max:MAX_HUE];
 }
 
-- (void)setRemoveGreenBox:(BOOL)remove
-{
-    _removeGreenBoxSetting = remove;
-    [self updateRemoveGreenBox];
-}
-
-- (void)updateRemoveGreenBox
-{
-    // needs for QuickTime only.
-    _removeGreenBox = [self.movie isMemberOfClass:[MMovie_QuickTime class]] ?
-                                                _removeGreenBoxSetting : FALSE;
-    [self updateMovieRect:TRUE];
-}
-
 @end

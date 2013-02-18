@@ -67,8 +67,6 @@
     int _viewDragAction;
     int _captureFormat;
     BOOL _includeLetterBoxOnCapture;
-    BOOL _removeGreenBoxSetting;
-    BOOL _removeGreenBox;
 
     // capture
     NSImage* _captureImage;
@@ -130,8 +128,6 @@
 - (void)setSaturation:(float)saturation;
 - (void)setContrast:(float)contrast;
 - (void)setHue:(float)hue;
-- (void)setRemoveGreenBox:(BOOL)remove;
-- (void)updateRemoveGreenBox;
 
 @end
 

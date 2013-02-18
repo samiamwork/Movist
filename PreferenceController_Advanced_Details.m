@@ -455,8 +455,6 @@
                                        nil]],
        [BoolNode boolNodeWithName:LABEL(@"Include Letter Box on Capture")
                               key:MIncludeLetterBoxOnCaptureKey],
-       [BoolNode boolNodeWithName:LABEL(@"Remove Green Box")
-                              key:MRemoveGreenBoxKey],
        [BoolNode boolNodeWithName:LABEL(@"Use Fast Decoding")
                               key:MUseFastDecodingKey],
        [IntNode intNodeWithName:LABEL_R(@"Video Queue Capacity (8~99)")
@@ -552,9 +550,6 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
     }
     else if ([key isEqualToString:MIncludeLetterBoxOnCaptureKey]) {
         [[NSApp delegate] setIncludeLetterBoxOnCapture:[object boolValue]];
-    }
-    else if ([key isEqualToString:MRemoveGreenBoxKey]) {
-        [_movieView setRemoveGreenBox:[object boolValue]];
     }
     // subtitles
     else if ([key isEqualToString:MUseQuickTimeSubtitlesKey]) {

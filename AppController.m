@@ -348,7 +348,6 @@ NSString* videoCodecName(int codecId);
     // initial update preferences: advanced - details : video
     [_movieView setCaptureFormat:[_defaults integerForKey:MCaptureFormatKey]];
     [self setIncludeLetterBoxOnCapture:[_defaults boolForKey:MIncludeLetterBoxOnCaptureKey]];
-    [_movieView setRemoveGreenBox:[_defaults boolForKey:MRemoveGreenBoxKey]];
 
     // initial update preferences: advanced - details : subtitle
     [MMovie_QuickTime setUseQuickTimeSubtitles:[_defaults boolForKey:MUseQuickTimeSubtitlesKey]];

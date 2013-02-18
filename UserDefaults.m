@@ -112,7 +112,6 @@ NSString* MViewDragActionKey                = @"ViewDragAction";
 #pragma mark prefs: advanced - details: video
 NSString* MCaptureFormatKey                 = @"CaptureFormat";
 NSString* MIncludeLetterBoxOnCaptureKey     = @"IncludeLetterBoxOnCapture";
-NSString* MRemoveGreenBoxKey                = @"RemoveGreenBox";
 NSString* MUseFastDecodingKey               = @"UseFastDecoding";
 NSString* MVideoQueueCapacityKey            = @"VideoQueueCapacity";
 #pragma mark prefs: advanced - details: audio
@@ -226,7 +225,6 @@ NSString* MShowActualPathForLinkKey         = @"ShowActualPathForLink";
     // prefs: advanced - details: video
     [dict setObject:[NSNumber numberWithInt:CAPTURE_FORMAT_PNG] forKey:MCaptureFormatKey];
     [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MIncludeLetterBoxOnCaptureKey];
-    [dict setObject:[NSNumber numberWithBool:TRUE] forKey:MRemoveGreenBoxKey];
     [dict setObject:[NSNumber numberWithBool:FALSE] forKey:MUseFastDecodingKey];
     [dict setObject:[NSNumber numberWithInt:8] forKey:MVideoQueueCapacityKey];
     // prefs: advanced - details: audio
