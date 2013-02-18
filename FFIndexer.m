@@ -150,13 +150,9 @@ typedef struct {
     //TRACE(@"mov_end   = %lld", aviContext->movi_end);
     //TRACE(@"riff_end  = %lld", aviContext->riff_end);
     aviContext->fsize = fileSize;
-	// I'm not sure this actually does anything anymore since
-	//  there's no way to set the filesize
-    _formatContext->file_size = fileSize;
 
     aviContext = (AVIContext*)(_indexContext->priv_data);
     aviContext->fsize = fileSize;
-    _indexContext->file_size = fileSize;
     _indexContext->pb->eof_reached = 0;
 }
 
