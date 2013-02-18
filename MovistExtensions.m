@@ -697,17 +697,16 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
     if ([[path lastPathComponent] hasPrefix:@"."] || [path hasSuffix:@".app"]) {
         return FALSE;
     }
-    FSRef possibleInvisibleFile;
-    FSCatalogInfo catalogInfo;
-    if (noErr != FSPathMakeRef((const UInt8*)[path fileSystemRepresentation],
-                               &possibleInvisibleFile, nil)) {
-        return FALSE;
-    }
-    FSGetCatalogInfo(&possibleInvisibleFile, kFSCatInfoFinderInfo, 
-                     &catalogInfo, nil, nil, nil);
-    if (((FileInfo*)catalogInfo.finderInfo)->finderFlags & kIsInvisible) {
-        return FALSE;
-    }
+	NSURL* url = [NSURL fileURLWithPath:path];
+	NSNumber* isHidden;
+	if (![url getResourceValue:&isHidden forKey:NSURLIsHiddenKey error:nil])
+	{
+		return FALSE;
+	}
+	if ([isHidden boolValue])
+	{
+		return FALSE;
+	}
 	NSError* err = nil;
 	NSString* hiddenFile = [NSString stringWithContentsOfFile:@"/.hidden" encoding:NSUTF8StringEncoding error:&err];
     NSArray* dotHiddens = [hiddenFile componentsSeparatedByString:@"\n"];
