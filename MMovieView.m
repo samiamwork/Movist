@@ -27,6 +27,7 @@
 #import "MMovieLayer_FFMPEG.h"
 #import "MMovieLayer_AVFoundation.h"
 #import "MSubtitle.h"
+#import "RigidConstraintLayoutManager.h"
 
 #import "MMovieOSD.h"
 
@@ -72,7 +73,7 @@
 	CGColorRef orange = CGColorCreateGenericRGB(1.0, 0.5, 0.0, 1.0);
 	CGColorRef lightBlue = CGColorCreateGenericRGB(0.0, 0.5, 1.0, 1.0);
 	_rootLayer.backgroundColor = orange;
-	_rootLayer.layoutManager   = [CAConstraintLayoutManager layoutManager];
+	_rootLayer.layoutManager   = [RigidConstraintLayoutManager layoutManager];
 	_rootLayer.borderColor     = lightBlue;
 	CGColorRelease(lightBlue);
 	CGColorRelease(orange);
