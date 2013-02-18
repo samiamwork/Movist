@@ -664,18 +664,29 @@ NSString* const MFontItalicAttributeName = @"MFontItalicAttributeName";
 
 - (NSString*)pathContentOfAliasAtPath:(NSString*)path
 {
-    FSRef ref;
-    if (noErr == FSPathMakeRef((const UInt8*)[path UTF8String], &ref, 0)) {
-        Boolean targetIsFolder, wasAliased;
-        if (noErr == FSResolveAliasFile(&ref, TRUE, &targetIsFolder, &wasAliased) &&
-            wasAliased) {
-            UInt8 s[PATH_MAX + 1];
-            if (noErr == FSRefMakePath(&ref, s, PATH_MAX)) {
-                return [NSString stringWithUTF8String:(const char*)s];
-            }
-        }
-    }    
-    return nil;
+	NSError* error;
+	NSURL* pathURL = [NSURL fileURLWithPath:path];
+
+	NSData* bookmarkData = (NSData*)CFURLCreateBookmarkDataFromFile(kCFAllocatorDefault, (CFURLRef)pathURL, (CFErrorRef*)&error);
+	if(bookmarkData == nil)
+	{
+		// Probably not a bookmark
+		return nil;
+	}
+	Boolean isStale;
+	NSURL* resolvedURL = (NSURL*)CFURLCreateByResolvingBookmarkData(kCFAllocatorDefault, (CFDataRef)bookmarkData, 0, NULL, NULL, &isStale, (CFErrorRef*)&error);
+	[bookmarkData release];
+	if (resolvedURL == nil)
+	{
+		return nil;
+	}
+	else if (isStale)
+	{
+		[resolvedURL release];
+		return nil;
+	}
+
+	return [[resolvedURL autorelease] path];
 }
 
 - (BOOL)isVisibleFile:(NSString*)path isDirectory:(BOOL*)isDirectory
