@@ -136,7 +136,7 @@
     [panel setCanChooseFiles:TRUE];
     [panel setCanChooseDirectories:TRUE];
     [panel setAllowsMultipleSelection:TRUE];
-    if (NSOKButton == [panel runModalForTypes:nil]) {
+    if (NSOKButton == [panel runModal]) {
         int row = MAX(0, [[_tableView selectedRowIndexes] firstIndex]);
         [_playlist insertURLs:[panel URLs] atIndex:row];
         [self updateUI];
