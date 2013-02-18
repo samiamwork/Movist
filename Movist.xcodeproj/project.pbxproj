@@ -589,6 +589,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3E4EED4615C617B0000EBFF2 /* libbz2.dylib in Frameworks */,
+				3E4EED4415C617A6000EBFF2 /* libz.dylib in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				AF31CFE50B7EF99000676AC6 /* OpenGL.framework in Frameworks */,
 				AF31CFE60B7EF99000676AC6 /* QTKit.framework in Frameworks */,
@@ -672,6 +674,8 @@
 		29B97314FDCFA39411CA2CEA /* Movist */ = {
 			isa = PBXGroup;
 			children = (
+				3E4EED4515C617B0000EBFF2 /* libbz2.dylib */,
+				3E4EED4315C617A6000EBFF2 /* libz.dylib */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -1508,17 +1512,15 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/build/include";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/contrib/build/lib",
 				);
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = (
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libz.dylib",
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libbz2.dylib",
+				OTHER_CFLAGS = (
+					"-isystem",
+					"\"$(SRCROOT)/contrib/build/include\"",
 				);
 				PRODUCT_NAME = Movist;
 				SDKROOT = macosx10.6;
@@ -1544,16 +1546,15 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/contrib/build/include";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/contrib/build/lib",
 				);
-				OTHER_LDFLAGS = (
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libz.dylib",
-					"$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk/usr/lib/libbz2.dylib",
+				OTHER_CFLAGS = (
+					"-isystem",
+					"\"$(SRCROOT)/contrib/build/include\"",
 				);
 				PRODUCT_NAME = Movist;
 				SDKROOT = macosx10.6;
