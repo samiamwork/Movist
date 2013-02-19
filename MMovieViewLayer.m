@@ -14,12 +14,12 @@
 {
 	if ((self = [super init]))
 	{
-		CGColorRef orange = CGColorCreateGenericRGB(1.0, 0.5, 0.0, 1.0);
+		CGColorRef black = CGColorCreateGenericRGB(0.0, 0.0, 0.0, 1.0);
 		CGColorRef lightBlue = CGColorCreateGenericRGB(0.0, 0.5, 1.0, 1.0);
-		self.backgroundColor = orange;
+		self.backgroundColor = black;
 		self.borderColor     = lightBlue;
 		CGColorRelease(lightBlue);
-		CGColorRelease(orange);
+		CGColorRelease(black);
 	}
 
 	return self;
