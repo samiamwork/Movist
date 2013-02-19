@@ -23,6 +23,7 @@
 #import "MMovieView.h"
 #import "MMovie_QuickTime.h"
 #import "MMovieOSD.h"
+#import "MMovieViewLayer.h"
 #import "MSubtitle.h"
 #import "AppController.h"   // for NSApp's delegate
 

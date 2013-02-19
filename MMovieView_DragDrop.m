@@ -21,6 +21,7 @@
 //
 
 #import "MMovieView.h"
+#import "MMovieViewLayer.h"
 
 #import "AppController.h"   // for NSApp's delegate
 

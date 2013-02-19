@@ -27,6 +27,7 @@
 @class MMovie;
 @class MSubtitle;
 @class MMovieOSD;
+@class MMovieViewLayer;
 @protocol MMovieLayer;
 
 @interface MMovieView : NSView
@@ -38,9 +39,8 @@
     CGRect _movieRect;
     CGRect _imageRect;
 
-	CALayer<MMovieLayer>* _movieLayer;
-	CALayer*              _rootLayer;
-	CALayer*              _iconOSDLayer;
+	MMovieViewLayer* _rootLayer;
+	MMovie*          _movie;
 
     // subtitle
     MSubtitle* _subtitle[3];

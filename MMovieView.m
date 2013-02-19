@@ -27,7 +27,7 @@
 #import "MMovieLayer_FFMPEG.h"
 #import "MMovieLayer_AVFoundation.h"
 #import "MSubtitle.h"
-#import "RigidConstraintLayoutManager.h"
+#import "MMovieViewLayer.h"
 
 #import "MMovieOSD.h"
 
@@ -63,25 +63,21 @@
                name:NSViewFrameDidChangeNotification object:self];
 
 	// add layer
-	_rootLayer = [CALayer layer];
-	CGColorRef orange = CGColorCreateGenericRGB(1.0, 0.5, 0.0, 1.0);
-	CGColorRef lightBlue = CGColorCreateGenericRGB(0.0, 0.5, 1.0, 1.0);
-	_rootLayer.backgroundColor = orange;
-	_rootLayer.layoutManager   = [RigidConstraintLayoutManager layoutManager];
-	_rootLayer.borderColor     = lightBlue;
-	CGColorRelease(lightBlue);
-	CGColorRelease(orange);
+	_rootLayer = [MMovieViewLayer layer];
 	[self setLayer:_rootLayer];
 	[self setWantsLayer:YES];
 	[self initCoreImage];
 
-	_iconOSDLayer = [CALayer layer];
-	_iconOSDLayer.zPosition = 1.0;
-	[_iconOSDLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinY relativeTo:@"superlayer" attribute:kCAConstraintMinY offset:0.0]];
-	[_iconOSDLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMaxY relativeTo:@"superlayer" attribute:kCAConstraintMaxY offset:0.0]];
-	[_iconOSDLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinX relativeTo:@"superlayer" attribute:kCAConstraintMinX offset:0.0]];
-	[_iconOSDLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMaxX relativeTo:@"superlayer" attribute:kCAConstraintMaxX offset:0.0]];
-	[_rootLayer addSublayer:_iconOSDLayer];
+	CALayer* iconOSDLayer = [CALayer layer];
+	iconOSDLayer.zPosition = 1.0;
+	CGImageRef iconImageRef = [[NSImage imageNamed:@"Movist"] CGImageForProposedRect:NULL context:nil hints:nil];
+	iconOSDLayer.bounds = (CGRect){
+		.origin = CGPointZero,
+		.size = (CGSize){.width = CGImageGetWidth(iconImageRef), .height = CGImageGetHeight(iconImageRef)}
+	};
+	CGImageRelease(iconImageRef);
+	iconOSDLayer.contents = (id)iconImageRef;
+	_rootLayer.icon = iconOSDLayer;
 }
 
 - (void)dealloc
@@ -108,15 +104,15 @@
 // TODO: remove these. They're just here to ease the CoreAnimation conversion process
 - (NSOpenGLContext*)openGLContext
 {
-	if([_movieLayer isKindOfClass:[CAOpenGLLayer class]])
-		return [(NSOpenGLLayer*)_movieLayer openGLContext];
+	if([_rootLayer.movie isKindOfClass:[CAOpenGLLayer class]])
+		return [(NSOpenGLLayer*)_rootLayer.movie openGLContext];
 	return nil;
 }
 
 - (NSOpenGLPixelFormat*)pixelFormat
 {
-	if([_movieLayer isKindOfClass:[CAOpenGLLayer class]])
-		return [(NSOpenGLLayer*)_movieLayer openGLPixelFormat];
+	if([_rootLayer.movie isKindOfClass:[CAOpenGLLayer class]])
+		return [(NSOpenGLLayer*)_rootLayer.movie openGLPixelFormat];
 	return nil;
 }
 
@@ -124,7 +120,7 @@
 #pragma mark -
 #pragma mark movie
 
-- (MMovie*)movie { return [_movieLayer movie]; }
+- (MMovie*)movie { return _movie; }
 - (float)currentFps { return _currentFps; }
 
 - (void)setMovie:(MMovie*)movie
@@ -132,27 +128,20 @@
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
     [_drawLock lock];
 
-	[_movieLayer removeFromSuperlayer];
-	_movieLayer = nil;
-
+	CALayer<MMovieLayer>* movieLayer;
 	Class c = [movie class];
 	if(c == [MMovie_QuickTime class])
 	{
-		// use AVPlayerLayer
-		_movieLayer = [[MMovieLayer_AVFoundation alloc] init];
+		movieLayer = [MMovieLayer_AVFoundation layer];
 	}
 	else
 	{
-		_movieLayer = [[MMovieLayer_FFMPEG alloc] init];
+		movieLayer = [MMovieLayer_FFMPEG layer];
 	}
-	[_movieLayer setName:@"Movie"];
-	// TODO: preserve proper aspect ratio. Probably need to use our own layoutmanager
-	[_movieLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinY relativeTo:@"superlayer" attribute:kCAConstraintMinY offset:0.0]];
-	[_movieLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMaxY relativeTo:@"superlayer" attribute:kCAConstraintMaxY offset:0.0]];
-	[_movieLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMinX relativeTo:@"superlayer" attribute:kCAConstraintMinX offset:0.0]];
-	[_movieLayer addConstraint:[CAConstraint constraintWithAttribute:kCAConstraintMaxX relativeTo:@"superlayer" attribute:kCAConstraintMaxX offset:0.0]];
-	[_rootLayer addSublayer:[_movieLayer autorelease]];
-	[_movieLayer setMovie:movie];
+	_movie = movie;
+	[movieLayer setMovie:movie];
+	movieLayer.name = @"Movie";
+	_rootLayer.movie = movieLayer;
 
     [self removeAllSubtitles];
 	[self clearOSD];
@@ -184,7 +173,7 @@
             break;
         case NSCarriageReturnCharacter :    // return : toggle full-screen
         case NSEnterCharacter :             // enter (in keypad)
-            if ([_movieLayer movie]) {
+            if (_movie) {
                 [[NSApp delegate] fullScreenAction:self];
             }
             break;
@@ -195,7 +184,7 @@
             else if ([[NSApp delegate] isDesktopBackground]) {
                 [[NSApp delegate] desktopBackgroundAction:self];
             }
-            else if ([_movieLayer movie]) {
+            else if (_movie) {
                 [[NSApp delegate] closeMovie];
                 [self showLogo];
             }
@@ -223,7 +212,7 @@
         case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1 atIndex:0];   break;
         case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0 atIndex:0];   break;
 
-        case 'm' : case 'M' : [[NSApp delegate] setMuted:![[_movieLayer movie] muted]];          break;
+        case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];          break;
 
         case 'i' : case 'I' : [self saveCurrentImage:shiftPressed];                 break;
     }

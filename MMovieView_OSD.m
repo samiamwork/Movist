@@ -25,6 +25,7 @@
 #import "MMovie.h"
 #import "MMovieOSD.h"
 #import "AppController.h"   // for NSApp's delegate
+#import "MMovieViewLayer.h"
 
 @implementation MMovieView (OSD)
 
@@ -135,22 +136,12 @@
 
 - (void)showLogo
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
-
-    [_iconOSD setImage:[NSImage imageNamed:@"Movist"]];
-
-    [_drawLock unlock];
+	_rootLayer.icon.hidden = NO;
 }
 
 - (void)hideLogo
 {
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [_drawLock lock];
-
-    [_iconOSD setImage:nil];
-
-    [_drawLock unlock];
+	_rootLayer.icon.hidden = YES;
 }
 
 @end
