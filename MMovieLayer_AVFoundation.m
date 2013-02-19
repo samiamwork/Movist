@@ -11,6 +11,15 @@
 
 @implementation MMovieLayer_AVFoundation
 
+- (id)init
+{
+	if((self = [super init]))
+	{
+		self.videoGravity = AVLayerVideoGravityResize;
+	}
+	return self;
+}
+
 - (void)setMovie:(MMovie_QuickTime*)newMovie
 {
 	if(newMovie == _movie)
