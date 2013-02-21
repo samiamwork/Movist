@@ -90,7 +90,6 @@
 {
     [_mainWindow disableScreenUpdatesUntilFlush];
     [_mainWindow disableFlushWindow];
-    [_fullWindow orderOut:self];
 
     // move _movieView to _mainWindow from _fullWindow
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
