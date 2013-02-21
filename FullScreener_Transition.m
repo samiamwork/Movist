@@ -73,7 +73,6 @@
 
 - (void)attachMovieViewToFullWindow
 {
-    [_mainWindow disableScreenUpdatesUntilFlush];
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [_fullWindow setMovieView:_movieView];
 
@@ -88,9 +87,6 @@
 
 - (void)detachMovieViewFromFullWindow
 {
-    [_mainWindow disableScreenUpdatesUntilFlush];
-    [_mainWindow disableFlushWindow];
-
     // move _movieView to _mainWindow from _fullWindow
     [_movieView removeFromSuperviewWithoutNeedingDisplay];
     [[_mainWindow contentView] addSubview:_movieView];
@@ -100,8 +96,6 @@
     [_mainWindow makeFirstResponder:_movieView];
     [_mainWindow makeKeyAndOrderFront:nil];
     [_mainWindow setHasShadow:TRUE];
-    [_mainWindow enableFlushWindow];
-    [_mainWindow flushWindowIfNeeded];
 }
 
 - (void)beginFullScreenFromDesktopBackground
@@ -163,8 +157,6 @@
     [self attachMovieViewToFullWindow];
     [_fullWindow setFrame:[[_fullWindow screen] frame] display:TRUE];
     [_fullWindow addChildWindow:_mainWindow ordered:NSWindowBelow];
-    [_fullWindow flushWindow];
-    [_mainWindow flushWindow];
 
     [fader fadeIn:fadeDuration];
     [[_movieView movie] setRate:rate];
