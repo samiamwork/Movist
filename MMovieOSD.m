@@ -32,7 +32,6 @@
 - (void)renderString:(NSMutableAttributedString*)string inRect:(NSRect)rect;
 - (void)renderImage:(NSImage*)image inRect:(NSRect)rect;
 
-- (void)makeTexture:(CGLContextObj)glContext;
 - (void)updateDrawingRect;
 
 @end
@@ -84,8 +83,6 @@
     [_shadowColor release];
     [_shadow release];
     [_shadowNone release];
-
-    [self makeTexture:CGLGetCurrentContext()];  // delete texture
 
     [super dealloc];
 }
@@ -705,7 +702,7 @@ enum {  // for _updateMask
     }
     if (_updateMask & UPDATE_TEXTURE) {
         _updateMask &= ~UPDATE_TEXTURE;
-        [self makeTexture:CGLGetCurrentContext()];
+		// We're not using OpenGL for display anymore
     }
     if (_updateMask & UPDATE_DRAWING_RECT) {
         _updateMask &= ~UPDATE_DRAWING_RECT;
