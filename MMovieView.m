@@ -28,6 +28,7 @@
 #import "MMovieLayer_AVFoundation.h"
 #import "MSubtitle.h"
 #import "MMovieViewLayer.h"
+#import "MMovieOSDLayer.h"
 
 #import "MMovieOSD.h"
 
@@ -78,6 +79,10 @@
 	CGImageRelease(iconImageRef);
 	iconOSDLayer.contents = (id)iconImageRef;
 	_rootLayer.icon = iconOSDLayer;
+
+	MMovieOSDLayer* messageLayer = [MMovieOSDLayer layer];
+	messageLayer.hidden = YES;
+	_rootLayer.message = messageLayer;
 }
 
 - (void)dealloc

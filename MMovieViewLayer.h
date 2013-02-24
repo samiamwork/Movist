@@ -9,10 +9,12 @@
 #import <QuartzCore/QuartzCore.h>
 
 @protocol MMovieLayer;
+@class MMovieOSDLayer;
 
 @interface MMovieViewLayer : CALayer
 - (id)init;
 
 @property (readwrite,nonatomic,assign) CALayer<MMovieLayer>* movie;
 @property (readwrite,nonatomic,assign) CALayer* icon;
+@property (readwrite,nonatomic,assign) MMovieOSDLayer* message;
 @end

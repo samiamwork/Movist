@@ -24,6 +24,8 @@
 
 #import "MMovie.h"
 #import "MMovieOSD.h"
+#import "MMovieOSDLayer.h"
+#import "MMovieViewLayer.h"
 
 @implementation MMovieView (Message)
 
@@ -31,7 +33,9 @@
 {
     //TRACE(@"%s \"%@\"", __PRETTY_FUNCTION__, [s string]);
     [_messageOSD setString:s];
-    [self redisplay];
+	[_messageOSD drawOnScreen];
+	_rootLayer.message.hidden = NO;
+	[_rootLayer.message setTextImage:[_messageOSD texImage]];
 
     [self invalidateMessageHideTimer];
     _messageHideTimer = [NSTimer scheduledTimerWithTimeInterval:_messageHideInterval
@@ -79,8 +83,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _messageHideTimer = nil;
 
-    [_messageOSD setString:[[[NSAttributedString alloc] initWithString:@""] autorelease]];
-    [self redisplay];
+	_rootLayer.message.hidden = YES;
 }
 
 - (void)invalidateMessageHideTimer

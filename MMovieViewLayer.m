@@ -9,6 +9,7 @@
 #import "MMovieViewLayer.h"
 #import "MMovieLayer.h"
 #import "MMovie.h"
+#import "MMovieOSDLayer.h"
 
 @implementation MMovieViewLayer
 
@@ -43,6 +44,16 @@
 	[_icon removeFromSuperlayer];
 	[self addSublayer:newIcon];
 	_icon = newIcon;
+}
+
+- (void)setMessage:(MMovieOSDLayer*)newMessage
+{
+	if(newMessage == _message)
+		return;
+	[_message removeFromSuperlayer];
+	newMessage.zPosition = 1.0;
+	[self addSublayer:newMessage];
+	_message = newMessage;
 }
 
 - (void)layoutIcon
@@ -87,6 +98,10 @@
 	}
 }
 
+- (void)layoutMessage
+{
+}
+
 - (void)layoutSublayers
 {
 	[CATransaction begin];
@@ -94,6 +109,7 @@
 	{
 		[self layoutIcon];
 		[self layoutMovie];
+		[self layoutMessage];
 	}
 	[CATransaction commit];
 }

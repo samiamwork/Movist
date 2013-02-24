@@ -14,6 +14,7 @@
 		3E4EED4415C617A6000EBFF2 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4EED4315C617A6000EBFF2 /* libz.dylib */; };
 		3E4EED4615C617B0000EBFF2 /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4EED4515C617B0000EBFF2 /* libbz2.dylib */; };
 		3E4EED4815C617D3000EBFF2 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E4EED4715C617D3000EBFF2 /* CoreMedia.framework */; };
+		3E91B78C16D9AB2300CE72C1 /* MMovieOSDLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E91B78B16D9AB2300CE72C1 /* MMovieOSDLayer.m */; };
 		3E9FE3E214A565D400B5AEF1 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3DC14A565D300B5AEF1 /* libavcodec.a */; };
 		3E9FE3E314A565D400B5AEF1 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3DD14A565D300B5AEF1 /* libavformat.a */; };
 		3E9FE3E414A565D400B5AEF1 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3DE14A565D300B5AEF1 /* libavutil.a */; };
@@ -274,6 +275,8 @@
 		3E4EED4315C617A6000EBFF2 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		3E4EED4515C617B0000EBFF2 /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		3E4EED4715C617D3000EBFF2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		3E91B78A16D9AB2300CE72C1 /* MMovieOSDLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMovieOSDLayer.h; sourceTree = "<group>"; };
+		3E91B78B16D9AB2300CE72C1 /* MMovieOSDLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovieOSDLayer.m; sourceTree = "<group>"; };
 		3E9FE3DC14A565D300B5AEF1 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = contrib/build/lib/libavcodec.a; sourceTree = "<group>"; };
 		3E9FE3DD14A565D300B5AEF1 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = contrib/build/lib/libavformat.a; sourceTree = "<group>"; };
 		3E9FE3DE14A565D300B5AEF1 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = contrib/build/lib/libavutil.a; sourceTree = "<group>"; };
@@ -661,6 +664,8 @@
 				AFFA4D400B80B6FB0024700D /* MainWindow.m */,
 				AF03F1850BDE3E2D0066B086 /* MMovieOSD.h */,
 				AF03F1860BDE3E2D0066B086 /* MMovieOSD.m */,
+				3E91B78A16D9AB2300CE72C1 /* MMovieOSDLayer.h */,
+				3E91B78B16D9AB2300CE72C1 /* MMovieOSDLayer.m */,
 				3EDEB21816D3176C00CA8400 /* MMovieViewLayer.h */,
 				3EDEB21916D3176C00CA8400 /* MMovieViewLayer.m */,
 				AF31CEDB0B7EE42F00676AC6 /* MMovieView.h */,
@@ -1445,6 +1450,7 @@
 				3E4EED4215C61141000EBFF2 /* MMovieLayer_FFMPEG.m in Sources */,
 				3EDEB20716D2B84500CA8400 /* MMovieLayer_AVFoundation.m in Sources */,
 				3EDEB21A16D3176D00CA8400 /* MMovieViewLayer.m in Sources */,
+				3E91B78C16D9AB2300CE72C1 /* MMovieOSDLayer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
