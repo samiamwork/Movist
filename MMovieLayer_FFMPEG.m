@@ -50,6 +50,7 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 
 - (void)dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidMoveNotification object:self.view.window];
 	[self cleanupCoreVideo];
 	CVOpenGLTextureRelease(_image);
 	[_ciContext release];
