@@ -14,17 +14,6 @@
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp;
 @end
 
-static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
-                                          const CVTimeStamp* inNow,
-                                          const CVTimeStamp* inOutputTime,
-                                          CVOptionFlags flagsIn,
-                                          CVOptionFlags* flagsOut,
-                                          void* displayLinkContext)
-{
-    //TRACE(@"%s", __PRETTY_FUNCTION__);
-	return [(MMovieLayer_FFMPEG*)displayLinkContext updateImage:inOutputTime];
-}
-
 @implementation MMovieLayer_FFMPEG
 
 - (id)init
@@ -38,51 +27,17 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 		CGColorRelease(blue);
 		self.asynchronous = YES;
 		[self setNeedsDisplayOnBoundsChange:YES];
-		
-		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-		[nc addObserver:self selector:@selector(windowMoved:)
-				   name:NSWindowDidMoveNotification object:self.view.window];
-
-		//[self initCoreVideo];
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidMoveNotification object:self.view.window];
-	[self cleanupCoreVideo];
 	CVOpenGLTextureRelease(_image);
 	[_ciContext release];
 	[_movie release];
 
 	[super dealloc];
-}
-
-- (BOOL)initCoreVideo
-{
-	// TODO: not sure we can assume that the current display will be the main display on init
-    _displayID = CGMainDisplayID();
-    CVReturn cvRet = CVDisplayLinkCreateWithCGDisplay(_displayID, &_displayLink);
-    if (cvRet != kCVReturnSuccess) {
-        //TRACE(@"CVDisplayLinkCreateWithCGDisplay() failed: %d", cvRet);
-        return FALSE;
-    }
-    CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink,
-                                                      [[self openGLContext] CGLContextObj],
-                                                      [[self openGLPixelFormat] CGLPixelFormatObj]);
-    CVDisplayLinkSetOutputCallback(_displayLink, &displayLinkOutputCallback, self);
-    CVDisplayLinkStart(_displayLink);
-    return TRUE;
-}
-
-- (void)cleanupCoreVideo
-{
-	if (_displayLink)
-	{
-		CVDisplayLinkStop(_displayLink);
-		CVDisplayLinkRelease(_displayLink);
-	}
 }
 
 - (void)setMovie:(MMovie_FFmpeg*)newMovie
@@ -124,17 +79,6 @@ static CVReturn displayLinkOutputCallback(CVDisplayLinkRef displayLink,
 	NSNumber* screenNumber   = [deviceDesc objectForKey:@"NSScreenNumber"];
 
 	return (CGDirectDisplayID)[screenNumber intValue];
-}
-
-- (void)windowMoved:(NSNotification*)aNotification
-{
-	//TRACE(@"%s", __PRETTY_FUNCTION__);
-	CGDirectDisplayID displayID = [self currentDisplayID];
-	if (displayID != _displayID)
-	{
-		CVDisplayLinkSetCurrentCGDisplay(_displayLink, displayID);
-		_displayID = displayID;
-	}
 }
 
 - (void)configure

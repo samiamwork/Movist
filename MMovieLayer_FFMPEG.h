@@ -30,7 +30,6 @@
 	MMovie_FFmpeg*      _movie;
 	CVOpenGLTextureRef  _image;
 	CIContext*          _ciContext;
-	CVDisplayLinkRef    _displayLink;
 	CGDirectDisplayID   _displayID;
 //	NSRecursiveLock*    _drawLock;
 }
