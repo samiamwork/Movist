@@ -260,6 +260,8 @@ static BOOL _useQuickTimeSubtitles = FALSE;
         // override _duration & _startTime by QuickTime
 		CMTime t = [playerItem duration];
 		_duration = CMTimeGetSeconds(t);
+		// TODO: since "indexedDuration" also appears to stand for "loadedDuration" this isn't strictly correct
+		_indexedDuration = _duration;
         _startTime = 0;
 
 		if([_audioTracks count] > 0)
