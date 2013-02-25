@@ -50,10 +50,26 @@
 {
 	if(newMessage == _message)
 		return;
+	[_message removeObserver:self forKeyPath:@"horizontalPlacement"];
+	[_message removeObserver:self forKeyPath:@"verticalPlacement"];
 	[_message removeFromSuperlayer];
 	newMessage.zPosition = 1.0;
 	[self addSublayer:newMessage];
 	_message = newMessage;
+	[_message addObserver:self forKeyPath:@"horizontalPlacement" options:NSKeyValueObservingOptionNew context:NULL];
+	[_message addObserver:self forKeyPath:@"verticalPlacement" options:NSKeyValueObservingOptionNew context:NULL];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+	if(object == _message)
+	{
+		[self setNeedsLayout];
+	}
+	else
+	{
+		[super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+	}
 }
 
 - (void)layoutIcon
@@ -100,6 +116,26 @@
 
 - (void)layoutMessage
 {
+	CGPoint newPosition;
+	switch(_message.horizontalPlacement)
+	{
+		case OSD_HPOSITION_LEFT:   newPosition.x = 0.0; break;
+		case OSD_HPOSITION_CENTER: newPosition.x = self.bounds.size.width/2.0; break;
+		case OSD_HPOSITION_RIGHT:  newPosition.x = self.bounds.size.width; break;
+		default: break;
+	}
+
+	switch(_message.verticalPlacement)
+	{
+		case OSD_VPOSITION_LBOX:   // TODO: should be bottom of video (I think)
+		case OSD_VPOSITION_BOTTOM: newPosition.y = 0.0; break;
+		case OSD_VPOSITION_CENTER: newPosition.y = self.bounds.size.height/2.0; break;
+		case OSD_VPOSITION_UBOX:   // TODO: should be top of video (I think)
+		case OSD_VPOSITION_TOP:    newPosition.y = self.bounds.size.height; break;
+		default: break;
+	}
+
+	_message.position = newPosition;
 }
 
 - (void)layoutSublayers

@@ -13,4 +13,7 @@
 @interface MMovieOSDLayer : CALayer
 
 - (void)setTextImage:(NSImage*)newImage;
+
+@property (readwrite,assign,nonatomic) int horizontalPlacement;
+@property (readwrite,assign,nonatomic) int verticalPlacement;
 @end

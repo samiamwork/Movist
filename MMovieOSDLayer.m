@@ -7,6 +7,7 @@
 //
 
 #import "MMovieOSDLayer.h"
+#import "Movist.h"
 #import <Cocoa/Cocoa.h>
 
 @implementation MMovieOSDLayer
@@ -40,6 +41,54 @@
 		}
 		[CATransaction commit];
 	});
+}
+
+- (void)setVerticalPlacement:(int)newPlacement
+{
+	if(newPlacement == _verticalPlacement)
+		return;
+
+	_verticalPlacement = newPlacement;
+	[CATransaction begin];
+	[CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
+	{
+		// TODO: should probably be handled by MMovieViewLayer in layout
+		CGPoint newAnchorPoint = self.anchorPoint;
+		switch(_verticalPlacement)
+		{
+			case OSD_VPOSITION_BOTTOM:
+			case OSD_VPOSITION_LBOX:   newAnchorPoint.y = 0.0; break;
+			case OSD_VPOSITION_CENTER: newAnchorPoint.y = 0.5; break;
+			case OSD_VPOSITION_TOP:
+			case OSD_VPOSITION_UBOX:   newAnchorPoint.y = 1.0; break;
+			default: break;
+		}
+		self.anchorPoint = newAnchorPoint;
+	}
+	[CATransaction commit];
+}
+
+- (void)setHorizontalPlacement:(int)newPlacement
+{
+	if(newPlacement == _horizontalPlacement)
+		return;
+
+	_horizontalPlacement = newPlacement;
+	[CATransaction begin];
+	[CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
+	{
+		// TODO: should probably be handled by MMovieViewLayer in layout
+		CGPoint newAnchorPoint = self.anchorPoint;
+		switch(_horizontalPlacement)
+		{
+			case OSD_HPOSITION_LEFT:   newAnchorPoint.x = 0.0; break;
+			case OSD_HPOSITION_CENTER: newAnchorPoint.x = 0.5; break;
+			case OSD_HPOSITION_RIGHT:  newAnchorPoint.x = 1.0; break;
+			default: break;
+		}
+		self.anchorPoint = newAnchorPoint;
+	}
+	[CATransaction commit];
 }
 
 @end

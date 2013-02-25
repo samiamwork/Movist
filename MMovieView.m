@@ -82,6 +82,8 @@
 
 	MMovieOSDLayer* messageLayer = [MMovieOSDLayer layer];
 	messageLayer.hidden = YES;
+	messageLayer.horizontalPlacement = OSD_HPOSITION_LEFT;
+	messageLayer.verticalPlacement   = OSD_VPOSITION_TOP;
 	_rootLayer.message = messageLayer;
 }
 
