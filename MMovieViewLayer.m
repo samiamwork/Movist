@@ -46,18 +46,23 @@
 	_icon = newIcon;
 }
 
+- (void)replaceOldOSD:(MMovieOSDLayer*)oldOSD withNew:(MMovieOSDLayer*)newOSD
+{
+	[oldOSD removeObserver:self forKeyPath:@"horizontalPlacement"];
+	[oldOSD removeObserver:self forKeyPath:@"verticalPlacement"];
+	[oldOSD removeFromSuperlayer];
+	newOSD.zPosition = 1.0;
+	[self addSublayer:newOSD];
+	[newOSD addObserver:self forKeyPath:@"horizontalPlacement" options:NSKeyValueObservingOptionNew context:NULL];
+	[newOSD addObserver:self forKeyPath:@"verticalPlacement" options:NSKeyValueObservingOptionNew context:NULL];
+}
+
 - (void)setMessage:(MMovieOSDLayer*)newMessage
 {
 	if(newMessage == _message)
 		return;
-	[_message removeObserver:self forKeyPath:@"horizontalPlacement"];
-	[_message removeObserver:self forKeyPath:@"verticalPlacement"];
-	[_message removeFromSuperlayer];
-	newMessage.zPosition = 1.0;
-	[self addSublayer:newMessage];
+	[self replaceOldOSD:_message withNew:newMessage];
 	_message = newMessage;
-	[_message addObserver:self forKeyPath:@"horizontalPlacement" options:NSKeyValueObservingOptionNew context:NULL];
-	[_message addObserver:self forKeyPath:@"verticalPlacement" options:NSKeyValueObservingOptionNew context:NULL];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
