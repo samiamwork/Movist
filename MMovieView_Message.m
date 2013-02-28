@@ -112,9 +112,13 @@
     if (error) {
         NSString* s = [NSString stringWithFormat:@"%@\n\n%@", error, info];
         [_errorOSD setString:[[[NSAttributedString alloc] initWithString:s] autorelease]];
+		[_errorOSD drawOnScreen];
+		_rootLayer.error.hidden = NO;
+		[_rootLayer.error setTextImage:[_errorOSD texImage]];
     }
     else {
         [_errorOSD clearContent];
+		_rootLayer.error.hidden = YES;
     }
     [self redisplay];
 }
