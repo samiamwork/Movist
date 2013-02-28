@@ -65,6 +65,14 @@
 	_message = newMessage;
 }
 
+- (void)setError:(MMovieOSDLayer*)newError
+{
+	if(newError == _error)
+		return;
+	[self replaceOldOSD:_error withNew:newError];
+	_error = newError;
+}
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
 	if(object == _message)

@@ -85,6 +85,12 @@
 	messageLayer.horizontalPlacement = OSD_HPOSITION_LEFT;
 	messageLayer.verticalPlacement   = OSD_VPOSITION_TOP;
 	_rootLayer.message = messageLayer;
+
+	MMovieOSDLayer* errorLayer = [MMovieOSDLayer layer];
+	errorLayer.hidden = YES;
+	errorLayer.horizontalPlacement = OSD_HPOSITION_CENTER;
+	errorLayer.verticalPlacement   = OSD_HPOSITION_CENTER;
+	_rootLayer.error = errorLayer;
 }
 
 - (void)dealloc

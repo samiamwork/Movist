@@ -17,4 +17,5 @@
 @property (readwrite,nonatomic,assign) CALayer<MMovieLayer>* movie;
 @property (readwrite,nonatomic,assign) CALayer* icon;
 @property (readwrite,nonatomic,assign) MMovieOSDLayer* message;
+@property (readwrite,nonatomic,assign) MMovieOSDLayer* error;
 @end
