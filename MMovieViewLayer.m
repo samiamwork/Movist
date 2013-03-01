@@ -107,6 +107,8 @@
 		return;
 	}
 
+	// TODO: to match the old way, the y-offset should be at least the height of
+	//       one (to three) line(s) of the first subtitle that's in the letterbox.
 	CGFloat movieAspectRatio = movieSize.width/movieSize.height;
 	CGFloat boundsAspectRation = self.bounds.size.width/self.bounds.size.height;
 	if(movieAspectRatio > boundsAspectRation)
@@ -138,13 +140,14 @@
 		default: break;
 	}
 
+	// Assumes that the movie layer has been layed-out already
 	switch(_message.verticalPlacement)
 	{
-		case OSD_VPOSITION_LBOX:   // TODO: should be bottom of video (I think)
-		case OSD_VPOSITION_BOTTOM: newPosition.y = 0.0; break;
+		case OSD_VPOSITION_LBOX:   newPosition.y = 0.0; break;
+		case OSD_VPOSITION_BOTTOM: newPosition.y = _movie.frame.origin.y; break;
 		case OSD_VPOSITION_CENTER: newPosition.y = self.bounds.size.height/2.0; break;
-		case OSD_VPOSITION_UBOX:   // TODO: should be top of video (I think)
-		case OSD_VPOSITION_TOP:    newPosition.y = self.bounds.size.height; break;
+		case OSD_VPOSITION_UBOX:   newPosition.y = self.bounds.size.height; break;
+		case OSD_VPOSITION_TOP:    newPosition.y = CGRectGetMaxY(_movie.frame); break;
 		default: break;
 	}
 
