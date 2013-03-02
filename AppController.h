@@ -360,7 +360,6 @@
 - (void)setSubtitleVMargin:(float)vMargin atIndex:(int)index;
 - (void)changeSubtitleVMargin:(int)tag atIndex:(int)index;
 - (void)setSubtitleLineSpacing:(float)spacing atIndex:(int)index;
-- (void)setSubtitleSync:(float)sync atIndex:(int)index;
 - (void)changeSubtitleSync:(int)tag atIndex:(int)index;
 
 - (void)setLetterBoxHeight:(int)height;

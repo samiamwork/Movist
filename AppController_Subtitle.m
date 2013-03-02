@@ -286,19 +286,6 @@
                             index + 1, NSLocalizedString(@"Line Spacing", nil), spacing]];
 }
 
-- (void)setSubtitleSync:(float)sync atIndex:(int)index
-{
-    assert(0 <= index);
-    SubtitleAttributes attrs;
-    attrs.sync = sync;
-    attrs.mask = SUBTITLE_ATTRIBUTE_SYNC;
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
-    
-    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f %@",
-                            index + 1, NSLocalizedString(@"Sync", nil), sync,
-                            NSLocalizedString(@"sec.", nil)]];
-}
-
 - (float)_changeSubtitleSync:(int)tag atIndex:(int)index
 {
     SubtitleAttributes attrs;
