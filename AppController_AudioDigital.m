@@ -170,6 +170,7 @@ static BOOL audioDeviceSupportsDigital(AudioStreamID* streamID)
 	err = AudioObjectGetPropertyData(audioDev, &propertyAddress, 0, NULL, &paramSize, psz_name);
     if (err != noErr) {
         TRACE(@"could not get default audio device name: [%4.4s]\n", (char *)&err);
+		free(psz_name);
         return FALSE;
     }
     
