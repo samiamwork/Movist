@@ -163,7 +163,8 @@
         _frame[i] = avcodec_alloc_frame();
         if (_frame[i] == 0) {
             TRACE(@"ERROR_FFMPEG_FRAME_ALLOCATE_FAILED");
-            return FALSE;
+			[self release];
+            return nil;
         }
         avpicture_fill((AVPicture*)_frame[i], malloc(bufSize),
                        RGB_PIXEL_FORMAT, bufWidth, height);
@@ -172,8 +173,10 @@
                                            _frame[i]->data[0], _frame[i]->linesize[0],
                                            0, 0, 0, &_pixelBuffer[i]);
         if (ret != kCVReturnSuccess) {
+			// TODO: clean up our mess
             TRACE(@"kCVPixelBufferCreateWithBytes() failed : %d", ret);
-            return FALSE;
+			[self release];
+            return nil;
         }
     }
     _mutex = [[NSRecursiveLock alloc] init];
