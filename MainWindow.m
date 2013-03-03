@@ -379,7 +379,7 @@
     NSSize screenSize = [[self screen] visibleFrame].size;
     if (screenSize.width / screenSize.height < size.width / size.height) {
         // window is wider than screen => fit to window width
-        NSRect rect;
+        NSRect rect = self.frame;
         rect.size.width = screenSize.width;
         size.width = [self contentRectForFrameRect:rect].size.width;
         size.width -= _movieViewMarginSize.width;
@@ -387,7 +387,7 @@
     }
     else {
         // screen is wider than window => fit to window height
-        NSRect rect;
+        NSRect rect = self.frame;
         rect.size.height = screenSize.height;
         size.height = [self contentRectForFrameRect:rect].size.height;
         size.height -= _movieViewMarginSize.height;
