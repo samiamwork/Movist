@@ -33,9 +33,6 @@
 {
     NSRect bounds = [self bounds];
     int i;
-    NSColor* subtitleMessageTextColor, *subtitleMessageStrokeColor;
-    subtitleMessageTextColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:0.5];
-    subtitleMessageStrokeColor = [NSColor colorWithCalibratedRed:1 green:1 blue:1 alpha:0.5];
     for (i = 0; i < 3; i++) {
         _subtitleOSD[i] = [[MMovieOSD alloc] init];
         [_subtitleOSD[i] initTextRendering];
