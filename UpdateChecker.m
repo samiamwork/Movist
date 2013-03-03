@@ -63,7 +63,8 @@ NSString* const kMovistUpdateErrorDomain = @"MovistUpdateErrorDomain";
                                          options:NSMappedRead | NSUncachedRead
                                            error:error];
     if (!data || [data length] == 0) {
-		*error = [NSError errorWithDomain:kMovistUpdateErrorDomain code:1 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"No response received from update server", @"No response received from update server"), NSLocalizedDescriptionKey, nil]];
+		if(error != NULL)
+			*error = [NSError errorWithDomain:kMovistUpdateErrorDomain code:1 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"No response received from update server", @"No response received from update server"), NSLocalizedDescriptionKey, nil]];
         return UPDATE_CHECK_FAILED;
     }
 
@@ -75,7 +76,8 @@ NSString* const kMovistUpdateErrorDomain = @"MovistUpdateErrorDomain";
 	[string release];
 	if(parts == nil || [parts count] != 2)
 	{
-		*error = [NSError errorWithDomain:kMovistUpdateErrorDomain code:1 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Could not understand update server response", @"Could not understand update server response"), NSLocalizedDescriptionKey, nil]];
+		if(error != NULL)
+			*error = [NSError errorWithDomain:kMovistUpdateErrorDomain code:1 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:NSLocalizedString(@"Could not understand update server response", @"Could not understand update server response"), NSLocalizedDescriptionKey, nil]];
 		return UPDATE_CHECK_FAILED;
 	}
 	NSString* versionString = [parts objectAtIndex:0];
