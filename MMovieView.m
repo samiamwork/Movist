@@ -76,7 +76,6 @@
 		.origin = CGPointZero,
 		.size = (CGSize){.width = CGImageGetWidth(iconImageRef), .height = CGImageGetHeight(iconImageRef)}
 	};
-	CGImageRelease(iconImageRef);
 	iconOSDLayer.contents = (id)iconImageRef;
 	_rootLayer.icon = iconOSDLayer;
 
