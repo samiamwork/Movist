@@ -175,8 +175,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 
 - (BOOL)initAudioUnit
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    
     if (_stream->codec->sample_fmt != SAMPLE_FMT_S16) {
         TRACE(@"audio sample format is not signed short\n");
         return false;
@@ -268,7 +266,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 
 - (BOOL)initAnalogAudio:(int*)errorCode
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     // create audio unit
     if (![self initAudioUnit]) {
         *errorCode = ERROR_FFMPEG_AUDIO_UNIT_CREATE_FAILED;
@@ -291,7 +288,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 
 - (void)cleanupAnalogAudio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_audioUnit) {
         //[self stopAudio];
         while (AudioUnitUninitialize(_audioUnit) != 0) {
@@ -320,7 +316,6 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
 
 - (void)stopAnalogAudio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     while (AudioOutputUnitStop(_audioUnit) != 0) {
         //assert(FALSE);
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];

@@ -54,7 +54,6 @@ static int AudioStreamChangeFormat(AudioStreamID i_stream_id, AudioStreamBasicDe
 
 - (id)initWithCapacity:(unsigned int)capacity
 {
-    TRACE(@"%s %d", __PRETTY_FUNCTION__, capacity);
     self = [super init];
     if (self) {
         _capacity = capacity;
@@ -71,7 +70,6 @@ static int AudioStreamChangeFormat(AudioStreamID i_stream_id, AudioStreamBasicDe
 
 - (void)dealloc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     free(_data);
     free(_time);
     [_mutex release];
@@ -200,7 +198,6 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
 		kAudioObjectPropertyElementMaster
 	};
 	OSStatus err = AudioObjectGetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, NULL, &paramSize, &audioDev);
-    TRACE(@"%s device id=%u", __PRETTY_FUNCTION__, audioDev);
     if (err != noErr) {
         TRACE(@"failed to get device id : [%4.4s]\n", (char *)&err);
         assert(FALSE);
@@ -252,7 +249,6 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
 
 - (BOOL)initDigitalAudio:(int*)error
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     OSStatus err = noErr;
     UInt32 paramSize = sizeof(AudioDeviceID);
     if (s_audioDeviceId) {
@@ -317,7 +313,6 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
             if (format[j].mFormatID == 'IAC3' ||
                 format[j].mFormatID == kAudioFormat60958AC3) {
                 if ((int)(format[j].mSampleRate) == _stream->codec->sample_rate) {
-                    TRACE(@"%s %d", __PRETTY_FUNCTION__, _stream->codec->sample_rate);
                     desc = format[j];
                     break;
                 }
@@ -364,8 +359,6 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
 
 - (void)cleanupDigitalAudio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
-    
     /* Remove IOProc callback */
 	OSStatus err = AudioDeviceDestroyIOProcID(_audioDev, s_theIOProcID);
     if (err != noErr) {
@@ -394,7 +387,6 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
 
 - (void)startDigitalAudio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (noErr !=  AudioDeviceStart(_audioDev, s_theIOProcID)) {
         TRACE(@"AudioDeviceStart failed");
         assert(FALSE);
@@ -404,7 +396,6 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
 
 - (void)stopDigitalAudio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (noErr != AudioDeviceStop(_audioDev, s_theIOProcID)) {
         //_started = FALSE;
         TRACE(@"AudioDeviceStop failed");

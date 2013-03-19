@@ -145,7 +145,6 @@ typedef struct {
         return;
     }
     _finished = FALSE;
-    TRACE(@"file size = %lld", fileSize);
 
     //TRACE(@"mov_end   = %lld", aviContext->movi_end);
     //TRACE(@"riff_end  = %lld", aviContext->riff_end);
@@ -158,7 +157,6 @@ typedef struct {
 
 - (void)indexingThreadFunc:(id)anObject
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);    
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
     const char* path = [[[_movie url] path] UTF8String];
@@ -194,7 +192,6 @@ typedef struct {
     [pool release];
     _running = FALSE;
 
-    TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 
 @end

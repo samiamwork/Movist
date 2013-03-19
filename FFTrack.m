@@ -135,7 +135,6 @@ AVPacket s_flushPacket;
 
 - (void)cleanupTrack
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     // -[quit] should be sent before sending -[cleanupTrack].
     assert(!_running);
     [self cleanupContext];

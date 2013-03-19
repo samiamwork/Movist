@@ -53,7 +53,6 @@
 
 - (void)cleanupTrack
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     assert(!_running);
 
 	av_free(_decodedFrame);
@@ -75,7 +74,6 @@
 
 - (void)startAudio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     _running = TRUE;
     int error;
     if (_passThrough) {
@@ -100,7 +98,6 @@
 
 - (void)stopAudio
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (!_running) {
         return;
     }

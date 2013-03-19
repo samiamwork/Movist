@@ -30,7 +30,6 @@ NSString* const kMovistUpdateErrorDomain = @"MovistUpdateErrorDomain";
 
 - (id)init
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super init]) {
         NSDictionary* infoDict = [[NSBundle mainBundle] infoDictionary];
         CURRENT_VERSION = [[infoDict objectForKey:@"CFBundleVersion"] retain];

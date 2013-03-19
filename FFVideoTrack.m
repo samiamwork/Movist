@@ -377,7 +377,6 @@
 
 - (void)cleanupTrack
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     assert(!_running);
 #	if MOVIST_USE_SWSCALE
     if (_scalerContext) {
@@ -564,7 +563,6 @@
 #ifndef _EXPERIMENTAL_AV_SYNC
 - (void)decodeThreadFunc:(id)anObject
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     /*
     TRACE(@"cur thread priority %f", [NSThread threadPriority]);
     [NSThread setThreadPriority:0.9];
@@ -597,7 +595,6 @@
     }
     _running = FALSE;
 
-    TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 #endif
 
