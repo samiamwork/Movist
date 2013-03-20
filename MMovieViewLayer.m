@@ -23,6 +23,15 @@
 		self.borderColor     = lightBlue;
 		CGColorRelease(lightBlue);
 		CGColorRelease(black);
+
+		_subtitle = [MMovieOSDLayer layer];
+		_subtitle.name                 = @"subtitle";
+		_subtitle.hidden               = NO;
+		_subtitle.zPosition            = 1.0;
+		_subtitle.horizontalPlacement  = OSD_HPOSITION_CENTER;
+		_subtitle.verticalPlacement    = OSD_VPOSITION_LBOX;
+
+		[self replaceOldOSD:nil withNew:self.subtitle];
 	}
 
 	return self;
@@ -71,6 +80,20 @@
 		return;
 	[self replaceOldOSD:_error withNew:newError];
 	_error = newError;
+}
+
+
+- (void)setSubtitleEnabled:(BOOL)isEnabled
+{
+	if(_subtitleEnabled == isEnabled)
+		return;
+
+	[CATransaction begin];
+	[CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
+	{
+		self.subtitle.hidden = !isEnabled;
+	}
+	[CATransaction commit];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -162,6 +185,7 @@
 		[self layoutIcon];
 		[self layoutMovie];
 		[self layoutOSD:_message];
+		[self layoutOSD:_subtitle];
 	}
 	[CATransaction commit];
 }

@@ -18,4 +18,6 @@
 @property (readwrite,nonatomic,assign) CALayer* icon;
 @property (readwrite,nonatomic,assign) MMovieOSDLayer* message;
 @property (readwrite,nonatomic,assign) MMovieOSDLayer* error;
+@property (readonly,nonatomic,assign)  MMovieOSDLayer* subtitle;
+@property (readwrite,assign,nonatomic) BOOL subtitleEnabled;
 @end
