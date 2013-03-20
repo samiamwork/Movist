@@ -129,10 +129,10 @@
 	}
 }
 
-- (void)layoutMessage
+- (void)layoutOSD:(MMovieOSDLayer*)osd
 {
-	CGPoint newPosition;
-	switch(_message.horizontalPlacement)
+	CGPoint newPosition = CGPointZero;
+	switch(osd.horizontalPlacement)
 	{
 		case OSD_HPOSITION_LEFT:   newPosition.x = 0.0; break;
 		case OSD_HPOSITION_CENTER: newPosition.x = self.bounds.size.width/2.0; break;
@@ -141,7 +141,7 @@
 	}
 
 	// Assumes that the movie layer has been layed-out already
-	switch(_message.verticalPlacement)
+	switch(osd.verticalPlacement)
 	{
 		case OSD_VPOSITION_LBOX:   newPosition.y = 0.0; break;
 		case OSD_VPOSITION_BOTTOM: newPosition.y = _movie.frame.origin.y; break;
@@ -151,7 +151,7 @@
 		default: break;
 	}
 
-	_message.position = newPosition;
+	osd.position = newPosition;
 }
 
 - (void)layoutSublayers
@@ -161,7 +161,7 @@
 	{
 		[self layoutIcon];
 		[self layoutMovie];
-		[self layoutMessage];
+		[self layoutOSD:_message];
 	}
 	[CATransaction commit];
 }
