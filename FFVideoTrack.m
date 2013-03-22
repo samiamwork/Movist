@@ -640,10 +640,8 @@
     //NSDate* begin = [NSDate date];
 #define _DROP_FRAME_DISPLAY
 #if defined(_DROP_FRAME_DISPLAY)
-    int i = 0;
     CVPixelBufferRef pixelBuffer;
     do {
-        i++;
         pixelBuffer = [_imageQueue pixelBuffer];
         *currentTime = [_imageQueue time];
         [_imageQueue dequeue];
