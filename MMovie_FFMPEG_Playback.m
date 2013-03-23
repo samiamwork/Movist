@@ -33,7 +33,6 @@
 
 - (BOOL)initPlayback:(int*)errorCode
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     _quitRequested = FALSE;
     _fileEnded = FALSE;
     _movieEndNotificationPosted = FALSE;
@@ -61,14 +60,12 @@
 
 - (void)cleanupPlayback
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     // quit and wait for play-thread is finished
     // awake if waiting for command
     [_commandLock lock];
     _reservedCommand = COMMAND_NONE;
     [_commandLock unlockWithCondition:DISPATCHING_COMMAND];
 
-    TRACE(@"%s waiting for finished...", __PRETTY_FUNCTION__);
     while ([self isRunning]) {
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.01]];
     }
@@ -81,7 +78,6 @@
     while (track = [enumerator nextObject]) {
         [(FFAudioTrack*)[track impl] quit];
     }
-    TRACE(@"%s waiting done.", __PRETTY_FUNCTION__);
 
     [_frameReadMutex release];
     //[_avSyncMutex release];
@@ -272,7 +268,6 @@
 - (void)seekFunc
 {
     _seekTime = _reservedSeekTime;
-    TRACE(@"%s seek to %g", __PRETTY_FUNCTION__, _seekTime);
     if (_indexedDuration < _duration &&
         _indexedDuration < _seekTime) {
         TRACE(@"not indexed time => repositioning to indexed-duration");
@@ -320,12 +315,10 @@
         [self setRate:_rate];
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.03]];
     }
-    TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 
 - (void)playFunc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     //_hostTime = 0;
     _playAfterSeek = TRUE;
     _dispatchPacket = TRUE;
@@ -350,12 +343,10 @@
     if (!_quitRequested) {
         [self waitForVideoQueueEmpty:_mainVideoTrack];
     }
-    TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 
 - (void)pauseFunc
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     _dispatchPacket = FALSE;
     _playAfterSeek = FALSE;
     _dispatchNextImage = FALSE;
@@ -370,7 +361,6 @@
 
 - (void)setRate:(float)rate
 {
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, rate);
     if (rate == 0.0) {
         [self reserveCommand:COMMAND_PAUSE];
     }
@@ -382,26 +372,22 @@
 
 - (void)stepBackward
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     [self reserveCommand:COMMAND_STEP_BACKWARD];
 }
 
 - (void)stepForward
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     [self reserveCommand:COMMAND_STEP_FORWARD];
 }
 
 - (void)gotoBeginning
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     _reservedSeekTime = 0;
     [self reserveCommand:COMMAND_SEEK];
 }
 
 - (void)gotoEnd
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     _reservedSeekTime = [self duration];
     [self reserveCommand:COMMAND_SEEK];
 }
@@ -422,7 +408,6 @@
 
 - (void)seekByTime:(float)dt
 {    
-    TRACE(@"%s %g", __PRETTY_FUNCTION__, dt);
     float time = _lastDecodedTime + dt;
     if (time < 0) {
         time = 0;
@@ -437,7 +422,6 @@
 
 - (void)playThreadFunc:(id)anObject
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     NSAutoreleasePool* pool;
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     int prevCommand = COMMAND_NONE;
@@ -490,7 +474,6 @@
     }
     _running = FALSE;
 
-    TRACE(@"%s finished", __PRETTY_FUNCTION__);
 }
 
 
