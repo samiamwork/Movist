@@ -607,9 +607,10 @@
     }
     double current = hostTime - *hostTime0point;
     double imageTime = [_imageQueue time];
-    if (imageTime + 0.5 < current || current + 0.5 < imageTime) {
+    if (hostTime < 0.0 || imageTime + 0.5 < current || current + 0.5 < imageTime) {
         TRACE(@"reset av sync %f %f", current, imageTime);
-        *hostTime0point = hostTime - imageTime;
+		if(hostTime >= 0.0)
+			*hostTime0point = hostTime - imageTime;
         current = imageTime;
     }
     if (current < imageTime) {

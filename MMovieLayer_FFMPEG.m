@@ -25,7 +25,7 @@
 		CGColorRef blue = CGColorCreateGenericRGB(0.0, 0.5, 1.0, 1.0);
 		self.backgroundColor = blue;
 		CGColorRelease(blue);
-		self.asynchronous = YES;
+		self.asynchronous = NO;
 		[self setNeedsDisplayOnBoundsChange:YES];
 	}
 	return self;
@@ -35,7 +35,7 @@
 {
 	CVOpenGLTextureRelease(_image);
 	[_ciContext release];
-	[_movie release];
+	[self setMovie:nil];
 
 	[super dealloc];
 }
@@ -45,14 +45,56 @@
 	if(newMovie == _movie)
 		return;
 	
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:MMovieCurrentTimeNotification object:_movie];
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:MMovieRateChangeNotification object:_movie];
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
 	[_movie release];
 	_movie = [newMovie retain];
+	if(_movie != nil)
+	{
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(currentTimeChanged:) name:MMovieCurrentTimeNotification object:_movie];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackRateChanged:) name:MMovieRateChangeNotification object:_movie];
+	}
+	if([_movie rate] > 0.0)
+	{
+		self.asynchronous = YES;
+	}
+	else
+	{
+		self.asynchronous = NO;
+	}
 	_movieNeedsGLContext = YES;
 }
 
 - (MMovie*)movie
 {
 	return _movie;
+}
+
+- (void)playbackRateChanged:(NSNotification*)theNotification
+{
+	if([_movie rate] == 0.0)
+	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			self.asynchronous = NO;
+		});
+	}
+	else
+	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			self.asynchronous = YES;
+		});
+	}
+}
+
+- (void)currentTimeChanged:(NSNotification*)theNotification
+{
+	if([_movie rate] == 0.0)
+	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setNeedsDisplay];
+		});
+	}
 }
 
 - (void)reshape
@@ -103,8 +145,6 @@
 
 - (CVReturn)updateImage:(const CVTimeStamp*)timeStamp
 {
-	if(timeStamp == NULL)
-		return kCVReturnSuccess;
 //	if([_drawLock tryLock])
 	{
 		CVOpenGLTextureRef image = [_movie nextImage:timeStamp];

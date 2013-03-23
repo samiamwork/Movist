@@ -102,6 +102,7 @@
     if (videoTrack == _mainVideoTrack) {
         if (_command == COMMAND_SEEK) {
             _seekComplete = TRUE;
+			[[NSNotificationCenter defaultCenter] postNotificationName:MMovieCurrentTimeNotification object:self];
         }
         _lastDecodedTime = time;
     }
@@ -482,14 +483,17 @@
 
 - (CVOpenGLTextureRef)nextImage:(const CVTimeStamp*)timeStamp
 {
-    double hostTime = (double)timeStamp->hostTime / _hostTimeFreq;
+	double hostTime = -1.0;
+	if(timeStamp != NULL)
+		hostTime = (double)timeStamp->hostTime / _hostTimeFreq;
     [_trackMutex lock];
     if (!_mainVideoTrack) {
         [_trackMutex unlock];
         return 0;
     }
     if (!_dispatchNextImage) {
-        _hostTime0point = hostTime - _currentTime;
+		if (timeStamp != NULL)
+			_hostTime0point = hostTime - _currentTime;
         [_trackMutex unlock];
         return 0;
     }
