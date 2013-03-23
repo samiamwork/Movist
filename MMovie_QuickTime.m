@@ -310,6 +310,7 @@ static BOOL _useQuickTimeSubtitles = FALSE;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+	[_avPlayer removeTimeObserver:_playbackPeriodicObserver];
     [_avPlayer release];
 	_avPlayer = nil;
     [self cleanupA52Codec];
