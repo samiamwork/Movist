@@ -24,6 +24,7 @@
 
 #import "MMovie.h"
 #import "MMovie_QuickTime.h"
+#import "MMovie_FFMPEG.h"
 #import "MMovieLayer_FFMPEG.h"
 #import "MMovieLayer_AVFoundation.h"
 #import "MSubtitle.h"
@@ -140,13 +141,13 @@
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
     [_drawLock lock];
 
-	CALayer<MMovieLayer>* movieLayer;
+	CALayer<MMovieLayer>* movieLayer = nil;
 	Class c = [movie class];
 	if(c == [MMovie_QuickTime class])
 	{
 		movieLayer = [MMovieLayer_AVFoundation layer];
 	}
-	else
+	else if(c == [MMovie_FFmpeg class])
 	{
 		movieLayer = [MMovieLayer_FFMPEG layer];
 	}
