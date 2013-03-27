@@ -639,8 +639,6 @@
 	}
 
     //NSDate* begin = [NSDate date];
-#define _DROP_FRAME_DISPLAY
-#if defined(_DROP_FRAME_DISPLAY)
     CVPixelBufferRef pixelBuffer;
     do {
         pixelBuffer = [_imageQueue pixelBuffer];
@@ -655,20 +653,6 @@
         TRACE(@"CVOpenGLTextureCacheCreateTextureFromImage() failed : %d", ret);
     }
     CVOpenGLTextureCacheFlush(_textureCache, 0);
-#else
-    *currentTime = [_imageQueue time];
-
-    CVOpenGLTextureRef texture;
-    int ret = CVOpenGLTextureCacheCreateTextureFromImage(0, _textureCache,
-                                                         [_imageQueue pixelBuffer],
-                                                         0, &texture);
-    if (ret != kCVReturnSuccess) {
-        TRACE(@"CVOpenGLTextureCacheCreateTextureFromImage() failed : %d", ret);
-    }
-    CVOpenGLTextureCacheFlush(_textureCache, 0);
-
-    [_imageQueue dequeue];
-#endif
     //TRACE(@"nextImage (%.1f sec)", -[begin timeIntervalSinceNow]);
 
     [_imageQueue unlock];
