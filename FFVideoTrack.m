@@ -118,8 +118,6 @@
 //#undef RGB_PIXEL_FORMAT
 //#define RGB_PIXEL_FORMAT    PIX_FMT_BGRA    // PIX_FMT_ARGB is not supported by ffmpeg
 
-//#define _EXPERIMENTAL_AV_SYNC
-
 @interface ImageQueue : NSObject
 {
     CVPixelBufferRef* _pixelBuffer;
@@ -330,9 +328,7 @@
 #endif
 
     // init playback
-#ifndef _EXPERIMENTAL_AV_SYNC
     _packetQueue = [[PacketQueue alloc] initWithCapacity:30 * 5];  // 30 fps * 5 sec.
-#endif
 	_imageQueue = [[ImageQueue alloc] initWithCapacity:videoQueueCapacity
                                                  width:width height:height];
     _needKeyFrame = FALSE;
@@ -343,11 +339,9 @@
     _nextFrameTime = 0;
     _nextFramePts = 0;
 
-#ifndef _EXPERIMENTAL_AV_SYNC
     _running = TRUE;
     [NSThread detachNewThreadSelector:@selector(decodeThreadFunc:)
                              toTarget:self withObject:nil];
-#endif
 
     return TRUE;
 }
@@ -393,10 +387,8 @@
         _textureCache = nil;
     }
     [_imageQueue release];
-#ifndef _EXPERIMENTAL_AV_SYNC
     [_packetQueue release];
     _packetQueue = 0;
-#endif
 
     [super cleanupTrack];
 }
@@ -409,20 +401,12 @@
 
 - (BOOL)isQueueEmpty
 {
-#ifdef _EXPERIMENTAL_AV_SYNC
-    return [_imageQueue isEmpty];
-#else
     return [_packetQueue isEmpty];
-#endif
 }
 
 - (BOOL)isQueueFull
 {
-#ifdef _EXPERIMENTAL_AV_SYNC
-    return [_imageQueue capacity] - 2 <= [_imageQueue count] || ![_movie canDecodeVideo];
-#else
     return [_packetQueue isFull];
-#endif
 }
 
 - (BOOL)isDecodeStarted
@@ -440,20 +424,14 @@
     _needPtsAdjust = enable;
 }
 
-#ifdef _EXPERIMENTAL_AV_SYNC
-- (double)decodePacket:(AVPacket*)packet
-#else
 - (double)decodePacket
-#endif
 {
-#ifndef _EXPERIMENTAL_AV_SYNC
     AVPacket packetInst;
     AVPacket* packet = &packetInst;
     if (![_packetQueue getPacket:packet]) {
         //TRACE(@"%s no more packet", __PRETTY_FUNCTION__);
         return -1;
     }
-#endif
 
     if (packet->stream_index != _streamIndex) {
         TRACE(@"%s invalid stream_index %d", __PRETTY_FUNCTION__, packet->stream_index);
@@ -531,36 +509,17 @@
 
 - (void)clearQueue
 {
-#ifdef _EXPERIMENTAL_AV_SYNC
-    [self decodePacket:&s_flushPacket];
-#else
     [_packetQueue clear];
     [self putPacket:&s_flushPacket];
-#endif
     [_imageQueue clear];
 }
 
 - (void)putPacket:(AVPacket*)packet
 {
-#ifdef _EXPERIMENTAL_AV_SYNC
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    double frameTime = [self decodePacket:packet];
-    if (frameTime < 0) {
-        [pool release];
-        return;
-    }
-    AVFrame* frame = [_imageQueue back];
-    [self convertImage:frame];
-    [_imageQueue enqueue:frame time:frameTime];
-    [_movie videoTrack:self decodedTime:frameTime];
-    [pool release];
-#else
     av_dup_packet(packet);
     [_packetQueue putPacket:packet];
-#endif
 }
 
-#ifndef _EXPERIMENTAL_AV_SYNC
 - (void)decodeThreadFunc:(id)anObject
 {
     /*
@@ -596,7 +555,6 @@
     _running = FALSE;
 
 }
-#endif
 
 - (BOOL)isNewImageAvailable:(double)hostTime
              hostTime0point:(double*)hostTime0point
