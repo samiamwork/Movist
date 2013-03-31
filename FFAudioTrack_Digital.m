@@ -518,6 +518,7 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
         [_movie reservedCommand] != COMMAND_NONE ||
         [_movie isPlayLocked] ||
         [_movie command] != COMMAND_PLAY ||
+		[_movie hostTime0point] == 0.0 ||
         [_rawDataQueue isEmpty]) {
         memset((uint8_t*)(audioBuf.mData), 0, audioBuf.mDataByteSize);
         //TRACE(@"no audio data, queue(%f)", [_rawDataQueue current]);
