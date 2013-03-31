@@ -512,7 +512,7 @@
     else if (_command == COMMAND_NONE) {
         _hostTime0point = hostTime - _currentTime;
     }
-	if (hostTime == 0.0)
+	if (hostTime < 0.0)
 		_hostTime0point = 0.0;
     [_trackMutex unlock];
     return image;

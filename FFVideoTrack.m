@@ -563,15 +563,25 @@
         //TRACE(@"not decoded %f", hostTime - *hostTime0point);
         return FALSE;
     }
-    double current = hostTime - *hostTime0point;
+
+	// If we're not actievly playing then we're going to give them
+	// whatever we have at the front of the queue
+	if (hostTime < 0.0)
+		return TRUE;
+
+	// Check the time of the next image in the queue
+	// If the time requested is farther than a half a second from
+	// the image time assume we're getting out of sync and just
+	// adjust the host zero time so that the host time matches up
+	// with the current image time
+    double requestedTime = hostTime - *hostTime0point;
     double imageTime = [_imageQueue time];
-    if (hostTime < 0.0 || imageTime + 0.5 < current || current + 0.5 < imageTime) {
-        TRACE(@"reset av sync %f %f", current, imageTime);
-		if(hostTime >= 0.0)
-			*hostTime0point = hostTime - imageTime;
-        current = imageTime;
+    if (imageTime + 0.5 < requestedTime || requestedTime + 0.5 < imageTime) {
+        TRACE(@"reset av sync %f %f", requestedTime, imageTime);
+		*hostTime0point = hostTime - imageTime;
+        requestedTime = imageTime;
     }
-    if (current < imageTime) {
+    if (requestedTime < imageTime) {
         //TRACE(@"wait %f < %f", current, imageTime);
         return FALSE;
     }
@@ -583,35 +593,39 @@
                     currentTime:(double*)currentTime
                  hostTime0point:(double*)hostTime0point
 {
+	CVOpenGLTextureRef texture = NULL;
+
     _dataPoppingStarted = TRUE;
     if ([_movie isPlayLocked]) {
         _dataPoppingStarted = FALSE;
         return 0;
     }
     [_imageQueue lock];
-	if (![self isNewImageAvailable:hostTime
-					hostTime0point:hostTime0point]) {
-        [_imageQueue unlock];
-        _dataPoppingStarted = FALSE;
-		return 0;
+
+	CVPixelBufferRef pixelBuffer = NULL;
+	while ([self isNewImageAvailable:hostTime hostTime0point:hostTime0point])
+	{
+		pixelBuffer  = [_imageQueue pixelBuffer];
+		*currentTime = [_imageQueue time];
+		if (hostTime >= 0.0)
+		{
+			[_imageQueue dequeue];
+			[[NSNotificationCenter defaultCenter]
+			 postNotificationName:MMovieCurrentTimeNotification object:_movie];
+		}
+		else
+			break;
 	}
 
-    //NSDate* begin = [NSDate date];
-    CVPixelBufferRef pixelBuffer;
-    do {
-        pixelBuffer = [_imageQueue pixelBuffer];
-        *currentTime = [_imageQueue time];
-        [_imageQueue dequeue];
-    } while ([self isNewImageAvailable:hostTime hostTime0point:hostTime0point]);
-
-    CVOpenGLTextureRef texture;
-    int ret = CVOpenGLTextureCacheCreateTextureFromImage(0, _textureCache,
-                                                         pixelBuffer, 0, &texture);
-    if (ret != kCVReturnSuccess) {
-        TRACE(@"CVOpenGLTextureCacheCreateTextureFromImage() failed : %d", ret);
-    }
-    CVOpenGLTextureCacheFlush(_textureCache, 0);
-    //TRACE(@"nextImage (%.1f sec)", -[begin timeIntervalSinceNow]);
+	if (pixelBuffer)
+	{
+		int ret = CVOpenGLTextureCacheCreateTextureFromImage(0, _textureCache,
+															 pixelBuffer, 0, &texture);
+		if (ret != kCVReturnSuccess) {
+			TRACE(@"CVOpenGLTextureCacheCreateTextureFromImage() failed : %d", ret);
+		}
+		CVOpenGLTextureCacheFlush(_textureCache, 0);
+	}
 
     [_imageQueue unlock];
     _dataPoppingStarted = FALSE;
