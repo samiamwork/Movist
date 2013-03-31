@@ -506,8 +506,6 @@
     if (image) {
         _hostTime = hostTime;
         _hostTime0point -= _avFineTuningTime;
-        [[NSNotificationCenter defaultCenter]
-         postNotificationName:MMovieCurrentTimeNotification object:self];
     }
     else if (_command == COMMAND_NONE) {
         _hostTime0point = hostTime - _currentTime;
