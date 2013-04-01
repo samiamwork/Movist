@@ -99,7 +99,6 @@ extern AVPacket s_flushPacket;
     struct SwsContext* _scalerContext;
 #	endif
     CVOpenGLTextureCacheRef _textureCache;
-    BOOL _needKeyFrame;
     BOOL _useFrameDrop;
     BOOL _seeked;
     BOOL _decodeStarted;

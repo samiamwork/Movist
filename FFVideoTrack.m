@@ -331,7 +331,6 @@
     _packetQueue = [[PacketQueue alloc] initWithCapacity:30 * 5];  // 30 fps * 5 sec.
 	_imageQueue = [[ImageQueue alloc] initWithCapacity:videoQueueCapacity
                                                  width:width height:height];
-    _needKeyFrame = FALSE;
     _useFrameDrop = _stream->r_frame_rate.num / _stream->r_frame_rate.den > 30;
     _frameInterval = 1. * _stream->r_frame_rate.den / _stream->r_frame_rate.num;
     _seeked = FALSE;

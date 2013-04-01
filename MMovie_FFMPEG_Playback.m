@@ -152,7 +152,6 @@
 //                                                    packet.flags, 
 //                                                    packet.pts, packet.dts,
 //                                                    packet.pos);
-    _needKeyFrame = FALSE;
 
     enumerator = [_videoTracks objectEnumerator];
     while ((vTrack = (FFVideoTrack*)[[enumerator nextObject] impl])) {
