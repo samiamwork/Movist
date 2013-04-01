@@ -102,8 +102,14 @@
     if (videoTrack == _mainVideoTrack) {
         if (_command == COMMAND_SEEK) {
             _seekComplete = TRUE;
-			[[NSNotificationCenter defaultCenter] postNotificationName:MMovieCurrentTimeNotification object:self];
         }
+		// TODO: HACK! having this notify for every decoded frame is overkill
+		//       we only need the notification when seeking but checking for
+		//       the seek command isn't enough since spurious packet read errors
+		//       can cause is to exit the seek state. What's really needed is
+		//       a better way to manage the playback clock and a more robust
+		//       command queue for playback.
+		[[NSNotificationCenter defaultCenter] postNotificationName:MMovieCurrentTimeNotification object:self];
         _lastDecodedTime = time;
     }
 }
