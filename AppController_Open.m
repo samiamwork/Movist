@@ -657,6 +657,9 @@
             }
         }
 
+		// TODO: bemore careful about how we are identifying subtitle tracks
+		//       as "name" can be "Unnamed" which is not specific. Might be
+		//       best to combine name and language.
         // init _subtitleNameSet for next open.
         [_subtitleNameSet removeAllObjects];
         MSubtitle* subtitle;
