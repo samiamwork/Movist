@@ -40,7 +40,6 @@
     _command = COMMAND_NONE;
     _reservedCommand = COMMAND_NONE;
     _commandLock = [[NSConditionLock alloc] initWithCondition:WAITING_FOR_COMMAND];
-    //_avSyncMutex = [[NSLock alloc] init];
     _frameReadMutex = [[NSLock alloc] init];
     _playLocked = FALSE;
 
@@ -79,7 +78,6 @@
     }
 
     [_frameReadMutex release];
-    //[_avSyncMutex release];
     [_commandLock release];
 }
 
