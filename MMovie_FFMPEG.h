@@ -74,7 +74,6 @@ enum {
     float _seekTime;
     float _reservedSeekTime;
     double _lastDecodedTime;
-    BOOL _seekKeyFrame;
 
     double _currentTime;
     double _hostTimeFreq;

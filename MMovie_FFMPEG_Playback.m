@@ -46,7 +46,6 @@
 
     _rate = DEFAULT_PLAY_RATE;
     _playAfterSeek = FALSE;
-    _seekKeyFrame = TRUE;
 
     _currentTime = 0;
     _hostTime = 0;
