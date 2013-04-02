@@ -333,7 +333,6 @@
                                                  width:width height:height];
     _useFrameDrop = _stream->r_frame_rate.num / _stream->r_frame_rate.den > 30;
     _frameInterval = 1. * _stream->r_frame_rate.den / _stream->r_frame_rate.num;
-    _seeked = FALSE;
     _decodeStarted = FALSE;
     _nextFrameTime = 0;
     _nextFramePts = 0;
@@ -413,11 +412,6 @@
     return _decodeStarted;
 }
 
-- (void)seek:(double)time
-{
-    _seeked = TRUE;
-}
-
 - (void)enablePtsAdjust:(BOOL)enable
 {
     _needPtsAdjust = enable;
@@ -469,7 +463,7 @@
     }
     double time;
     double timeErr = (_nextFramePts - pts) * av_q2d(_stream->time_base);
-    if (_needPtsAdjust && _seeked &&
+    if (_needPtsAdjust &&
         _frame->pict_type != FF_I_TYPE && packet->duration &&
         -1. < timeErr && timeErr < 1.) {
         time = (double)(_nextFramePts) * av_q2d(_stream->time_base);

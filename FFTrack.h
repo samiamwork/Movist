@@ -100,7 +100,6 @@ extern AVPacket s_flushPacket;
 #	endif
     CVOpenGLTextureCacheRef _textureCache;
     BOOL _useFrameDrop;
-    BOOL _seeked;
     BOOL _decodeStarted;
     BOOL _needPtsAdjust;
     double _frameInterval;
@@ -120,7 +119,6 @@ extern AVPacket s_flushPacket;
 - (BOOL)isQueueFull;
 - (BOOL)isDecodeStarted;
 - (void)clearQueue;
-- (void)seek:(double)time;
 - (void)enablePtsAdjust:(BOOL)enable;
 - (CVOpenGLTextureRef)nextImage:(double)hostTime
                     currentTime:(double*)currentTime

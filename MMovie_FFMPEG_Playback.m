@@ -259,7 +259,6 @@
     NSEnumerator* enumerator = [_videoTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
         [(FFVideoTrack*)[track impl] clearQueue];
-        [(FFVideoTrack*)[track impl] seek:_seekTime];
     }
     enumerator = [_audioTracks objectEnumerator];
     while (track = [enumerator nextObject]) {
