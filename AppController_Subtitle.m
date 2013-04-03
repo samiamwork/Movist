@@ -442,12 +442,10 @@
         return;
     }
 
-    MSubtitle* subtitle;
     int enabledCount = 0;
     if (0 < [_subtitleNameSet count]) {
         // select previous selected language
-        NSEnumerator* e = [_subtitles objectEnumerator];
-        while (subtitle = [e nextObject]) {
+		for (MSubtitle* subtitle in _subtitles) {
             if ([_subtitleNameSet containsObject:[subtitle name]]) {
                 [subtitle setEnabled:TRUE];
                 enabledCount++;
@@ -461,32 +459,26 @@
         // select by user-defined default language identifiers
         NSArray* defaultLangIDs = [[_defaults objectForKey:MDefaultLanguageIdentifiersKey]
                                    componentsSeparatedByString:@" "];
-        NSString* s;
-        NSEnumerator* e = [defaultLangIDs objectEnumerator];
-        while (s = [e nextObject]) {
-            NSEnumerator* se = [_subtitles objectEnumerator];
-            while (subtitle = [se nextObject]) {
-                if ([subtitle checkDefaultLanguage:[NSArray arrayWithObject:s]]) {
-                    break;
-                }
-            }
-            if (subtitle) {
-                enabledCount = 1;
-                [subtitle setEnabled:TRUE];
-                while (subtitle = [se nextObject]) {
-                    [subtitle setEnabled:FALSE];
-                }
-                break;
-            }
-        }
+		for (NSString* langID in defaultLangIDs) {
+			for (MSubtitle* subtitle in _subtitles) {
+				if (!enabledCount && [subtitle checkDefaultLanguage:[NSArray arrayWithObject:langID]]) {
+					[subtitle setEnabled:YES];
+					enabledCount = 1;
+				}
+				else {
+					[subtitle setEnabled:NO];
+				}
+			}
+			if (enabledCount)
+				break;
+		}
     }
 
     if (enabledCount == 0) {
         // select first language by default
         MSubtitle* firstExternal = nil;
         MSubtitle* firstEmbedded = nil;
-        NSEnumerator* e = [_subtitles objectEnumerator];
-        while (subtitle = [e nextObject]) {
+		for (MSubtitle* subtitle in _subtitles) {
             [subtitle setEnabled:FALSE];
             if ([subtitle isEmbedded]) {
                 if (!firstEmbedded) {
