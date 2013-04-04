@@ -32,9 +32,8 @@
 
 - (void)changeSubtitleVisible
 {
-    NSMenuItem* visibleItem;
-    NSEnumerator* e = [[_subtitleMenu itemArray] objectEnumerator];
-    while (visibleItem = [e nextObject]) {
+    NSMenuItem* visibleItem = nil;
+	for (visibleItem in [_subtitleMenu itemArray]) {
         if ([visibleItem action] == @selector(subtitleVisibleAction:)) {
             break;
         }
@@ -55,9 +54,7 @@
 - (int)enabledSubtitleCount
 {
     int count = 0;
-    MSubtitle* subtitle;
-    NSEnumerator* e = [_subtitles objectEnumerator];
-    while (subtitle = [e nextObject]) {
+	for (MSubtitle* subtitle in _subtitles) {
         if ([subtitle isEnabled]) {
             count++;
         }
@@ -73,14 +70,12 @@
         if (![_movieView subtitleVisible]) {
             [_movieView setSubtitleVisible:TRUE];
 
-            NSMenuItem* visibleItem;
-            NSEnumerator* e = [[_subtitleMenu itemArray] objectEnumerator];
-            while (visibleItem = [e nextObject]) {
+			for (NSMenuItem* visibleItem in [_subtitleMenu itemArray]) {
                 if ([visibleItem action] == @selector(subtitleVisibleAction:)) {
+					[visibleItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
                     break;
                 }
             }
-            [visibleItem setTitle:NSLocalizedString(@"Hide Subtitle", nil)];
         }
     }
     else if (_subtitles) {
@@ -96,9 +91,7 @@
 #define INIT_LETTER_BOX_HEIGHT_MENUITEMS    \
     NSMenuItem* sameItem, *line1Item, *line2Item, *line3Item;   \
     {   \
-        NSMenuItem* item;   \
-        NSEnumerator* e = [[_subtitleMenu itemArray] objectEnumerator];    \
-        while (item = [e nextObject]) { \
+		for (NSMenuItem* item in [_subtitleMenu itemArray]) { \
         if ([item action] == @selector(letterBoxHeightAction:)) {   \
             switch ([item tag]) {   \
                 case LETTER_BOX_HEIGHT_SAME    : sameItem  = item;  break;  \
@@ -325,11 +318,10 @@
 #define INIT_SUBTITLE_POSITION_MENUITEMS(index) \
     NSMenuItem* uboxItem, *topItem, *centerItem, *bottomItem, *lboxItem;    \
     {   \
-        NSMenuItem* item, *items[3] = {    \
+        NSMenuItem *items[3] = {    \
             _subtitle0MenuItem, _subtitle1MenuItem, _subtitle2MenuItem  \
         };   \
-        NSEnumerator* e = [[[items[index] submenu] itemArray] objectEnumerator];    \
-        while (item = [e nextObject]) { \
+        for (NSMenuItem* item in [[items[index] submenu] itemArray]) { \
             if ([item action] == @selector(subtitlePositionAction:)) {  \
                 switch ([item tag]) {   \
                     case OSD_VPOSITION_UBOX   : uboxItem = item;   break;   \
@@ -410,10 +402,8 @@
 {
     // count external subtitles
     int externalCount = 0;
-    MSubtitle* subtitle;
     NSString* defaultName = NSLocalizedString(@"External Subtitle", nil);
-    NSEnumerator* e = [_subtitles objectEnumerator];
-    while (subtitle = [e nextObject]) {
+	for (MSubtitle* subtitle in _subtitles) {
         if (![subtitle isEmbedded] && 1 < externalCount++) {
             break;
         }
@@ -422,8 +412,7 @@
     if (1 < externalCount) {
         // add to track number.
         int trackNumber = 1;
-        e = [_subtitles objectEnumerator];
-        while (subtitle = [e nextObject]) {
+		for (MSubtitle* subtitle in _subtitles) {
             if ([subtitle isEmbedded]) {
                 continue;
             }

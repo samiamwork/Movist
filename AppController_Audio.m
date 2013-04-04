@@ -353,16 +353,14 @@
 - (void)enableAudioTracksInIndexSet:(NSIndexSet*)set
 {
     int i = 0;
-    MTrack* track;
-    NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
-    while ((track = [enumerator nextObject])) {
+	for (MTrack* track in [_movie audioTracks]) {
         if (![set containsIndex:i++]/* && [track isEnabled]*/) {
             [track setEnabled:FALSE];
         }
     }
+	// TODO: this looks redundant
     i = 0;
-    enumerator = [[_movie audioTracks] objectEnumerator];
-    while ((track = [enumerator nextObject])) {
+	for (MTrack* track in [_movie audioTracks]) {
         if ([set containsIndex:i++]/* && ![track isEnabled]*/) {
             [track setEnabled:TRUE];
         }
@@ -416,9 +414,7 @@
     int index = tag;
     if (index < 0) { // rotation
         int i = 0;
-        MTrack* track;
-        NSEnumerator* enumerator = [[_movie audioTracks] objectEnumerator];
-        while ((track = [enumerator nextObject])) {
+		for (MTrack* track in [_movie audioTracks]) {
             if ([track isEnabled]) {
                 break;
             }
@@ -488,9 +484,8 @@
 
 - (void)updateVolumeMenuItems
 {
-    NSMenuItem* item, *upItem, *altUpItem, *downItem, *altDownItem;
-    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
-    while ((item = [e nextObject])) {
+    NSMenuItem *upItem, *altUpItem, *downItem, *altDownItem;
+	for (NSMenuItem* item in [_controlMenu itemArray]) {
         if ([item action] == @selector(volumeAction:)) {
             switch ([item tag]) {
                 case +1 : upItem = item;        break;

@@ -121,17 +121,15 @@ NSString* videoCodecName(int codecId);
                name:MSubtitleTrackDidLoadNotification object:nil];
     
     // modify menu-item shortcuts with shift modifier.
-    NSMenuItem* item;
-    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
-    while ((item = [e nextObject])) {
+	for(NSMenuItem* item in [_controlMenu itemArray]) {
         if ([item action] == @selector(rateAction:) && [item tag] == 0) {
             [item setKeyEquivalent:@"\\"];
             [item setKeyEquivalentModifierMask:NSCommandKeyMask | NSShiftKeyMask];
             break;
         }
     }
-    e = [[_subtitleMenu itemArray] objectEnumerator];
-    while ((item = [e nextObject])) {
+
+	for (NSMenuItem* item in [_subtitleMenu itemArray]) {
         if ([item action] == @selector(subtitleSyncAction:) && [item tag] == 0) {
             [item setKeyEquivalent:@"="];
             [item setKeyEquivalentModifierMask:NSControlKeyMask | NSShiftKeyMask];

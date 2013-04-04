@@ -110,14 +110,13 @@
 - (void)setRepeatMode:(unsigned int)mode
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, mode);
-    NSMenuItem* item;
-    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
-    while (item = [e nextObject]) {
+	NSMenuItem* item = nil;
+	for (item in [_controlMenu itemArray]) {
         if ([item action] == @selector(repeatAction:) && [item tag] == mode) {
-            break;
+			break;
         }
     }
-    [_movieView setMessage:(item) ? [item title] : @""];
+	[_movieView setMessage:(item) ? [item title] : @""];
          
     [_playlist setRepeatMode:mode];
     [self updateRepeatUI];
@@ -173,9 +172,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     unsigned int mode = [_playlist repeatMode];
 
-    NSMenuItem* item;
-    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
-    while (item = [e nextObject]) {
+	for (NSMenuItem* item in [_controlMenu itemArray]) {
         if ([item action] == @selector(repeatAction:)) {
             [item setState:[item tag] == mode];
         }

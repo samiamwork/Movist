@@ -78,8 +78,7 @@
     NSString* info;
     BOOL digitalAudioOut = _audioDeviceSupportsDigital &&
                            [_defaults boolForKey:MAutodetectDigitalAudioOutKey];
-    NSEnumerator* enumerator = [classes objectEnumerator];
-    while (movieClass = [enumerator nextObject]) {
+	for(movieClass in classes) {
         info = [NSString stringWithFormat:
                 NSLocalizedString(@"Opening with %@...", nil), [movieClass name]];
         [_movieView setMessageWithURL:movieURL info:info];
@@ -175,11 +174,8 @@
     NSMutableArray* subtitles = [NSMutableArray arrayWithCapacity:1];
 
     BOOL someError = FALSE;
-    NSURL* url;
-    NSArray* subs;
-    NSEnumerator* e = [subtitleURLs objectEnumerator];
-    while (url = [e nextObject]) {
-        subs = [self subtitleFromURL:url withEncoding:cfEncoding error:error];
+	for(NSURL* url in subtitleURLs) {
+		NSArray* subs = [self subtitleFromURL:url withEncoding:cfEncoding error:error];
         if (!subs) {
             someError = TRUE;
         }
@@ -201,9 +197,7 @@
 {
     NSString* s = nil;
     if (_subtitles) {
-        MSubtitle* subtitle;
-        NSEnumerator* enumerator = [_subtitles objectEnumerator];
-        while (subtitle = [enumerator nextObject]) {
+		for (MSubtitle* subtitle in _subtitles) {
             if ([subtitle isEnabled]) {
                 s = (!s) ? [NSString stringWithString:[subtitle name]] :
                            [s stringByAppendingFormat:@", %@", [subtitle name]];
@@ -483,9 +477,8 @@
     }
 
     NSArray* subtitleExts = [MSubtitle fileExtensions];
-    NSString* filename;
-    NSEnumerator* e = [filenames objectEnumerator];
-    while (filename = [e nextObject]) {
+	NSString* filename = nil;
+	for (filename in filenames) {
         if (![filename hasAnyExtension:subtitleExts]) {
             break;
         }
@@ -505,9 +498,7 @@
     NSArray* subtitles = [self subtitleFromURLs:subtitleURLs withEncoding:encoding error:&error];
     if (!subtitles) {
         NSString* s = @"";
-        NSURL* subtitleURL;
-        NSEnumerator* e = [subtitleURLs objectEnumerator];
-        while (subtitleURL = [e nextObject]) {
+		for (NSURL* subtitleURL in subtitleURLs) {
             s = [s stringByAppendingFormat:@"%@\n", [[subtitleURL path] lastPathComponent]];
         }
         runAlertPanel(_mainWindow, NSLocalizedString(@"Cannot open file", nil), s,
@@ -560,17 +551,13 @@
     NSArray* subtitles = [self subtitleFromURLs:subtitleURLs
                                    withEncoding:kCFStringEncodingInvalidId error:&error];
     if (!subtitles) {
-        NSURL* subtitleURL;
-        NSEnumerator* e = [subtitleURLs objectEnumerator];
-        while (subtitleURL = [e nextObject]) {
+		for (NSURL* subtitleURL in subtitleURLs) {
             runAlertPanelForOpenError(_mainWindow, error, subtitleURL);
         }
         return;
     }
 
-    MSubtitle* subtitle;
-    NSEnumerator* enumerator = [subtitles objectEnumerator];
-    while (subtitle = [enumerator nextObject]) {
+	for (MSubtitle* subtitle in subtitles) {
         [subtitle setEnabled:FALSE];
     }
     
@@ -662,9 +649,7 @@
 		//       best to combine name and language.
         // init _subtitleNameSet for next open.
         [_subtitleNameSet removeAllObjects];
-        MSubtitle* subtitle;
-        NSEnumerator* enumerator = [_subtitles objectEnumerator];
-        while (subtitle = [enumerator nextObject]) {
+		for (MSubtitle* subtitle in _subtitles) {
             if ([subtitle isEnabled]) {
                 [_subtitleNameSet addObject:[subtitle name]];
             }

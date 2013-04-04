@@ -167,9 +167,8 @@
     //TRACE(@"%s [%d]:%.1f sec", __PRETTY_FUNCTION__, index, interval);
     _seekInterval[index] = interval;
 
-    NSMenuItem* item, *backwardItem[3], *forwardItem[3];
-    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
-    while (item = [e nextObject]) {
+    NSMenuItem *backwardItem[3], *forwardItem[3];
+	for (NSMenuItem* item in [_controlMenu itemArray]) {
         if ([item action] == @selector(seekAction:)) {
             switch ([item tag]) {
                 case SEEK_TAG_BACKWARD_3    : backwardItem[2] = item;   break;
@@ -408,10 +407,10 @@
 - (void)updatePlayUI
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSMenuItem* playMenuItem;
-    NSEnumerator* e = [[_controlMenu itemArray] objectEnumerator];
-    while (playMenuItem = [e nextObject]) {
-        if ([playMenuItem action] == @selector(playAction:)) {
+	NSMenuItem* playMenuItem = nil;
+	for (NSMenuItem* item in [_controlMenu itemArray]) {
+        if ([item action] == @selector(playAction:)) {
+			playMenuItem = item;
             break;
         }
     }
