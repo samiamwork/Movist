@@ -254,11 +254,7 @@
 - (int)indexAtTime:(float)time direction:(int)direction
 {
     int index = MAX(0, _indexCache);
-    if (index < 0) {
-        //TRACE(@"%s(\"%@\")[%.03f]: <none>", __PRETTY_FUNCTION__, _name, time);
-        return _indexCache = (0 < direction) ? 0 : -1;
-    }
-    if ([_items count] <= index) {
+	if ([_items count] <= index) {
         //TRACE(@"%s(\"%@\")[%.03f]: <none>", __PRETTY_FUNCTION__, _name, time);
         return _indexCache = (direction < 0) ? [_items count] - 1 : -1;
     }
