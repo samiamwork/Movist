@@ -26,6 +26,7 @@
 #import "MMovieOSD.h"
 #import "AppController.h"   // for NSApp's delegate
 #import "MMovieViewLayer.h"
+#import "MMovieOSDLayer.h"
 
 @implementation MMovieView (OSD)
 
@@ -45,6 +46,7 @@
 
         // h/v-position will be updated later
     }
+	_rootLayer.subtitle.hidden = NO;
     _subtitleVisible = TRUE;
     _indexOfSubtitleInLBOX = -1;
     _autoLetterBoxHeightMaxLines = 3;

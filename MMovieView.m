@@ -93,8 +93,28 @@
 	_rootLayer.error = errorLayer;
 }
 
+- (void)subtitleShutdown
+{
+	[[NSNotificationCenter defaultCenter] removeObserver:self forKeyPath:MMovieCurrentTimeNotification];
+}
+
+- (void)updateSubtitle
+{
+	if(_subtitleVisible)
+	{
+		[self updateSubtitleOSDAtIndex:0];
+		[_rootLayer.subtitle setTextImage:[_subtitleOSD[0] texImage]];
+	}
+}
+
+- (void)subtitleTick:(NSNotification*)theNotification
+{
+	[self updateSubtitle];
+}
+
 - (void)dealloc
 {
+	[self subtitleShutdown];
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self invalidateMessageHideTimer];
     [_drawLock release];
@@ -151,7 +171,9 @@
 	{
 		movieLayer = [MMovieLayer_FFMPEG layer];
 	}
+	[[NSNotificationCenter defaultCenter] removeObserver:self name:MMovieCurrentTimeNotification object:_movie];
 	_movie = movie;
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subtitleTick:) name:MMovieCurrentTimeNotification object:_movie];
 	[movieLayer setMovie:movie];
 	movieLayer.name = @"Movie";
 	_rootLayer.movie = movieLayer;

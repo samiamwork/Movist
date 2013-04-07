@@ -21,7 +21,9 @@
 //
 
 #import "MMovieView.h"
+#import "MMOvieViewLayer.h"
 #import "MMovieLayer.h"
+#import "MMovieOSDLayer.h"
 
 #import "MMovie.h"
 #import "MSubtitle.h"
@@ -53,12 +55,14 @@
 {
     assert(subtitle != nil && [subtitle isEnabled]);
     int i;
+	// Find first free subtitle
     for (i = 0; i < 3; i++) {
         if (!_subtitle[i]) {
             break;
         }
     }
     if (i == 3) {
+		// No free subtitles
         return;
     }
 
@@ -171,6 +175,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (_subtitleVisible != visible) {
         _subtitleVisible = visible;
+		_rootLayer.subtitle.hidden = !visible;
         [_subtitle[0] setRenderingEnabled:_subtitleVisible];
         [_subtitle[1] setRenderingEnabled:_subtitleVisible];
         [_subtitle[2] setRenderingEnabled:_subtitleVisible];
@@ -179,6 +184,7 @@
             [self updateSubtitleOSDAtIndex:1];
             [self updateSubtitleOSDAtIndex:2];
         }
+		[_rootLayer setSubtitleEnabled:visible];
         [self redisplay];
     }
 }
