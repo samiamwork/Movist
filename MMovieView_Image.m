@@ -247,7 +247,6 @@
                     [self updateSubtitleOSDAtIndex:i];
                 }
             }
-            [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:mr autoSizeWidth:asw];
         }
     }
     [_errorOSD setViewBounds:bounds movieRect:NSInsetRect(bounds, 50, 0) autoSizeWidth:0];

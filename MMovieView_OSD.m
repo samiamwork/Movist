@@ -39,11 +39,6 @@
         [_subtitleOSD[i] initTextRendering];
         [_subtitleOSD[i] setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
 
-        _auxSubtitleOSD[i] = [[MMovieOSD alloc] init];
-        [_auxSubtitleOSD[i] initTextRendering];
-        [_auxSubtitleOSD[i] setShadowBlur:0];   // no shadow
-        [_auxSubtitleOSD[i] setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
-
         // h/v-position will be updated later
     }
 	_rootLayer.subtitle.hidden = NO;
@@ -83,9 +78,6 @@
     [_subtitleOSD[0] release];
     [_subtitleOSD[1] release];
     [_subtitleOSD[2] release];
-    [_auxSubtitleOSD[0] release];
-    [_auxSubtitleOSD[1] release];
-    [_auxSubtitleOSD[2] release];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,9 +94,6 @@
         for (i = 2; 0 <= i; i--) {
             if ([_subtitleOSD[i] hasContent]) {
                 [_subtitleOSD[i] drawOnScreen];
-            }
-            else if ([_auxSubtitleOSD[i] hasContent]) {
-                [_auxSubtitleOSD[i] drawOnScreen];
             }
         }
     }

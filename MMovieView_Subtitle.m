@@ -135,7 +135,6 @@
     if (!self.movie || !_subtitle[index] || ![_subtitle[index] isEnabled]) {
         [_subtitleOSD[index] clearContent];
         _needsSubtitleDrawing &= ~(1 << index);
-        [_auxSubtitleOSD[index] clearContent];
     }
     else {
         BOOL isRendering;
@@ -147,13 +146,8 @@
 
         if (texImage || !isRendering) {
             _needsSubtitleDrawing &= ~(1 << index);
-            [_auxSubtitleOSD[index] clearContent];
         }
         else {
-            MSubtitleItem* item = [_subtitle[index] itemAtTime:time direction:0];
-            if (item && [item string]) {
-                [_auxSubtitleOSD[index] setString:[item string]];
-            }
             if (paused) {
                 _needsSubtitleDrawing |= (1 << index);
                 ret = FALSE;
@@ -251,7 +245,6 @@
             [self updateMovieRect:FALSE];
             remake = TRUE;
         }
-        [_auxSubtitleOSD[index] setFontName:attrs->fontName size:attrs->fontSize];
         if (index == 0) {
             [_messageOSD setFontName:attrs->fontName size:15.0];
             [_errorOSD setFontName:attrs->fontName size:24.0];
@@ -261,43 +254,36 @@
         if ([_subtitleOSD[index] setTextColor:attrs->textColor]) {
             remake = TRUE;
         }
-        [_auxSubtitleOSD[index] setTextColor:attrs->textColor];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_COLOR) {
         if ([_subtitleOSD[index] setStrokeColor:attrs->strokeColor]) {
             remake = TRUE;
         }
-        [_auxSubtitleOSD[index] setStrokeColor:attrs->strokeColor];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_WIDTH) {
         if ([_subtitleOSD[index] setStrokeWidth:attrs->strokeWidth]) {
             remake = TRUE;
         }
-        // don't change _auxSubtitleOSD's strok-width
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_COLOR) {
         if ([_subtitleOSD[index] setShadowColor:attrs->shadowColor]) {
             remake = TRUE;
         }
-        [_auxSubtitleOSD[index] setShadowColor:attrs->shadowColor];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_BLUR) {
         if ([_subtitleOSD[index] setShadowBlur:attrs->shadowBlur]) {
             remake = TRUE;
         }
-        // don't change _auxSubtitleOSD's shadow-blur
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_OFFSET) {
         if ([_subtitleOSD[index] setShadowOffset:attrs->shadowOffset]) {
             remake = TRUE;
         }
-        // don't change _auxSubtitleOSD's shadow-offset
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS) {
         if ([_subtitleOSD[index] setShadowDarkness:attrs->shadowDarkness]) {
             remake = TRUE;
         }
-        // don't change _auxSubtitleOSD's shadow-darkness
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_LINE_SPACING) {
         if ([_subtitleOSD[index] setLineSpacing:attrs->lineSpacing]) {
@@ -305,15 +291,12 @@
             [self updateMovieRect:FALSE];
             remake = TRUE;
         }
-        [_auxSubtitleOSD[index] setLineSpacing:attrs->lineSpacing];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_H_POSITION) {
         [_subtitleOSD[index] setHPosition:attrs->hPosition];
-        [_auxSubtitleOSD[index] setHPosition:attrs->hPosition];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_V_POSITION) {
         [_subtitleOSD[index] setVPosition:attrs->vPosition];
-        [_auxSubtitleOSD[index] setVPosition:attrs->vPosition];
         if (index == _indexOfSubtitleInLBOX ||
             attrs->vPosition == OSD_VPOSITION_LBOX) {
             [self updateIndexOfSubtitleInLBOX];
@@ -325,14 +308,12 @@
         if ([_subtitleOSD[index] setHMargin:attrs->hMargin]) {
             remake = TRUE;
         }
-        [_auxSubtitleOSD[index] setHMargin:attrs->hMargin];
         if (index == 0) {
             [_messageOSD setHMargin:attrs->hMargin];
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_V_MARGIN) {
         [_subtitleOSD[index] setVMargin:attrs->vMargin];
-        [_auxSubtitleOSD[index] setVMargin:attrs->vMargin];
         if (index == 0) {
             [_messageOSD setVMargin:attrs->vMargin];
         }
@@ -407,7 +388,6 @@
             BOOL onLetterBox = (_letterBoxHeight != LETTER_BOX_HEIGHT_SAME);
             if (0 <= _indexOfSubtitleInLBOX) {
                 [_subtitleOSD[_indexOfSubtitleInLBOX] updateVPosition:onLetterBox];
-                [_auxSubtitleOSD[_indexOfSubtitleInLBOX] updateVPosition:onLetterBox];
             }
             [_messageOSD updateVPosition:onLetterBox];
         }
