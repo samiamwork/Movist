@@ -43,8 +43,8 @@
 	MMovie*          _movie;
 
     // subtitle
-    MSubtitle* _subtitle[3];
-    MMovieOSD* _subtitleOSD[3];
+    MSubtitle* _subtitle;
+    MMovieOSD* _subtitleOSD;
     unsigned int _needsSubtitleDrawing; // bit-mask of subtitle-numbers
     BOOL _subtitleVisible;
     int _indexOfSubtitleInLBOX;

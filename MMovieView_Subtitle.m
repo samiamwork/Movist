@@ -36,41 +36,26 @@
 
 - (int)subtitleCount
 {
-    int i;
-    for (i = 0; i < 3; i++) {
-        if (!_subtitle[i]) {
-            break;
-        }
-    }
-    return i;
+	return 1;
 }
 
 - (MSubtitle*)subtitleAtIndex:(int)index
 {
-    assert(0 <= index && index < 3);
-    return _subtitle[index];
+    return _subtitle;
 }
 
 - (void)addSubtitle:(MSubtitle*)subtitle
 {
     assert(subtitle != nil && [subtitle isEnabled]);
-    int i;
-	// Find first free subtitle
-    for (i = 0; i < 3; i++) {
-        if (!_subtitle[i]) {
-            break;
-        }
-    }
-    if (i == 3) {
-		// No free subtitles
-        return;
-    }
+    // If subtitle is already in use just return
+	if(_subtitle)
+		return;
 
-    _subtitle[i] = [subtitle retain];
-    TRACE(@"%s [%d]:%@", __PRETTY_FUNCTION__, i, [subtitle name]);
-    [_subtitle[i] setMovieOSD:_subtitleOSD[i]];
-    [self updateSubtitleOSDAtIndex:i];
-    [_subtitle[i] startRenderThread];
+    _subtitle = [subtitle retain];
+    TRACE(@"%s :%@", __PRETTY_FUNCTION__, [subtitle name]);
+    [_subtitle setMovieOSD:_subtitleOSD];
+    [self updateSubtitleOSDAtIndex:0];
+    [_subtitle startRenderThread];
 
     [self updateIndexOfSubtitleInLBOX];
     [self updateLetterBoxHeight];
@@ -81,27 +66,14 @@
 - (void)removeSubtitle:(MSubtitle*)subtitle
 {
     assert(subtitle != nil);
-    int i;
-    for (i = 0; i < 3; i++) {
-        if (_subtitle[i] == subtitle) {
-            break;
-        }
-    }
-    if (i == 3) {
-        return;
-    }
+	if (subtitle != _subtitle)
+		return;
 
-    [_subtitle[i] quitRenderThread];
-    [_subtitle[i] setMovieOSD:nil];
-    [_subtitle[i] release];
-    for (; i < 2; i++) {
-        _subtitle[i] = _subtitle[i + 1];
-        [_subtitle[i] setMovieOSD:_subtitleOSD[i]];
-    }
-    _subtitle[i] = nil;
-    for (i = 0; i < 3; i++) {
-        [self updateSubtitleOSDAtIndex:i];
-    }
+    [_subtitle quitRenderThread];
+    [_subtitle setMovieOSD:nil];
+    [_subtitle release];
+    _subtitle = nil;
+	[self updateSubtitleOSDAtIndex:0];
 
     [self updateIndexOfSubtitleInLBOX];
     [self updateLetterBoxHeight];
@@ -111,16 +83,13 @@
 
 - (void)removeAllSubtitles
 {
-    int i;
-    for (i = 0; i < 3; i++) {
-        if (_subtitle[i]) {
-            [_subtitle[i] quitRenderThread];
-            [_subtitle[i] setMovieOSD:nil];
-            [_subtitle[i] release];
-            _subtitle[i] = nil;
-            [self updateSubtitleOSDAtIndex:i];
-        }
-    }
+	if (_subtitle) {
+		[_subtitle quitRenderThread];
+		[_subtitle setMovieOSD:nil];
+		[_subtitle release];
+		_subtitle = nil;
+		[self updateSubtitleOSDAtIndex:0];
+	}
 
     [self updateIndexOfSubtitleInLBOX];
     [self updateLetterBoxHeight];
@@ -132,17 +101,17 @@
 {
     BOOL ret = TRUE;
     [_drawLock lock];
-    if (!self.movie || !_subtitle[index] || ![_subtitle[index] isEnabled]) {
-        [_subtitleOSD[index] clearContent];
+    if (!self.movie || !_subtitle || ![_subtitle isEnabled]) {
+        [_subtitleOSD clearContent];
         _needsSubtitleDrawing &= ~(1 << index);
     }
     else {
         BOOL isRendering;
         BOOL paused = (0 == [self.movie rate]);
-        float time = [self.movie currentTime] + [_subtitleOSD[index] subtitleSync];
-        NSImage* texImage = [_subtitle[index] texImageAtTime:time isSeek:paused
+        float time = [self.movie currentTime] + [_subtitleOSD subtitleSync];
+        NSImage* texImage = [_subtitle texImageAtTime:time isSeek:paused
                                                  isRendering:&isRendering];
-        [_subtitleOSD[index] setTexImage:texImage];
+        [_subtitleOSD setTexImage:texImage];
 
         if (texImage || !isRendering) {
             _needsSubtitleDrawing &= ~(1 << index);
@@ -170,13 +139,9 @@
     if (_subtitleVisible != visible) {
         _subtitleVisible = visible;
 		_rootLayer.subtitle.hidden = !visible;
-        [_subtitle[0] setRenderingEnabled:_subtitleVisible];
-        [_subtitle[1] setRenderingEnabled:_subtitleVisible];
-        [_subtitle[2] setRenderingEnabled:_subtitleVisible];
+        [_subtitle setRenderingEnabled:_subtitleVisible];
         if (_subtitleVisible) {
             [self updateSubtitleOSDAtIndex:0];
-            [self updateSubtitleOSDAtIndex:1];
-            [self updateSubtitleOSDAtIndex:2];
         }
 		[_rootLayer setSubtitleEnabled:visible];
         [self redisplay];
@@ -191,47 +156,47 @@
 {
     assert(0 <= index && index < 3);
     if (attrs->mask & SUBTITLE_ATTRIBUTE_FONT) {
-        attrs->fontName = [_subtitleOSD[index] fontName];
-        attrs->fontSize = [_subtitleOSD[index] fontSize];
+        attrs->fontName = [_subtitleOSD fontName];
+        attrs->fontSize = [_subtitleOSD fontSize];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_TEXT_COLOR) {
-        attrs->textColor = [_subtitleOSD[index] textColor];
+        attrs->textColor = [_subtitleOSD textColor];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_COLOR) {
-        attrs->strokeColor = [_subtitleOSD[index] strokeColor];
+        attrs->strokeColor = [_subtitleOSD strokeColor];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_WIDTH) {
-        attrs->strokeWidth = [_subtitleOSD[index] strokeWidth];
+        attrs->strokeWidth = [_subtitleOSD strokeWidth];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_COLOR) {
-        attrs->shadowColor = [_subtitleOSD[index] shadowColor];
+        attrs->shadowColor = [_subtitleOSD shadowColor];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_BLUR) {
-        attrs->shadowBlur = [_subtitleOSD[index] shadowBlur];
+        attrs->shadowBlur = [_subtitleOSD shadowBlur];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_OFFSET) {
-        attrs->shadowOffset = [_subtitleOSD[index] shadowOffset];
+        attrs->shadowOffset = [_subtitleOSD shadowOffset];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS) {
-        attrs->shadowDarkness = [_subtitleOSD[index] shadowDarkness];
+        attrs->shadowDarkness = [_subtitleOSD shadowDarkness];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_LINE_SPACING) {
-        attrs->lineSpacing = [_subtitleOSD[index] lineSpacing];
+        attrs->lineSpacing = [_subtitleOSD lineSpacing];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_H_POSITION) {
-        attrs->hPosition = [_subtitleOSD[index] hPosition];
+        attrs->hPosition = [_subtitleOSD hPosition];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_V_POSITION) {
-        attrs->vPosition = [_subtitleOSD[index] vPosition];
+        attrs->vPosition = [_subtitleOSD vPosition];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_H_MARGIN) {
-        attrs->hMargin = [_subtitleOSD[index] hMargin];
+        attrs->hMargin = [_subtitleOSD hMargin];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_V_MARGIN) {
-        attrs->vMargin = [_subtitleOSD[index] vMargin];
+        attrs->vMargin = [_subtitleOSD vMargin];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SYNC) {
-        attrs->sync = [_subtitleOSD[index] subtitleSync];
+        attrs->sync = [_subtitleOSD subtitleSync];
     }
 }
 
@@ -240,7 +205,7 @@
     assert(0 <= index && index < 3);
     BOOL remake = FALSE;
     if (attrs->mask & SUBTITLE_ATTRIBUTE_FONT) {
-        if ([_subtitleOSD[index] setFontName:attrs->fontName size:attrs->fontSize]) {
+        if ([_subtitleOSD setFontName:attrs->fontName size:attrs->fontSize]) {
             [self updateLetterBoxHeight];
             [self updateMovieRect:FALSE];
             remake = TRUE;
@@ -251,52 +216,52 @@
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_TEXT_COLOR) {
-        if ([_subtitleOSD[index] setTextColor:attrs->textColor]) {
+        if ([_subtitleOSD setTextColor:attrs->textColor]) {
             remake = TRUE;
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_COLOR) {
-        if ([_subtitleOSD[index] setStrokeColor:attrs->strokeColor]) {
+        if ([_subtitleOSD setStrokeColor:attrs->strokeColor]) {
             remake = TRUE;
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_STROKE_WIDTH) {
-        if ([_subtitleOSD[index] setStrokeWidth:attrs->strokeWidth]) {
+        if ([_subtitleOSD setStrokeWidth:attrs->strokeWidth]) {
             remake = TRUE;
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_COLOR) {
-        if ([_subtitleOSD[index] setShadowColor:attrs->shadowColor]) {
+        if ([_subtitleOSD setShadowColor:attrs->shadowColor]) {
             remake = TRUE;
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_BLUR) {
-        if ([_subtitleOSD[index] setShadowBlur:attrs->shadowBlur]) {
+        if ([_subtitleOSD setShadowBlur:attrs->shadowBlur]) {
             remake = TRUE;
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_OFFSET) {
-        if ([_subtitleOSD[index] setShadowOffset:attrs->shadowOffset]) {
+        if ([_subtitleOSD setShadowOffset:attrs->shadowOffset]) {
             remake = TRUE;
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS) {
-        if ([_subtitleOSD[index] setShadowDarkness:attrs->shadowDarkness]) {
+        if ([_subtitleOSD setShadowDarkness:attrs->shadowDarkness]) {
             remake = TRUE;
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_LINE_SPACING) {
-        if ([_subtitleOSD[index] setLineSpacing:attrs->lineSpacing]) {
+        if ([_subtitleOSD setLineSpacing:attrs->lineSpacing]) {
             [self updateLetterBoxHeight];
             [self updateMovieRect:FALSE];
             remake = TRUE;
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_H_POSITION) {
-        [_subtitleOSD[index] setHPosition:attrs->hPosition];
+        [_subtitleOSD setHPosition:attrs->hPosition];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_V_POSITION) {
-        [_subtitleOSD[index] setVPosition:attrs->vPosition];
+        [_subtitleOSD setVPosition:attrs->vPosition];
         if (index == _indexOfSubtitleInLBOX ||
             attrs->vPosition == OSD_VPOSITION_LBOX) {
             [self updateIndexOfSubtitleInLBOX];
@@ -305,7 +270,7 @@
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_H_MARGIN) {
-        if ([_subtitleOSD[index] setHMargin:attrs->hMargin]) {
+        if ([_subtitleOSD setHMargin:attrs->hMargin]) {
             remake = TRUE;
         }
         if (index == 0) {
@@ -313,19 +278,19 @@
         }
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_V_MARGIN) {
-        [_subtitleOSD[index] setVMargin:attrs->vMargin];
+        [_subtitleOSD setVMargin:attrs->vMargin];
         if (index == 0) {
             [_messageOSD setVMargin:attrs->vMargin];
         }
         [self updateMovieRect:FALSE];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SYNC) {
-        [_subtitleOSD[index] setSubtitleSync:attrs->sync];
+        [_subtitleOSD setSubtitleSync:attrs->sync];
     }
 
-    if (_subtitle[index] && [_subtitle[index] isEnabled]) {
+    if (_subtitle && [_subtitle isEnabled]) {
         if (remake) {
-            [_subtitle[index] setNeedsRemakeTexImages];
+            [_subtitle setNeedsRemakeTexImages];
         }
         [self updateSubtitleOSDAtIndex:index];
     }
@@ -334,13 +299,10 @@
 
 - (void)updateIndexOfSubtitleInLBOX
 {
-    int i;
-    for (i = 0; i < 3; i++) {
-        if (_subtitle[i] && [_subtitleOSD[i] vPosition] == OSD_VPOSITION_LBOX) {
-            break;
-        }
-    }
-    _indexOfSubtitleInLBOX = (i < 3) ? i : -1;
+	if (_subtitle && [_subtitleOSD vPosition] == OSD_VPOSITION_LBOX) {
+		_indexOfSubtitleInLBOX = 0;
+	}
+	_indexOfSubtitleInLBOX = -1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -352,10 +314,7 @@
 
 - (void)updateLetterBoxHeight
 {
-    if (!self.movie ||
-        ((!_subtitle[0] || ![_subtitle[0] isEnabled]) &&
-         (!_subtitle[1] || ![_subtitle[0] isEnabled]) &&
-         (!_subtitle[2] || ![_subtitle[0] isEnabled]))) {
+    if (!self.movie || !_subtitle || ![_subtitle isEnabled]) {
         _letterBoxHeight = LETTER_BOX_HEIGHT_SAME;
     }
     else if (_letterBoxHeightPrefs != LETTER_BOX_HEIGHT_AUTO) {
@@ -364,7 +323,7 @@
     else {
         int prevHeight = _letterBoxHeight;
         if (0 <= _indexOfSubtitleInLBOX) {
-            MMovieOSD* subtitleOSD = _subtitleOSD[_indexOfSubtitleInLBOX];
+            MMovieOSD* subtitleOSD = _subtitleOSD;
             NSRect rect = [[[self window] screen] frame];
             if (0 < _fullScreenUnderScan) {
                 rect = [self underScannedRect:rect];
@@ -387,7 +346,7 @@
         if (prevHeight != _letterBoxHeight) {
             BOOL onLetterBox = (_letterBoxHeight != LETTER_BOX_HEIGHT_SAME);
             if (0 <= _indexOfSubtitleInLBOX) {
-                [_subtitleOSD[_indexOfSubtitleInLBOX] updateVPosition:onLetterBox];
+                [_subtitleOSD updateVPosition:onLetterBox];
             }
             [_messageOSD updateVPosition:onLetterBox];
         }
@@ -415,7 +374,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _subtitleScreenMargin = screenMargin;
-    // need not update _subtitleOSDs.
+    // need not update _subtitleOSD.
     // need not update subtitle
     [self updateMovieRect:TRUE];
 }
@@ -423,32 +382,26 @@
 - (float)prevSubtitleTime
 {
     float t, prevTime = 0;
-    int i;
-    for (i = 0; i < 3; i++) {
-        if (_subtitle[i] && [_subtitle[i] isEnabled]) {
-            t = [_subtitle[i] prevSubtitleTime:
-                 [self.movie currentTime] + [_subtitleOSD[i] subtitleSync]];
-            if (prevTime < t) {
-                prevTime = t;
-            }
-        }
-    }
+	if (_subtitle && [_subtitle isEnabled]) {
+		t = [_subtitle prevSubtitleTime:
+			 [self.movie currentTime] + [_subtitleOSD subtitleSync]];
+		if (prevTime < t) {
+			prevTime = t;
+		}
+	}
     return prevTime;
 }
 
 - (float)nextSubtitleTime
 {
     float t, nextTime = [self.movie duration];
-    int i;
-    for (i = 0; i < 3; i++) {
-        if (_subtitle[i] && [_subtitle[i] isEnabled]) {
-            t = [_subtitle[i] nextSubtitleTime:
-                 [self.movie currentTime] + [_subtitleOSD[i] subtitleSync]];
-            if (t < nextTime) {
-                nextTime = t;
-            }
-        }
-    }
+	if (_subtitle && [_subtitle isEnabled]) {
+		t = [_subtitle nextSubtitleTime:
+			 [self.movie currentTime] + [_subtitleOSD subtitleSync]];
+		if (t < nextTime) {
+			nextTime = t;
+		}
+	}
     return nextTime;
 }
 

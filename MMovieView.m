@@ -103,7 +103,7 @@
 	if(_subtitleVisible)
 	{
 		[self updateSubtitleOSDAtIndex:0];
-		[_rootLayer.subtitle setTextImage:[_subtitleOSD[0] texImage]];
+		[_rootLayer.subtitle setTextImage:[_subtitleOSD texImage]];
 	}
 }
 
@@ -120,9 +120,7 @@
     [_drawLock release];
 
     [self cleanupOSD];
-    [_subtitle[0] release];
-    [_subtitle[1] release];
-    [_subtitle[2] release];
+    [_subtitle release];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 

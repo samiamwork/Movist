@@ -33,14 +33,12 @@
 - (BOOL)initOSD
 {
     NSRect bounds = [self bounds];
-    int i;
-    for (i = 0; i < 3; i++) {
-        _subtitleOSD[i] = [[MMovieOSD alloc] init];
-        [_subtitleOSD[i] initTextRendering];
-        [_subtitleOSD[i] setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
+	_subtitleOSD = [[MMovieOSD alloc] init];
+	[_subtitleOSD initTextRendering];
+	[_subtitleOSD setViewBounds:bounds movieRect:bounds autoSizeWidth:0];
 
-        // h/v-position will be updated later
-    }
+	// h/v-position will be updated later
+
 	_rootLayer.subtitle.hidden = NO;
     _subtitleVisible = TRUE;
     _indexOfSubtitleInLBOX = -1;
@@ -75,9 +73,7 @@
     [_iconOSD release];
     [_errorOSD release];
     [_messageOSD release];
-    [_subtitleOSD[0] release];
-    [_subtitleOSD[1] release];
-    [_subtitleOSD[2] release];
+    [_subtitleOSD release];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,12 +86,9 @@
         [_iconOSD drawOnScreen];
     }
     if (_subtitleVisible) {
-        int i;
-        for (i = 2; 0 <= i; i--) {
-            if ([_subtitleOSD[i] hasContent]) {
-                [_subtitleOSD[i] drawOnScreen];
-            }
-        }
+		if ([_subtitleOSD hasContent]) {
+			[_subtitleOSD drawOnScreen];
+		}
     }
     if ([_messageOSD hasContent]) {
         [_messageOSD drawOnScreen];
@@ -107,9 +100,7 @@
 
 - (void)clearOSD
 {
-    [_subtitleOSD[0] setSubtitleSync:0], [_subtitleOSD[0] clearContent];
-    [_subtitleOSD[1] setSubtitleSync:0], [_subtitleOSD[1] clearContent];
-    [_subtitleOSD[2] setSubtitleSync:0], [_subtitleOSD[2] clearContent];
+    [_subtitleOSD setSubtitleSync:0], [_subtitleOSD clearContent];
     [_messageOSD clearContent];
     [_errorOSD clearContent];
 }
@@ -117,9 +108,7 @@
 - (void)updateOSDImageBaseWidth
 {
     float width = (self.movie) ? [self.movie adjustedSizeByAspectRatio].width : 0;
-    [_subtitleOSD[0] setImageBaseWidth:width];
-    [_subtitleOSD[1] setImageBaseWidth:width];
-    [_subtitleOSD[2] setImageBaseWidth:width];
+    [_subtitleOSD setImageBaseWidth:width];
 }
 
 - (void)showLogo

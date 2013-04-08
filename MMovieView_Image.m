@@ -239,15 +239,12 @@
         }
         [_iconOSD setViewBounds:bounds movieRect:mr autoSizeWidth:asw];
         [_messageOSD setViewBounds:bounds movieRect:mr autoSizeWidth:asw];
-        int i;
-        for (i = 0; i < 3; i++) {
-            if ([_subtitleOSD[i] setViewBounds:bounds movieRect:mr autoSizeWidth:asw]) {
-                if (_subtitle[i] && [_subtitle[i] isEnabled]) {
-                    [_subtitle[i] setNeedsRemakeTexImages];
-                    [self updateSubtitleOSDAtIndex:i];
-                }
-            }
-        }
+		if ([_subtitleOSD setViewBounds:bounds movieRect:mr autoSizeWidth:asw]) {
+			if (_subtitle && [_subtitle isEnabled]) {
+				[_subtitle setNeedsRemakeTexImages];
+				[self updateSubtitleOSDAtIndex:0];
+			}
+		}
     }
     [_errorOSD setViewBounds:bounds movieRect:NSInsetRect(bounds, 50, 0) autoSizeWidth:0];
 
@@ -265,7 +262,7 @@
         return (boundingSize.height - movieSize.height) / 2;
     }
 
-    MMovieOSD* subtitleOSD = _subtitleOSD[_indexOfSubtitleInLBOX];
+    MMovieOSD* subtitleOSD = _subtitleOSD;
     float lineHeight = [subtitleOSD adjustedLineHeight:movieSize.width];
     float lineSpacing = [subtitleOSD adjustedLineSpacing:movieSize.width];
     // FIXME: how to apply line-spacing for line-height?  it's estimated roughly...
