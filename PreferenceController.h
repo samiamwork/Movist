@@ -66,8 +66,8 @@
 
     // subtitle
     IBOutlet NSView* _subtitlePane;
-    int _subtitleIndex;     // current tab-index of _subtitleTabView
-    IBOutlet NSTabView*     _subtitleTabView;
+
+    IBOutlet NSBox*         _subtitleBoxView;
     IBOutlet NSView*        _subtitleDataView;
     IBOutlet NSButton*      _subtitleEnableButton;
     IBOutlet NSPopUpButton* _subtitleEncodingPopUpButton;

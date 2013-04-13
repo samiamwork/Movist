@@ -146,126 +146,103 @@
                             screenMargin]];
 }
 
-- (void)setSubtitleFontSize:(float)size atIndex:(int)index
+- (void)setSubtitleFontSize:(float)size
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__);
-    assert(0 <= index);
     size = adjustToRange(size, 1.0, 50.0);
 
     SubtitleAttributes attrs;
     attrs.mask = SUBTITLE_ATTRIBUTE_FONT;
-    [_movieView getSubtitleAttributes:&attrs atIndex:index]; // fill fontName
+    [_movieView getSubtitleAttributes:&attrs]; // fill fontName
 
     attrs.fontSize = size;
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
+    [_movieView setSubtitleAttributes:&attrs];
 
-    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f",
-                            index + 1, NSLocalizedString(@"Font Size", nil), size]];
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%@ %.1f",
+                            NSLocalizedString(@"Font Size", nil), size]];
 }
 
-- (float)_changeSubtitleFontSize:(int)tag atIndex:(int)index
+- (float)_changeSubtitleFontSize:(int)tag
 {
     SubtitleAttributes attrs;
     attrs.mask = SUBTITLE_ATTRIBUTE_FONT;
-    [_movieView getSubtitleAttributes:&attrs atIndex:index];
+    [_movieView getSubtitleAttributes:&attrs];
     attrs.fontSize = (tag < 0) ? (attrs.fontSize - 1.0) :
                      (0 < tag) ? (attrs.fontSize + 1.0) :
-                                 [_defaults floatForKey:MSubtitleFontSizeKey[index]];
+                                 [_defaults floatForKey:MSubtitleFontSizeKey];
     attrs.fontSize = adjustToRange(attrs.fontSize, 1.0, 50.0);
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
+    [_movieView setSubtitleAttributes:&attrs];
     return attrs.fontSize;
 }
 
-- (void)changeSubtitleFontSize:(int)tag atIndex:(int)index
+- (void)changeSubtitleFontSize:(int)tag
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__);
     NSString* action = (tag < 0) ? [_subtitleFontSizeSmallerMenuItem title] :
                        (0 < tag) ? [_subtitleFontSizeBiggerMenuItem title] :
                                    [_subtitleFontSizeDefaultMenuItem title];
     NSMutableString* msg = [NSMutableString stringWithString:action];
-    if (0 <= index) {
-        float size = [self _changeSubtitleFontSize:tag atIndex:index];
-        [msg appendFormat:@"\n%d: %.1f", index + 1, size];
-    }
-    else {
-        float size;
-        for (index = 0; index < 3; index++) {
-            size = [self _changeSubtitleFontSize:tag atIndex:index];
-            if ([_movieView subtitleAtIndex:index]) {
-                [msg appendFormat:@"\n%d: %.1f", index + 1, size];
-            }
-        }
-    }
+	float size = [self _changeSubtitleFontSize:tag];
+	[msg appendFormat:@"\n%.1f", size];
+
     [_movieView setMessage:msg];
 }
 
-- (void)setSubtitleHMargin:(float)hMargin atIndex:(int)index
+- (void)setSubtitleHMargin:(float)hMargin
 {
-    assert(0 <= index);
     hMargin = adjustToRange(hMargin, MIN_SUBTITLE_H_MARGIN, MAX_SUBTITLE_H_MARGIN);
 
     SubtitleAttributes attrs;
     attrs.hMargin = hMargin;
     attrs.mask = SUBTITLE_ATTRIBUTE_H_MARGIN;
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
+    [_movieView setSubtitleAttributes:&attrs];
 
-    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f %%",
-                            index + 1, NSLocalizedString(@"HMargin", nil), hMargin]];
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%@ %.1f %%",
+                            NSLocalizedString(@"HMargin", nil), hMargin]];
 }
 
-- (void)setSubtitleVMargin:(float)vMargin atIndex:(int)index
+- (void)setSubtitleVMargin:(float)vMargin
 {
-    assert(0 <= index);
     vMargin = adjustToRange(vMargin, MIN_SUBTITLE_V_MARGIN, MAX_SUBTITLE_V_MARGIN);
 
     SubtitleAttributes attrs;
     attrs.vMargin = vMargin;
     attrs.mask = SUBTITLE_ATTRIBUTE_V_MARGIN;
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
+    [_movieView setSubtitleAttributes:&attrs];
     
-    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f %%",
-                            index + 1, NSLocalizedString(@"VMargin", nil), vMargin]];
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%@ %.1f %%",
+                            NSLocalizedString(@"VMargin", nil), vMargin]];
 }
 
-- (float)_changeSubtitleVMargin:(int)tag atIndex:(int)index
+- (float)_changeSubtitleVMargin:(int)tag
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     SubtitleAttributes attrs;
     attrs.mask = SUBTITLE_ATTRIBUTE_V_MARGIN;
-    [_movieView getSubtitleAttributes:&attrs atIndex:index];
+    [_movieView getSubtitleAttributes:&attrs];
     
     attrs.vMargin = (tag < 0) ? (attrs.vMargin - 1.0) :
                     (0 < tag) ? (attrs.vMargin + 1.0) :
-                                [_defaults floatForKey:MSubtitleVMarginKey[index]];
+                                [_defaults floatForKey:MSubtitleVMarginKey];
     attrs.vMargin = adjustToRange(attrs.vMargin, MIN_SUBTITLE_V_MARGIN, MAX_SUBTITLE_V_MARGIN);
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
+    [_movieView setSubtitleAttributes:&attrs];
     return attrs.vMargin;
 }
 
-- (void)changeSubtitleVMargin:(int)tag atIndex:(int)index
+- (void)changeSubtitleVMargin:(int)tag
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSString* action = (tag < 0) ? [_subtitleVMarginSmallerMenuItem title] :
                        (0 < tag) ? [_subtitleVMarginBiggerMenuItem title] :
                                    [_subtitleVMarginDefaultMenuItem title];
     NSMutableString* msg = [NSMutableString stringWithString:action];
-    if (0 <= index) {
-        float vMargin = [self _changeSubtitleVMargin:tag atIndex:index];
-        [msg appendFormat:@"\n%d: %.1f", index + 1, vMargin];
-    }
-    else {
-        float vMargin;
-        for (index = 0; index < 3; index++) {
-            vMargin = [self _changeSubtitleVMargin:tag atIndex:index];
-            if ([_movieView subtitleAtIndex:index]) {
-                [msg appendFormat:@"\n%d: %.1f", index + 1, vMargin];
-            }
-        }
-    }
+	float vMargin = [self _changeSubtitleVMargin:tag];
+	[msg appendFormat:@"\n%.1f", vMargin];
+
     [_movieView setMessage:msg];
 }
 
-- (void)setSubtitleLineSpacing:(float)spacing atIndex:(int)index
+- (void)setSubtitleLineSpacing:(float)spacing
 {
     assert(0 <= index);
     spacing = adjustToRange(spacing, MIN_SUBTITLE_LINE_SPACING, MAX_SUBTITLE_LINE_SPACING);
@@ -273,55 +250,41 @@
     SubtitleAttributes attrs;
     attrs.lineSpacing = spacing;
     attrs.mask = SUBTITLE_ATTRIBUTE_LINE_SPACING;
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
+    [_movieView setSubtitleAttributes:&attrs];
     
-    [_movieView setMessage:[NSString localizedStringWithFormat:@"%d: %@ %.1f",
-                            index + 1, NSLocalizedString(@"Line Spacing", nil), spacing]];
+    [_movieView setMessage:[NSString localizedStringWithFormat:@"%@ %.1f",
+                            NSLocalizedString(@"Line Spacing", nil), spacing]];
 }
 
-- (float)_changeSubtitleSync:(int)tag atIndex:(int)index
+- (float)_changeSubtitleSync:(int)tag
 {
     SubtitleAttributes attrs;
     attrs.mask = SUBTITLE_ATTRIBUTE_SYNC;
-    [_movieView getSubtitleAttributes:&attrs atIndex:index];
+    [_movieView getSubtitleAttributes:&attrs];
     attrs.sync = (tag < 0) ? attrs.sync - 0.5 :
                  (0 < tag) ? attrs.sync + 0.5 :
                  0.0;
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
+    [_movieView setSubtitleAttributes:&attrs];
     return attrs.sync;
 }
 
-- (void)changeSubtitleSync:(int)tag atIndex:(int)index
+- (void)changeSubtitleSync:(int)tag
 {
     NSString* action = (tag < 0) ? [_subtitleSyncLaterMenuItem title] :
                        (0 < tag) ? [_subtitleSyncEarlierMenuItem title] :
                                    [_subtitleSyncDefaultMenuItem title];
     NSMutableString* msg = [NSMutableString stringWithString:action];
-    if (0 <= index) {
-        float sync = [self _changeSubtitleSync:tag atIndex:index];
-        [msg appendFormat:@"\n%d: %.1f %@",
-         index + 1, sync, NSLocalizedString(@"sec.", nil)];
-    }
-    else {
-        float sync;
-        for (index = 0; index < 3; index++) {
-            sync = [self _changeSubtitleSync:tag atIndex:index];
-            if ([_movieView subtitleAtIndex:index]) {
-                [msg appendFormat:@"\n%d: %.1f %@",
-                 index + 1, sync, NSLocalizedString(@"sec.", nil)];
-            }
-        }
-    }
+	float sync = [self _changeSubtitleSync:tag];
+	[msg appendFormat:@"\n%.1f %@",
+	 sync, NSLocalizedString(@"sec.", nil)];
+
     [_movieView setMessage:msg];
 }
 
-#define INIT_SUBTITLE_POSITION_MENUITEMS(index) \
+#define INIT_SUBTITLE_POSITION_MENUITEMS \
     NSMenuItem* uboxItem, *topItem, *centerItem, *bottomItem, *lboxItem;    \
     {   \
-        NSMenuItem *items[3] = {    \
-            _subtitle0MenuItem, _subtitle1MenuItem, _subtitle2MenuItem  \
-        };   \
-        for (NSMenuItem* item in [[items[index] submenu] itemArray]) { \
+        for (NSMenuItem* item in [[_subtitle0MenuItem submenu] itemArray]) { \
             if ([item action] == @selector(subtitlePositionAction:)) {  \
                 switch ([item tag]) {   \
                     case OSD_VPOSITION_UBOX   : uboxItem = item;   break;   \
@@ -334,9 +297,9 @@
         }   \
     }
 
-- (void)setSubtitlePosition:(int)position atIndex:(int)index
+- (void)setSubtitlePosition:(int)position
 {
-    INIT_SUBTITLE_POSITION_MENUITEMS(index)
+    INIT_SUBTITLE_POSITION_MENUITEMS
 
     NSString* ps;
     switch (position) {
@@ -352,17 +315,17 @@
     SubtitleAttributes attrs;
     attrs.vPosition = position;
     attrs.mask = SUBTITLE_ATTRIBUTE_V_POSITION;
-    [_movieView setSubtitleAttributes:&attrs atIndex:index];
-    [_movieView setMessage:[NSString stringWithFormat:@"%d: %@", index + 1, ps]];
-    [self updateSubtitlePositionMenuItems:index];
+    [_movieView setSubtitleAttributes:&attrs];
+    [_movieView setMessage:[NSString stringWithFormat:@"%@", ps]];
+    [self updateSubtitlePositionMenuItem];
     [self updateControlPanelSubtitleUI];
 }
 
-- (void)changeSubtitlePositionAtIndex:(int)index
+- (void)changeSubtitlePosition
 {
     SubtitleAttributes attrs;
     attrs.mask = SUBTITLE_ATTRIBUTE_V_POSITION;
-    [_movieView getSubtitleAttributes:&attrs atIndex:index];
+    [_movieView getSubtitleAttributes:&attrs];
 
     // change to next position
     switch (attrs.vPosition) {
@@ -373,7 +336,7 @@
         case OSD_VPOSITION_LBOX   : attrs.vPosition = OSD_VPOSITION_UBOX;    break;
         default                   : attrs.vPosition = OSD_VPOSITION_LBOX;    break;
     }
-    [self setSubtitlePosition:attrs.vPosition atIndex:index];
+    [self setSubtitlePosition:attrs.vPosition];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -487,77 +450,24 @@
     }
 }
 
+// TODO: Fix this to choose the next subtitle when tag < 0
 - (void)changeSubtitleLanguage:(int)tag
 {
-    if (tag < 0) {  // rotation
-        if ([_subtitles count] <= 1) {
-            return;
-        }
-        // make index set combination (max 3 subtitles)
-        NSMutableIndexSet* indexSet;
-        int i, j, k, subtitleCount = [_subtitles count];
-        NSMutableArray* combiSets = [NSMutableArray arrayWithCapacity:10];
-        for (i = 0; i < subtitleCount; i++) {
-            indexSet = [[[NSMutableIndexSet alloc] init] autorelease];
-            [indexSet addIndex:i];
-            [combiSets addObject:indexSet];
-        }
-        for (i = 0; i < subtitleCount; i++) {
-            for (j = i + 1; j < subtitleCount; j++) {
-                indexSet = [[[NSMutableIndexSet alloc] init] autorelease];
-                [indexSet addIndex:i];
-                [indexSet addIndex:j];
-                [combiSets addObject:indexSet];
-            }
-        }
-        for (i = 0; i < subtitleCount; i++) {
-            for (j = i + 1; j < subtitleCount; j++) {
-                for (k = j + 1; k < subtitleCount; k++) {
-                    indexSet = [[[NSMutableIndexSet alloc] init] autorelease];
-                    [indexSet addIndex:i];
-                    [indexSet addIndex:j];
-                    [indexSet addIndex:k];
-                    [combiSets addObject:indexSet];
-                }
-            }
-        }
-        //TRACE(@"combiSets=%@", combiSets);
-
-        // current index set
-        indexSet = [[[NSMutableIndexSet alloc] init] autorelease];
-        for (i = 0; i < subtitleCount; i++) {
-            if ([[_subtitles objectAtIndex:i] isEnabled]) {
-                [indexSet addIndex:i];
-            }
-        }
-
-        // find next index set
-        for (i = 0; i < [combiSets count]; i++) {
-            if ([indexSet isEqualToIndexSet:[combiSets objectAtIndex:i]]) {
-                indexSet = [combiSets objectAtIndex:(i + 1) % [combiSets count]];
-                break;
-            }
-        }
-        for (i = 0; i < subtitleCount; i++) {
-            [[_subtitles objectAtIndex:i] setEnabled:[indexSet containsIndex:i]];
-        }
-    }
-    else {  // select or enable/disable
-        BOOL addRemove = (100 <= tag);
-        int index = (addRemove) ? (tag - 100) : tag;
-        if (0 <= index) {
-            if (addRemove) {
-                MSubtitle* subtitle = [_subtitles objectAtIndex:index];
-                [subtitle setEnabled:![subtitle isEnabled]];
-            }
-            else {  // enable only one at index.
-                int i, subtitleCount = [_subtitles count];
-                for (i = 0; i < subtitleCount; i++) {
-                    [[_subtitles objectAtIndex:i] setEnabled:(i == index)];
-                }
-            }
-        }
-    }
+	// select or enable/disable
+	BOOL addRemove = (100 <= tag);
+	int index = (addRemove) ? (tag - 100) : tag;
+	if (0 <= index) {
+		if (addRemove) {
+			MSubtitle* subtitle = [_subtitles objectAtIndex:index];
+			[subtitle setEnabled:![subtitle isEnabled]];
+		}
+		else {  // enable only one at index.
+			int i, subtitleCount = [_subtitles count];
+			for (i = 0; i < subtitleCount; i++) {
+				[[_subtitles objectAtIndex:i] setEnabled:(i == index)];
+			}
+		}
+	}
 
     MSubtitle* subtitle;
     int i, subtitleCount = [_subtitles count];
@@ -578,26 +488,6 @@
     [self updateMovieViewSubtitles];
     [self updateSubtitleLanguageMenuItems];
     [_propertiesView reloadData];
-}
-
-- (void)changeSubtitleOrder
-{
-    int i, count = [_movieView subtitleCount];
-    if (1 < count) {
-        MSubtitle* s = [_movieView subtitleAtIndex:0];
-        [_movieView removeSubtitle:s];
-        [_movieView addSubtitle:s];
-
-        [self updateSubtitleLanguageMenuItems];
-        [_propertiesView reloadData];
-        NSMutableString* ms = [NSMutableString stringWithCapacity:256];
-        [ms appendFormat:@"%@:", NSLocalizedString(@"Subtitle Order", nil)];
-        for (i = 0; i < count; i++) {
-            [ms appendFormat:(i < count - 1) ? @" %@," : @" %@",
-                             [[_movieView subtitleAtIndex:i] name]];
-        }
-        [_movieView setMessage:ms];
-    }
 }
 
 - (void)updateMovieViewSubtitles
@@ -678,40 +568,36 @@
         }
     }
 
-    unsigned int i;
-    MSubtitle* subtitle;
-    NSMenuItem* items[3] = { _subtitle0MenuItem, _subtitle1MenuItem, _subtitle2MenuItem };
-    for (i = 0; i < 3; i++) {
-        subtitle = [_movieView subtitleAtIndex:i];
-        if (subtitle) {
-            [items[i] setTitle:[NSString stringWithFormat:@"%d: %@ - %@",
-                                i + 1, [subtitle trackName], [subtitle name]]];
-            [items[i] setEnabled:TRUE];
-        }
-        else {
-            [items[i] setTitle:[NSString stringWithFormat:@"%d: <%@>",
-                                i + 1, NSLocalizedString(@"None", nil)]];
-            [items[i] setEnabled:FALSE];
-        }
-    }
+	MSubtitle*  subtitle = [_movieView subtitle];
+	if (subtitle) {
+		[_subtitle0MenuItem setTitle:[NSString stringWithFormat:@"%@ - %@",
+							[subtitle trackName], [subtitle name]]];
+		[_subtitle0MenuItem setEnabled:TRUE];
+	}
+	else {
+		[_subtitle0MenuItem setTitle:[NSString stringWithFormat:@"<%@>",
+							NSLocalizedString(@"None", nil)]];
+		[_subtitle0MenuItem setEnabled:FALSE];
+	}
+
     [_subtitleMenu update];
     
     // update subtitle-name in control-panel.
-    [self subtitleLanguageAction:_subtitleLanguageSegmentedControl];
+	[self updateControlPanelSubtitleUI];
 }
 
-- (void)updateSubtitlePositionMenuItems:(int)index
+- (void)updateSubtitlePositionMenuItem
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     int position = -10; // for no check
-    if ([_movieView subtitleAtIndex:index]) {
+    if ([_movieView subtitle]) {
         SubtitleAttributes attrs;
         attrs.mask = SUBTITLE_ATTRIBUTE_V_POSITION;
-        [_movieView getSubtitleAttributes:&attrs atIndex:index];
+        [_movieView getSubtitleAttributes:&attrs];
         position = attrs.vPosition;
     }
 
-    INIT_SUBTITLE_POSITION_MENUITEMS(index)
+    INIT_SUBTITLE_POSITION_MENUITEMS
 
     #define SUBTITLE_POSITION_MENUITEM_SET_STATE(item)    \
         [item setState:([item tag] == position) ? NSOnState : NSOffState]
@@ -741,32 +627,17 @@
 
 - (void)updateControlPanelSubtitleUI
 {
-    int index = [_subtitleLanguageSegmentedControl selectedSegment] - 1;
-    if (index < 0) {
-        [_subtitleNameTextField setStringValue:NSLocalizedString(@"All Subtitles", nil)];
-        [_subtitlePositionPopUpButton selectItem:nil];
-        [_subtitlePositionPopUpButton setEnabled:FALSE];
-        [_subtitlePositionDefaultButton setEnabled:FALSE];
-    }
-    else {
-        MSubtitle* subtitle = [_movieView subtitleAtIndex:index];
-        if (subtitle) {
-            [_subtitleNameTextField setStringValue:
-             [NSString stringWithFormat:@"%@ (%@)", [subtitle name], [subtitle type]]];
-            SubtitleAttributes attrs;
-            attrs.mask = SUBTITLE_ATTRIBUTE_V_POSITION;
-            [_movieView getSubtitleAttributes:&attrs atIndex:index];
-            [_subtitlePositionPopUpButton selectItemWithTag:attrs.vPosition];
-        }
-        else {
-            [_subtitleNameTextField setStringValue:
-             [NSString stringWithFormat:@"<%@>", NSLocalizedString(@"No Subtitle", nil)]];
-            int vpos = [_defaults integerForKey:MSubtitleVPositionKey[index]];
-            [_subtitlePositionPopUpButton selectItemWithTag:vpos];
-        }
-        [_subtitlePositionPopUpButton setEnabled:TRUE];
-        [_subtitlePositionDefaultButton setEnabled:TRUE];
-    }
+	MSubtitle* subtitle = [_movieView subtitle];
+	if (subtitle) {
+		[_subtitleNameTextField setStringValue:
+		 [NSString stringWithFormat:@"%@ (%@)", [subtitle name], [subtitle type]]];
+		SubtitleAttributes attrs;
+		attrs.mask = SUBTITLE_ATTRIBUTE_V_POSITION;
+		[_movieView getSubtitleAttributes:&attrs];
+		[_subtitlePositionPopUpButton selectItemWithTag:attrs.vPosition];
+	}
+	[_subtitlePositionPopUpButton setEnabled:TRUE];
+	[_subtitlePositionDefaultButton setEnabled:TRUE];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -803,79 +674,48 @@
 - (IBAction)subtitleLanguageAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (sender == _subtitleLanguageSegmentedControl) {
-        // this is just for updating subtitle name text-field in control-panel.
-        // don't change subtitle language.
-        [self updateControlPanelSubtitleUI];
-    }
-    else {
-        [self changeSubtitleLanguage:[sender tag]];
-    }
-}
-
-- (IBAction)subtitleOrderAction:(id)sender
-{
-    [self changeSubtitleOrder];
-}
-
-- (int)subtitleIndexFromSender:(id)sender
-{
-    if ([[sender class] isEqualTo:[NSMenuItem class]]) {
-        return ([sender menu] == [_subtitle0MenuItem submenu]) ? 0 :
-               ([sender menu] == [_subtitle1MenuItem submenu]) ? 1 :
-               ([sender menu] == [_subtitle2MenuItem submenu]) ? 2 : -1;
-    }
-    else if ([sender window] == (NSWindow*)_controlPanel) {
-        return [_subtitleLanguageSegmentedControl selectedSegment] - 1;
-    }
-    return -1;
+	[self changeSubtitleLanguage:[sender tag]];
 }
 
 - (IBAction)subtitleFontSizeAction:(id)sender
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__);
-    int index = [self subtitleIndexFromSender:sender];
-    [self changeSubtitleFontSize:[sender tag] atIndex:index];
+    [self changeSubtitleFontSize:[sender tag]];
 }
 
 - (IBAction)subtitleVMarginAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    int index = [self subtitleIndexFromSender:sender];
-    [self changeSubtitleVMargin:[sender tag] atIndex:index];
+    [self changeSubtitleVMargin:[sender tag]];
 }
 
 - (IBAction)subtitleSyncAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    int index = [self subtitleIndexFromSender:sender];
-    [self changeSubtitleSync:[sender tag] atIndex:index];
+    [self changeSubtitleSync:[sender tag]];
 }
 
 - (IBAction)subtitlePositionAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    int index = [self subtitleIndexFromSender:sender];
-    assert(0 <= index);
-
     int position;
     if (sender == _subtitlePositionPopUpButton) {
         position = [[_subtitlePositionPopUpButton selectedItem] tag];
     }
     else if (sender == _subtitlePositionDefaultButton) {
-        position = [_defaults integerForKey:MSubtitleVPositionKey[index]];
+        position = [_defaults integerForKey:MSubtitleVPositionKey];
     }
     else {  // for menu-items
         position = [sender tag];
         if (position < 0) { // rotation for the 1st subtitle only
-            [self changeSubtitlePositionAtIndex:0];
+            [self changeSubtitlePosition];
             return;
         }
         else if (OSD_VPOSITION_LBOX < position) {
-            position = [_defaults integerForKey:MSubtitleVPositionKey[index]];
+            position = [_defaults integerForKey:MSubtitleVPositionKey];
         }
     }
-    [self setSubtitlePosition:position atIndex:index];
+    [self setSubtitlePosition:position];
 }
 
 - (IBAction)letterBoxHeightAction:(id)sender

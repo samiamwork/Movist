@@ -31,17 +31,11 @@
 - (void)initSubtitlePane
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[_subtitleTabView tabViewItemAtIndex:0] setView:_subtitleDataView];
-    [[_subtitleTabView tabViewItemAtIndex:1] setView:_subtitleDataView];
-    [[_subtitleTabView tabViewItemAtIndex:2] setView:_subtitleDataView];
+	[_subtitleBoxView setContentView:_subtitleDataView];
     [_subtitleEncodingPopUpButton removeAllItems];
     initSubtitleEncodingMenu([_subtitleEncodingPopUpButton menu], nil);
 
     [_subtitleEnableButton setState:[_defaults boolForKey:MSubtitleEnableKey]];
-
-    _subtitleIndex = [[_defaults objectForKey:MPrefsSubtitleTabKey] intValue];
-    _subtitleIndex = adjustToRange(_subtitleIndex, 0, 2);
-    [_subtitleTabView selectTabViewItemAtIndex:_subtitleIndex];
 
     int textEncoding = [_defaults integerForKey:MSubtitleEncodingKey];
     [_subtitleEncodingPopUpButton selectItemWithTag:textEncoding];
@@ -69,23 +63,23 @@
 {
     [self updateSubtitleFontAndSizeUI];
 
-    NSColor* textColor = [_defaults colorForKey:MSubtitleTextColorKey[_subtitleIndex]];
+    NSColor* textColor = [_defaults colorForKey:MSubtitleTextColorKey];
     [_subtitleTextColorWell setColor:textColor];
     [_subtitleTextOpacitySlider setFloatValue:[textColor alphaComponent]];
     [_subtitleTextOpacityTextField setFloatValue:[textColor alphaComponent]];
 
-    NSColor* strokeColor = [_defaults colorForKey:MSubtitleStrokeColorKey[_subtitleIndex]];
-    float strokeWidth = [_defaults floatForKey:MSubtitleStrokeWidthKey[_subtitleIndex]];
+    NSColor* strokeColor = [_defaults colorForKey:MSubtitleStrokeColorKey];
+    float strokeWidth = [_defaults floatForKey:MSubtitleStrokeWidthKey];
     [_subtitleStrokeColorWell setColor:strokeColor];
     [_subtitleStrokeOpacitySlider setFloatValue:[strokeColor alphaComponent]];
     [_subtitleStrokeOpacityTextField setFloatValue:[strokeColor alphaComponent]];
     [_subtitleStrokeWidthSlider setFloatValue:strokeWidth];
     [_subtitleStrokeWidthTextField setFloatValue:strokeWidth];
 
-    NSColor* shadowColor = [_defaults colorForKey:MSubtitleShadowColorKey[_subtitleIndex]];
-    float shadowBlur = [_defaults floatForKey:MSubtitleShadowBlurKey[_subtitleIndex]];
-    float shadowOffset = [_defaults floatForKey:MSubtitleShadowOffsetKey[_subtitleIndex]];
-    int shadowDarkness = [_defaults integerForKey:MSubtitleShadowDarknessKey[_subtitleIndex]];
+    NSColor* shadowColor = [_defaults colorForKey:MSubtitleShadowColorKey];
+    float shadowBlur = [_defaults floatForKey:MSubtitleShadowBlurKey];
+    float shadowOffset = [_defaults floatForKey:MSubtitleShadowOffsetKey];
+    int shadowDarkness = [_defaults integerForKey:MSubtitleShadowDarknessKey];
     [_subtitleShadowColorWell setColor:shadowColor];
     [_subtitleShadowOpacitySlider setFloatValue:[shadowColor alphaComponent]];
     [_subtitleShadowOpacityTextField setFloatValue:[shadowColor alphaComponent]];
@@ -96,18 +90,18 @@
     [_subtitleShadowDarknessSlider setIntValue:shadowDarkness];
     [_subtitleShadowDarknessTextField setIntValue:shadowDarkness];
 
-    int position = [_defaults integerForKey:MSubtitleVPositionKey[_subtitleIndex]];
+    int position = [_defaults integerForKey:MSubtitleVPositionKey];
     [_subtitlePositionPopUpButton selectItemWithTag:position];
 
-    float hMargin = [_defaults floatForKey:MSubtitleHMarginKey[_subtitleIndex]];
+    float hMargin = [_defaults floatForKey:MSubtitleHMarginKey];
     [_subtitleHMarginSlider setFloatValue:hMargin];
     [_subtitleHMarginTextField setFloatValue:hMargin];
 
-    float vMargin = [_defaults floatForKey:MSubtitleVMarginKey[_subtitleIndex]];
+    float vMargin = [_defaults floatForKey:MSubtitleVMarginKey];
     [_subtitleVMarginSlider setFloatValue:vMargin];
     [_subtitleVMarginTextField setFloatValue:vMargin];
 
-    float lineSpacing = [_defaults floatForKey:MSubtitleLineSpacingKey[_subtitleIndex]];
+    float lineSpacing = [_defaults floatForKey:MSubtitleLineSpacingKey];
     [_subtitleLineSpacingSlider setFloatValue:lineSpacing];
     [_subtitleLineSpacingTextField setFloatValue:lineSpacing];
 }
@@ -121,8 +115,8 @@
     [paragraphStyle setAlignment:NSCenterTextAlignment];
     [attrs setObject:[paragraphStyle autorelease] forKey:NSParagraphStyleAttributeName];
     
-    NSString* name = [_defaults stringForKey:MSubtitleFontNameKey[_subtitleIndex]];
-    float size = [_defaults floatForKey:MSubtitleFontSizeKey[_subtitleIndex]];
+    NSString* name = [_defaults stringForKey:MSubtitleFontNameKey];
+    float size = [_defaults floatForKey:MSubtitleFontSizeKey];
     NSFont* font = [NSFont fontWithName:name size:MIN(size, 20.0)];
     if (font) {
         [attrs setObject:font forKey:NSFontAttributeName];
@@ -130,7 +124,7 @@
     NSString* title = [NSString localizedStringWithFormat:@"%@ %g", [font displayName], size];
     NSMutableAttributedString* mas = [[NSMutableAttributedString alloc]
                                       initWithString:title attributes:attrs];
-    BOOL autoFontSize = [_defaults boolForKey:MSubtitleAutoFontSizeKey[_subtitleIndex]];
+    BOOL autoFontSize = [_defaults boolForKey:MSubtitleAutoFontSizeKey];
     if (autoFontSize) {
         NSRange range;
         range.location = [[font displayName] length] + 1;
@@ -141,7 +135,7 @@
     }
     [_subtitleFontButton setAttributedTitle:[mas autorelease]];
     
-    int chars = [_defaults integerForKey:MSubtitleAutoFontSizeCharsKey[_subtitleIndex]];
+    int chars = [_defaults integerForKey:MSubtitleAutoFontSizeCharsKey];
     [_subtitleAutoFontSizeButton setState:autoFontSize];
     [_subtitleAutoFontSizeLabelTextField setEnabled:autoFontSize];
     [_subtitleAutoFontSizeTextField setEnabled:autoFontSize];
@@ -164,8 +158,8 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [[self window] makeFirstResponder:nil];
 
-    NSString* name = [_defaults stringForKey:MSubtitleFontNameKey[_subtitleIndex]];
-    float size = [_defaults floatForKey:MSubtitleFontSizeKey[_subtitleIndex]];
+    NSString* name = [_defaults stringForKey:MSubtitleFontNameKey];
+    float size = [_defaults floatForKey:MSubtitleFontSizeKey];
     NSFont* font = [NSFont fontWithName:name size:size];
 
     NSFontManager* fontManager = [NSFontManager sharedFontManager];
@@ -190,8 +184,8 @@
     NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin |
                                      NSStringDrawingUsesFontLeading |
                                      NSStringDrawingUsesDeviceMetrics;
-    NSString* fontName = [_defaults stringForKey:MSubtitleFontNameKey[_subtitleIndex]];
-    float hMargin = [_defaults floatForKey:MSubtitleHMarginKey[_subtitleIndex]] / 100.0;    // percentage
+    NSString* fontName = [_defaults stringForKey:MSubtitleFontNameKey];
+    float hMargin = [_defaults floatForKey:MSubtitleHMarginKey] / 100.0;    // percentage
     float width, maxWidth = 640.0 - (640.0 * hMargin) * 2;
     float fontSize = 10;
     while (TRUE) {
@@ -211,17 +205,17 @@
 
 - (void)updateFontSizeForAutoFontSizeChars
 {
-    int chars = [_defaults integerForKey:MSubtitleAutoFontSizeCharsKey[_subtitleIndex]];
+    int chars = [_defaults integerForKey:MSubtitleAutoFontSizeCharsKey];
     float fontSize = [self fontSizeForAutoFontSizeChars:chars];
-    [_defaults setFloat:fontSize forKey:MSubtitleFontSizeKey[_subtitleIndex]];
+    [_defaults setFloat:fontSize forKey:MSubtitleFontSizeKey];
 
     [self updateSubtitleFontAndSizeUI];
 
     SubtitleAttributes attrs;
-    attrs.fontName = [_defaults stringForKey:MSubtitleFontNameKey[_subtitleIndex]];
+    attrs.fontName = [_defaults stringForKey:MSubtitleFontNameKey];
     attrs.fontSize = fontSize;
     attrs.mask = SUBTITLE_ATTRIBUTE_FONT;
-    [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+    [_movieView setSubtitleAttributes:&attrs];
 }
 
 - (IBAction)subtitleAutoFontSizeAction:(id)sender
@@ -229,7 +223,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     BOOL autoFontSize = [_subtitleAutoFontSizeButton state];
     [_defaults setBool:autoFontSize
-                forKey:MSubtitleAutoFontSizeKey[_subtitleIndex]];
+                forKey:MSubtitleAutoFontSizeKey];
 
     if (autoFontSize) {
         [self updateFontSizeForAutoFontSizeChars];
@@ -243,7 +237,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [_defaults setInteger:[sender intValue]
-                   forKey:MSubtitleAutoFontSizeCharsKey[_subtitleIndex]];
+                   forKey:MSubtitleAutoFontSizeCharsKey];
 
     [self updateFontSizeForAutoFontSizeChars];
 }
@@ -251,23 +245,23 @@
 - (void)changeFont:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    NSString* name = [_defaults stringForKey:MSubtitleFontNameKey[_subtitleIndex]];
-    float size = [_defaults floatForKey:MSubtitleFontSizeKey[_subtitleIndex]];
+    NSString* name = [_defaults stringForKey:MSubtitleFontNameKey];
+    float size = [_defaults floatForKey:MSubtitleFontSizeKey];
     NSFont* font = [sender convertFont:[NSFont fontWithName:name size:size]];
 
     float fontSize = [font pointSize];
-    if ([_defaults boolForKey:MSubtitleAutoFontSizeKey[_subtitleIndex]]) {
-        fontSize = [_defaults floatForKey:MSubtitleFontSizeKey[_subtitleIndex]];
+    if ([_defaults boolForKey:MSubtitleAutoFontSizeKey]) {
+        fontSize = [_defaults floatForKey:MSubtitleFontSizeKey];
     }
-    [_defaults setObject:[font fontName] forKey:MSubtitleFontNameKey[_subtitleIndex]];
-    [_defaults setFloat:fontSize forKey:MSubtitleFontSizeKey[_subtitleIndex]];
+    [_defaults setObject:[font fontName] forKey:MSubtitleFontNameKey];
+    [_defaults setFloat:fontSize forKey:MSubtitleFontSizeKey];
     [self updateSubtitleFontAndSizeUI];
 
     SubtitleAttributes attrs;
     attrs.fontName = [font fontName];
     attrs.fontSize = fontSize;
     attrs.mask = SUBTITLE_ATTRIBUTE_FONT;
-    [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+    [_movieView setSubtitleAttributes:&attrs];
 }
 
 - (IBAction)subtitleAttributesAction:(id)sender
@@ -295,11 +289,11 @@
                                     alpha:[_subtitleTextOpacitySlider floatValue]];
             [_subtitleTextColorWell setColor:textColor];
             [_subtitleTextOpacityTextField setFloatValue:[textColor alphaComponent]];
-            [_defaults setColor:textColor forKey:MSubtitleTextColorKey[_subtitleIndex]];
+            [_defaults setColor:textColor forKey:MSubtitleTextColorKey];
             SubtitleAttributes attrs;
             attrs.textColor = textColor;
             attrs.mask = SUBTITLE_ATTRIBUTE_TEXT_COLOR;
-            [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+            [_movieView setSubtitleAttributes:&attrs];
             break;
         }
         case SUBTITLE_STROKE_COLOR :
@@ -310,21 +304,21 @@
                                     alpha:[_subtitleStrokeOpacitySlider floatValue]];
             [_subtitleStrokeColorWell setColor:strokeColor];
             [_subtitleStrokeOpacityTextField setFloatValue:[strokeColor alphaComponent]];
-            [_defaults setColor:strokeColor forKey:MSubtitleStrokeColorKey[_subtitleIndex]];
+            [_defaults setColor:strokeColor forKey:MSubtitleStrokeColorKey];
             SubtitleAttributes attrs;
             attrs.strokeColor = strokeColor;
             attrs.mask = SUBTITLE_ATTRIBUTE_STROKE_COLOR;
-            [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+            [_movieView setSubtitleAttributes:&attrs];
             break;
         }
         case SUBTITLE_STROKE_WIDTH : {
             float strokeWidth = normalizedFloat1([_subtitleStrokeWidthSlider floatValue]);
             [_subtitleStrokeWidthTextField setFloatValue:strokeWidth];
-            [_defaults setFloat:strokeWidth forKey:MSubtitleStrokeWidthKey[_subtitleIndex]];
+            [_defaults setFloat:strokeWidth forKey:MSubtitleStrokeWidthKey];
             SubtitleAttributes attrs;
             attrs.strokeWidth = strokeWidth;
             attrs.mask = SUBTITLE_ATTRIBUTE_STROKE_WIDTH;
-            [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+            [_movieView setSubtitleAttributes:&attrs];
             break;
         }
         case SUBTITLE_SHADOW_COLOR :
@@ -335,41 +329,41 @@
                                     alpha:[_subtitleShadowOpacitySlider floatValue]];
             [_subtitleShadowColorWell setColor:shadowColor];
             [_subtitleShadowOpacityTextField setFloatValue:[shadowColor alphaComponent]];
-            [_defaults setColor:shadowColor forKey:MSubtitleShadowColorKey[_subtitleIndex]];
+            [_defaults setColor:shadowColor forKey:MSubtitleShadowColorKey];
             SubtitleAttributes attrs;
             attrs.shadowColor = shadowColor;
             attrs.mask = SUBTITLE_ATTRIBUTE_SHADOW_COLOR;
-            [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+            [_movieView setSubtitleAttributes:&attrs];
             break;
         }
         case SUBTITLE_SHADOW_OFFSET : {
             float shadowOffset = normalizedFloat1([_subtitleShadowOffsetSlider floatValue]);
             [_subtitleShadowOffsetTextField setFloatValue:shadowOffset];
-            [_defaults setFloat:shadowOffset forKey:MSubtitleShadowOffsetKey[_subtitleIndex]];
+            [_defaults setFloat:shadowOffset forKey:MSubtitleShadowOffsetKey];
             SubtitleAttributes attrs;
             attrs.shadowOffset = shadowOffset;
             attrs.mask = SUBTITLE_ATTRIBUTE_SHADOW_OFFSET;
-            [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+            [_movieView setSubtitleAttributes:&attrs];
             break;
         }
         case SUBTITLE_SHADOW_DARKNESS : {
             float shadowDarkness = (float)[_subtitleShadowDarknessSlider intValue];
             [_subtitleShadowDarknessTextField setIntValue:shadowDarkness];
-            [_defaults setInteger:shadowDarkness forKey:MSubtitleShadowDarknessKey[_subtitleIndex]];
+            [_defaults setInteger:shadowDarkness forKey:MSubtitleShadowDarknessKey];
             SubtitleAttributes attrs;
             attrs.shadowDarkness = shadowDarkness;
             attrs.mask = SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS;
-            [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+            [_movieView setSubtitleAttributes:&attrs];
             break;
         }
         case SUBTITLE_SHADOW_BLUR : {
             float shadowBlur = normalizedFloat1([_subtitleShadowBlurSlider floatValue]);
             [_subtitleShadowBlurTextField setFloatValue:shadowBlur];
-            [_defaults setFloat:shadowBlur forKey:MSubtitleShadowBlurKey[_subtitleIndex]];
+            [_defaults setFloat:shadowBlur forKey:MSubtitleShadowBlurKey];
             SubtitleAttributes attrs;
             attrs.shadowBlur = shadowBlur;
             attrs.mask = SUBTITLE_ATTRIBUTE_SHADOW_BLUR;
-            [_movieView setSubtitleAttributes:&attrs atIndex:_subtitleIndex];
+            [_movieView setSubtitleAttributes:&attrs];
             break;
         }
     }
@@ -388,16 +382,16 @@
     switch ([sender tag]) {
         case SUBTITLE_V_POSITION : {
             int position = [[_subtitlePositionPopUpButton selectedItem] tag];
-            [_defaults setInteger:position forKey:MSubtitleVPositionKey[_subtitleIndex]];
-            [_appController setSubtitlePosition:position atIndex:_subtitleIndex];
+            [_defaults setInteger:position forKey:MSubtitleVPositionKey];
+            [_appController setSubtitlePosition:position];
             break;
         }
         case SUBTITLE_H_MARGIN : {
             float hMargin = [_subtitleHMarginSlider floatValue];
             [_subtitleHMarginTextField setFloatValue:hMargin];
-            [_defaults setFloat:hMargin forKey:MSubtitleHMarginKey[_subtitleIndex]];
-            [_appController setSubtitleHMargin:hMargin atIndex:_subtitleIndex];
-            if ([_defaults boolForKey:MSubtitleAutoFontSizeKey[_subtitleIndex]]) {
+            [_defaults setFloat:hMargin forKey:MSubtitleHMarginKey];
+            [_appController setSubtitleHMargin:hMargin];
+            if ([_defaults boolForKey:MSubtitleAutoFontSizeKey]) {
                 [self updateFontSizeForAutoFontSizeChars];
             }
             break;
@@ -405,15 +399,15 @@
         case SUBTITLE_V_MARGIN : {
             float vMargin = [_subtitleVMarginSlider floatValue];
             [_subtitleVMarginTextField setFloatValue:vMargin];
-            [_defaults setFloat:vMargin forKey:MSubtitleVMarginKey[_subtitleIndex]];
-            [_appController setSubtitleVMargin:vMargin atIndex:_subtitleIndex];
+            [_defaults setFloat:vMargin forKey:MSubtitleVMarginKey];
+            [_appController setSubtitleVMargin:vMargin];
             break;
         }
         case SUBTITLE_LINE_SPACING : {
             float spacing = [_subtitleLineSpacingSlider floatValue];
             [_subtitleLineSpacingTextField setFloatValue:spacing];
-            [_defaults setFloat:spacing forKey:MSubtitleLineSpacingKey[_subtitleIndex]];
-            [_appController setSubtitleLineSpacing:spacing atIndex:_subtitleIndex];
+            [_defaults setFloat:spacing forKey:MSubtitleLineSpacingKey];
+            [_appController setSubtitleLineSpacing:spacing];
             break;
         }
     }

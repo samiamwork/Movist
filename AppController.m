@@ -104,7 +104,6 @@ NSString* videoCodecName(int codecId);
     [_rTimeTextField setClickable:TRUE];    [_fsRTimeTextField setClickable:TRUE];
 
     _decoderButton = [_mainWindow createDecoderButton];
-    [_subtitleLanguageSegmentedControl setSelectedSegment:1];    // "subtitle 1"
     [self updateDecoderUI];
     [self updateDataSizeBpsUI];
 
@@ -186,23 +185,23 @@ NSString* videoCodecName(int codecId);
         if ([value intValue] != 100) {  // default was 100 ("auto")
             switch ([value intValue]) {
                 case -1 :   // -1 is "on movie"
-                    [_defaults setInteger:OSD_VPOSITION_BOTTOM forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:OSD_VPOSITION_BOTTOM forKey:MSubtitleVPositionKey];
                     [_defaults setInteger:LETTER_BOX_HEIGHT_SAME forKey:MLetterBoxHeightKey];
                     break;
                 case 0 :    // 0 is "on letter-box"
-                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey];
                     [_defaults setInteger:LETTER_BOX_HEIGHT_SAME forKey:MLetterBoxHeightKey];
                     break;
                 case 1 :    // 1 is "on letter-box (1 line)"
-                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey];
                     [_defaults setInteger:LETTER_BOX_HEIGHT_1_LINE forKey:MLetterBoxHeightKey];
                     break;
                 case 2 :    // 2 is "on letter-box (2 lines)"
-                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey];
                     [_defaults setInteger:LETTER_BOX_HEIGHT_2_LINES forKey:MLetterBoxHeightKey];
                     break;
                 case 3 :    // 3 is "on letter-box (3 lines)"
-                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey[0]];
+                    [_defaults setInteger:OSD_VPOSITION_LBOX forKey:MSubtitleVPositionKey];
                     [_defaults setInteger:LETTER_BOX_HEIGHT_3_LINES forKey:MLetterBoxHeightKey];
                     break;
             }
@@ -301,38 +300,37 @@ NSString* videoCodecName(int codecId);
                  SUBTITLE_ATTRIBUTE_SHADOW_OFFSET | SUBTITLE_ATTRIBUTE_SHADOW_DARKNESS |
                  SUBTITLE_ATTRIBUTE_LINE_SPACING  | SUBTITLE_ATTRIBUTE_V_POSITION |
                  SUBTITLE_ATTRIBUTE_H_MARGIN      | SUBTITLE_ATTRIBUTE_V_MARGIN;
-    int i;
     NSFont* font;
     NSString* fontName;
-    for (i = 0; i < 3; i++) {
-        fontName = [_defaults stringForKey:MSubtitleFontNameKey[i]];
-        font = [NSFont fontWithName:fontName size:10.0];
-        if (!font) {
-            runAlertPanel(_mainWindow,
-                          NSLocalizedString(@"Subtitle Font Not Found", nil),
-                          [NSString stringWithFormat:NSLocalizedString(
-                           @"\"%@\" not found\n"
-                            "Subtitle font setting will be restored to default.", nil),
-                           fontName],
-                          NSLocalizedString(@"OK", nil), nil, nil);
-            [_defaults setObject:[[NSFont boldSystemFontOfSize:1.0] fontName]
-                          forKey:MSubtitleFontNameKey[i]];
-        }
-        attrs.fontName      = [_defaults stringForKey:MSubtitleFontNameKey[i]];
-        attrs.fontSize      = [_defaults floatForKey:MSubtitleFontSizeKey[i]];
-        attrs.textColor     = [_defaults colorForKey:MSubtitleTextColorKey[i]];
-        attrs.strokeColor   = [_defaults colorForKey:MSubtitleStrokeColorKey[i]];
-        attrs.strokeWidth   = [_defaults floatForKey:MSubtitleStrokeWidthKey[i]];
-        attrs.shadowColor   = [_defaults colorForKey:MSubtitleShadowColorKey[i]];
-        attrs.shadowBlur    = [_defaults floatForKey:MSubtitleShadowBlurKey[i]];
-        attrs.shadowOffset  = [_defaults floatForKey:MSubtitleShadowOffsetKey[i]];
-        attrs.shadowDarkness= [_defaults integerForKey:MSubtitleShadowDarknessKey[i]];
-        attrs.vPosition     = [_defaults integerForKey:MSubtitleVPositionKey[i]];
-        attrs.hMargin       = [_defaults floatForKey:MSubtitleHMarginKey[i]];
-        attrs.vMargin       = [_defaults floatForKey:MSubtitleVMarginKey[i]];
-        attrs.lineSpacing   = [_defaults floatForKey:MSubtitleLineSpacingKey[i]];
-        [_movieView setSubtitleAttributes:&attrs atIndex:i];
-    }
+
+	fontName = [_defaults stringForKey:MSubtitleFontNameKey];
+	font = [NSFont fontWithName:fontName size:10.0];
+	if (!font) {
+		runAlertPanel(_mainWindow,
+					  NSLocalizedString(@"Subtitle Font Not Found", nil),
+					  [NSString stringWithFormat:NSLocalizedString(
+					   @"\"%@\" not found\n"
+						"Subtitle font setting will be restored to default.", nil),
+					   fontName],
+					  NSLocalizedString(@"OK", nil), nil, nil);
+		[_defaults setObject:[[NSFont boldSystemFontOfSize:1.0] fontName]
+					  forKey:MSubtitleFontNameKey];
+	}
+	attrs.fontName      = [_defaults stringForKey:MSubtitleFontNameKey];
+	attrs.fontSize      = [_defaults floatForKey:MSubtitleFontSizeKey];
+	attrs.textColor     = [_defaults colorForKey:MSubtitleTextColorKey];
+	attrs.strokeColor   = [_defaults colorForKey:MSubtitleStrokeColorKey];
+	attrs.strokeWidth   = [_defaults floatForKey:MSubtitleStrokeWidthKey];
+	attrs.shadowColor   = [_defaults colorForKey:MSubtitleShadowColorKey];
+	attrs.shadowBlur    = [_defaults floatForKey:MSubtitleShadowBlurKey];
+	attrs.shadowOffset  = [_defaults floatForKey:MSubtitleShadowOffsetKey];
+	attrs.shadowDarkness= [_defaults integerForKey:MSubtitleShadowDarknessKey];
+	attrs.vPosition     = [_defaults integerForKey:MSubtitleVPositionKey];
+	attrs.hMargin       = [_defaults floatForKey:MSubtitleHMarginKey];
+	attrs.vMargin       = [_defaults floatForKey:MSubtitleVMarginKey];
+	attrs.lineSpacing   = [_defaults floatForKey:MSubtitleLineSpacingKey];
+	[_movieView setSubtitleAttributes:&attrs];
+
     [_movieView setLetterBoxHeight:[_defaults integerForKey:MLetterBoxHeightKey]];
     [_movieView setSubtitleScreenMargin:[_defaults floatForKey:MSubtitleScreenMarginKey]];
 
@@ -494,9 +492,7 @@ NSString* videoCodecName(int codecId);
     [self updateAudioTrackMenuItems];
     [self updateVolumeMenuItems];
     [self updateSubtitleLanguageMenuItems];
-    [self updateSubtitlePositionMenuItems:0];
-    [self updateSubtitlePositionMenuItems:1];
-    [self updateSubtitlePositionMenuItems:2];
+    [self updateSubtitlePositionMenuItem];
     [self updateLetterBoxHeightMenuItems];
     [self updateRepeatUI];
     [self updateVolumeUI];
@@ -812,9 +808,6 @@ NSString* videoCodecName(int codecId);
             enabled = ([self enabledSubtitleCount] < 3);
         }
         return enabled;
-    }
-    if ([menuItem action] == @selector(subtitleOrderAction:)) {
-        return 1 < [_movieView subtitleCount];
     }
     if ([menuItem action] == @selector(subtitleVisibleAction:) ||
         [menuItem action] == @selector(subtitleFontSizeAction:) ||

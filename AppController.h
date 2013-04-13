@@ -125,7 +125,6 @@
     IBOutlet ControlPanel* _controlPanel;
     IBOutlet NSTextField* _audioDeviceTextField;
     IBOutlet NSTextField* _audioOutTextField;
-    IBOutlet NSSegmentedControl* _subtitleLanguageSegmentedControl;
     IBOutlet NSTextField* _subtitleNameTextField;
     IBOutlet NSPopUpButton* _subtitlePositionPopUpButton;
     IBOutlet NSButton* _subtitlePositionDefaultButton;
@@ -352,15 +351,15 @@
 - (int)enabledSubtitleCount;
 - (void)setSubtitleEnable:(BOOL)enable;
 
-- (void)setSubtitleFontSize:(float)size atIndex:(int)index;
-- (void)changeSubtitleFontSize:(int)tag atIndex:(int)index;
-- (void)setSubtitlePosition:(int)position atIndex:(int)index;
-- (void)changeSubtitlePositionAtIndex:(int)index;
-- (void)setSubtitleHMargin:(float)hMargin atIndex:(int)index;
-- (void)setSubtitleVMargin:(float)vMargin atIndex:(int)index;
-- (void)changeSubtitleVMargin:(int)tag atIndex:(int)index;
-- (void)setSubtitleLineSpacing:(float)spacing atIndex:(int)index;
-- (void)changeSubtitleSync:(int)tag atIndex:(int)index;
+- (void)setSubtitleFontSize:(float)size;
+- (void)changeSubtitleFontSize:(int)tag;
+- (void)setSubtitlePosition:(int)position;
+- (void)changeSubtitlePosition;
+- (void)setSubtitleHMargin:(float)hMargin;
+- (void)setSubtitleVMargin:(float)vMargin;
+- (void)changeSubtitleVMargin:(int)tag;
+- (void)setSubtitleLineSpacing:(float)spacing;
+- (void)changeSubtitleSync:(int)tag;
 
 - (void)setLetterBoxHeight:(int)height;
 - (void)changeLetterBoxHeight;
@@ -372,13 +371,12 @@
 - (void)changeSubtitleLanguage:(int)tag;
 - (void)updateMovieViewSubtitles;
 - (void)updateSubtitleLanguageMenuItems;
-- (void)updateSubtitlePositionMenuItems:(int)index;
+- (void)updateSubtitlePositionMenuItem;
 - (void)updateLetterBoxHeightMenuItems;
 - (void)updateControlPanelSubtitleUI;
 
 - (IBAction)subtitleVisibleAction:(id)sender;
 - (IBAction)subtitleLanguageAction:(id)sender;
-- (IBAction)subtitleOrderAction:(id)sender;
 - (IBAction)subtitleFontSizeAction:(id)sender;
 - (IBAction)subtitleVMarginAction:(id)sender;
 - (IBAction)subtitlePositionAction:(id)sender;

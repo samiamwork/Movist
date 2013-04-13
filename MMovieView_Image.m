@@ -242,7 +242,7 @@
 		if ([_subtitleOSD setViewBounds:bounds movieRect:mr autoSizeWidth:asw]) {
 			if (_subtitle && [_subtitle isEnabled]) {
 				[_subtitle setNeedsRemakeTexImages];
-				[self updateSubtitleOSDAtIndex:0];
+				[self updateSubtitleOSD];
 			}
 		}
     }
@@ -258,7 +258,7 @@
 - (float)calcLetterBoxHeightForMovieSize:(NSSize)movieSize
                             boundingSize:(NSSize)boundingSize
 {
-    if (_letterBoxHeight == LETTER_BOX_HEIGHT_SAME || _indexOfSubtitleInLBOX < 0) {
+    if (_letterBoxHeight == LETTER_BOX_HEIGHT_SAME || !_subtitleInLBOX) {
         return (boundingSize.height - movieSize.height) / 2;
     }
 

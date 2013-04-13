@@ -102,7 +102,7 @@
 {
 	if(_subtitleVisible)
 	{
-		[self updateSubtitleOSDAtIndex:0];
+		[self updateSubtitleOSD];
 		[_rootLayer.subtitle setTextImage:[_subtitleOSD texImage]];
 	}
 }
@@ -239,11 +239,11 @@
         case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1];         break;
 
         case 'l' : case 'L' : [[NSApp delegate] changeLetterBoxHeight];             break;
-        case 'p' : case 'P' : [[NSApp delegate] changeSubtitlePositionAtIndex:0];   break;
+        case 'p' : case 'P' : [[NSApp delegate] changeSubtitlePosition];   break;
 
-        case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1 atIndex:0];   break;
-        case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1 atIndex:0];   break;
-        case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0 atIndex:0];   break;
+        case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1];   break;
+        case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1];   break;
+        case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0];   break;
 
         case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];          break;
 

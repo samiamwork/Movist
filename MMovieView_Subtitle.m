@@ -39,7 +39,7 @@
 	return 1;
 }
 
-- (MSubtitle*)subtitleAtIndex:(int)index
+- (MSubtitle*)subtitle
 {
     return _subtitle;
 }
@@ -54,7 +54,7 @@
     _subtitle = [subtitle retain];
     TRACE(@"%s :%@", __PRETTY_FUNCTION__, [subtitle name]);
     [_subtitle setMovieOSD:_subtitleOSD];
-    [self updateSubtitleOSDAtIndex:0];
+    [self updateSubtitleOSD];
     [_subtitle startRenderThread];
 
     [self updateIndexOfSubtitleInLBOX];
@@ -73,7 +73,7 @@
     [_subtitle setMovieOSD:nil];
     [_subtitle release];
     _subtitle = nil;
-	[self updateSubtitleOSDAtIndex:0];
+	[self updateSubtitleOSD];
 
     [self updateIndexOfSubtitleInLBOX];
     [self updateLetterBoxHeight];
@@ -88,7 +88,7 @@
 		[_subtitle setMovieOSD:nil];
 		[_subtitle release];
 		_subtitle = nil;
-		[self updateSubtitleOSDAtIndex:0];
+		[self updateSubtitleOSD];
 	}
 
     [self updateIndexOfSubtitleInLBOX];
@@ -97,13 +97,13 @@
     [self redisplay];
 }
 
-- (BOOL)updateSubtitleOSDAtIndex:(int)index
+- (BOOL)updateSubtitleOSD
 {
     BOOL ret = TRUE;
     [_drawLock lock];
     if (!self.movie || !_subtitle || ![_subtitle isEnabled]) {
         [_subtitleOSD clearContent];
-        _needsSubtitleDrawing &= ~(1 << index);
+        _needsSubtitleDrawing &= ~1;
     }
     else {
         BOOL isRendering;
@@ -114,11 +114,11 @@
         [_subtitleOSD setTexImage:texImage];
 
         if (texImage || !isRendering) {
-            _needsSubtitleDrawing &= ~(1 << index);
+            _needsSubtitleDrawing &= ~1;
         }
         else {
             if (paused) {
-                _needsSubtitleDrawing |= (1 << index);
+                _needsSubtitleDrawing |= 1;
                 ret = FALSE;
             }
         }
@@ -141,7 +141,7 @@
 		_rootLayer.subtitle.hidden = !visible;
         [_subtitle setRenderingEnabled:_subtitleVisible];
         if (_subtitleVisible) {
-            [self updateSubtitleOSDAtIndex:0];
+            [self updateSubtitleOSD];
         }
 		[_rootLayer setSubtitleEnabled:visible];
         [self redisplay];
@@ -152,9 +152,8 @@
 #pragma mark -
 #pragma mark subtitle attributes
 
-- (void)getSubtitleAttributes:(SubtitleAttributes*)attrs atIndex:(int)index
+- (void)getSubtitleAttributes:(SubtitleAttributes*)attrs
 {
-    assert(0 <= index && index < 3);
     if (attrs->mask & SUBTITLE_ATTRIBUTE_FONT) {
         attrs->fontName = [_subtitleOSD fontName];
         attrs->fontSize = [_subtitleOSD fontSize];
@@ -200,9 +199,8 @@
     }
 }
 
-- (void)setSubtitleAttributes:(const SubtitleAttributes*)attrs atIndex:(int)index
+- (void)setSubtitleAttributes:(const SubtitleAttributes*)attrs
 {
-    assert(0 <= index && index < 3);
     BOOL remake = FALSE;
     if (attrs->mask & SUBTITLE_ATTRIBUTE_FONT) {
         if ([_subtitleOSD setFontName:attrs->fontName size:attrs->fontSize]) {
@@ -210,10 +208,8 @@
             [self updateMovieRect:FALSE];
             remake = TRUE;
         }
-        if (index == 0) {
-            [_messageOSD setFontName:attrs->fontName size:15.0];
-            [_errorOSD setFontName:attrs->fontName size:24.0];
-        }
+		[_messageOSD setFontName:attrs->fontName size:15.0];
+		[_errorOSD setFontName:attrs->fontName size:24.0];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_TEXT_COLOR) {
         if ([_subtitleOSD setTextColor:attrs->textColor]) {
@@ -262,8 +258,7 @@
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_V_POSITION) {
         [_subtitleOSD setVPosition:attrs->vPosition];
-        if (index == _indexOfSubtitleInLBOX ||
-            attrs->vPosition == OSD_VPOSITION_LBOX) {
+        if (_subtitleInLBOX || attrs->vPosition == OSD_VPOSITION_LBOX) {
             [self updateIndexOfSubtitleInLBOX];
             [self updateLetterBoxHeight];
             [self updateMovieRect:FALSE];
@@ -273,15 +268,11 @@
         if ([_subtitleOSD setHMargin:attrs->hMargin]) {
             remake = TRUE;
         }
-        if (index == 0) {
-            [_messageOSD setHMargin:attrs->hMargin];
-        }
+		[_messageOSD setHMargin:attrs->hMargin];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_V_MARGIN) {
         [_subtitleOSD setVMargin:attrs->vMargin];
-        if (index == 0) {
-            [_messageOSD setVMargin:attrs->vMargin];
-        }
+		[_messageOSD setVMargin:attrs->vMargin];
         [self updateMovieRect:FALSE];
     }
     if (attrs->mask & SUBTITLE_ATTRIBUTE_SYNC) {
@@ -292,17 +283,18 @@
         if (remake) {
             [_subtitle setNeedsRemakeTexImages];
         }
-        [self updateSubtitleOSDAtIndex:index];
+        [self updateSubtitleOSD];
     }
     [self redisplay];
 }
 
+// TODO: fix method name and check that it's correct. This looks very wrong
 - (void)updateIndexOfSubtitleInLBOX
 {
 	if (_subtitle && [_subtitleOSD vPosition] == OSD_VPOSITION_LBOX) {
-		_indexOfSubtitleInLBOX = 0;
+		_subtitleInLBOX = TRUE;
 	}
-	_indexOfSubtitleInLBOX = -1;
+	_subtitleInLBOX = FALSE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -322,7 +314,7 @@
     }
     else {
         int prevHeight = _letterBoxHeight;
-        if (0 <= _indexOfSubtitleInLBOX) {
+        if (_subtitleInLBOX) {
             MMovieOSD* subtitleOSD = _subtitleOSD;
             NSRect rect = [[[self window] screen] frame];
             if (0 < _fullScreenUnderScan) {
@@ -345,7 +337,7 @@
         }
         if (prevHeight != _letterBoxHeight) {
             BOOL onLetterBox = (_letterBoxHeight != LETTER_BOX_HEIGHT_SAME);
-            if (0 <= _indexOfSubtitleInLBOX) {
+            if (_subtitleInLBOX) {
                 [_subtitleOSD updateVPosition:onLetterBox];
             }
             [_messageOSD updateVPosition:onLetterBox];

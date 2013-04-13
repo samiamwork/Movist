@@ -41,7 +41,7 @@
 
 	_rootLayer.subtitle.hidden = NO;
     _subtitleVisible = TRUE;
-    _indexOfSubtitleInLBOX = -1;
+    _subtitleInLBOX = FALSE;
     _autoLetterBoxHeightMaxLines = 3;
 
     _messageOSD = [[MMovieOSD alloc] init];
