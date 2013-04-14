@@ -656,10 +656,9 @@
     }
     return self;
 }
-/*
+
 - (id)initWithCoder:(NSCoder*)decoder
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     if (self = [super initWithCoder:decoder]) {
         [self setImageName:@"HUD"];
     }
@@ -668,14 +667,13 @@
 
 - (id)copyWithZone:(NSZone*)zone
 {
-    TRACE(@"%s", __PRETTY_FUNCTION__);
     HUDTableHeaderCell* cell = [super copyWithZone:zone];
     cell->_lImage = [_lImage retain];
     cell->_mImage = [_mImage retain];
     cell->_rImage = [_rImage retain];
     return cell;
 }
-*/
+
 - (void)dealloc
 {
     [_lImage release];
