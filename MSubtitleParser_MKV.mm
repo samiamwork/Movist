@@ -120,30 +120,6 @@ static NSMutableDictionary* s_parsers = nil;    // [subtitleURL : parser]
     return [_subtitles objectForKey:[NSNumber numberWithInt:number]];
 }
 
-- (NSArray*)allSubtitles
-{
-    NSMutableArray* numbers = [NSMutableArray arrayWithArray:[_subtitles allKeys]];
-    [numbers sortUsingSelector:@selector(compare:)];
-
-    NSMutableArray* subtitles = [NSMutableArray arrayWithCapacity:[numbers count]];
-
-    int track = 1;
-    NSNumber* num;
-    MSubtitle* sub;
-    NSEnumerator* e = [numbers objectEnumerator];
-    while (num = [e nextObject]) {
-        sub = [_subtitles objectForKey:num];
-        [sub setTrackName:(1 == [numbers count]) ?
-                           NSLocalizedString(@"Subtitle Track", nil) :
-                           [NSString stringWithFormat:@"%@ %d",
-                            NSLocalizedString(@"Subtitle Track", nil), track]];
-        [sub setEmbedded:TRUE];
-        [subtitles addObject:sub];
-        track++;
-    }
-    return subtitles;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 //#define TRACE_PARSING
@@ -619,7 +595,27 @@ void StdIOCallback64::setFilePointer(int64_t offset, seek_mode mode)
         [self cleanupEbmlStream];
     }
 
-    return [self allSubtitles];
+	// Set subtitle track names
+	int track = 1;
+	NSMutableArray* sortedSubtitles = [NSMutableArray array];
+	for (NSNumber* num in [[_subtitles allKeys] sortedArrayUsingSelector:@selector(compare:)])
+	{
+		MSubtitle* sub = [_subtitles objectForKey:num];
+		[sortedSubtitles addObject:sub];
+		if ([_subtitles count] == 1)
+		{
+			[sub setTrackName:NSLocalizedString(@"Subtitle Track", nil)];
+		}
+		else
+		{
+			[sub setTrackName:[NSString stringWithFormat:@"%@ %d",
+							   NSLocalizedString(@"Subtitle Track", nil), track]];
+		}
+		[sub setEmbedded:TRUE];
+		track++;
+	}
+
+    return sortedSubtitles;
 }
 
 @end
