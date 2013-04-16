@@ -96,6 +96,26 @@
     return (_extraInfo) ? [s stringByAppendingFormat:@", %@", _extraInfo] : s;
 }
 
+- (NSString*)UIName
+{
+	if (_trackName && _name && _language)
+		return [NSString stringWithFormat:@"%@ - %@ (%@)", _trackName, _name, _language];
+	else if (_trackName && _language)
+		return [NSString stringWithFormat:@"%@ (%@)", _trackName, _language];
+	else if (_trackName && _name)
+		return [NSString stringWithFormat:@"%@ - %@", _trackName, _name];
+	else if (_name && _language)
+		return [NSString stringWithFormat:@"%@ (%@)", _name, _language];
+	else if (_trackName)
+		return _trackName;
+	else if (_name)
+		return _name;
+	else if (_language)
+		return _language;
+	else
+		return NSLocalizedString(@"Unknown Subtitle", nil);
+}
+
 - (BOOL)checkDefaultLanguage:(NSArray*)defaultLangIDs
 {
 #define CHECK_SUBSTRING(field, identifier)  \

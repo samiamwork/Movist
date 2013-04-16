@@ -67,6 +67,7 @@
 - (NSString*)extraInfo;
 - (NSString*)trackName;
 - (NSString*)summary;
+- (NSString*)UIName;
 - (BOOL)isEmbedded;
 - (void)setType:(NSString*)type;
 - (void)setName:(NSString*)name;
