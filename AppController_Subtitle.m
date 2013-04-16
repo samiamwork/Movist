@@ -440,22 +440,38 @@
     }
 }
 
-// TODO: Fix this to choose the next subtitle when tag < 0
 - (void)changeSubtitleLanguage:(int)tag
 {
-	// TODO: remove this when we actually handle tag < 0
+	int index;
 	if (tag < 0)
-		return;
-
-	// select or enable/disable
-	int index = tag;
-	if (0 <= index) {
-		// TODO: be smarter about this since we know only one subtitle
-		//       is enabled at a time.
-		// enable only one at index.
-		int i, subtitleCount = [_subtitles count];
-		for (i = 0; i < subtitleCount; i++) {
-			[[_subtitles objectAtIndex:i] setEnabled:(i == index)];
+	{
+		// Pick the next subtitle
+		index = 0;
+		for (MSubtitle* sub in _subtitles)
+		{
+			index++;
+			if([sub isEnabled])
+			{
+				[sub setEnabled:NO];
+				break;
+			}
+		}
+		if (index == [_subtitles count])
+			index = 0;
+		[(MSubtitle*)[_subtitles objectAtIndex:index] setEnabled:YES];
+	}
+	else
+	{
+		// select or enable/disable a specific subtitle
+		index = tag;
+		if (0 <= index) {
+			// TODO: be smarter about this since we know only one subtitle
+			//       is enabled at a time.
+			// enable only one at index.
+			int i, subtitleCount = [_subtitles count];
+			for (i = 0; i < subtitleCount; i++) {
+				[[_subtitles objectAtIndex:i] setEnabled:(i == index)];
+			}
 		}
 	}
 
