@@ -448,8 +448,7 @@
 		return;
 
 	// select or enable/disable
-	BOOL addRemove = (100 <= tag);
-	int index = (addRemove) ? (tag - 100) : tag;
+	int index = tag;
 	if (0 <= index) {
 		// TODO: be smarter about this since we know only one subtitle
 		//       is enabled at a time.
@@ -519,20 +518,6 @@
             [item setTag:i];
             [item setState:[subtitle isEnabled]];
             [item setKeyEquivalentModifierMask:mask];
-
-            // enable/disable ... item
-            item = [_subtitleMenu
-                    insertItemWithTitle:[NSString stringWithFormat:
-                                         ([subtitle isEnabled] ? 
-                                          NSLocalizedString(@"Disable %@", nil) :
-                                          NSLocalizedString(@"Enable %@", nil)),
-                                         [subtitle UIName]]
-                                 action:@selector(subtitleLanguageAction:)
-                          keyEquivalent:keyEquivalent atIndex:mi++];
-            [item setTag:i + 100];
-            [item setState:[subtitle isEnabled]];
-            [item setKeyEquivalentModifierMask:mask | NSAlternateKeyMask];
-            [item setAlternate:TRUE];
         }
         if (1 < [_subtitles count]) {   // add rotate item
             item = [_subtitleMenu
