@@ -651,7 +651,7 @@
         [_subtitleNameSet removeAllObjects];
 		for (MSubtitle* subtitle in _subtitles) {
             if ([subtitle isEnabled]) {
-                [_subtitleNameSet addObject:[subtitle name]];
+                [_subtitleNameSet addObject:[subtitle UIName]];
             }
         }
 

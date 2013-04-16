@@ -345,18 +345,8 @@
 - (void)setSubtitle:(MSubtitle*)subtitle enabled:(BOOL)enabled
 {
     [subtitle setEnabled:enabled];
-    if (enabled) {
-        [_movieView addSubtitle:subtitle];
-        [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Subtitle %@ enabled", nil),
-            [subtitle name]]];
-    }
-    else {
-        [_movieView removeSubtitle:subtitle];
-        [_movieView setMessage:[NSString stringWithFormat:
-            NSLocalizedString(@"Subtitle %@ disabled", nil),
-            [subtitle name]]];
-    }
+	[_movieView addSubtitle:subtitle];
+	[_movieView setMessage:[subtitle UIName]];
 
     [self updateSubtitleLanguageMenuItems];
 }
@@ -398,7 +388,7 @@
     if (0 < [_subtitleNameSet count]) {
         // select previous selected language
 		for (MSubtitle* subtitle in _subtitles) {
-            if ([_subtitleNameSet containsObject:[subtitle name]]) {
+            if ([_subtitleNameSet containsObject:[subtitle UIName]]) {
                 [subtitle setEnabled:TRUE];
                 enabledCount++;
             }
@@ -453,38 +443,26 @@
 // TODO: Fix this to choose the next subtitle when tag < 0
 - (void)changeSubtitleLanguage:(int)tag
 {
+	// TODO: remove this when we actually handle tag < 0
+	if (tag < 0)
+		return;
+
 	// select or enable/disable
 	BOOL addRemove = (100 <= tag);
 	int index = (addRemove) ? (tag - 100) : tag;
 	if (0 <= index) {
-		if (addRemove) {
-			MSubtitle* subtitle = [_subtitles objectAtIndex:index];
-			[subtitle setEnabled:![subtitle isEnabled]];
-		}
-		else {  // enable only one at index.
-			int i, subtitleCount = [_subtitles count];
-			for (i = 0; i < subtitleCount; i++) {
-				[[_subtitles objectAtIndex:i] setEnabled:(i == index)];
-			}
+		// TODO: be smarter about this since we know only one subtitle
+		//       is enabled at a time.
+		// enable only one at index.
+		int i, subtitleCount = [_subtitles count];
+		for (i = 0; i < subtitleCount; i++) {
+			[[_subtitles objectAtIndex:i] setEnabled:(i == index)];
 		}
 	}
 
-    MSubtitle* subtitle;
-    int i, subtitleCount = [_subtitles count];
-    NSMutableString* names = [NSMutableString stringWithCapacity:64];
-    for (i = 0; i < subtitleCount; i++) {
-        subtitle = [_subtitles objectAtIndex:i];
-        if ([subtitle isEnabled]) {
-            if ([names length] == 0) {
-                [names appendString:[subtitle name]];
-            }
-            else {
-                [names appendFormat:@", %@", [subtitle name]];
-            }
-        }
-    }
+	MSubtitle* subtitle = [_subtitles objectAtIndex:index];
     [_movieView setMessage:[NSString stringWithFormat:
-        NSLocalizedString(@"Subtitle %@ selected", nil), names]];
+        NSLocalizedString(@"%@ selected", nil), [subtitle UIName]]];
     [self updateMovieViewSubtitles];
     [self updateSubtitleLanguageMenuItems];
     [_propertiesView reloadData];
@@ -535,9 +513,7 @@
             keyEquivalent = [NSString stringWithFormat:@"%d", i + 1];
             // select ... item
             item = [_subtitleMenu
-                    insertItemWithTitle:[NSString stringWithFormat:
-                                         NSLocalizedString(@"%@ - %@", nil),
-                                         [subtitle trackName], [subtitle name]]
+                    insertItemWithTitle:[subtitle UIName]
                                  action:@selector(subtitleLanguageAction:)
                           keyEquivalent:keyEquivalent atIndex:mi++];
             [item setTag:i];
@@ -548,9 +524,9 @@
             item = [_subtitleMenu
                     insertItemWithTitle:[NSString stringWithFormat:
                                          ([subtitle isEnabled] ? 
-                                          NSLocalizedString(@"Disable %@ - %@", nil) :
-                                          NSLocalizedString(@"Enable %@ - %@", nil)),
-                                         [subtitle trackName], [subtitle name]]
+                                          NSLocalizedString(@"Disable %@", nil) :
+                                          NSLocalizedString(@"Enable %@", nil)),
+                                         [subtitle UIName]]
                                  action:@selector(subtitleLanguageAction:)
                           keyEquivalent:keyEquivalent atIndex:mi++];
             [item setTag:i + 100];
@@ -570,8 +546,7 @@
 
 	MSubtitle*  subtitle = [_movieView subtitle];
 	if (subtitle) {
-		[_subtitle0MenuItem setTitle:[NSString stringWithFormat:@"%@ - %@",
-							[subtitle trackName], [subtitle name]]];
+		[_subtitle0MenuItem setTitle:[subtitle UIName]];
 		[_subtitle0MenuItem setEnabled:TRUE];
 	}
 	else {
