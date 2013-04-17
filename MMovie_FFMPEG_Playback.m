@@ -492,6 +492,9 @@
         [_trackMutex unlock];
         return 0;
     }
+	// _dispatchNextImage is only set false when "pauseFunc" is called
+	// although I don't know why as it's set true after seeking even though
+	// after the seek it will still be paused
     if (!_dispatchNextImage) {
 		if (timeStamp != NULL)
 			_hostTime0point = hostTime - _currentTime;
