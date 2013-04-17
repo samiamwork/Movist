@@ -40,7 +40,6 @@
 - (void)awakeFromNib
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    _drawLock = [[NSRecursiveLock alloc] init];
 
     if (![self initOSD]) {
         // FIXME: alert...
@@ -117,7 +116,6 @@
 	[self subtitleShutdown];
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     [self invalidateMessageHideTimer];
-    [_drawLock release];
 
     [self cleanupOSD];
     [_subtitle release];
@@ -157,7 +155,6 @@
 - (void)setMovie:(MMovie*)movie
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, movie);
-    [_drawLock lock];
 
 	CALayer<MMovieLayer>* movieLayer = nil;
 	Class c = [movie class];
@@ -185,7 +182,6 @@
     _fpsElapsedTime = 0.0;
     _fpsFrameCount = 0;
 
-    [_drawLock unlock];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -39,7 +39,7 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-    if ([_drawLock tryLock]) {
+    {
 //        if (_movie) {
 //            CVOpenGLTextureRef image = [_movie nextImage:timeStamp];
 //            if (image) {
@@ -81,7 +81,6 @@
 //                _fpsFrameCount = 0;
 //            }
 //        }
-        [_drawLock unlock];
     }
 
     [pool release];
@@ -210,7 +209,6 @@
 - (void)updateMovieRect:(BOOL)display
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, display ? @"display" : @"no-display");
-    [_drawLock lock];
 
     NSRect bounds = [self bounds];
     if (_subtitleScreenMargin) {
@@ -252,7 +250,6 @@
         [self redisplay];
     }
 
-    [_drawLock unlock];
 }
 
 - (float)calcLetterBoxHeightForMovieSize:(NSSize)movieSize

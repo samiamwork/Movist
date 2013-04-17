@@ -33,7 +33,6 @@
 @interface MMovieView : NSView
 {
 	CGDirectDisplayID _displayID;
-    NSRecursiveLock* _drawLock;
 
     NSSize _movieSize;
     CGRect _movieRect;

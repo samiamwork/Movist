@@ -100,7 +100,6 @@
 - (BOOL)updateSubtitleOSD
 {
     BOOL ret = TRUE;
-    [_drawLock lock];
     if (!self.movie || !_subtitle || ![_subtitle isEnabled]) {
         [_subtitleOSD clearContent];
         _needsSubtitleDrawing &= ~1;
@@ -123,7 +122,6 @@
             }
         }
     }
-    [_drawLock unlock];
     return ret;
 }
 
