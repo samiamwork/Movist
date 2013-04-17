@@ -10,6 +10,12 @@
 #import "Movist.h"
 #import <Cocoa/Cocoa.h>
 
+@interface MMovieOSDLayer ()
+{
+	NSImage* _currentImage;
+}
+
+@end
 @implementation MMovieOSDLayer
 
 - (id)init
@@ -24,6 +30,10 @@
 
 - (void)setTextImage:(NSImage*)newImage
 {
+	if(newImage == _currentImage)
+		return;
+
+	_currentImage = newImage;
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[CATransaction begin];
 		[CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
