@@ -342,6 +342,23 @@ enum {
     MCODEC_SPEEX        = 51700,// Speex
     MCODEC_TTA          = 51800,// TTA (True Audio)
     MCODEC_WAVPACK      = 51900,// WavPack
+
+	MCODEC_WMAVOICE        = 52000, // WMA Voice
+	MCODEC_WMAPRO          = 52100, // WMA Pro
+	MCODEC_WMALOSSLESS     = 52200, // WMA Lossless
+	MCODEC_ATRAC3P         = 52300, // ATRAC3 Plus
+	MCODEC_EAC3            = 52400, // Dolby Digital Plus / Enhanced AC-3
+	MCODEC_SIPR            = 52500, // RealAudio Sipro Voice
+	MCODEC_MP1             = 52600, // MP1 (MPEG-1 Audio Layer 1)
+	MCODEC_TWINVQ          = 52700, // TwinVQ
+	MCODEC_TRUEHD          = 52800, // Dolby TrueHD
+	MCODEC_MP4ALS          = 52900, // MPEG-4 ALS (Audio Lossless Coding)
+	MCODEC_ATRAC1          = 53000, // ATRAC1
+	MCODEC_BINKAUDIO_RDFT  = 53100, // Bink (RDFT)
+	MCODEC_BINKAUDIO_DCT   = 53200, // Bink (DCT)
+	MCODEC_AAC_LATM        = 53300, // AAC LATM
+	MCODEC_QDMC            = 53400, // QDesign
+	MCODEC_CELT            = 53500, // CELT
 };
 
 #pragma mark -
