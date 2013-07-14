@@ -8,6 +8,22 @@ then
 	exit 0
 fi
 
+if [[ ! -e "libav/configure" ]]
+then
+	echo init libav submodule
+	pushd ..
+	git submodule init
+	git submodule update
+	popd
+else
+	# Even if we have the files it's possible that
+	# we've moved to a new commit for the submodule
+	echo update libav submodule
+	pushd ..
+	git submodule update
+	popd
+fi
+
 THESDK="/Developer/SDKs/MacOSX10.7.sdk"
 THESDK="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk"
 ORIGINAL_PATH="$PATH"
