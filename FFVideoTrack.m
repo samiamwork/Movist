@@ -461,22 +461,11 @@
     else if (_frame->opaque && *(uint64_t*)_frame->opaque != AV_NOPTS_VALUE) {
         pts = *(uint64_t*)_frame->opaque;
     }
-    double time;
-    double timeErr = (_nextFramePts - pts) * av_q2d(_stream->time_base);
-    if (_needPtsAdjust &&
-        _frame->pict_type != FF_I_TYPE && packet->duration &&
-        -1. < timeErr && timeErr < 1.) {
-        time = (double)(_nextFramePts) * av_q2d(_stream->time_base);
-        _nextFramePts += _frameInterval / av_q2d(_stream->time_base);
-    }
-    else {
-        time = (double)(pts) * av_q2d(_stream->time_base);
-        _nextFramePts = pts + _frameInterval / av_q2d(_stream->time_base);
-    }
-    //TRACE(@"[%s] frame flag %d pts %lld dts %lld pos %lld time %f timeErr %f", __PRETTY_FUNCTION__, 
+	double time = (double)(pts) * av_q2d(_stream->time_base);
+    //TRACE(@"[%s] frame flag %d pts %lld dts %lld pos %lld time %f", __PRETTY_FUNCTION__,
     //      _frame->pict_type, 
     //      packet.pts, packet.dts,
-    //      packet.pos, time, timeErr);
+    //      packet.pos, time);
     return time;
 }
 
