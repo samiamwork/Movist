@@ -12,7 +12,7 @@ ARCHS:=i386 x86_64
 ARCH_FLAGS:=$(addprefix -arch ,$(ARCHS))
 
 # To be exported
-CXX=g++-4.2
+CXX=clang++
 CXXFLAGS=$(ARCH_FLAGS) -isystem $(PREFIX)/include
 LDFLAGS=$(ARCH_FLAGS) -L$(PREFIX)/lib
 export CXX
