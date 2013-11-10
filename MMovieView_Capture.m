@@ -22,6 +22,7 @@
 
 #import "MMovieView.h"
 #import "AppController.h"   // for NSApp's delegate
+#import <OpenGL/gl.h>
 
 @implementation MMovieView (Capture)
 

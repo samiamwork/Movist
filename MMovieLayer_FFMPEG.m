@@ -8,6 +8,7 @@
 
 #import "MMovieLayer_FFMPEG.h"
 #import "MMovie_FFMPEG.h"
+#import <OpenGL/gl.h>
 
 @interface MMovieLayer_FFMPEG ()
 - (void)configure;
