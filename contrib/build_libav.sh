@@ -1,6 +1,12 @@
 #/bin/bash
 set -e 
 
+if [ -z "$MACOSX_DEPLOYMENT_TARGET" ]
+then
+	echo MACOSX_DEPLOYMENT_TARGET not set
+	exit 1
+fi
+
 GUARD_FILE=build/guard_4
 if [[ -e $GUARD_FILE ]]
 then
@@ -24,7 +30,6 @@ else
 	popd
 fi
 
-OSX_MIN_VERSION=10.7
 ORIGINAL_PATH="$PATH"
 
 build_libav()
@@ -50,8 +55,8 @@ build_libav()
 --disable-avprobe \
 --disable-avserver \
 --disable-avplay \
---extra-ldflags="-L$PREFIX/../lib -arch $THEARC -mmacosx-version-min=$OSX_MIN_VERSION" \
---extra-cflags="-isystem $PREFIX/../include -arch $THEARC -mmacosx-version-min=$OSX_MIN_VERSION -Wno-deprecated-declarations $THEOPT " \
+--extra-ldflags="-L$PREFIX/../lib -arch $THEARC -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET" \
+--extra-cflags="-isystem $PREFIX/../include -arch $THEARC -mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET -Wno-deprecated-declarations $THEOPT " \
 --enable-protocol=file \
 --prefix=$PREFIX \
 && make clean && make && make install-libs && make install-headers)
