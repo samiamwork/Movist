@@ -67,6 +67,11 @@
 	_rootLayer = [MMovieViewLayer layer];
 	[self setLayer:_rootLayer];
 	[self setWantsLayer:YES];
+	if([self respondsToSelector:@selector(setLayerUsesCoreImageFilters:)])
+	{
+		// OS X 10.9 and later only
+		[self setLayerUsesCoreImageFilters:YES];
+	}
 	[self initCoreImage];
 
 	CALayer* iconOSDLayer = [CALayer layer];
