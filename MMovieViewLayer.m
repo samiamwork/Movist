@@ -113,7 +113,7 @@
 	if(!_icon)
 		return;
 
-	_icon.position = self.position;
+	_icon.position = CGPointMake(self.bounds.size.width/2.0, self.bounds.size.height/2.0);
 	CGImageRef iconImageRef = (CGImageRef)_icon.contents;
 	_icon.bounds = (CGRect){
 		.origin = CGPointZero,
