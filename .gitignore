@@ -1,5 +1,13 @@
-.DS_Store
+# Any path matches.
+*.diff
+*.orig
 *.pbxuser
 *.perspectivev3
-xcuserdata
+*.swp
+.DS_Store
+.vimrc.local
 build
+project.xcworkspace/
+xcuserdata/
+
+# Full paths.
