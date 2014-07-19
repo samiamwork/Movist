@@ -479,4 +479,14 @@
     [_movieView saveCurrentImage:[sender tag] != 0];
 }
 
+- (IBAction)revealInFinder:(id)sender
+{
+    NSLog(@"Revealing in Finder...");
+}
+
+- (IBAction)moveToTrash:(id)sender
+{
+    NSLog(@"Moving to Trash...");
+}
+
 @end
