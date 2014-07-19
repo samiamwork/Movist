@@ -481,7 +481,7 @@
 
 - (IBAction)revealInFinder:(id)sender
 {
-    NSLog(@"Revealing in Finder...");
+    [_movie revealInFinder];
 }
 
 - (IBAction)moveToTrash:(id)sender
