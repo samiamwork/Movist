@@ -42,7 +42,8 @@
     AVCodecContext* context = _stream->codec;
     if (!_passThrough) {
 		// request downmix.
-        context->request_channels = 2;
+		// but don't increase channel count unnecessarily
+		context->request_channels = MIN(2, context->channels);
     }
 
     if (![super initTrack:errorCode]) {
