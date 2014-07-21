@@ -458,6 +458,32 @@
     }
 }
 
+- (void)revealInFinder
+{
+    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[self.url]];
+}
+
+/** Moves the movie to the trash.
+ * Returns NO if there was any error trashing the path.
+ */
+- (BOOL)moveToTrash
+{
+	if (![self.url isFileURL]) {
+		NSLog(@"Can't trash non file '%@'", self.url);
+		return NO;
+	}
+
+	NSString *path = [self.url path];
+	NSString *folder = [path stringByDeletingLastPathComponent];
+	NSArray *files = [NSArray arrayWithObject:[path lastPathComponent]];
+
+	NSInteger tag = 0;
+	const BOOL ret = [[NSWorkspace sharedWorkspace]
+    	performFileOperation:NSWorkspaceRecycleOperation
+        source:folder destination:nil files:files tag:&tag];
+	return ret;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark playback

@@ -161,6 +161,8 @@ typedef struct {
 - (int)aspectRatio;
 - (NSSize)adjustedSizeByAspectRatio;
 - (void)setAspectRatio:(int)aspectRatio;
+- (void)revealInFinder;
+- (BOOL)moveToTrash;
 
 #pragma mark -
 #pragma mark playback
