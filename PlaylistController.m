@@ -229,7 +229,7 @@
     return [_playlist count];
 }
 
-- (float)tableView:(NSTableView*)tableView heightOfRow:(int)rowIndex
+- (CGFloat)tableView:(NSTableView*)tableView heightOfRow:(int)rowIndex
 {
     PlaylistItem* item = [_playlist itemAtIndex:rowIndex];
     int subtitleURLCount = [[item subtitleURLs] count];
