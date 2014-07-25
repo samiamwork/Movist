@@ -590,6 +590,10 @@
 		D53F03F5198311EE000F0EA3 /* sk */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = sk; path = Resources/sk.lproj/Preferences.xib; sourceTree = "<group>"; };
 		D53F03F6198311F9000F0EA3 /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Turkish; path = Resources/Turkish.lproj/Preferences.xib; sourceTree = "<group>"; };
 		D53F03F719831205000F0EA3 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh_TW; path = Resources/zh_TW.lproj/Preferences.xib; sourceTree = "<group>"; };
+		D53F03F81983158B000F0EA3 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D53F03F919831598000F0EA3 /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt_BR; path = pt_BR.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D53F03FA198315A5000F0EA3 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		D53F03FB198315B2000F0EA3 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D5A27A4F1983008000E8243E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D5A27A511983009A00E8243E /* Korean */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Korean; path = Resources/Korean.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		D5A27A52198300A300E8243E /* pl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pl; path = Resources/pl.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -1465,6 +1469,10 @@
 				AFC7D44D0C371C4C00F5EA5C /* Korean */,
 				AFCA763D0F4B99E6008DBDCD /* Turkish */,
 				AF51AD10106466A600989D78 /* Russian */,
+				D53F03F81983158B000F0EA3 /* pl */,
+				D53F03F919831598000F0EA3 /* pt_BR */,
+				D53F03FA198315A5000F0EA3 /* sk */,
+				D53F03FB198315B2000F0EA3 /* zh_TW */,
 			);
 			name = InfoPlist.strings;
 			path = Resources;
