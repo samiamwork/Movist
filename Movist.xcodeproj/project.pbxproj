@@ -1530,6 +1530,7 @@
 				AFC85A99113C92710061A934 /* pl */,
 			);
 			name = Localizable.strings;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
