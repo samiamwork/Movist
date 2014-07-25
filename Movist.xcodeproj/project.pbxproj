@@ -289,7 +289,7 @@
 		3EDEB20616D2B84300CA8400 /* MMovieLayer_AVFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovieLayer_AVFoundation.m; sourceTree = "<group>"; };
 		3EDEB21816D3176C00CA8400 /* MMovieViewLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMovieViewLayer.h; sourceTree = "<group>"; };
 		3EDEB21916D3176C00CA8400 /* MMovieViewLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovieViewLayer.m; sourceTree = "<group>"; };
-		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* Movist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Movist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AF010C130C0F190600CA9913 /* PlayPanel.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; path = PlayPanel.h; sourceTree = "<group>"; };
 		AF010C140C0F190600CA9913 /* PlayPanel.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = PlayPanel.m; sourceTree = "<group>"; };
@@ -1544,7 +1544,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "Resources/Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1579,7 +1579,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
-				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_FILE = "Resources/Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
