@@ -1,0 +1,2295 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+    <dependencies>
+        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
+            <connections>
+                <outlet property="delegate" destination="206" id="302"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
+            <items>
+                <menuItem title="Movist" id="56">
+                    <menu key="submenu" title="Movist" systemMenu="apple" id="57">
+                        <items>
+                            <menuItem title="Movist Hakkında" id="58">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="orderFrontStandardAboutPanel:" target="-2" id="142"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="196">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Ayarlar" keyEquivalent="," id="1232">
+                                <connections>
+                                    <action selector="preferencePanelAction:" target="206" id="1234"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="143">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Servisler" id="131">
+                                <menu key="submenu" title="Servisler" systemMenu="services" id="130"/>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="144">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Movist Gizle" keyEquivalent="h" id="134">
+                                <connections>
+                                    <action selector="hide:" target="-2" id="152"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Diğerlerini Gizle" keyEquivalent="h" id="145">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="hideOtherApplications:" target="-2" id="146"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Hepsini Göster" id="150">
+                                <connections>
+                                    <action selector="unhideAllApplications:" target="-2" id="153"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="149">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Movist Çık" keyEquivalent="q" id="136">
+                                <connections>
+                                    <action selector="terminate:" target="-2" id="139"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Dosya" id="83">
+                    <menu key="submenu" title="Dosya" id="81">
+                        <items>
+                            <menuItem title="Film Dosyası Aç…" keyEquivalent="o" id="72">
+                                <connections>
+                                    <action selector="openFileAction:" target="206" id="249"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Tekrar Aç…" tag="1" keyEquivalent="o" id="252">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="reopenMovieAction:" target="206" id="646"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sonlardan Aç" id="124">
+                                <menu key="submenu" title="Sonlardan Aç" systemMenu="recentDocuments" id="125">
+                                    <items>
+                                        <menuItem title="En Son" id="126">
+                                            <connections>
+                                                <action selector="clearRecentDocuments:" target="-1" id="127"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1286">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Altyazı Dosyası Aç…" keyEquivalent="o" id="2131">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="openSubtitleFileAction:" target="206" id="2132"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Altyazı Dosyası Ekle…" id="2376">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="addSubtitleFileAction:" target="206" id="2377"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="251">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Tam Ekran Gez" keyEquivalent="n" id="1285">
+                                <connections>
+                                    <action selector="fullNavigationAction:" target="206" id="1287"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1179">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Pencereyi Kapat" keyEquivalent="w" id="1180">
+                                <connections>
+                                    <action selector="performClose:" target="311" id="1181"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Düzenle" id="163">
+                    <menu key="submenu" title="Düzenle" id="169">
+                        <items>
+                            <menuItem title="Kes" keyEquivalent="x" id="157">
+                                <connections>
+                                    <action selector="cut:" target="-1" id="2793"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Kopyala" keyEquivalent="c" id="2792">
+                                <connections>
+                                    <action selector="copy:" target="-1" id="2794"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Kopyala (... Kenarlar İle)" tag="1" alternate="YES" keyEquivalent="C" id="339">
+                                <connections>
+                                    <action selector="copy:" target="-1" id="1288"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Yapıştır" keyEquivalent="v" id="1290">
+                                <connections>
+                                    <action selector="paste:" target="-1" id="1292"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Tümünü Seç" keyEquivalent="a" id="341">
+                                <connections>
+                                    <action selector="selectAll:" target="-1" id="346"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Kontrol" id="605">
+                    <menu key="submenu" title="Kontrol" id="606">
+                        <items>
+                            <menuItem title="Oynat" id="607">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="playAction:" target="206" id="628"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="608">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Önceki Kare" tag="-1" keyEquivalent="[" id="653">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="659"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sonraki Kare" tag="1" keyEquivalent="]" id="651">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="660"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="10 sn Geri" tag="-10" keyEquivalent="" id="609">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="657"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="60 sn Geri" tag="-20" alternate="YES" keyEquivalent="" id="794">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="804"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="300 sn Geri" tag="-30" alternate="YES" keyEquivalent="" id="796">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="806"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Önceki Altyazı" tag="-40" alternate="YES" keyEquivalent="" id="1189">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="1196"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="10 sn İleri" tag="10" keyEquivalent="" id="654">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="658"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="60 sn İleri" tag="20" alternate="YES" keyEquivalent="" id="795">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="805"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="300 sn İleri" tag="30" alternate="YES" keyEquivalent="" id="797">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="807"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sonraki Altyazı" tag="40" alternate="YES" keyEquivalent="" id="1190">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES" option="YES"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="1195"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Başlangıç" tag="-100" keyEquivalent="↖" id="652">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="655"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Son" tag="100" keyEquivalent="↘" id="610">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="656"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="620">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Daha Yavaş Oynat" tag="-1" keyEquivalent="" id="1197">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                <connections>
+                                    <action selector="rateAction:" target="206" id="1204"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Daha Hızlı Oynat" tag="1" keyEquivalent="" id="1199">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>
+                                <connections>
+                                    <action selector="rateAction:" target="206" id="1205"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Normal Oynatma Hızı" keyEquivalent="|" id="1200">
+                                <connections>
+                                    <action selector="rateAction:" target="206" id="1206"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1138">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Aralığı Başlangıçtan Tekrarla" tag="-1" keyEquivalent="[" id="1139">
+                                <connections>
+                                    <action selector="rangeRepeatAction:" target="206" id="1143"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Aralığı Sondan Tekrarla" tag="1" keyEquivalent="]" id="1140">
+                                <connections>
+                                    <action selector="rangeRepeatAction:" target="206" id="1144"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Tekrarlanan Aralığı Sıfırla" keyEquivalent="\" id="1141">
+                                <connections>
+                                    <action selector="rangeRepeatAction:" target="206" id="1146"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="611">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Önceki Film" tag="-1" keyEquivalent="" id="612">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="prevNextMovieAction:" target="206" id="632"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sonraki Film" tag="1" keyEquivalent="" id="613">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="prevNextMovieAction:" target="206" id="631"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="614">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Tekrarı Kapat" keyEquivalent="R" id="617">
+                                <connections>
+                                    <action selector="repeatAction:" target="206" id="633"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Tümünü Tekrarla" tag="1" keyEquivalent="r" id="618">
+                                <connections>
+                                    <action selector="repeatAction:" target="206" id="634"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Tekini Tekrarla" tag="2" keyEquivalent="r" id="619">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="repeatAction:" target="206" id="635"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1198">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Sesi Artır" tag="1" keyEquivalent="" id="621">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="volumeAction:" target="206" id="636"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sistem Sesini Artır" tag="2" alternate="YES" keyEquivalent="" id="1660">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="volumeAction:" target="206" id="1666"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sesi Azalt" tag="-1" keyEquivalent="" id="622">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="volumeAction:" target="206" id="637"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sistem Sesini Azalt" tag="-2" alternate="YES" keyEquivalent="" id="1661">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES"/>
+                                <connections>
+                                    <action selector="volumeAction:" target="206" id="1667"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Sessiz" keyEquivalent="" id="623">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="muteAction:" target="206" id="638"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Film" id="218">
+                    <menu key="submenu" title="Film" id="219">
+                        <items>
+                            <menuItem title="Yarım Boyut" keyEquivalent="0" id="221">
+                                <connections>
+                                    <action selector="movieSizeAction:" target="206" id="624"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Normal Boyut" tag="1" keyEquivalent="1" id="220">
+                                <connections>
+                                    <action selector="movieSizeAction:" target="206" id="625"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Çifte Boyut" tag="2" keyEquivalent="2" id="222">
+                                <connections>
+                                    <action selector="movieSizeAction:" target="206" id="626"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Ekrana Sığdır" tag="3" keyEquivalent="3" id="233">
+                                <connections>
+                                    <action selector="movieSizeAction:" target="206" id="627"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Tam Ekran" keyEquivalent="f" id="223">
+                                <connections>
+                                    <action selector="fullScreenAction:" target="206" id="310"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Masaüstü Arkaplan" keyEquivalent="d" id="1766">
+                                <connections>
+                                    <action selector="desktopBackgroundAction:" target="206" id="1767"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="432">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Görüş Oranı" id="438">
+                                <menu key="submenu" title="Görüş Oranı" id="439">
+                                    <items>
+                                        <menuItem title="Varsayılan (VEO)" keyEquivalent="0" id="440">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="aspectRatioAction:" target="206" id="446"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Kaynak (KEO)" tag="1" keyEquivalent="1" id="1565">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="aspectRatioAction:" target="206" id="1567"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="4 : 3 (TV)" tag="2" keyEquivalent="2" id="441">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="aspectRatioAction:" target="206" id="447"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="16 : 9 (HDTV)" tag="3" keyEquivalent="3" id="442">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="aspectRatioAction:" target="206" id="448"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="1.85 : 1 (Ekran)" tag="4" keyEquivalent="4" id="443">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="aspectRatioAction:" target="206" id="449"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="2.35 : 1 (Ekran)" tag="5" keyEquivalent="5" id="444">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="aspectRatioAction:" target="206" id="450"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Tam Ekran Doldurma" id="1271">
+                                <menu key="submenu" title="Tam Ekran Doldurma" id="1272">
+                                    <items>
+                                        <menuItem title="Varsayılan" id="1273">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="fullScreenFillAction:" target="206" id="1280"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Genişlet" tag="1" id="1274">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="fullScreenFillAction:" target="206" id="1281"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Kes" tag="2" id="1275">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="fullScreenFillAction:" target="206" id="1282"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Dönüş" tag="-1" keyEquivalent="f" id="1277">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="fullScreenFillAction:" target="206" id="1283"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="1278">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Tarama Altı" keyEquivalent="u" id="1276">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="fullScreenUnderScanAction:" target="206" id="1284"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="701">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Ses İzi Yok" tag="-1" id="1223">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="audioTrackAction:" target="206" id="1224"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1293">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Şimdiki Resmi Kaydet" keyEquivalent="i" id="1294">
+                                <connections>
+                                    <action selector="saveCurrentImage:" target="206" id="1298"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Şimdiki Resmi Kenar ile Kaydet" tag="1" alternate="YES" keyEquivalent="I" id="1295">
+                                <connections>
+                                    <action selector="saveCurrentImage:" target="206" id="1297"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Altyazı" id="350">
+                    <menu key="submenu" title="Altyazı" id="351">
+                        <items>
+                            <menuItem isSeparatorItem="YES" id="1220">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="1:" id="2133">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="1:" id="2134">
+                                    <items>
+                                        <menuItem title="Kodlama ile Tekrar Aç" id="2140">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Kodlama ile Tekrar Aç" id="2155">
+                                                <items>
+                                                    <menuItem title="Nesne" id="2156">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2139">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Font Boyutu Büyüt" tag="1" id="2154">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2228"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Font Boyutu Küçült" tag="-1" id="2153">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2229"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Varsayılan Font Boyutu" id="2152">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2230"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2142">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Büyüt" tag="1" id="2151">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2231"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Küçült" tag="-1" id="2150">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2232"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Varsayılan" id="2149">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2233"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2138">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="0.5 sn Sonra" tag="-1" id="2137">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2234"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="0.5 sn Önce" tag="1" id="2136">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2235"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Varsayılana Eşle" id="2135">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2236"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2141">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Üst Boşluk" id="2148">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2237"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Filmin Üstü" tag="1" id="2147">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2238"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Filmi Ortala" tag="2" id="2146">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2239"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Filmin Altı" tag="3" id="2145">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2240"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Alt Boşluk" tag="4" id="2144">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2241"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Varsayılan" tag="10" id="2143">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2242"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon Dönüş" tag="-1" keyEquivalent="p" id="2898">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2899"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="2:" id="2158">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="2:" id="2159">
+                                    <items>
+                                        <menuItem title="Kodlama ile Tekrar Aç" id="2174">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Kodlama ile Tekrar Aç" id="2180">
+                                                <items>
+                                                    <menuItem title="Nesne" id="2181">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2175">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Font Boyutu Büyüt" tag="1" id="2160">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2243"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Font Boyutu Küçült" tag="-1" id="2161">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2244"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Varsayılan Font Boyutu" id="2162">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2245"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2172">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Büyüt" tag="1" id="2163">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2246"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Küçült" tag="-1" id="2164">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2247"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Varsayılan" id="2165">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2248"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2176">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="0.5 sn Sonra" tag="-1" id="2177">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2249"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="0.5 sn Önce" tag="1" id="2178">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2250"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Varsayılana Eşle" id="2179">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2251"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2173">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Üst Boşluk" id="2166">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2252"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Filmin Üstü" tag="1" id="2167">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2253"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Filmi Ortala" tag="2" id="2168">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2254"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Filmin Altı" tag="3" id="2169">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2255"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Alt Boşluk" tag="4" id="2170">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2256"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Varsayılan" tag="10" id="2171">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2257"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="3:" id="2182">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="3:" id="2183">
+                                    <items>
+                                        <menuItem title="Kodlama ile Tekrar Aç" id="2189">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Kodlama ile Tekrar Aç" id="2204">
+                                                <items>
+                                                    <menuItem title="Nesne" id="2205">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2188">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Font Boyutu Büyüt" tag="1" id="2203">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2258"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Font Boyutu Küçült" tag="-1" id="2202">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2259"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Varsayılan Font Boyutu" id="2201">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleFontSizeAction:" target="206" id="2260"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2191">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Büyüt" tag="1" id="2200">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2261"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Küçült" tag="-1" id="2199">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2262"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="V-Kenarı Varsayılan" id="2198">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleVMarginAction:" target="206" id="2263"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2187">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="0.5 sn Önce" tag="-1" id="2186">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2264"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="0.5 sn Sonra" tag="1" id="2185">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2265"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Varsayılana Eşle" id="2184">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitleSyncAction:" target="206" id="2266"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="2190">
+                                            <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Üst Boşluk" id="2197">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2267"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Film Üstü" tag="1" id="2196">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2268"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Filmi Ortala" tag="2" id="2195">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2269"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Film Altı" tag="3" id="2194">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2270"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Alt Boşluk" tag="4" id="2193">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2271"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Pozisyon: Varsayılan" tag="10" id="2192">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="subtitlePositionAction:" target="206" id="2272"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
+                            <menuItem title="Sırayı Değiştir" keyEquivalent="S" id="2676">
+                                <connections>
+                                    <action selector="subtitleOrderAction:" target="206" id="2677"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="2026">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Altyazıyı Gizle" keyEquivalent="v" id="1219">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="subtitleVisibleAction:" target="206" id="1231"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="663">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Font Boyutu Büyüt" tag="1" keyEquivalent="" id="1151">
+                                <connections>
+                                    <action selector="subtitleFontSizeAction:" target="206" id="1173"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Font Boyutu Küçült" tag="-1" keyEquivalent="" id="1152">
+                                <connections>
+                                    <action selector="subtitleFontSizeAction:" target="206" id="1174"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Varsayılan Font Boyutu" keyEquivalent="=" id="1153">
+                                <connections>
+                                    <action selector="subtitleFontSizeAction:" target="206" id="1175"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="2157">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="V-Kenarı Büyüt" tag="1" keyEquivalent="" id="1158">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="subtitleVMarginAction:" target="206" id="1167"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="V-Kenarı Küçült" tag="-1" keyEquivalent="" id="1159">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="subtitleVMarginAction:" target="206" id="1168"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="V-Kenarı Varsayılan" keyEquivalent="=" id="1160">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="subtitleVMarginAction:" target="206" id="1169"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1157">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="0.5 sn Sonra" tag="-1" keyEquivalent="" id="666">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES"/>
+                                <connections>
+                                    <action selector="subtitleSyncAction:" target="206" id="1176"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="0.5 sn Önce" tag="1" keyEquivalent="" id="667">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" control="YES"/>
+                                <connections>
+                                    <action selector="subtitleSyncAction:" target="206" id="1177"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Varsayılana Eşle" keyEquivalent="+" id="674">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                <connections>
+                                    <action selector="subtitleSyncAction:" target="206" id="1178"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="1150">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Kenar Boşluğu: Aynı" keyEquivalent="0" id="665">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                                <connections>
+                                    <action selector="letterBoxHeightAction:" target="206" id="1875"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Kenar Boşluğu: 1 Satır" tag="1" keyEquivalent="1" id="1306">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                                <connections>
+                                    <action selector="letterBoxHeightAction:" target="206" id="1874"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Kenar Boşluğu: 2 Satır" tag="2" keyEquivalent="2" id="1307">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                                <connections>
+                                    <action selector="letterBoxHeightAction:" target="206" id="1873"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Kenar Boşluğu: 3 Satır" tag="3" keyEquivalent="3" id="1308">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                                <connections>
+                                    <action selector="letterBoxHeightAction:" target="206" id="1872"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Kenar Boşluğu: Varsayılan" tag="10" keyEquivalent="=" id="673">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                                <connections>
+                                    <action selector="letterBoxHeightAction:" target="206" id="1871"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Pencere" id="19">
+                    <menu key="submenu" title="Pencere" systemMenu="window" id="24">
+                        <items>
+                            <menuItem title="Her Zaman Üstte" keyEquivalent="t" id="2687">
+                                <connections>
+                                    <action selector="alwaysOnTopAction:" target="206" id="2688"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Küçült" keyEquivalent="m" id="23">
+                                <connections>
+                                    <action selector="performMiniaturize:" target="-1" id="37"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Yakınlaştır" id="197">
+                                <connections>
+                                    <action selector="performZoom:" target="-1" id="198"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="92">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Oynatma Listesi" keyEquivalent="l" id="470">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="playlistAction:" target="206" id="471"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Kontrol Paneli" keyEquivalent="c" id="472">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="controlPanelAction:" target="206" id="474"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="469">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                            </menuItem>
+                            <menuItem title="Tamamını Öne Getir" id="5">
+                                <connections>
+                                    <action selector="arrangeInFront:" target="-1" id="39"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem title="Yardım" id="103">
+                    <menu key="submenu" title="Yardım" id="106">
+                        <items>
+                            <menuItem title="Movist Yardım" keyEquivalent="?" id="111">
+                                <connections>
+                                    <action selector="showHelp:" target="-1" id="122"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+            </items>
+        </menu>
+        <customObject id="206" userLabel="AppController" customClass="AppController">
+            <connections>
+                <outlet property="_altCopyImageMenuItem" destination="339" id="1299"/>
+                <outlet property="_altSaveImageMenuItem" destination="1295" id="1296"/>
+                <outlet property="_aspectRatioMenu" destination="439" id="445"/>
+                <outlet property="_audioDeviceTextField" destination="1536" id="1541"/>
+                <outlet property="_audioOutTextField" destination="1538" id="1542"/>
+                <outlet property="_controlMenu" destination="606" id="2481"/>
+                <outlet property="_controlPanel" destination="451" id="473"/>
+                <outlet property="_controlPanelButton" destination="536" id="1268"/>
+                <outlet property="_cpDecoderButton" destination="1433" id="1553"/>
+                <outlet property="_dataSizeBpsTextField" destination="1501" id="1512"/>
+                <outlet property="_fpsTextField" destination="1497" id="1513"/>
+                <outlet property="_fsDecoderButton" destination="1246" id="1554"/>
+                <outlet property="_fsLTimeTextField" destination="566" id="1555"/>
+                <outlet property="_fsMuteButton" destination="366" id="1556"/>
+                <outlet property="_fsNextSeekButton" destination="1545" id="1557"/>
+                <outlet property="_fsPlayButton" destination="365" id="1558"/>
+                <outlet property="_fsPlaylistButton" destination="370" id="1559"/>
+                <outlet property="_fsPrevSeekButton" destination="1543" id="1560"/>
+                <outlet property="_fsRTimeTextField" destination="392" id="1561"/>
+                <outlet property="_fsSeekSlider" destination="368" id="1562"/>
+                <outlet property="_fsVolumeSlider" destination="367" id="1563"/>
+                <outlet property="_fullScreenFillMenu" destination="1272" id="1279"/>
+                <outlet property="_lTimeTextField" destination="565" id="567"/>
+                <outlet property="_letterBoxHeightPopUpButton" destination="1374" id="1876"/>
+                <outlet property="_mainWindow" destination="311" id="327"/>
+                <outlet property="_movieMenu" destination="219" id="1229"/>
+                <outlet property="_movieView" destination="313" id="326"/>
+                <outlet property="_muteButton" destination="399" id="404"/>
+                <outlet property="_muteMenuItem" destination="623" id="643"/>
+                <outlet property="_nextMovieButton" destination="1329" id="1338"/>
+                <outlet property="_nextSeekButton" destination="1529" id="1532"/>
+                <outlet property="_playButton" destination="398" id="408"/>
+                <outlet property="_playPanel" destination="363" id="429"/>
+                <outlet property="_playlistButton" destination="402" id="409"/>
+                <outlet property="_prevMovieButton" destination="1327" id="1337"/>
+                <outlet property="_prevSeekButton" destination="1527" id="1531"/>
+                <outlet property="_propertiesView" destination="1425" id="1447"/>
+                <outlet property="_rTimeTextField" destination="403" id="568"/>
+                <outlet property="_reopenWithMenuItem" destination="252" id="1184"/>
+                <outlet property="_repeatBeginningTextField" destination="1509" id="1519"/>
+                <outlet property="_repeatEndTextField" destination="1510" id="1520"/>
+                <outlet property="_seekSlider" destination="401" id="572"/>
+                <outlet property="_subtitle0EncodingMenu" destination="2155" id="2206"/>
+                <outlet property="_subtitle0MenuItem" destination="2133" id="2224"/>
+                <outlet property="_subtitle1EncodingMenu" destination="2180" id="2212"/>
+                <outlet property="_subtitle1MenuItem" destination="2158" id="2225"/>
+                <outlet property="_subtitle2EncodingMenu" destination="2204" id="2218"/>
+                <outlet property="_subtitle2MenuItem" destination="2182" id="2226"/>
+                <outlet property="_subtitleFontSizeBiggerMenuItem" destination="1151" id="2678"/>
+                <outlet property="_subtitleFontSizeDefaultMenuItem" destination="1153" id="2680"/>
+                <outlet property="_subtitleFontSizeSmallerMenuItem" destination="1152" id="2679"/>
+                <outlet property="_subtitleLanguageSegmentedControl" destination="1894" id="1900"/>
+                <outlet property="_subtitleMenu" destination="351" id="1230"/>
+                <outlet property="_subtitleNameTextField" destination="1893" id="1899"/>
+                <outlet property="_subtitlePositionDefaultButton" destination="1882" id="2585"/>
+                <outlet property="_subtitlePositionPopUpButton" destination="1883" id="1897"/>
+                <outlet property="_subtitleSyncDefaultMenuItem" destination="674" id="2686"/>
+                <outlet property="_subtitleSyncEarlierMenuItem" destination="667" id="2685"/>
+                <outlet property="_subtitleSyncLaterMenuItem" destination="666" id="2684"/>
+                <outlet property="_subtitleVMarginBiggerMenuItem" destination="1158" id="2681"/>
+                <outlet property="_subtitleVMarginDefaultMenuItem" destination="1160" id="2683"/>
+                <outlet property="_subtitleVMarginSmallerMenuItem" destination="1159" id="2682"/>
+                <outlet property="_volumeSlider" destination="400" id="571"/>
+            </connections>
+        </customObject>
+        <window title="Movist" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" frameAutosaveName="MainWindow" animationBehavior="default" id="311" userLabel="MainWindow" customClass="MainWindow">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" texturedBackground="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="584" y="474" width="640" height="340"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="312">
+                <rect key="frame" x="7" y="11" width="640" height="340"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button toolTip="Mute" id="399">
+                        <rect key="frame" x="4" y="26" width="18" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainVolume3" imagePosition="only" alignment="center" inset="2" id="2901">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system" size="10"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="muteAction:" target="206" id="411"/>
+                        </connections>
+                    </button>
+                    <slider verticalHuggingPriority="750" id="400">
+                        <rect key="frame" x="23" y="31" width="80" height="15"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="1" doubleValue="0.5" tickMarkPosition="above" sliderType="linear" id="2902">
+                            <font key="font" size="12" name="Helvetica"/>
+                        </sliderCell>
+                        <connections>
+                            <action selector="volumeAction:" target="206" id="412"/>
+                        </connections>
+                    </slider>
+                    <button toolTip="Playlist" id="402" customClass="HoverButton">
+                        <rect key="frame" x="616" y="25" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainPlaylist" imagePosition="only" alignment="center" inset="2" id="2903">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="playlistAction:" target="206" id="416"/>
+                        </connections>
+                    </button>
+                    <openGLView useAuxiliaryDepthBufferStencil="NO" useDoubleBufferingEnabled="YES" id="313" customClass="MMovieView">
+                        <rect key="frame" x="0.0" y="67" width="640" height="272"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </openGLView>
+                    <button toolTip="Control Panel" id="536" customClass="HoverButton">
+                        <rect key="frame" x="544" y="25" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainControlPanel" imagePosition="only" alignment="left" inset="2" id="2904">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="controlPanelAction:" target="206" id="537"/>
+                        </connections>
+                    </button>
+                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="1185">
+                        <rect key="frame" x="0.0" y="337" width="640" height="5"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <font key="titleFont" metaFont="system"/>
+                    </box>
+                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="1187">
+                        <rect key="frame" x="0.0" y="64" width="640" height="5"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <font key="titleFont" metaFont="system"/>
+                    </box>
+                    <button toolTip="Previous Movie" tag="-1" id="1327" customClass="HoverButton">
+                        <rect key="frame" x="568" y="25" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainPrevMovie" imagePosition="only" alignment="left" tag="-1" inset="2" id="2905">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="prevNextMovieAction:" target="206" id="1331"/>
+                        </connections>
+                    </button>
+                    <button toolTip="Next Movie" tag="1" id="1329" customClass="HoverButton">
+                        <rect key="frame" x="592" y="25" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainNextMovie" imagePosition="only" alignment="left" tag="1" inset="2" id="2906">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="prevNextMovieAction:" target="206" id="1332"/>
+                        </connections>
+                    </button>
+                    <customView id="1517" customClass="MainLCDView">
+                        <rect key="frame" x="0.0" y="51" width="640" height="15"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" id="565" customClass="TimeTextField">
+                                <rect key="frame" x="3" y="0.0" width="63" height="15"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES"/>
+                                <textFieldCell key="cell" alignment="left" title="--:--:--" id="2909">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" red="0.21568628000000001" green="0.22352941000000001" blue="0.18431373000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.54000002000000003" colorSpace="calibratedWhite"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="403" customClass="TimeTextField">
+                                <rect key="frame" x="574" y="0.0" width="63" height="15"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES"/>
+                                <textFieldCell key="cell" alignment="right" title="--:--:--" id="2908">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" red="0.21568628000000001" green="0.22352941000000001" blue="0.18431373000000001" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.54000002000000003" colorSpace="calibratedWhite"/>
+                                </textFieldCell>
+                                <connections>
+                                    <action selector="viewDurationAction:" target="206" id="1235"/>
+                                </connections>
+                            </textField>
+                            <slider verticalHuggingPriority="750" id="401" customClass="MainSeekSlider">
+                                <rect key="frame" x="62" y="0.0" width="516" height="15"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                <sliderCell key="cell" controlSize="small" continuous="YES" enabled="NO" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="2907">
+                                    <font key="font" size="12" name="Helvetica"/>
+                                </sliderCell>
+                                <connections>
+                                    <action selector="seekAction:" target="206" id="649"/>
+                                </connections>
+                            </slider>
+                        </subviews>
+                    </customView>
+                    <box title="Title" boxType="oldStyle" borderType="none" titlePosition="noTitle" id="1539">
+                        <rect key="frame" x="269" y="7" width="103" height="45"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <view key="contentView">
+                            <rect key="frame" x="0.0" y="0.0" width="103" height="45"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <button id="398">
+                                    <rect key="frame" x="26" y="-4" width="49" height="51"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainPlay" imagePosition="only" alignment="center" alternateImage="MainPlayPressed" inset="2" id="2910">
+                                        <behavior key="behavior" lightByContents="YES"/>
+                                        <font key="font" metaFont="system" size="10"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="playAction:" target="206" id="415"/>
+                                    </connections>
+                                </button>
+                                <button toolTip="Backward" tag="-10" id="1527" customClass="HoverButton">
+                                    <rect key="frame" x="0.0" y="9" width="22" height="24"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainPrevSeek" imagePosition="only" alignment="left" continuous="YES" tag="-10" inset="2" id="2911">
+                                        <behavior key="behavior" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="seekAction:" target="206" id="1533"/>
+                                    </connections>
+                                </button>
+                                <button toolTip="Forward" tag="10" id="1529" customClass="HoverButton">
+                                    <rect key="frame" x="79" y="9" width="22" height="24"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainNextSeek" imagePosition="only" alignment="left" continuous="YES" tag="10" inset="2" id="2912">
+                                        <behavior key="behavior" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="seekAction:" target="206" id="1534"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <font key="titleFont" size="11" name="LucidaGrande"/>
+                    </box>
+                </subviews>
+            </view>
+            <connections>
+                <outlet property="_movieView" destination="313" id="320"/>
+                <outlet property="_seekSlider" destination="401" id="1568"/>
+            </connections>
+        </window>
+        <window title="Play Panel" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="PlayPanel" animationBehavior="default" id="363" userLabel="PlayPanel" customClass="PlayPanel">
+            <windowStyleMask key="styleMask" titled="YES" nonactivatingPanel="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="120" y="491" width="500" height="87"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="364">
+                <rect key="frame" x="0.0" y="0.0" width="500" height="87"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button id="366">
+                        <rect key="frame" x="5" y="31" width="22" height="19"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FSVolume3" imagePosition="only" alignment="center" inset="2" id="2913">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system" size="10"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="muteAction:" target="206" id="379"/>
+                        </connections>
+                    </button>
+                    <slider verticalHuggingPriority="750" id="367">
+                        <rect key="frame" x="25" y="32" width="80" height="15"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="1" doubleValue="0.5" tickMarkPosition="above" sliderType="linear" id="2914">
+                            <font key="font" size="12" name="Helvetica"/>
+                        </sliderCell>
+                        <connections>
+                            <action selector="volumeAction:" target="206" id="380"/>
+                        </connections>
+                    </slider>
+                    <slider verticalHuggingPriority="750" id="368" customClass="FSSeekSlider">
+                        <rect key="frame" x="73" y="52" width="357" height="15"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                        <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" maxValue="100" tickMarkPosition="above" sliderType="linear" id="2915">
+                            <font key="font" size="12" name="Helvetica"/>
+                        </sliderCell>
+                        <connections>
+                            <action selector="seekAction:" target="206" id="650"/>
+                        </connections>
+                    </slider>
+                    <button id="370">
+                        <rect key="frame" x="475" y="26" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FSPlaylist" imagePosition="only" alignment="left" alternateImage="FSPlaylistPressed" inset="2" id="2916">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="playlistAction:" target="206" id="384"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" id="392" customClass="TimeTextField">
+                        <rect key="frame" x="435" y="53" width="61" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" alignment="right" title="00:00:00" id="2917">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textFieldCell>
+                        <connections>
+                            <action selector="viewDurationAction:" target="206" id="1236"/>
+                        </connections>
+                    </textField>
+                    <textField verticalHuggingPriority="750" id="544">
+                        <rect key="frame" x="19" y="71" width="461" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" alignment="center" title="Oynatma Paneli" id="2918">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textFieldCell>
+                    </textField>
+                    <button id="548">
+                        <rect key="frame" x="403" y="26" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FSControlPanel" imagePosition="only" alignment="left" alternateImage="FSControlPanelPressed" inset="2" id="2919">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="controlPanelAction:" target="206" id="549"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" id="566" customClass="TimeTextField">
+                        <rect key="frame" x="4" y="53" width="61" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" alignment="left" title="00:00:00" id="2920">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textFieldCell>
+                    </textField>
+                    <button id="1246">
+                        <rect key="frame" x="480" y="70" width="14" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="squareTextured" bezelStyle="texturedSquare" image="FSQuickTime" imagePosition="only" alignment="left" inset="2" id="2921">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="reopenMovieAction:" target="206" id="1249"/>
+                        </connections>
+                    </button>
+                    <button tag="-1" id="1333">
+                        <rect key="frame" x="427" y="26" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FSPrevMovie" imagePosition="only" alignment="left" alternateImage="FSPrevMoviePressed" tag="-1" inset="2" id="2922">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="prevNextMovieAction:" target="206" id="1335"/>
+                        </connections>
+                    </button>
+                    <button tag="1" id="1334">
+                        <rect key="frame" x="451" y="26" width="24" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FSNextMovie" imagePosition="only" alignment="left" alternateImage="FSNextMoviePressed" tag="1" inset="2" id="2923">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="prevNextMovieAction:" target="206" id="1336"/>
+                        </connections>
+                    </button>
+                    <box title="Title" boxType="oldStyle" borderType="none" titlePosition="noTitle" id="1547">
+                        <rect key="frame" x="198" y="15" width="106" height="36"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <view key="contentView">
+                            <rect key="frame" x="0.0" y="0.0" width="106" height="36"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <button id="365">
+                                    <rect key="frame" x="29" y="-4" width="49" height="42"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FSPlay" imagePosition="only" alignment="center" alternateImage="FSPlayPressed" inset="2" id="2924">
+                                        <behavior key="behavior" lightByContents="YES"/>
+                                        <font key="font" metaFont="system" size="10"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="playAction:" target="206" id="383"/>
+                                    </connections>
+                                </button>
+                                <button tag="-10" id="1543">
+                                    <rect key="frame" x="3" y="4" width="22" height="24"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FSPrevSeek" imagePosition="only" alignment="left" alternateImage="FSPrevSeekPressed" continuous="YES" tag="-10" inset="2" id="2925">
+                                        <behavior key="behavior" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="seekAction:" target="206" id="1551"/>
+                                    </connections>
+                                </button>
+                                <button tag="10" id="1545">
+                                    <rect key="frame" x="80" y="4" width="22" height="24"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="FSNextSeek" imagePosition="only" alignment="left" alternateImage="FSNextSeekPressed" continuous="YES" tag="10" inset="2" id="2926">
+                                        <behavior key="behavior" lightByContents="YES"/>
+                                        <font key="font" metaFont="system"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="seekAction:" target="206" id="1552"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                        </view>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <font key="titleFont" size="11" name="LucidaGrande"/>
+                    </box>
+                </subviews>
+            </view>
+            <connections>
+                <outlet property="_movieView" destination="313" id="390"/>
+                <outlet property="_seekSlider" destination="368" id="1569"/>
+                <outlet property="_titleTextField" destination="544" id="546"/>
+            </connections>
+        </window>
+        <window title="Control Panel" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="ControlPanel" animationBehavior="default" id="451" userLabel="ControlPanel" customClass="ControlPanel">
+            <windowStyleMask key="styleMask" titled="YES" utility="YES" nonactivatingPanel="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="261" y="368" width="442" height="355"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="452">
+                <rect key="frame" x="0.0" y="0.0" width="442" height="355"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <tabView drawsBackground="NO" type="noTabsNoBorder" id="1339" customClass="HUDTabView">
+                        <rect key="frame" x="0.0" y="0.0" width="442" height="310"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <font key="font" metaFont="system"/>
+                        <tabViewItems>
+                            <tabViewItem label="A/V Control" identifier="video" id="1340">
+                                <view key="view" id="1341">
+                                    <rect key="frame" x="0.0" y="0.0" width="442" height="310"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <box title="Video" id="1344">
+                                            <rect key="frame" x="10" y="98" width="136" height="203"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="132" height="186"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <slider verticalHuggingPriority="750" tag="2" id="1350">
+                                                        <rect key="frame" x="14" y="55" width="103" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" tag="2" maxValue="2" doubleValue="1" tickMarkPosition="below" numberOfTickMarks="3" sliderType="linear" id="2931">
+                                                            <font key="font" size="12" name="Helvetica"/>
+                                                        </sliderCell>
+                                                        <connections>
+                                                            <action selector="videoColorControlsAction:" target="451" id="1455"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <slider verticalHuggingPriority="750" id="1346">
+                                                        <rect key="frame" x="14" y="143" width="103" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="-1" maxValue="1" tickMarkPosition="below" numberOfTickMarks="3" sliderType="linear" id="2927">
+                                                            <font key="font" size="12" name="Helvetica"/>
+                                                        </sliderCell>
+                                                        <connections>
+                                                            <action selector="videoColorControlsAction:" target="451" id="1453"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <slider verticalHuggingPriority="750" tag="1" id="1348">
+                                                        <rect key="frame" x="14" y="99" width="103" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" tag="1" maxValue="2" doubleValue="1" tickMarkPosition="below" numberOfTickMarks="3" sliderType="linear" id="2929">
+                                                            <font key="font" size="12" name="Helvetica"/>
+                                                        </sliderCell>
+                                                        <connections>
+                                                            <action selector="videoColorControlsAction:" target="451" id="1454"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <button tag="2" id="1353">
+                                                        <rect key="frame" x="101" y="70" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" tag="2" inset="2" id="2934">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="videoColorControlsDefaultsAction:" target="451" id="1459"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" id="1349">
+                                                        <rect key="frame" x="11" y="73" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Karşıtlık:" id="2930">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <button id="1352">
+                                                        <rect key="frame" x="101" y="158" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" inset="2" id="2933">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="videoColorControlsDefaultsAction:" target="451" id="1457"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button tag="1" id="1356">
+                                                        <rect key="frame" x="101" y="114" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" tag="1" inset="2" id="2937">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="videoColorControlsDefaultsAction:" target="451" id="1458"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" id="1351">
+                                                        <rect key="frame" x="13" y="161" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Aydınlık:" id="2932">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1354">
+                                                        <rect key="frame" x="11" y="117" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Doygunluk:" id="2935">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <slider verticalHuggingPriority="750" tag="3" id="1355">
+                                                        <rect key="frame" x="14" y="11" width="103" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" tag="3" minValue="-3.1399999999999997" maxValue="3.1399999999999997" doubleValue="0.059809520244598513" tickMarkPosition="below" numberOfTickMarks="3" sliderType="linear" id="2936">
+                                                            <font key="font" size="12" name="Helvetica"/>
+                                                        </sliderCell>
+                                                        <connections>
+                                                            <action selector="videoColorControlsAction:" target="451" id="1456"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <button tag="3" id="1357">
+                                                        <rect key="frame" x="101" y="26" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" tag="3" inset="2" id="2938">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="videoColorControlsDefaultsAction:" target="451" id="1460"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" id="1347">
+                                                        <rect key="frame" x="11" y="29" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Renkler:" id="2928">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </box>
+                                        <box title="Ses" id="1358">
+                                            <rect key="frame" x="153" y="98" width="136" height="203"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="132" height="186"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField verticalHuggingPriority="750" id="1535">
+                                                        <rect key="frame" x="13" y="161" width="55" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="Aygıt:" id="2939">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1536">
+                                                        <rect key="frame" x="70" y="161" width="55" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="..." id="2940">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1537">
+                                                        <rect key="frame" x="13" y="139" width="55" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="Şimdiki:" id="2941">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1538">
+                                                        <rect key="frame" x="70" y="139" width="55" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="..." id="2942">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </box>
+                                        <box title="Altyazı" id="1360">
+                                            <rect key="frame" x="296" y="7" width="136" height="294"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="132" height="277"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField verticalHuggingPriority="750" id="1363">
+                                                        <rect key="frame" x="11" y="128" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Eşleme:" id="2943">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1364">
+                                                        <rect key="frame" x="11" y="215" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Font Boyutu:" id="2944">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1365">
+                                                        <rect key="frame" x="11" y="171" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="V-Kenarı:" id="2945">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1366">
+                                                        <rect key="frame" x="11" y="31" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Boşluk Kutusu:" id="2946">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <button id="1367">
+                                                        <rect key="frame" x="103" y="212" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" inset="2" id="2947">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleFontSizeAction:" target="206" id="1466"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="-1" id="1368">
+                                                        <rect key="frame" x="14" y="193" width="53" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="smallSquare" title="Küçült" bezelStyle="smallSquare" alignment="center" controlSize="small" continuous="YES" borderStyle="border" tag="-1" inset="2" id="2948">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleFontSizeAction:" target="206" id="1464"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="1" id="1369">
+                                                        <rect key="frame" x="66" y="193" width="53" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="smallSquare" title="Büyüt" bezelStyle="smallSquare" alignment="center" controlSize="small" continuous="YES" borderStyle="border" tag="1" inset="2" id="2949">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleFontSizeAction:" target="206" id="1465"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button id="1370">
+                                                        <rect key="frame" x="103" y="168" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" inset="2" id="2950">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleVMarginAction:" target="206" id="1473"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="-1" id="1371">
+                                                        <rect key="frame" x="14" y="149" width="53" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="smallSquare" title="Küçült" bezelStyle="smallSquare" alignment="center" controlSize="small" continuous="YES" borderStyle="border" tag="-1" inset="2" id="2951">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleVMarginAction:" target="206" id="1471"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="1" id="1372">
+                                                        <rect key="frame" x="66" y="149" width="53" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="smallSquare" title="Büyüt" bezelStyle="smallSquare" alignment="center" controlSize="small" continuous="YES" borderStyle="border" tag="1" inset="2" id="2952">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleVMarginAction:" target="206" id="1472"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button tag="10" id="1373">
+                                                        <rect key="frame" x="103" y="28" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" tag="10" inset="2" id="2953">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="letterBoxHeightAction:" target="206" id="1879"/>
+                                                        </connections>
+                                                    </button>
+                                                    <popUpButton verticalHuggingPriority="750" id="1374">
+                                                        <rect key="frame" x="11" y="9" width="111" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <popUpButtonCell key="cell" type="push" title="Aynı Yükseklik" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingMiddle" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1378" id="2954">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <menu key="menu" title="OtherViews" id="1375">
+                                                                <items>
+                                                                    <menuItem title="Aynı Yükseklik" state="on" id="1378"/>
+                                                                    <menuItem title="1 Sıra Yükseklik" tag="1" id="1379"/>
+                                                                    <menuItem title="2 Sıra Yükseklik" tag="2" id="1376"/>
+                                                                    <menuItem title="3 Sıra Yükseklik" tag="3" id="1380"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="letterBoxHeightAction:" target="206" id="1878"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                    <textField verticalHuggingPriority="750" id="1881">
+                                                        <rect key="frame" x="11" y="84" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Pozisyon:" id="2958">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <button tag="10" id="1882">
+                                                        <rect key="frame" x="103" y="81" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" tag="10" inset="2" id="2959">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitlePositionAction:" target="206" id="1903"/>
+                                                        </connections>
+                                                    </button>
+                                                    <popUpButton verticalHuggingPriority="750" id="1883">
+                                                        <rect key="frame" x="11" y="62" width="111" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <popUpButtonCell key="cell" type="push" title="Altta Boşluk" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingMiddle" state="on" borderStyle="borderAndBezel" tag="4" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1892" id="2960">
+                                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <menu key="menu" title="OtherViews" id="1885">
+                                                                <items>
+                                                                    <menuItem title="Üstte Boşluk" id="1888"/>
+                                                                    <menuItem title="Filmin Üstünde" tag="1" id="1887"/>
+                                                                    <menuItem title="Filmi Ortala" tag="2" id="1889"/>
+                                                                    <menuItem title="Filmin Altında" tag="3" id="1886"/>
+                                                                    <menuItem title="Altta Boşluk" state="on" tag="4" id="1892"/>
+                                                                </items>
+                                                            </menu>
+                                                        </popUpButtonCell>
+                                                        <connections>
+                                                            <action selector="subtitlePositionAction:" target="206" id="1902"/>
+                                                        </connections>
+                                                    </popUpButton>
+                                                    <button id="1381">
+                                                        <rect key="frame" x="103" y="125" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" inset="2" id="2955">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleSyncAction:" target="206" id="1463"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="-1" id="1382">
+                                                        <rect key="frame" x="14" y="106" width="53" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="smallSquare" title="Sonra" bezelStyle="smallSquare" alignment="center" controlSize="small" continuous="YES" borderStyle="border" tag="-1" inset="2" id="2956">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleSyncAction:" target="206" id="1461"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="1" id="1383">
+                                                        <rect key="frame" x="66" y="106" width="53" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="smallSquare" title="Önce" bezelStyle="smallSquare" alignment="center" controlSize="small" continuous="YES" borderStyle="border" tag="1" inset="2" id="2957">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="subtitleSyncAction:" target="206" id="1462"/>
+                                                        </connections>
+                                                    </button>
+                                                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="1880">
+                                                        <rect key="frame" x="4" y="51" width="123" height="5"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                                        <font key="titleFont" metaFont="system"/>
+                                                    </box>
+                                                    <textField verticalHuggingPriority="750" id="1893">
+                                                        <rect key="frame" x="1" y="234" width="129" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="center" title="..." id="2961">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <segmentedControl verticalHuggingPriority="750" id="1894">
+                                                        <rect key="frame" x="16" y="248" width="100" height="20"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <segmentedCell key="cell" controlSize="small" state="on" alignment="left" style="rounded" trackingMode="selectOne" id="2962">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <segments>
+                                                                <segment label="*" selected="YES" tag="-1"/>
+                                                                <segment label="1"/>
+                                                                <segment label="2" tag="1"/>
+                                                                <segment label="3" tag="2"/>
+                                                            </segments>
+                                                        </segmentedCell>
+                                                        <connections>
+                                                            <action selector="subtitleLanguageAction:" target="206" id="1901"/>
+                                                        </connections>
+                                                    </segmentedControl>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </box>
+                                        <box title="Oynatıcı" id="1384">
+                                            <rect key="frame" x="10" y="7" width="279" height="87"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="2" y="2" width="275" height="70"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <slider verticalHuggingPriority="750" id="1417">
+                                                        <rect key="frame" x="12" y="27" width="103" height="17"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" minValue="0.5" maxValue="3" doubleValue="1" tickMarkPosition="below" numberOfTickMarks="7" sliderType="linear" id="2963">
+                                                            <font key="font" size="12" name="Helvetica"/>
+                                                        </sliderCell>
+                                                        <connections>
+                                                            <action selector="playbackRateAction:" target="451" id="1496"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <button id="1418">
+                                                        <rect key="frame" x="99" y="42" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" inset="2" id="2964">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="rateAction:" target="206" id="1491"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" id="1419">
+                                                        <rect key="frame" x="11" y="45" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Oynatma Hızı:" id="2965">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1420">
+                                                        <rect key="frame" x="10" y="11" width="24" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="½x" id="2966">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.003649635" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1421">
+                                                        <rect key="frame" x="40" y="11" width="22" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="1x" id="2967">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.003649635" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1422">
+                                                        <rect key="frame" x="70" y="11" width="22" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="2x" id="2968">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.003649635" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1423">
+                                                        <rect key="frame" x="99" y="11" width="20" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" title="3x" id="2969">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1505">
+                                                        <rect key="frame" x="153" y="45" width="94" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="Tekrar Arası:" id="2970">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.003649635" green="0.003649635" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <button id="1506">
+                                                        <rect key="frame" x="245" y="42" width="16" height="18"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="Default" imagePosition="only" alignment="right" alternateImage="DefaultPressed" inset="2" id="2971">
+                                                            <behavior key="behavior" lightByContents="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="rangeRepeatAction:" target="206" id="1524"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="-1" id="1507">
+                                                        <rect key="frame" x="155" y="23" width="56" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="smallSquare" title="Başlangıç" bezelStyle="smallSquare" alignment="center" controlSize="small" borderStyle="border" tag="-1" inset="2" id="2972">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="rangeRepeatAction:" target="206" id="1522"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button verticalHuggingPriority="750" tag="1" id="1508">
+                                                        <rect key="frame" x="208" y="23" width="53" height="22"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <buttonCell key="cell" type="smallSquare" title="Son" bezelStyle="smallSquare" alignment="center" controlSize="small" borderStyle="border" tag="1" inset="2" id="2973">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="rangeRepeatAction:" target="206" id="1523"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" id="1509">
+                                                        <rect key="frame" x="153" y="11" width="59" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="center" title="--:--:--" id="2974">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <textField verticalHuggingPriority="750" id="1510">
+                                                        <rect key="frame" x="205" y="11" width="59" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="center" title="--:--:--" id="2975">
+                                                            <font key="font" metaFont="smallSystem"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                            </view>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </box>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                            <tabViewItem label="Properties" identifier="properties" id="1342">
+                                <view key="view" id="1343">
+                                    <rect key="frame" x="0.0" y="0.0" width="442" height="310"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="1424">
+                                            <rect key="frame" x="16" y="14" width="411" height="204"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <clipView key="contentView" id="mNC-vB-PXt">
+                                                <rect key="frame" x="0.0" y="17" width="411" height="187"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <subviews>
+                                                    <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="2987" id="1425" customClass="HUDTableView">
+                                                        <rect key="frame" x="0.0" y="0.0" width="411" height="187"/>
+                                                        <autoresizingMask key="autoresizingMask"/>
+                                                        <size key="intercellSpacing" width="3" height="2"/>
+                                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                                        <tableColumns>
+                                                            <tableColumn identifier="enable" editable="NO" width="20" minWidth="20" maxWidth="1000" id="1428" customClass="HUDTableColumn">
+                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center">
+                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                                </tableHeaderCell>
+                                                                <buttonCell key="dataCell" type="check" bezelStyle="regularSquare" imagePosition="only" alignment="left" controlSize="small" inset="2" id="1429" customClass="HUDCheckBoxCell">
+                                                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                                                    <font key="font" metaFont="cellTitle"/>
+                                                                </buttonCell>
+                                                            </tableColumn>
+                                                            <tableColumn identifier="name" editable="NO" width="85" minWidth="8" maxWidth="1000" id="1426" customClass="HUDTableColumn">
+                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Name">
+                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                                </tableHeaderCell>
+                                                                <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" alignment="left" id="1427" customClass="HUDTextFieldCell">
+                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                                <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                            </tableColumn>
+                                                            <tableColumn identifier="codec" editable="NO" width="60" minWidth="10" maxWidth="3.4028234663852886e+38" id="1438" customClass="HUDTableColumn">
+                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Codec">
+                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                                </tableHeaderCell>
+                                                                <textFieldCell key="dataCell" controlSize="small" selectable="YES" alignment="center" id="1495" customClass="HUDTextFieldCell">
+                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                                <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                            </tableColumn>
+                                                            <tableColumn identifier="format" editable="NO" width="234" minWidth="26" maxWidth="1000" id="1430" customClass="HUDTableColumn">
+                                                                <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Format">
+                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                                </tableHeaderCell>
+                                                                <textFieldCell key="dataCell" controlSize="small" lineBreakMode="truncatingTail" selectable="YES" alignment="left" id="1431" customClass="HUDTextFieldCell">
+                                                                    <font key="font" metaFont="smallSystem"/>
+                                                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </tableColumn>
+                                                        </tableColumns>
+                                                        <connections>
+                                                            <outlet property="dataSource" destination="206" id="1493"/>
+                                                            <outlet property="delegate" destination="206" id="1494"/>
+                                                        </connections>
+                                                    </tableView>
+                                                </subviews>
+                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </clipView>
+                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" controlSize="small" horizontal="YES" id="2988">
+                                                <rect key="frame" x="0.0" y="193" width="400" height="11"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" controlSize="small" horizontal="NO" id="2986">
+                                                <rect key="frame" x="400" y="17" width="11" height="187"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </scroller>
+                                            <tableHeaderView key="headerView" id="2987">
+                                                <rect key="frame" x="0.0" y="0.0" width="411" height="17"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                            </tableHeaderView>
+                                        </scrollView>
+                                        <textField verticalHuggingPriority="750" id="1432">
+                                            <rect key="frame" x="80" y="284" width="322" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="left" title="Movie File name" id="2976">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <button id="1433">
+                                            <rect key="frame" x="410" y="282" width="16" height="18"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMinY="YES"/>
+                                            <buttonCell key="cell" type="squareTextured" bezelStyle="texturedSquare" image="FSQuickTime" imagePosition="only" alignment="left" inset="2" id="2977">
+                                                <behavior key="behavior" lightByContents="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="reopenMovieAction:" target="206" id="1492"/>
+                                            </connections>
+                                        </button>
+                                        <textField verticalHuggingPriority="750" id="1435">
+                                            <rect key="frame" x="13" y="284" width="62" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="right" title="Movie:" id="2978">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" id="1497">
+                                            <rect key="frame" x="313" y="262" width="89" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="right" title="xx.xx / xx.xx" id="2979">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" id="1498">
+                                            <rect key="frame" x="266" y="262" width="45" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="right" title="FPS:" id="2980">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" id="1501">
+                                            <rect key="frame" x="80" y="262" width="158" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="left" title="xxx.xx MB, xxxx.xx kbps" id="2981">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" id="1502">
+                                            <rect key="frame" x="13" y="262" width="62" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES"/>
+                                            <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" alignment="right" title="Data:" id="2982">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </subviews>
+                                </view>
+                            </tabViewItem>
+                        </tabViewItems>
+                    </tabView>
+                    <textField verticalHuggingPriority="750" id="1514">
+                        <rect key="frame" x="20" y="339" width="402" height="14"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                        <textFieldCell key="cell" controlSize="small" alignment="center" title="Kontrol Paneli" id="2983">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </textFieldCell>
+                    </textField>
+                    <button id="1515">
+                        <rect key="frame" x="3" y="339" width="14" height="16"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <buttonCell key="cell" type="squareTextured" bezelStyle="texturedSquare" image="HUDClose" imagePosition="only" alignment="left" inset="2" id="2984">
+                            <behavior key="behavior" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="orderOut:" target="451" id="1521"/>
+                        </connections>
+                    </button>
+                    <segmentedControl verticalHuggingPriority="750" id="1572">
+                        <rect key="frame" x="127" y="308" width="180" height="24"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <segmentedCell key="cell" state="on" alignment="left" style="automatic" trackingMode="selectOne" id="2985">
+                            <font key="font" metaFont="system"/>
+                            <segments>
+                                <segment label="S/V Kontrol" imageScaling="none" selected="YES"/>
+                                <segment label="Özellikler" imageScaling="none" tag="1"/>
+                            </segments>
+                        </segmentedCell>
+                        <connections>
+                            <action selector="segmentedControlAction:" target="451" id="1575"/>
+                        </connections>
+                    </segmentedControl>
+                </subviews>
+            </view>
+            <connections>
+                <outlet property="_appController" destination="206" id="677"/>
+                <outlet property="_movieFilenameTextField" destination="1432" id="1445"/>
+                <outlet property="_movieView" destination="313" id="468"/>
+                <outlet property="_playbackRateSlider" destination="1417" id="1443"/>
+                <outlet property="_segmentedControl" destination="1572" id="1573"/>
+                <outlet property="_tabView" destination="1339" id="1444"/>
+                <outlet property="_videoBrightnessSlider" destination="1346" id="1439"/>
+                <outlet property="_videoContrastSlider" destination="1350" id="1441"/>
+                <outlet property="_videoHueSlider" destination="1355" id="1442"/>
+                <outlet property="_videoSaturationSlider" destination="1348" id="1440"/>
+            </connections>
+        </window>
+        <view id="1186">
+            <rect key="frame" x="0.0" y="0.0" width="125" height="1"/>
+            <autoresizingMask key="autoresizingMask"/>
+        </view>
+        <view id="1188">
+            <rect key="frame" x="0.0" y="0.0" width="125" height="1"/>
+            <autoresizingMask key="autoresizingMask"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="Default" width="12" height="12"/>
+        <image name="DefaultPressed" width="12" height="12"/>
+        <image name="FSControlPanel" width="20" height="18"/>
+        <image name="FSControlPanelPressed" width="20" height="18"/>
+        <image name="FSNextMovie" width="20" height="18"/>
+        <image name="FSNextMoviePressed" width="20" height="18"/>
+        <image name="FSNextSeek" width="18" height="18"/>
+        <image name="FSNextSeekPressed" width="18" height="18"/>
+        <image name="FSPlay" width="48" height="41"/>
+        <image name="FSPlayPressed" width="48" height="41"/>
+        <image name="FSPlaylist" width="20" height="18"/>
+        <image name="FSPlaylistPressed" width="20" height="18"/>
+        <image name="FSPrevMovie" width="20" height="18"/>
+        <image name="FSPrevMoviePressed" width="20" height="18"/>
+        <image name="FSPrevSeek" width="18" height="18"/>
+        <image name="FSPrevSeekPressed" width="18" height="18"/>
+        <image name="FSQuickTime" width="14" height="14"/>
+        <image name="FSVolume3" width="18" height="13"/>
+        <image name="HUDClose" width="13" height="13"/>
+        <image name="MainControlPanel" width="20" height="18"/>
+        <image name="MainNextMovie" width="20" height="18"/>
+        <image name="MainNextSeek" width="18" height="18"/>
+        <image name="MainPlay" width="45" height="45"/>
+        <image name="MainPlayPressed" width="45" height="45"/>
+        <image name="MainPlaylist" width="20" height="18"/>
+        <image name="MainPrevMovie" width="20" height="18"/>
+        <image name="MainPrevSeek" width="18" height="18"/>
+        <image name="MainVolume3" width="18" height="17"/>
+    </resources>
+</document>

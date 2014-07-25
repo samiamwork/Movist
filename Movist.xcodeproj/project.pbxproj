@@ -24,7 +24,6 @@
 		3E9FE3E914A5667300B5AEF1 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E9FE3E814A5667300B5AEF1 /* libswscale.a */; };
 		3EDEB20716D2B84500CA8400 /* MMovieLayer_AVFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EDEB20616D2B84300CA8400 /* MMovieLayer_AVFoundation.m */; };
 		3EDEB21A16D3176D00CA8400 /* MMovieViewLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EDEB21916D3176C00CA8400 /* MMovieViewLayer.m */; };
-		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
@@ -255,6 +254,7 @@
 		AFFE5EE60C341EAE00516510 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFFE5EE30C341EAE00516510 /* AudioToolbox.framework */; };
 		AFFE5EE70C341EAE00516510 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFFE5EE40C341EAE00516510 /* AudioUnit.framework */; };
 		AFFE5EE80C341EAE00516510 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFFE5EE50C341EAE00516510 /* CoreAudio.framework */; };
+		D5A27A501983008000E8243E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5A27A4E1983008000E8243E /* MainMenu.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -262,7 +262,6 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		2CB96DA30F1CCF1C00C14189 /* libebml.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libebml.a; path = contrib/lib/libebml.a; sourceTree = "<group>"; };
@@ -337,7 +336,6 @@
 		AF0C51250C5CDB5800199932 /* RemoteControlContainer.h */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.h; name = RemoteControlContainer.h; path = AppleRemote/RemoteControlContainer.h; sourceTree = "<group>"; };
 		AF0C51260C5CDB5800199932 /* RemoteControlContainer.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; name = RemoteControlContainer.m; path = AppleRemote/RemoteControlContainer.m; sourceTree = "<group>"; };
 		AF1379F0112307FB0000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/Localizable.strings; sourceTree = "<group>"; };
-		AF1379F1112308120000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AF1379F2112308220000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AF1379F31123082B0000B429 /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = zh_TW; path = zh_TW.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AF166D2B0DD882FA0066166E /* OutlineCategoryMid.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = OutlineCategoryMid.tiff; path = Images/OutlineCategoryMid.tiff; sourceTree = "<group>"; };
@@ -358,7 +356,6 @@
 		AF1E05370DA790A700CE7196 /* FFVideoTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFVideoTrack.m; sourceTree = "<group>"; };
 		AF1E10830DA8C6EA00CE7196 /* MMovie_Codec.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMovie_Codec.m; sourceTree = "<group>"; };
 		AF1EF6EE0FE2221D0038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Localizable.strings; sourceTree = "<group>"; };
-		AF1EF6EF0FE2222D0038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = sk; path = sk.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AF1EF6F00FE2224A0038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = sk; path = sk.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AF1EF6F10FE222590038E2A0 /* sk */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = sk; path = sk.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AF2546800E40AC4500889018 /* MSubtitle_Render.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSubtitle_Render.m; sourceTree = "<group>"; };
@@ -447,7 +444,6 @@
 		AF5143160C3C252C00BDACB7 /* FSSeekSliderCenter.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = FSSeekSliderCenter.tiff; path = Images/FSSeekSliderCenter.tiff; sourceTree = "<group>"; };
 		AF51AD10106466A600989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Russian; path = Russian.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AF51AD11106466CA00989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Russian; path = Russian.lproj/Localizable.strings; sourceTree = "<group>"; };
-		AF51AD2A1064675900989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AF51AD2C1064676800989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AF51AD2D1064677100989D78 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AF5A29420C2CEC0D00483AEB /* AppController_Open.m */ = {isa = PBXFileReference; fileEncoding = 0; lastKnownFileType = sourcecode.c.objc; path = AppController_Open.m; sourceTree = "<group>"; };
@@ -547,15 +543,12 @@
 		AFB7D77D0FBB2CEF006BC714 /* spudec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spudec.h; sourceTree = "<group>"; };
 		AFC7D3A80C37084800F5EA5C /* English */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		AFC7D3DE0C370FD100F5EA5C /* Korean */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Korean; path = Korean.lproj/Localizable.strings; sourceTree = "<group>"; };
-		AFC7D42E0C37138500F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AFC7D4300C3715A500F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFC7D4330C37160300F5EA5C /* Korean */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Korean; path = Korean.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFC7D44D0C371C4C00F5EA5C /* Korean */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = Korean; path = Korean.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AFC85A99113C92710061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
-		AFC85A9A113C92780061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pl; path = pl.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AFC85A9B113C927E0061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pl; path = pl.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFC85A9C113C92840061A934 /* pl */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pl; path = pl.lproj/Preferences.nib; sourceTree = "<group>"; };
-		AFCA76390F4B99A8008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AFCA763A0F4B99BA008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFCA763B0F4B99CB008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Turkish; path = Turkish.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFCA763C0F4B99E0008DBDCD /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Turkish; path = Turkish.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -570,7 +563,6 @@
 		AFCD05F70DBB000200348AB0 /* HUDCheckBoxOnPressed.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = HUDCheckBoxOnPressed.tiff; path = Images/HUDCheckBoxOnPressed.tiff; sourceTree = "<group>"; };
 		AFCD39510E0454AA00963D8E /* FullScreener_Transition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FullScreener_Transition.m; sourceTree = "<group>"; };
 		AFD3F2D3112BBDD00099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt_BR; path = pt_BR.lproj/Localizable.strings; sourceTree = "<group>"; };
-		AFD3F2D4112BBDD60099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt_BR; path = pt_BR.lproj/MainMenu.nib; sourceTree = "<group>"; };
 		AFD3F2D5112BBDDC0099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt_BR; path = pt_BR.lproj/Playlist.nib; sourceTree = "<group>"; };
 		AFD3F2D6112BBDE40099F2DE /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = pt_BR; path = pt_BR.lproj/Preferences.nib; sourceTree = "<group>"; };
 		AFEE863C0C0C807D00EABE1D /* Movist.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Movist.icns; sourceTree = "<group>"; };
@@ -598,6 +590,14 @@
 		AFFE5EE30C341EAE00516510 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		AFFE5EE40C341EAE00516510 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
 		AFFE5EE50C341EAE00516510 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = /System/Library/Frameworks/CoreAudio.framework; sourceTree = "<absolute>"; };
+		D5A27A4F1983008000E8243E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = Resources/English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D5A27A511983009A00E8243E /* Korean */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Korean; path = Resources/Korean.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D5A27A52198300A300E8243E /* pl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pl; path = Resources/pl.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D5A27A53198300AD00E8243E /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pt_BR; path = Resources/pt_BR.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D5A27A54198300BB00E8243E /* Russian */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Russian; path = Resources/Russian.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D5A27A55198300D500E8243E /* sk */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = sk; path = Resources/sk.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D5A27A56198300DF00E8243E /* Turkish */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Turkish; path = Resources/Turkish.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		D5A27A57198300EA00E8243E /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh_TW; path = Resources/zh_TW.lproj/MainMenu.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -728,7 +728,7 @@
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				AFC7D3A70C37084800F5EA5C /* Localizable.strings */,
-				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
+				D5A27A4E1983008000E8243E /* MainMenu.xib */,
 				AF76EF160BF60AE2000995C9 /* Playlist.nib */,
 				AF07D2140BE71FD400D7EC30 /* Preferences.nib */,
 				AFEE863C0C0C807D00EABE1D /* Movist.icns */,
@@ -1162,6 +1162,11 @@
 				zh_TW,
 				pt_BR,
 				pl,
+				ko,
+				tr,
+				ru,
+				"zh-Hant",
+				"pt-BR",
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* Movist */;
 			projectDirPath = "";
@@ -1177,7 +1182,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				AF07D2160BE71FD400D7EC30 /* Preferences.nib in Resources */,
 				AF76EF180BF60AE3000995C9 /* Playlist.nib in Resources */,
@@ -1215,6 +1219,7 @@
 				AFF80E210C31E16A00ADFD22 /* FSPlaylist.tiff in Resources */,
 				AFF80E410C31E24700ADFD22 /* FSVolumeMute.tiff in Resources */,
 				AFF80E4C0C31E29900ADFD22 /* FSVolume1.tiff in Resources */,
+				D5A27A501983008000E8243E /* MainMenu.xib in Resources */,
 				AFF80E4D0C31E29900ADFD22 /* FSVolume2.tiff in Resources */,
 				AFF80E4E0C31E29900ADFD22 /* FSVolume3.tiff in Resources */,
 				AFC7D3A90C37084800F5EA5C /* Localizable.strings in Resources */,
@@ -1465,21 +1470,6 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				29B97319FDCFA39411CA2CEA /* English */,
-				AFC7D42E0C37138500F5EA5C /* Korean */,
-				AFCA76390F4B99A8008DBDCD /* Turkish */,
-				AF1EF6EF0FE2222D0038E2A0 /* sk */,
-				AF51AD2A1064675900989D78 /* Russian */,
-				AF1379F1112308120000B429 /* zh_TW */,
-				AFD3F2D4112BBDD60099F2DE /* pt_BR */,
-				AFC85A9A113C92780061A934 /* pl */,
-			);
-			name = MainMenu.nib;
-			sourceTree = "<group>";
-		};
 		AF07D2140BE71FD400D7EC30 /* Preferences.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1526,6 +1516,21 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		D5A27A4E1983008000E8243E /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D5A27A4F1983008000E8243E /* English */,
+				D5A27A511983009A00E8243E /* Korean */,
+				D5A27A52198300A300E8243E /* pl */,
+				D5A27A53198300AD00E8243E /* pt_BR */,
+				D5A27A54198300BB00E8243E /* Russian */,
+				D5A27A55198300D500E8243E /* sk */,
+				D5A27A56198300DF00E8243E /* Turkish */,
+				D5A27A57198300EA00E8243E /* zh_TW */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -1544,7 +1549,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
-				INFOPLIST_FILE = "Resources/Info.plist";
+				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1579,7 +1584,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = "";
-				INFOPLIST_FILE = "Resources/Info.plist";
+				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
