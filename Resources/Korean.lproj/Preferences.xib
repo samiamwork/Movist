@@ -1,0 +1,1653 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+    <dependencies>
+        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="PreferenceController">
+            <connections>
+                <outlet property="_advancedPane" destination="270" id="513"/>
+                <outlet property="_advancedTabView" destination="847" id="2696"/>
+                <outlet property="_alwaysOnTopButton" destination="540" id="541"/>
+                <outlet property="_alwaysOnTopOnPlayingButton" destination="3073" id="3075"/>
+                <outlet property="_audioPane" destination="277" id="515"/>
+                <outlet property="_autoPlayOnFullScreenButton" destination="910" id="916"/>
+                <outlet property="_autodetectDigitalAudioOutButton" destination="914" id="917"/>
+                <outlet property="_autodetectMovieSeriesButton" destination="909" id="915"/>
+                <outlet property="_codecBindingTableView" destination="880" id="899"/>
+                <outlet property="_deactivateScreenSaverButton" destination="784" id="785"/>
+                <outlet property="_detailsOutlineView" destination="869" id="876"/>
+                <outlet property="_fileBindingTableView" destination="889" id="896"/>
+                <outlet property="_fullNavOnStartupButton" destination="1039" id="1041"/>
+                <outlet property="_fullNavUseButton" destination="725" id="746"/>
+                <outlet property="_fullScreenBlackScreensButton" destination="1527" id="1647"/>
+                <outlet property="_fullScreenEffectPopUpButton" destination="601" id="611"/>
+                <outlet property="_fullScreenFillForStdMoviePopUpButton" destination="580" id="592"/>
+                <outlet property="_fullScreenFillForWideMoviePopUpButton" destination="569" id="591"/>
+                <outlet property="_fullScreenUnderScanSlider" destination="586" id="590"/>
+                <outlet property="_generalPane" destination="220" id="511"/>
+                <outlet property="_lastUpdateCheckTimeTextField" destination="865" id="872"/>
+                <outlet property="_letterBoxHeightPopUpButton" destination="2614" id="2639"/>
+                <outlet property="_openingViewPopUpButton" destination="2129" id="2140"/>
+                <outlet property="_quitWhenWindowCloseButton" destination="548" id="551"/>
+                <outlet property="_rememberLastPlayButton" destination="734" id="762"/>
+                <outlet property="_seekInterval0Stepper" destination="642" id="664"/>
+                <outlet property="_seekInterval0TextField" destination="640" id="652"/>
+                <outlet property="_seekInterval1Stepper" destination="647" id="665"/>
+                <outlet property="_seekInterval1TextField" destination="644" id="653"/>
+                <outlet property="_seekInterval2Stepper" destination="651" id="666"/>
+                <outlet property="_seekInterval2TextField" destination="648" id="654"/>
+                <outlet property="_showiTunesMoviesButton" destination="911" id="918"/>
+                <outlet property="_showiTunesPodcastsButton" destination="912" id="927"/>
+                <outlet property="_showiTunesTVShowsButton" destination="913" id="928"/>
+                <outlet property="_subtitleAutoFontSizeButton" destination="2529" id="2640"/>
+                <outlet property="_subtitleAutoFontSizeLabelTextField" destination="2532" id="2641"/>
+                <outlet property="_subtitleAutoFontSizeStepper" destination="2531" id="2642"/>
+                <outlet property="_subtitleAutoFontSizeTextField" destination="2530" id="2643"/>
+                <outlet property="_subtitleDataView" destination="2496" id="2644"/>
+                <outlet property="_subtitleEnableButton" destination="330" id="331"/>
+                <outlet property="_subtitleEncodingPopUpButton" destination="2823" id="2829"/>
+                <outlet property="_subtitleFontButton" destination="2527" id="2646"/>
+                <outlet property="_subtitleHMarginSlider" destination="2576" id="2647"/>
+                <outlet property="_subtitleHMarginTextField" destination="2578" id="2648"/>
+                <outlet property="_subtitleLineSpacingSlider" destination="2582" id="2649"/>
+                <outlet property="_subtitleLineSpacingTextField" destination="2583" id="2650"/>
+                <outlet property="_subtitlePane" destination="228" id="512"/>
+                <outlet property="_subtitlePositionPopUpButton" destination="2584" id="2651"/>
+                <outlet property="_subtitleScreenMarginSlider" destination="2626" id="2652"/>
+                <outlet property="_subtitleScreenMarginTextField" destination="2636" id="2653"/>
+                <outlet property="_subtitleShadowBlurSlider" destination="2511" id="2654"/>
+                <outlet property="_subtitleShadowBlurTextField" destination="2512" id="2655"/>
+                <outlet property="_subtitleShadowColorWell" destination="2505" id="2656"/>
+                <outlet property="_subtitleShadowDarknessSlider" destination="2533" id="2657"/>
+                <outlet property="_subtitleShadowDarknessTextField" destination="2534" id="2658"/>
+                <outlet property="_subtitleShadowOffsetSlider" destination="2513" id="2659"/>
+                <outlet property="_subtitleShadowOffsetTextField" destination="2514" id="2660"/>
+                <outlet property="_subtitleShadowOpacitySlider" destination="2524" id="2661"/>
+                <outlet property="_subtitleShadowOpacityTextField" destination="2525" id="2662"/>
+                <outlet property="_subtitleStrokeColorWell" destination="2507" id="2663"/>
+                <outlet property="_subtitleStrokeOpacitySlider" destination="2521" id="2664"/>
+                <outlet property="_subtitleStrokeOpacityTextField" destination="2522" id="2665"/>
+                <outlet property="_subtitleStrokeWidthSlider" destination="2509" id="2666"/>
+                <outlet property="_subtitleStrokeWidthTextField" destination="2510" id="2667"/>
+                <outlet property="_subtitleTabView" destination="2629" id="2668"/>
+                <outlet property="_subtitleTextColorWell" destination="2504" id="2669"/>
+                <outlet property="_subtitleTextOpacitySlider" destination="2518" id="2670"/>
+                <outlet property="_subtitleTextOpacityTextField" destination="2519" id="2671"/>
+                <outlet property="_subtitleVMarginSlider" destination="2577" id="2672"/>
+                <outlet property="_subtitleVMarginTextField" destination="2579" id="2673"/>
+                <outlet property="_supportAppleRemoteButton" destination="724" id="745"/>
+                <outlet property="_updateCheckIntervalPopUpButton" destination="857" id="873"/>
+                <outlet property="_updateSystemVolumeButton" destination="1286" id="1288"/>
+                <outlet property="_videoPane" destination="276" id="514"/>
+                <outlet property="window" destination="5" id="10"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application"/>
+        <window title="환경설정" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="5" userLabel="Panel" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="700" y="700" width="296" height="172"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <view key="contentView" id="6">
+                <rect key="frame" x="0.0" y="0.0" width="296" height="172"/>
+                <autoresizingMask key="autoresizingMask"/>
+            </view>
+        </window>
+        <customView id="220" userLabel="General">
+            <rect key="frame" x="0.0" y="0.0" width="521" height="379"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <button id="3073">
+                    <rect key="frame" x="34" y="209" width="272" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="재생 중에만 적용" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3229">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="alwaysOnTopOnPlayingAction:" target="-2" id="3076"/>
+                    </connections>
+                </button>
+                <popUpButton verticalHuggingPriority="750" id="2129">
+                    <rect key="frame" x="136" y="336" width="171" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <popUpButtonCell key="cell" type="push" title="실제 크기" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="2133" id="3228">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <menu key="menu" title="OtherViews" id="2131">
+                            <items>
+                                <menuItem title="현재 크기 유지" id="2132"/>
+                                <menuItem isSeparatorItem="YES" tag="-1" id="2139"/>
+                                <menuItem title="절반 크기" tag="1" id="2138"/>
+                                <menuItem title="실제 크기" state="on" tag="2" id="2133"/>
+                                <menuItem title="두배 크기" tag="3" id="2134"/>
+                                <menuItem title="화면에 맞추기" tag="4" id="2135"/>
+                                <menuItem title="전체 화면" tag="5" id="2136"/>
+                                <menuItem title="데스크탑 배경" tag="6" id="2137"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="openingViewAction:" target="-2" id="2141"/>
+                    </connections>
+                </popUpButton>
+                <textField verticalHuggingPriority="750" id="2127">
+                    <rect key="frame" x="17" y="342" width="117" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="동영상 열 때 보기:" id="3227">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button id="1039">
+                    <rect key="frame" x="34" y="18" width="272" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="시작시 전체 화면 탐색 실행" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3226">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="fullNavOnStartupAction:" target="-2" id="1042"/>
+                    </connections>
+                </button>
+                <button tag="2" id="913">
+                    <rect key="frame" x="34" y="39" width="272" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="iTunes TV 프로그램 보기" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="2" inset="2" id="3225">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="showFullNavItemsAction:" target="-2" id="925"/>
+                    </connections>
+                </button>
+                <button tag="1" id="912">
+                    <rect key="frame" x="34" y="60" width="272" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="iTunes 비디오 Podcast 보기" bezelStyle="regularSquare" imagePosition="left" alignment="left" tag="1" inset="2" id="3224">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="showFullNavItemsAction:" target="-2" id="924"/>
+                    </connections>
+                </button>
+                <button id="911">
+                    <rect key="frame" x="34" y="81" width="272" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="iTunes 동영상 보기" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3223">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="showFullNavItemsAction:" target="-2" id="923"/>
+                    </connections>
+                </button>
+                <button id="910">
+                    <rect key="frame" x="18" y="282" width="288" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="전체 화면 전환시 자동 재생" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3222">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="autoPlayOnFullScreenAction:" target="-2" id="922"/>
+                    </connections>
+                </button>
+                <button id="909">
+                    <rect key="frame" x="18" y="303" width="288" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="동영상 열 때 비슷한 파일 재생 목록에 추가" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3221">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="autodetectMovieSeriesAction:" target="-2" id="921"/>
+                    </connections>
+                </button>
+                <button id="784">
+                    <rect key="frame" x="18" y="250" width="288" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="윈도우 모드에서 화면 보호기 방지" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3220">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="deactivateScreenSaverAction:" target="-2" id="786"/>
+                    </connections>
+                </button>
+                <button id="734">
+                    <rect key="frame" x="18" y="154" width="288" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="종료시 마지막 재생 위치 기억" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3219">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="rememberLastPlayAction:" target="-2" id="764"/>
+                    </connections>
+                </button>
+                <button id="725">
+                    <rect key="frame" x="18" y="102" width="288" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="전체 화면 탐색 사용" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3218">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="fullNavUseAction:" target="-2" id="754"/>
+                    </connections>
+                </button>
+                <button id="724">
+                    <rect key="frame" x="18" y="123" width="288" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="Apple Remote 지원" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3217">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="supportAppleRemoteAction:" target="-2" id="753"/>
+                    </connections>
+                </button>
+                <box title="뒤로/앞으로 이동 간격" id="631">
+                    <rect key="frame" x="314" y="250" width="190" height="120"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <view key="contentView">
+                        <rect key="frame" x="2" y="2" width="186" height="103"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" id="550">
+                                <rect key="frame" x="14" y="69" width="80" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="←/→ :" id="3205">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="614">
+                                <rect key="frame" x="14" y="41" width="80" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="⌥ ←/→ :" id="3206">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="623">
+                                <rect key="frame" x="14" y="13" width="80" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="⌥⇧ ←/→ :" id="3207">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="640">
+                                <rect key="frame" x="99" y="67" width="34" height="22"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="3208">
+                                    <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0" negativeFormat="-0" hasThousandSeparators="NO" thousandSeparator="." id="643">
+                                        <attributedString key="attributedStringForZero">
+                                            <fragment content="0"/>
+                                        </attributedString>
+                                        <decimal key="minimum" value="1"/>
+                                        <decimal key="maximum" value="1000"/>
+                                    </numberFormatter>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <action selector="seekIntervalAction:" target="-2" id="655"/>
+                                    <outlet property="nextKeyView" destination="644" id="667"/>
+                                </connections>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="641">
+                                <rect key="frame" x="153" y="69" width="20" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="초" id="3209">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" id="642">
+                                <rect key="frame" x="132" y="64" width="19" height="27"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" minValue="1" maxValue="1000" doubleValue="1" id="3210"/>
+                                <connections>
+                                    <action selector="seekIntervalAction:" target="-2" id="658"/>
+                                </connections>
+                            </stepper>
+                            <textField verticalHuggingPriority="750" tag="1" id="644">
+                                <rect key="frame" x="99" y="39" width="34" height="22"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" tag="1" drawsBackground="YES" id="3211">
+                                    <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0" negativeFormat="-0" hasThousandSeparators="NO" thousandSeparator="." id="645">
+                                        <attributedString key="attributedStringForZero">
+                                            <fragment content="0"/>
+                                        </attributedString>
+                                        <decimal key="minimum" value="1"/>
+                                        <decimal key="maximum" value="1000"/>
+                                    </numberFormatter>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <action selector="seekIntervalAction:" target="-2" id="656"/>
+                                    <outlet property="nextKeyView" destination="648" id="668"/>
+                                </connections>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="646">
+                                <rect key="frame" x="153" y="41" width="20" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="초" id="3212">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" tag="1" id="647">
+                                <rect key="frame" x="132" y="36" width="19" height="27"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" tag="1" minValue="1" maxValue="1000" doubleValue="1" id="3213"/>
+                                <connections>
+                                    <action selector="seekIntervalAction:" target="-2" id="659"/>
+                                </connections>
+                            </stepper>
+                            <textField verticalHuggingPriority="750" tag="2" id="648">
+                                <rect key="frame" x="99" y="11" width="34" height="22"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" tag="2" drawsBackground="YES" id="3214">
+                                    <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0" negativeFormat="-0" hasThousandSeparators="NO" thousandSeparator="." id="649">
+                                        <attributedString key="attributedStringForZero">
+                                            <fragment content="0"/>
+                                        </attributedString>
+                                        <decimal key="minimum" value="1"/>
+                                        <decimal key="maximum" value="1000"/>
+                                    </numberFormatter>
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <action selector="seekIntervalAction:" target="-2" id="657"/>
+                                    <outlet property="nextKeyView" destination="640" id="669"/>
+                                </connections>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="650">
+                                <rect key="frame" x="153" y="13" width="20" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="초" id="3215">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" tag="2" id="651">
+                                <rect key="frame" x="132" y="8" width="19" height="27"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" tag="2" minValue="1" maxValue="1000" doubleValue="1" id="3216"/>
+                                <connections>
+                                    <action selector="seekIntervalAction:" target="-2" id="660"/>
+                                </connections>
+                            </stepper>
+                        </subviews>
+                    </view>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </box>
+                <button id="548">
+                    <rect key="frame" x="18" y="175" width="288" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="영상 윈도우를 닫으면 종료" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3204">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="quitWhenWindowCloseAction:" target="-2" id="553"/>
+                    </connections>
+                </button>
+                <button id="540">
+                    <rect key="frame" x="18" y="230" width="288" height="18"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="다른 모든 윈도우 위에 유지" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3203">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="alwaysOnTopAction:" target="-2" id="542"/>
+                    </connections>
+                </button>
+            </subviews>
+        </customView>
+        <customView id="228" userLabel="Subtitle">
+            <rect key="frame" x="0.0" y="0.0" width="521" height="527"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <popUpButton verticalHuggingPriority="750" id="2823">
+                    <rect key="frame" x="187" y="64" width="301" height="26"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <popUpButtonCell key="cell" type="push" title="encoding" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="-1" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2826" id="3237">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <menu key="menu" title="OtherViews" id="2825">
+                            <items>
+                                <menuItem title="encoding" state="on" tag="-1" id="2826"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="subtitleEncodingAction:" target="-2" id="2830"/>
+                    </connections>
+                </popUpButton>
+                <textField verticalHuggingPriority="750" id="2822">
+                    <rect key="frame" x="17" y="70" width="168" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="텍스트 인코딩:" id="3236">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2636">
+                    <rect key="frame" x="367" y="19" width="137" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="0,0" id="3235">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0" negativeFormat="-0.0" hasThousandSeparators="NO" thousandSeparator="." id="2638">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <tabView id="2629">
+                    <rect key="frame" x="13" y="97" width="495" height="385"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <font key="font" metaFont="system"/>
+                    <tabViewItems>
+                        <tabViewItem label="자막 1" identifier="Subtitle0" id="2630">
+                            <view key="view" id="2633">
+                                <rect key="frame" x="10" y="33" width="475" height="339"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </view>
+                        </tabViewItem>
+                        <tabViewItem label="자막 2" identifier="Subtitle1" id="2631">
+                            <view key="view" id="2632">
+                                <rect key="frame" x="10" y="33" width="475" height="339"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </view>
+                        </tabViewItem>
+                        <tabViewItem label="자막 3" identifier="Subtitle2" id="2634">
+                            <view key="view" id="2635">
+                                <rect key="frame" x="10" y="33" width="475" height="339"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                            </view>
+                        </tabViewItem>
+                    </tabViewItems>
+                    <connections>
+                        <outlet property="delegate" destination="-2" id="2693"/>
+                    </connections>
+                </tabView>
+                <slider verticalHuggingPriority="750" tag="3" id="2626">
+                    <rect key="frame" x="190" y="18" width="172" height="15"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" tag="3" maxValue="50" doubleValue="2" tickMarkPosition="above" sliderType="linear" id="3234">
+                        <font key="font" metaFont="smallSystem"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitleScreenMarginAction:" target="-2" id="2697"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2625">
+                    <rect key="frame" x="17" y="19" width="168" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="상/하 화면 여백:" id="3233">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" id="2614">
+                    <rect key="frame" x="187" y="38" width="178" height="26"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <popUpButtonCell key="cell" type="push" title="자막 3줄 높이" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="3" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2619" id="3232">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <menu key="menu" title="OtherViews" id="2616">
+                            <items>
+                                <menuItem title="자동" tag="100" id="2618"/>
+                                <menuItem isSeparatorItem="YES" title=" " tag="-10" id="2617">
+                                    <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                </menuItem>
+                                <menuItem title="위, 아래 같게" id="2621"/>
+                                <menuItem title="자막 1줄 높이" tag="1" id="2623"/>
+                                <menuItem title="자막 2줄 높이" tag="2" id="2620"/>
+                                <menuItem title="자막 3줄 높이" state="on" tag="3" id="2619"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="letterBoxHeightAction:" target="-2" id="2694"/>
+                    </connections>
+                </popUpButton>
+                <textField verticalHuggingPriority="750" id="2613">
+                    <rect key="frame" x="17" y="44" width="168" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="레터박스 높이:" id="3231">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button id="330">
+                    <rect key="frame" x="188" y="491" width="312" height="18"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="자막 사용" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3230">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="subtitleEnableAction:" target="-2" id="2953"/>
+                    </connections>
+                </button>
+            </subviews>
+        </customView>
+        <customView id="270" userLabel="Advanced">
+            <rect key="frame" x="0.0" y="0.0" width="521" height="440"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <tabView id="847">
+                    <rect key="frame" x="13" y="10" width="495" height="424"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <font key="font" metaFont="system"/>
+                    <tabViewItems>
+                        <tabViewItem label="일반" identifier="0" id="850">
+                            <view key="view" id="851">
+                                <rect key="frame" x="10" y="33" width="475" height="378"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <subviews>
+                                    <textField verticalHuggingPriority="750" id="856">
+                                        <rect key="frame" x="17" y="340" width="154" height="17"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="업데이트 확인:" id="3239">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <popUpButton verticalHuggingPriority="750" id="857">
+                                        <rect key="frame" x="173" y="334" width="176" height="26"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <popUpButtonCell key="cell" type="push" title="매주" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="860" id="3240">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                            <menu key="menu" title="OtherViews" id="858">
+                                                <items>
+                                                    <menuItem title="안함" id="863"/>
+                                                    <menuItem isSeparatorItem="YES" id="861">
+                                                        <modifierMask key="keyEquivalentModifierMask" command="YES"/>
+                                                    </menuItem>
+                                                    <menuItem title="매일" tag="1" id="859"/>
+                                                    <menuItem title="매주" state="on" tag="2" id="860"/>
+                                                    <menuItem title="매달" tag="3" id="862"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                        <connections>
+                                            <action selector="updateCheckIntervalAction:" target="-2" id="875"/>
+                                        </connections>
+                                    </popUpButton>
+                                    <button verticalHuggingPriority="750" id="864">
+                                        <rect key="frame" x="348" y="330" width="104" height="32"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <buttonCell key="cell" type="push" title="지금 확인" bezelStyle="rounded" alignment="center" borderStyle="border" inset="2" id="3241">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="checkUpdateNowAction:" target="-2" id="874"/>
+                                        </connections>
+                                    </button>
+                                    <textField verticalHuggingPriority="750" id="865">
+                                        <rect key="frame" x="182" y="316" width="305" height="16"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="3242">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" id="866">
+                                        <rect key="frame" x="17" y="316" width="154" height="16"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="마지막 확인:" id="3243">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </view>
+                        </tabViewItem>
+                        <tabViewItem label="파일 연결" identifier="1" id="848">
+                            <view key="view" id="849">
+                                <rect key="frame" x="10" y="33" width="475" height="378"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <subviews>
+                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="888">
+                                        <rect key="frame" x="20" y="36" width="435" height="321"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <clipView key="contentView" id="FGQ-1T-dm3">
+                                            <rect key="frame" x="1" y="17" width="433" height="303"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="3315" id="889">
+                                                    <rect key="frame" x="0.0" y="0.0" width="433" height="303"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <size key="intercellSpacing" width="3" height="2"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                                    <tableColumns>
+                                                        <tableColumn identifier="extension" editable="NO" width="77" minWidth="40" maxWidth="1000" id="890">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="확장자">
+                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </tableHeaderCell>
+                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="center" id="3305">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                        <tableColumn identifier="desc" editable="NO" width="198" minWidth="40" maxWidth="1000" id="891">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="설명">
+                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </tableHeaderCell>
+                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" id="3306">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                        <tableColumn identifier="application" editable="NO" width="149.48046875" minWidth="73.48046875" maxWidth="3.4028234663852886e+38" id="892">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="응용 프로그램">
+                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                            </tableHeaderCell>
+                                                            <popUpButtonCell key="dataCell" type="bevel" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="bezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" id="3307">
+                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                                <menu key="menu" id="3313"/>
+                                                            </popUpButtonCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                    </tableColumns>
+                                                    <connections>
+                                                        <outlet property="dataSource" destination="-2" id="897"/>
+                                                        <outlet property="delegate" destination="-2" id="898"/>
+                                                    </connections>
+                                                </tableView>
+                                            </subviews>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </clipView>
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="3316">
+                                            <rect key="frame" x="1" y="237" width="418" height="15"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="3314">
+                                            <rect key="frame" x="419" y="17" width="15" height="220"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <tableHeaderView key="headerView" id="3315">
+                                            <rect key="frame" x="0.0" y="0.0" width="433" height="17"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableHeaderView>
+                                    </scrollView>
+                                    <button verticalHuggingPriority="750" id="894">
+                                        <rect key="frame" x="20" y="5" width="27" height="24"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <buttonCell key="cell" type="smallSquare" title="..." bezelStyle="smallSquare" image="Action" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="3238">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="fileBindingAction:" target="-2" id="908"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </view>
+                        </tabViewItem>
+                        <tabViewItem label="코덱 연결" identifier="2" id="852">
+                            <view key="view" id="853">
+                                <rect key="frame" x="10" y="33" width="475" height="378"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <subviews>
+                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="879">
+                                        <rect key="frame" x="20" y="36" width="435" height="321"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <clipView key="contentView" id="fV6-kt-RpH">
+                                            <rect key="frame" x="1" y="17" width="433" height="303"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="3318" id="880">
+                                                    <rect key="frame" x="0.0" y="0.0" width="433" height="303"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <size key="intercellSpacing" width="3" height="2"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                                    <tableColumns>
+                                                        <tableColumn identifier="codec" editable="NO" width="96" minWidth="40" maxWidth="1000" id="882">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="코덱">
+                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </tableHeaderCell>
+                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="center" id="3309">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                        <tableColumn identifier="desc" editable="NO" width="199" minWidth="40" maxWidth="1000" id="881">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="설명">
+                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </tableHeaderCell>
+                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" id="3308">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                        <tableColumn identifier="decoder" editable="NO" width="129" minWidth="10" maxWidth="3.4028234663852886e+38" id="883">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="디코더">
+                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                            </tableHeaderCell>
+                                                            <popUpButtonCell key="dataCell" type="bevel" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="bezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" id="884">
+                                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                                <font key="font" metaFont="system"/>
+                                                                <menu key="menu" id="3312"/>
+                                                            </popUpButtonCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                    </tableColumns>
+                                                    <connections>
+                                                        <outlet property="dataSource" destination="-2" id="900"/>
+                                                        <outlet property="delegate" destination="-2" id="901"/>
+                                                    </connections>
+                                                </tableView>
+                                            </subviews>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </clipView>
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="3319">
+                                            <rect key="frame" x="1" y="237" width="418" height="15"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="3317">
+                                            <rect key="frame" x="419" y="17" width="15" height="220"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <tableHeaderView key="headerView" id="3318">
+                                            <rect key="frame" x="0.0" y="0.0" width="433" height="17"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableHeaderView>
+                                    </scrollView>
+                                    <button verticalHuggingPriority="750" id="885">
+                                        <rect key="frame" x="20" y="5" width="27" height="24"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <buttonCell key="cell" type="smallSquare" title="..." bezelStyle="smallSquare" image="Action" imagePosition="only" alignment="center" borderStyle="border" inset="2" id="3244">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="codecBindingAction:" target="-2" id="907"/>
+                                        </connections>
+                                    </button>
+                                    <textField verticalHuggingPriority="750" id="1403">
+                                        <rect key="frame" x="52" y="9" width="406" height="16"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="지정한 디코더로 열지 못하면 자동으로 다른 디코더로 재시도합니다." id="3245">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                            </view>
+                        </tabViewItem>
+                        <tabViewItem label="세부 설정" identifier="3" id="854">
+                            <view key="view" id="855">
+                                <rect key="frame" x="10" y="33" width="475" height="378"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <subviews>
+                                    <textField verticalHuggingPriority="750" id="867">
+                                        <rect key="frame" x="17" y="9" width="441" height="16"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="* 표시가 있는 항목은 다음 동영상부터 적용됩니다." id="3246">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="868">
+                                        <rect key="frame" x="20" y="36" width="435" height="321"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <clipView key="contentView" id="rIH-be-xKn">
+                                            <rect key="frame" x="1" y="17" width="433" height="303"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="3321" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="871" id="869">
+                                                    <rect key="frame" x="0.0" y="0.0" width="433" height="303"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <size key="intercellSpacing" width="3" height="2"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <tableViewGridLines key="gridStyleMask" vertical="YES" horizontal="YES"/>
+                                                    <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                                    <tableColumns>
+                                                        <tableColumn identifier="setting" editable="NO" width="310" minWidth="16" maxWidth="1000" id="871" customClass="AdvancedDetailsTableColumn">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="설정">
+                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </tableHeaderCell>
+                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" id="3311">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                        <tableColumn identifier="value" editable="NO" width="117" minWidth="19" maxWidth="1000" id="870" customClass="AdvancedDetailsTableColumn">
+                                                            <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="값">
+                                                                <font key="font" metaFont="smallSystem"/>
+                                                                <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" white="0.33333299" alpha="1" colorSpace="calibratedWhite"/>
+                                                            </tableHeaderCell>
+                                                            <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" id="3310">
+                                                                <font key="font" metaFont="system"/>
+                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                            </textFieldCell>
+                                                            <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                        </tableColumn>
+                                                    </tableColumns>
+                                                    <connections>
+                                                        <outlet property="dataSource" destination="-2" id="877"/>
+                                                        <outlet property="delegate" destination="-2" id="878"/>
+                                                    </connections>
+                                                </outlineView>
+                                            </subviews>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </clipView>
+                                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="3322">
+                                            <rect key="frame" x="1" y="373" width="418" height="15"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="3320">
+                                            <rect key="frame" x="419" y="17" width="15" height="356"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </scroller>
+                                        <tableHeaderView key="headerView" id="3321">
+                                            <rect key="frame" x="0.0" y="0.0" width="433" height="17"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableHeaderView>
+                                    </scrollView>
+                                </subviews>
+                            </view>
+                        </tabViewItem>
+                    </tabViewItems>
+                    <connections>
+                        <outlet property="delegate" destination="-2" id="1765"/>
+                    </connections>
+                </tabView>
+            </subviews>
+        </customView>
+        <customView id="276" userLabel="Video">
+            <rect key="frame" x="0.0" y="0.0" width="521" height="239"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <box title="전체 화면" id="576">
+                    <rect key="frame" x="17" y="16" width="487" height="203"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <view key="contentView">
+                        <rect key="frame" x="2" y="2" width="483" height="186"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" id="568">
+                                <rect key="frame" x="13" y="131" width="162" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="와이드 동영상 채우기:" id="3247">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" id="569">
+                                <rect key="frame" x="177" y="125" width="183" height="26"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <popUpButtonCell key="cell" type="push" title="기본" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="571" id="3248">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <menu key="menu" title="OtherViews" id="570">
+                                        <items>
+                                            <menuItem title="기본" state="on" id="571"/>
+                                            <menuItem title="늘이기" tag="1" id="572"/>
+                                            <menuItem title="잘라내기" tag="2" id="573"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="fullScreenFillAction:" target="-2" id="593"/>
+                                </connections>
+                            </popUpButton>
+                            <textField verticalHuggingPriority="750" id="579">
+                                <rect key="frame" x="13" y="105" width="162" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="표준 동영상 채우기:" id="3249">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" tag="1" id="580">
+                                <rect key="frame" x="177" y="99" width="183" height="26"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <popUpButtonCell key="cell" type="push" title="기본" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="583" id="3250">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <menu key="menu" title="OtherViews" id="581">
+                                        <items>
+                                            <menuItem title="기본" state="on" id="583"/>
+                                            <menuItem title="늘이기" tag="1" id="582"/>
+                                            <menuItem title="잘라내기" tag="2" id="584"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="fullScreenFillAction:" target="-2" id="594"/>
+                                </connections>
+                            </popUpButton>
+                            <textField verticalHuggingPriority="750" id="585">
+                                <rect key="frame" x="13" y="80" width="162" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="언더스캔:" id="3251">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <slider verticalHuggingPriority="750" id="586">
+                                <rect key="frame" x="178" y="69" width="181" height="25"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <sliderCell key="cell" continuous="YES" alignment="left" minValue="0.01" maxValue="15" doubleValue="0.01" tickMarkPosition="below" numberOfTickMarks="4" sliderType="linear" id="3252">
+                                    <font key="font" size="12" name="Helvetica"/>
+                                </sliderCell>
+                                <connections>
+                                    <action selector="fullScreenUnderScanAction:" target="-2" id="595"/>
+                                </connections>
+                            </slider>
+                            <textField verticalHuggingPriority="750" id="587">
+                                <rect key="frame" x="176" y="53" width="27" height="11"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="안함" id="3253">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="589">
+                                <rect key="frame" x="337" y="47" width="29" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="15 %" id="3254">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="3200">
+                                <rect key="frame" x="283" y="47" width="29" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="10 %" id="3259">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="596">
+                                <rect key="frame" x="233" y="53" width="29" height="11"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="5 %" id="3255">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" id="600">
+                                <rect key="frame" x="13" y="157" width="162" height="17"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="전환 효과:" id="3256">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <popUpButton verticalHuggingPriority="750" id="601">
+                                <rect key="frame" x="177" y="151" width="183" height="26"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <popUpButtonCell key="cell" type="push" title="없음" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="604" id="3257">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <menu key="menu" title="OtherViews" id="602">
+                                        <items>
+                                            <menuItem title="없음" state="on" id="604"/>
+                                            <menuItem title="페이드" tag="1" id="603"/>
+                                            <menuItem title="애니메이션" tag="2" id="605"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="fullScreenEffectAction:" target="-2" id="612"/>
+                                </connections>
+                            </popUpButton>
+                            <button id="1527">
+                                <rect key="frame" x="178" y="11" width="290" height="19"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="다른 모니터 검게 가리기" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="3258">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="fullScreenBlackScreensAction:" target="-2" id="1648"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </box>
+            </subviews>
+        </customView>
+        <customView id="277" userLabel="Audio">
+            <rect key="frame" x="0.0" y="0.0" width="521" height="115"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <textField verticalHuggingPriority="750" id="1405">
+                    <rect key="frame" x="210" y="20" width="294" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="디지털 출력 시에는 시스템 음량을 조절할 수 없습니다." id="3263">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button id="1286">
+                    <rect key="frame" x="191" y="38" width="312" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="음량 조절시 시스템 음량 조절" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3262">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="updateSystemVolumeAction:" target="-2" id="1289"/>
+                    </connections>
+                </button>
+                <textField verticalHuggingPriority="750" id="929">
+                    <rect key="frame" x="210" y="63" width="294" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="변경 사항은 다음 동영상부터 적용됩니다." id="3261">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button id="914">
+                    <rect key="frame" x="191" y="78" width="312" height="19"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="디지털 오디오 출력 자동 인식" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3260">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="autodetectDigitalAudioOutAction:" target="-2" id="926"/>
+                    </connections>
+                </button>
+            </subviews>
+        </customView>
+        <customView id="2496" userLabel="Subtitle Data View">
+            <rect key="frame" x="0.0" y="0.0" width="481" height="346"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="2610">
+                    <rect key="frame" x="12" y="123" width="449" height="5"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <font key="titleFont" metaFont="system"/>
+                </box>
+                <popUpButton verticalHuggingPriority="750" id="2584">
+                    <rect key="frame" x="165" y="84" width="178" height="26"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <popUpButtonCell key="cell" type="push" title="아래쪽 레터박스" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="4" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="2591" id="3304">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                        <menu key="menu" title="OtherViews" id="2586">
+                            <items>
+                                <menuItem title="위쪽 레터박스" id="2592"/>
+                                <menuItem title="영상 위쪽" tag="1" id="2593"/>
+                                <menuItem title="영상 가운데" tag="2" id="2590"/>
+                                <menuItem title="영상 아래쪽" tag="3" id="2589"/>
+                                <menuItem title="아래쪽 레터박스" state="on" tag="4" id="2591"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="subtitlePositionAction:" target="-2" id="2689"/>
+                    </connections>
+                </popUpButton>
+                <textField verticalHuggingPriority="750" id="2583">
+                    <rect key="frame" x="345" y="13" width="119" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="0,0" id="3303">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0" negativeFormat="-0.0" hasThousandSeparators="NO" thousandSeparator="." id="2595">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="3" id="2582">
+                    <rect key="frame" x="168" y="12" width="172" height="15"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" tag="4" maxValue="10" tickMarkPosition="above" sliderType="linear" id="3302">
+                        <font key="font" metaFont="smallSystem"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitlePositionAction:" target="-2" id="2692"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2581">
+                    <rect key="frame" x="9" y="13" width="154" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="줄 간격:" id="3301">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2580">
+                    <rect key="frame" x="9" y="90" width="154" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="위치:" id="3300">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2579">
+                    <rect key="frame" x="345" y="38" width="119" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="0,0%" id="3299">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0%" negativeFormat="-0.0%" hasThousandSeparators="NO" thousandSeparator="." id="2600">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0%"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2578">
+                    <rect key="frame" x="345" y="63" width="119" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="left" title="0,0%" id="3298">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0%" negativeFormat="-0.0%" hasThousandSeparators="NO" thousandSeparator="." id="2602">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0%"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="2" id="2577">
+                    <rect key="frame" x="168" y="37" width="172" height="15"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" tag="3" maxValue="10" doubleValue="2" tickMarkPosition="above" sliderType="linear" id="3297">
+                        <font key="font" metaFont="smallSystem"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitlePositionAction:" target="-2" id="2691"/>
+                    </connections>
+                </slider>
+                <slider verticalHuggingPriority="750" tag="1" id="2576">
+                    <rect key="frame" x="168" y="62" width="172" height="15"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="small" continuous="YES" alignment="left" tag="2" maxValue="10" doubleValue="2" tickMarkPosition="above" sliderType="linear" id="3296">
+                        <font key="font" metaFont="smallSystem"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitlePositionAction:" target="-2" id="2690"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2575">
+                    <rect key="frame" x="9" y="38" width="154" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="상/하 여백:" id="3295">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2574">
+                    <rect key="frame" x="9" y="63" width="154" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="좌/우 여백:" id="3294">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2535">
+                    <rect key="frame" x="223" y="150" width="66" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="진하기:" id="3293">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2534">
+                    <rect key="frame" x="291" y="150" width="48" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="0" id="3292">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0" negativeFormat="-0" hasThousandSeparators="NO" thousandSeparator="." id="2538">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="8" id="2533">
+                    <rect key="frame" x="226" y="139" width="114" height="12"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" alignment="left" tag="9" minValue="1" maxValue="20" doubleValue="10" tickMarkPosition="above" sliderType="linear" id="3291">
+                        <font key="font" size="12" name="Helvetica"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2687"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2532">
+                    <rect key="frame" x="301" y="272" width="110" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="한 줄 당 글자 수:" id="3290">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" id="2531">
+                    <rect key="frame" x="445" y="267" width="19" height="27"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <stepperCell key="cell" continuous="YES" alignment="left" minValue="10" maxValue="100" doubleValue="20" id="3289"/>
+                    <connections>
+                        <action selector="subtitleAutoFontSizeCharsAction:" target="-2" id="2678"/>
+                    </connections>
+                </stepper>
+                <textField verticalHuggingPriority="750" id="2530">
+                    <rect key="frame" x="416" y="270" width="30" height="22"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" drawsBackground="YES" id="3288">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0" negativeFormat="-0" hasThousandSeparators="NO" thousandSeparator="." id="2543">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="10"/>
+                            <decimal key="maximum" value="100"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="subtitleAutoFontSizeCharsAction:" target="-2" id="2677"/>
+                    </connections>
+                </textField>
+                <button id="2529">
+                    <rect key="frame" x="164" y="271" width="124" height="18"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="check" title="크기 자동 조절" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="3287">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="subtitleAutoFontSizeAction:" target="-2" id="2676"/>
+                    </connections>
+                </button>
+                <textField verticalHuggingPriority="750" id="2528">
+                    <rect key="frame" x="9" y="301" width="152" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="서체:" id="3286">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button id="2527">
+                    <rect key="frame" x="166" y="295" width="295" height="31"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <buttonCell key="cell" type="square" title="Font &amp; Size" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" inset="2" id="3285">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="subtitleFontAction:" target="-2" id="2675"/>
+                    </connections>
+                </button>
+                <textField verticalHuggingPriority="750" id="2526">
+                    <rect key="frame" x="223" y="182" width="66" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="불투명:" id="3284">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2525">
+                    <rect key="frame" x="291" y="182" width="48" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="0,0" id="3283">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0" negativeFormat="-0.0" hasThousandSeparators="NO" thousandSeparator="." id="2549">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="6" id="2524">
+                    <rect key="frame" x="226" y="172" width="114" height="12"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" alignment="left" tag="6" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="3282">
+                        <font key="font" size="12" name="Helvetica"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2685"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2523">
+                    <rect key="frame" x="223" y="214" width="66" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="불투명:" id="3281">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2522">
+                    <rect key="frame" x="291" y="214" width="48" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="0,0" id="3280">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0" negativeFormat="-0.0" hasThousandSeparators="NO" thousandSeparator="." id="2553">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="3" id="2521">
+                    <rect key="frame" x="226" y="204" width="114" height="12"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" alignment="left" tag="3" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="3279">
+                        <font key="font" size="12" name="Helvetica"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2682"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2520">
+                    <rect key="frame" x="223" y="246" width="66" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="불투명:" id="3278">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2519">
+                    <rect key="frame" x="291" y="246" width="48" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="0,0" id="3277">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0" negativeFormat="-0.0" hasThousandSeparators="NO" thousandSeparator="." id="2557">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="1" id="2518">
+                    <rect key="frame" x="226" y="236" width="114" height="12"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" alignment="left" tag="1" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="3276">
+                        <font key="font" size="12" name="Helvetica"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2680"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2517">
+                    <rect key="frame" x="345" y="182" width="66" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="거리:" id="3275">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2516">
+                    <rect key="frame" x="345" y="150" width="66" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="흐림:" id="3274">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2515">
+                    <rect key="frame" x="345" y="214" width="66" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="right" title="두께:" id="3273">
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" id="2514">
+                    <rect key="frame" x="413" y="182" width="48" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="0,0" id="3272">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0" negativeFormat="-0.0" hasThousandSeparators="NO" thousandSeparator="." id="2563">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="7" id="2513">
+                    <rect key="frame" x="348" y="172" width="113" height="12"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" alignment="left" tag="8" maxValue="5" doubleValue="4" tickMarkPosition="above" sliderType="linear" id="3271">
+                        <font key="font" size="12" name="Helvetica"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2686"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2512">
+                    <rect key="frame" x="413" y="150" width="48" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="0,0" id="3270">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0" negativeFormat="-0.0" hasThousandSeparators="NO" thousandSeparator="." id="2566">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="9" id="2511">
+                    <rect key="frame" x="348" y="139" width="113" height="12"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" alignment="left" tag="7" maxValue="10" doubleValue="4" tickMarkPosition="above" sliderType="linear" id="3269">
+                        <font key="font" size="12" name="Helvetica"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2688"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2510">
+                    <rect key="frame" x="413" y="214" width="48" height="14"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" controlSize="small" sendsActionOnEndEditing="YES" alignment="left" title="0,0" id="3268">
+                        <numberFormatter key="formatter" formatterBehavior="10_0" positiveFormat="0.0" negativeFormat="-0.0" hasThousandSeparators="NO" thousandSeparator="." id="2569">
+                            <attributedString key="attributedStringForZero">
+                                <fragment content="0,0"/>
+                            </attributedString>
+                            <decimal key="minimum" value="NaN"/>
+                            <decimal key="maximum" value="NaN"/>
+                        </numberFormatter>
+                        <font key="font" metaFont="smallSystem"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <slider verticalHuggingPriority="750" tag="4" id="2509">
+                    <rect key="frame" x="348" y="204" width="113" height="12"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" alignment="left" tag="4" maxValue="20" doubleValue="2" tickMarkPosition="above" sliderType="linear" id="3267">
+                        <font key="font" size="12" name="Helvetica"/>
+                    </sliderCell>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2683"/>
+                    </connections>
+                </slider>
+                <textField verticalHuggingPriority="750" id="2508">
+                    <rect key="frame" x="9" y="177" width="152" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="그림자:" id="3266">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <colorWell tag="2" id="2507">
+                    <rect key="frame" x="166" y="204" width="52" height="24"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2681"/>
+                    </connections>
+                </colorWell>
+                <textField verticalHuggingPriority="750" id="2506">
+                    <rect key="frame" x="9" y="209" width="152" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="외곽선:" id="3265">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <colorWell tag="5" id="2505">
+                    <rect key="frame" x="166" y="172" width="52" height="24"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <color key="color" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2684"/>
+                    </connections>
+                </colorWell>
+                <colorWell id="2504">
+                    <rect key="frame" x="166" y="236" width="52" height="24"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <color key="color" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <action selector="subtitleAttributesAction:" target="-2" id="2679"/>
+                    </connections>
+                </colorWell>
+                <textField verticalHuggingPriority="750" id="2503">
+                    <rect key="frame" x="9" y="241" width="152" height="17"/>
+                    <autoresizingMask key="autoresizingMask"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="right" title="글자:" id="3264">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+        </customView>
+    </objects>
+    <resources>
+        <image name="Action" width="32" height="23"/>
+    </resources>
+</document>
