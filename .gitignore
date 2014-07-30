@@ -3,3 +3,5 @@
 *.perspectivev3
 xcuserdata
 build
+# I don't see any reason to share this
+*.xccheckout
