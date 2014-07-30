@@ -993,8 +993,8 @@
                                     </connections>
                                 </button>
                                 <button toolTip="Backward" tag="-10" id="1527" customClass="HoverButton">
-                                    <rect key="frame" x="0.0" y="9" width="22" height="24"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <rect key="frame" x="-4" y="10" width="22" height="24"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainPrevSeek" imagePosition="only" alignment="left" continuous="YES" tag="-10" inset="2" id="2911">
                                         <behavior key="behavior" lightByContents="YES"/>
                                         <font key="font" metaFont="system"/>
@@ -1004,8 +1004,8 @@
                                     </connections>
                                 </button>
                                 <button toolTip="Forward" tag="10" id="1529" customClass="HoverButton">
-                                    <rect key="frame" x="79" y="9" width="22" height="24"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <rect key="frame" x="83" y="10" width="22" height="24"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                     <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainNextSeek" imagePosition="only" alignment="left" continuous="YES" tag="10" inset="2" id="2912">
                                         <behavior key="behavior" lightByContents="YES"/>
                                         <font key="font" metaFont="system"/>
@@ -1567,7 +1567,7 @@
                                                     <popUpButton verticalHuggingPriority="750" id="1883">
                                                         <rect key="frame" x="11" y="99" width="111" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
-                                                        <popUpButtonCell key="cell" type="push" title="Movie Bottom" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingMiddle" state="on" borderStyle="borderAndBezel" tag="3" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1892" id="2960">
+                                                        <popUpButtonCell key="cell" type="push" title="Lower Letter Box" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingMiddle" state="on" borderStyle="borderAndBezel" tag="4" inset="2" arrowPosition="arrowAtCenter" preferredEdge="maxY" selectedItem="1892" id="2960">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <menu key="menu" title="OtherViews" id="1885">
@@ -1575,7 +1575,7 @@
                                                                     <menuItem title="Upper Letter Box" id="1888"/>
                                                                     <menuItem title="Movie Top" tag="1" id="1887"/>
                                                                     <menuItem title="Movie Center" tag="2" id="1889"/>
-                                                                    <menuItem title="Movie Bottom" state="on" tag="3" id="1886"/>
+                                                                    <menuItem title="Movie Bottom" tag="3" id="1886"/>
                                                                     <menuItem title="Lower Letter Box" state="on" tag="4" id="1892"/>
                                                                 </items>
                                                             </menu>
