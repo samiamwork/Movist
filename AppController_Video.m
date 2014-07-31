@@ -486,7 +486,9 @@
 
 - (IBAction)moveToTrash:(id)sender
 {
-    NSLog(@"Moving to Trash...");
+    // TODO: Remove the current item from the playlist.
+    [_movie moveToTrash];
+    // TODO: Skip to the next item.
 }
 
 @end
