@@ -458,6 +458,12 @@
     }
 }
 
+- (void)revealInFinder
+{
+    [[NSWorkspace sharedWorkspace] activateFileViewerSelectingURLs:@[self.url]];
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark playback
