@@ -107,6 +107,21 @@
                                     <action selector="addSubtitleFileAction:" target="206" id="2377"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="NmU-gD-GRF"/>
+                            <menuItem title="Reveal Movie in Finder" keyEquivalent="f" id="cty-oL-EIS">
+                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="revealInFinder:" target="206" id="63T-Kd-9Fh"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Move Movie to Trash" id="U7p-hy-XNQ">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                <connections>
+                                    <action selector="moveToTrash:" target="206" id="W7b-py-hVo"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="251">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
