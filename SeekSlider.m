@@ -203,6 +203,10 @@
 - (void)drawKnob:(NSRect)knobRect
 {
     if ([(NSControl*)[self controlView] isEnabled]) {
+		if(isnan(knobRect.origin.x) || isnan(knobRect.origin.y))
+		{
+			return;
+		}
         float cx = knobRect.origin.x + knobRect.size.width  / 2;
         float cy = knobRect.origin.y + knobRect.size.height / 2;
         NSBezierPath* path = [NSBezierPath bezierPath];
