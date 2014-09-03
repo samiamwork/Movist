@@ -81,7 +81,7 @@ NSString* videoCodecName(int codecId);
     [_volumeSlider setMaxValue:MAX_VOLUME];
     [_volumeSlider replaceCell:[CustomSliderCell class]];
     CustomSliderCell* cell = [_volumeSlider cell];
-    [cell setImageName:@"MainVolume" backColor:nil trackOffset:5.0 knobOffset:2.0];
+    [cell setImageName:@"MainVolume" backColor:nil trackOffset:0.0 knobOffset:2.0];
 
     [_fsVolumeSlider setMinValue:MIN_VOLUME];
     [_fsVolumeSlider setMaxValue:MAX_VOLUME];
