@@ -366,7 +366,7 @@ static OSStatus audioProc(void* inRefCon, AudioUnitRenderActionFlags* ioActionFl
         if (dataSize > 0) {
             nextPts = pts +  1. * dataSize / [_dataQueue bitRate] / PTS_TO_SEC;
         }
-        decodedTime = 1. * pts * PTS_TO_SEC;
+        decodedTime = 1. * pts * PTS_TO_SEC - _startTime;
         pts = nextPts;
         if (0 < dataSize) {
             if (AVCODEC_MAX_AUDIO_FRAME_SIZE < dataSize) {

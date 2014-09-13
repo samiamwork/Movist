@@ -461,7 +461,7 @@
     else if (_frame->opaque && *(uint64_t*)_frame->opaque != AV_NOPTS_VALUE) {
         pts = *(uint64_t*)_frame->opaque;
     }
-	double time = (double)(pts) * av_q2d(_stream->time_base);
+	double time = (double)(pts) * av_q2d(_stream->time_base) - _startTime;
     //TRACE(@"[%s] frame flag %d pts %lld dts %lld pos %lld time %f", __PRETTY_FUNCTION__,
     //      _frame->pict_type, 
     //      packet.pts, packet.dts,

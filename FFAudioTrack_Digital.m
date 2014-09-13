@@ -430,7 +430,7 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
     for (i = packetSize + 8; i < 6144; i++) {
         buffer[i] = 0;
     }
-    double decodedAudioTime = (double)1. * packet->dts * PTS_TO_SEC;
+    double decodedAudioTime = (double)1. * packet->dts * PTS_TO_SEC - _startTime;
     [_rawDataQueue putData:buffer size:6144 time:decodedAudioTime];    
 }
 
@@ -463,7 +463,7 @@ static AudioDeviceIOProcID s_theIOProcID = NULL;
     else {
         memcpy(buffer + 8, packetPtr, packetSize);        
     }
-    double decodedAudioTime = (double)1. * packet->dts * PTS_TO_SEC;
+    double decodedAudioTime = (double)1. * packet->dts * PTS_TO_SEC - _startTime;
     assert(packetSize + 8 <= 6144/3);
     //TRACE(@"audio time %lld * %lf = %lf", packet->dts, PTS_TO_SEC, decodedAudioTime);
     [_rawDataQueue putData:buffer size:6144/3 time:decodedAudioTime];        

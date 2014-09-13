@@ -38,6 +38,10 @@
     if ((self = [super init])) {
         _streamIndex = index;
         _stream = stream;
+        if(stream->start_time != AV_NOPTS_VALUE)
+        {
+            _startTime = (double)stream->start_time * av_q2d(stream->time_base);
+        }
     }
     return self;
 }

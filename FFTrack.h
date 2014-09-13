@@ -42,6 +42,7 @@
 {
     int _streamIndex;
     AVStream* _stream;
+    double    _startTime;
 }
 
 + (id)contextWithAVStream:(AVStream*)stream index:(int)index;
