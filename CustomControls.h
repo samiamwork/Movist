@@ -133,7 +133,6 @@
     NSImage* _knobImageDisabled;
     NSColor* _backColor;
     float _trackOffset;
-    float _knobOffset;
 }
 
 - (void)setImageName:(NSString*)imageName backColor:(NSColor*)backColor
