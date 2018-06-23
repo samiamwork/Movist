@@ -146,7 +146,7 @@
 @interface HUDTableView : NSTableView {} @end
 @interface HUDTableColumn : NSTableColumn {} @end
 
-@interface HUDTableHeaderCell : NSTextFieldCell
+@interface HUDTableHeaderCell : NSTableHeaderCell
 {
     NSImage* _lImage;
     NSImage* _mImage;
