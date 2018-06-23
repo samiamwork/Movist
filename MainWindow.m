@@ -115,7 +115,7 @@
 - (void)orderFrontRegardless
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    if (!_alwaysOnTop && ![[NSApp delegate] isDesktopBackground]) {
+    if (!_alwaysOnTop && ![(AppController*)[NSApp delegate] isDesktopBackground]) {
         [super orderFrontRegardless];
     }
 }
@@ -123,7 +123,7 @@
 - (void)setLevel:(NSInteger)newLevel
 {
     //TRACE(@"%s %d", __PRETTY_FUNCTION__, newLevel);
-    if ([[NSApp delegate] isDesktopBackground]) {
+    if ([(AppController*)[NSApp delegate] isDesktopBackground]) {
         newLevel = MIN(DesktopWindowLevel, newLevel);
     }
     [super setLevel:MIN(TopMostWindowLevel, newLevel)];
@@ -139,7 +139,7 @@
 - (BOOL)windowShouldClose:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSApp delegate] closeMovie];
+    [(AppController*)[NSApp delegate] closeMovie];
     return TRUE;
 }
 
@@ -148,16 +148,16 @@
     if ([NSApp keyWindow] == self) {
         [super performClose:sender];
     }
-    else if ([[NSApp delegate] isFullScreen]) {
-        [[NSApp delegate] endFullScreen];
+    else if ([(AppController*)[NSApp delegate] isFullScreen]) {
+        [(AppController*)[NSApp delegate] endFullScreen];
         [super performClose:sender];
     }
-    else if ([[NSApp delegate] isDesktopBackground]) {
-        [[NSApp delegate] endDesktopBackground];
+    else if ([(AppController*)[NSApp delegate] isDesktopBackground]) {
+        [(AppController*)[NSApp delegate] endDesktopBackground];
         [super performClose:sender];
     }
-    else if ([[NSApp delegate] isFullNavigation]) {
-        [[NSApp delegate] endFullNavigation];
+    else if ([(AppController*)[NSApp delegate] isFullNavigation]) {
+        [(AppController*)[NSApp delegate] endFullNavigation];
         [super performClose:sender];
     }
     else {
@@ -218,7 +218,7 @@
 - (void)scrollWheel:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSApp delegate] scrollWheelAction:event];
+    [(AppController*)[NSApp delegate] scrollWheelAction:event];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

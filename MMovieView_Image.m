@@ -231,7 +231,7 @@
         _movieRect = *(CGRect*)&mr;
 
         float asw = 0;
-        if ([[NSApp delegate] isFullScreen] &&
+        if ([(AppController*)[NSApp delegate] isFullScreen] &&
             NSEqualSizes(_movieSize, NSZeroSize)) {
             asw = NSWidth(bounds);
         }
@@ -298,11 +298,11 @@
 - (NSRect)calcMovieRectForBoundingRect:(NSRect)boundingRect
 {
     //TRACE(@"%s %@", __PRETTY_FUNCTION__, NSStringFromSize(boundingSize));
-    if ([[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
+    if ([(AppController*)[NSApp delegate] isFullScreen] && 0 < _fullScreenUnderScan) {
         boundingRect = [self underScannedRect:boundingRect];
     }
 
-    if ([[NSApp delegate] isFullScreen] || [[NSApp delegate] isDesktopBackground]) {
+    if ([(AppController*)[NSApp delegate] isFullScreen] || [(AppController*)[NSApp delegate] isDesktopBackground]) {
         if (!NSEqualSizes(_movieSize, NSZeroSize)) {
             if (NSWidth(boundingRect)  < _movieSize.width ||
                 NSHeight(boundingRect) < _movieSize.height) {

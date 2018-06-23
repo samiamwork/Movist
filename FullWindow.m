@@ -133,7 +133,7 @@
     _movieView = [movieView retain];
     [[self contentView] addSubview:_movieView];
 
-    if ([[NSApp delegate] movie]) {
+    if ([(AppController*)[NSApp delegate] movie]) {
         // full-screen transition from window-mode
         [_movieView setFrame:[[self contentView] bounds]];
     }

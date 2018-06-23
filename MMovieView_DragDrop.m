@@ -92,11 +92,11 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     unsigned int modifierFlags = [[NSApp currentEvent] modifierFlags];
     if (modifierFlags & NSControlKeyMask) {
-        if ([[NSApp delegate] playlistWindowVisible]) {
-            [[NSApp delegate] hidePlaylistWindow];
+        if ([(AppController*)[NSApp delegate] playlistWindowVisible]) {
+            [(AppController*)[NSApp delegate] hidePlaylistWindow];
         }
         else {
-            [[NSApp delegate] showPlaylistWindow];
+            [(AppController*)[NSApp delegate] showPlaylistWindow];
         }
     }
     else if (modifierFlags & NSAlternateKeyMask) {
@@ -138,23 +138,23 @@
     switch (_dragAction) {
         case DRAG_ACTION_PLAY_FILES : {
             NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
-            [[NSApp delegate] performSelector:@selector(openFiles:)
+            [(AppController*)[NSApp delegate] performSelector:@selector(openFiles:)
                                    withObject:files afterDelay:0.01];
             return TRUE;
         }
         case DRAG_ACTION_ADD_FILES : {
             NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
-            [[NSApp delegate] addFiles:files];
+            [(AppController*)[NSApp delegate] addFiles:files];
             return TRUE;
         }
         case DRAG_ACTION_REPLACE_SUBTITLE_FILES : {
             NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
-            [[NSApp delegate] openSubtitleFiles:files];
+            [(AppController*)[NSApp delegate] openSubtitleFiles:files];
             return TRUE;
         }
         case DRAG_ACTION_ADD_SUBTITLE_FILES : {
             NSArray* files = [pboard propertyListForType:NSFilenamesPboardType];
-            [[NSApp delegate] addSubtitleFiles:files];
+            [(AppController*)[NSApp delegate] addSubtitleFiles:files];
             return TRUE;
         }
     }
@@ -165,8 +165,8 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     _dragAction = DRAG_ACTION_NONE;
-    if ([[NSApp delegate] playlistWindowVisible]) {
-        [[NSApp delegate] hidePlaylistWindow];
+    if ([(AppController*)[NSApp delegate] playlistWindowVisible]) {
+        [(AppController*)[NSApp delegate] hidePlaylistWindow];
     }
 	[self setDraggingVisualEffectEnabled:NO];
 }

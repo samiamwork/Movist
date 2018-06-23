@@ -549,7 +549,7 @@ objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
         [_movieView setCaptureFormat:[object intValue]];
     }
     else if ([key isEqualToString:MIncludeLetterBoxOnCaptureKey]) {
-        [[NSApp delegate] setIncludeLetterBoxOnCapture:[object boolValue]];
+        [(AppController*)[NSApp delegate] setIncludeLetterBoxOnCapture:[object boolValue]];
     }
     // subtitles
     else if ([key isEqualToString:MUseQuickTimeSubtitlesKey]) {

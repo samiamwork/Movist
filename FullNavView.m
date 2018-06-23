@@ -213,7 +213,7 @@
         case 27 :                           // ESC
         //case NSBackspaceCharacter :         // backsapce
             if (![self closeCurrent]) {
-                [[NSApp delegate] endFullNavigation];
+                [(AppController*)[NSApp delegate] endFullNavigation];
             }
             break;
     }
@@ -470,10 +470,10 @@
         [movie setRate:DEFAULT_PLAY_RATE];
     }
     else if ([item isMemberOfClass:[FullNavFileItem class]]) {
-        [[NSApp delegate] openFile:[(FullNavFileItem*)item path]];
+        [(AppController*)[NSApp delegate] openFile:[(FullNavFileItem*)item path]];
     }
     else if ([item isMemberOfClass:[FullNavURLItem class]]) {
-        [[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
+        [(AppController*)[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
     }
 }
 
@@ -565,10 +565,10 @@
     }
     else {
         if ([item isMemberOfClass:[FullNavFileItem class]]) {
-            [[NSApp delegate] openFile:[(FullNavFileItem*)item path] option:OPTION_ALL];
+            [(AppController*)[NSApp delegate] openFile:[(FullNavFileItem*)item path] option:OPTION_ALL];
         }
         else if ([item isMemberOfClass:[FullNavURLItem class]]) {
-            [[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
+            [(AppController*)[NSApp delegate] openURL:[(FullNavURLItem*)item URL]];
         }
         [[_movieView window] disableScreenUpdatesUntilFlush];   // for Tiger
         [_movieView setFrame:[self previewRect]];
@@ -593,7 +593,7 @@
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     if (![self isHidden] && ![_movieView isHidden]) {
-        [[NSApp delegate] closeMovie];
+        [(AppController*)[NSApp delegate] closeMovie];
         [_movieView setError:nil info:nil];
         [_movieView display];
         [_movieView setHidden:TRUE];

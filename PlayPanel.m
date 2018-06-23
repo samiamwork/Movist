@@ -171,7 +171,7 @@
 {
     //TRACE(@"%s (%g,%g,%g)", __PRETTY_FUNCTION__,
     //      [event deltaX], [event deltaY], [event deltaZ]);
-    [[NSApp delegate] scrollWheelAction:event];
+    [(AppController*)[NSApp delegate] scrollWheelAction:event];
 }
 
 @end

@@ -71,7 +71,7 @@
 - (IBAction)checkUpdateNowAction:(id)sender
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSApp delegate] checkForUpdates:TRUE];    // manual checking
+    [(AppController*)[NSApp delegate] checkForUpdates:TRUE];    // manual checking
 }
 
 ////////////////////////////////////////////////////////////////////////////////
