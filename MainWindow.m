@@ -172,7 +172,8 @@
 - (void)mouseDown:(NSEvent*)event
 {
     NSRect frame = [self frame];
-    _initialDragPoint = [self convertBaseToScreen:[event locationInWindow]];
+    NSPoint loc = [event locationInWindow];
+    _initialDragPoint = [self convertRectToScreen:(NSRect){.origin=loc, .size=NSZeroSize}].origin;
     _initialDragPoint.x -= frame.origin.x;
     _initialDragPoint.y -= frame.origin.y;
 }
@@ -186,7 +187,8 @@
 - (void)mouseDragged:(NSEvent*)event
 {
     if (0 <= _initialDragPoint.x && 0 <= _initialDragPoint.y) {
-        NSPoint p = [self convertBaseToScreen:[event locationInWindow]];
+        NSPoint loc = [event locationInWindow];
+        NSPoint p = [self convertRectToScreen:(NSRect){.origin=loc, .size=NSZeroSize}].origin;
         NSRect sr = [[self screen] frame];
         NSRect wr = [self frame];
 

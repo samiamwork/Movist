@@ -67,7 +67,8 @@
 {
     if (![self isSheet]) {
         NSRect frame = [self frame];
-        _initialDragPoint = [self convertBaseToScreen:[event locationInWindow]];
+        NSPoint loc = [event locationInWindow];
+        _initialDragPoint    = [self convertRectToScreen:NSMakeRect(loc.x, loc.y, 0.0, 0.0)].origin;
         _initialDragPoint.x -= frame.origin.x;
         _initialDragPoint.y -= frame.origin.y;
     }
@@ -85,7 +86,8 @@
 {
     if (![self isSheet] &&
         0 <= _initialDragPoint.x && 0 <= _initialDragPoint.y) {
-        NSPoint p = [self convertBaseToScreen:[event locationInWindow]];
+        NSPoint loc = [event locationInWindow];
+        NSPoint p = [self convertRectToScreen:NSMakeRect(loc.x, loc.y, 0.0, 0.0)].origin;
         NSRect sr = [[self screen] frame];
         NSRect wr = [self frame];
         

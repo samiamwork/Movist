@@ -73,7 +73,7 @@
         NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
         _effect = [defaults integerForKey:MFullScreenEffectKey];
         #if defined(AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER)
-        if ([_mainWindow userSpaceScaleFactor] != 1.0 &&
+        if ([_mainWindow backingScaleFactor] != 1.0 &&
             _effect == FS_EFFECT_ANIMATION) {
             _effect = FS_EFFECT_NONE;
         }

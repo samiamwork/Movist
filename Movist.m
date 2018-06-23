@@ -273,7 +273,12 @@ int runAlertPanel(MainWindow* mainWindow, NSString* title, NSString* msg,
         [mainWindow setAlwaysOnTop:FALSE];
     }
 
-    int ret = NSRunAlertPanel(title, msg, defaultButton, altButton, otherButton);
+    NSAlert* alert = [NSAlert alertWithMessageText:title
+                                     defaultButton:defaultButton
+                                   alternateButton:altButton
+                                       otherButton:otherButton
+                         informativeTextWithFormat:@"%@", msg];
+    int ret = [alert runModal];
     
     if (alwaysOnTop) {
         [mainWindow setAlwaysOnTop:TRUE];

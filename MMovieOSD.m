@@ -472,7 +472,6 @@ enum {  // for _updateMask
 
     NSImage* img = [[NSImage alloc] initWithSize:size];
     [img setCacheMode:NSImageCacheNever];
-    [img setCachedSeparately:TRUE]; // for thread safety
     [img lockFocus];
     [self renderString:s inRect:NSMakeRect(0, 0, size.width, size.height)];
     [img unlockFocus];
@@ -523,7 +522,6 @@ enum {  // for _updateMask
     
     NSImage* img = [[NSImage alloc] initWithSize:size];
     [img setCacheMode:NSImageCacheNever];
-    [img setCachedSeparately:TRUE]; // for thread safety
     [img lockFocus];
     [self renderImage:image inRect:NSMakeRect(0, 0, size.width, size.height)];
     [img unlockFocus];

@@ -98,7 +98,6 @@
     NSImage* image = [[NSImage alloc] initWithSize:[bmp size]];
     [image addRepresentation:bmp];
     [image setCacheMode:NSImageCacheNever];
-    [image setCachedSeparately:TRUE]; // for thread safety
     [bmp release];
 
     return [image autorelease];

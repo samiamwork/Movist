@@ -93,7 +93,6 @@
 - (void)setIcon:(NSImage*)icon title:(NSString*)title
 {
     if (isSystemTiger()) {
-        [icon setScalesWhenResized:TRUE];
         [icon setSize:NSMakeSize(128, 128)];
     }
     [icon retain], [_icon release], _icon = icon;

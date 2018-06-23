@@ -109,9 +109,10 @@
         [[NSUserDefaults standardUserDefaults] boolForKey:MUsePlayPanelKey]) {
         [_playPanel showPanel];
 
-        NSPoint p = [self convertBaseToScreen:[event locationInWindow]];
+        NSPoint loc = [event locationInWindow];
+        NSPoint p = [self convertRectToScreen:(NSRect){.origin=loc, .size=NSZeroSize}].origin;
         if (NSPointInRect(p, [_playPanel frame])) {
-            [_playPanel mouseMoved:[_playPanel convertScreenToBase:p]];
+            [_playPanel mouseMoved:[_playPanel convertRectToScreen:(NSRect){.origin=p, .size=NSZeroSize}].origin];
         }
     }
 }

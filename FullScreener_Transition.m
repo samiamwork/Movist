@@ -314,7 +314,8 @@
     //TRACE(@"%s", __PRETTY_FUNCTION__);
     // _restoreRect
     _restoreRect = [[_mainWindow contentView] convertRect:[_movieView frame] toView:nil];
-    _restoreRect.origin = [_mainWindow convertBaseToScreen:_restoreRect.origin];
+    _restoreRect.origin = [_mainWindow convertRectToScreen:(NSRect){
+        .origin=_restoreRect.origin, .size=NSZeroSize}].origin;
     
     // _fullMovieRect
     NSRect sr = [[_fullWindow screen] frame];

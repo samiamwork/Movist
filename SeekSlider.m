@@ -306,7 +306,7 @@
     NSRect r = [self convertRect:[self bounds] toView:nil];
     r.origin.x = locationInWindow.x;
     r.origin.y += r.size.height;
-    r.origin = [[self window] convertBaseToScreen:r.origin];
+    r.origin = [[self window] convertRectToScreen:NSMakeRect(r.origin.x, r.origin.y, 0.0, 0.0)].origin;
     r.origin.x -= [toolTipWindow frame].size.width / 2;
     [toolTipWindow setFrameOrigin:r.origin];
     [toolTipWindow orderFront:self];
