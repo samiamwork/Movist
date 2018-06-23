@@ -35,8 +35,15 @@ Movist README
 $ open Movist.xcodeproj
 and build it.
 
+3) How to update libav
 
-3) Contact
+If you want to update to a new version of libav to get new codecs or bugfixes:
+- Go into contrib/libav and do `git fetch` to get the latest remote versions of the source.
+- Check out the code to whatever more recent version you want to use. (I always use tagged releases)
+- Build. All the scripts are expecting to be called from Xcode so just do all your building from there. Xcode should show you any errors.
+- Find all the errors and warnings due to API changes and fix them.
+
+4) Contact
 
 * Github:
   https://github.com/samiamwork/Movist
