@@ -20,10 +20,7 @@
  */
 
 #include "ColorConversions.h"
-#include <QuickTime/QuickTime.h>
 #include <Accelerate/Accelerate.h>
-//#include "Codecprintf.h"
-//#include "CommonUtils.h"
 #include <stdio.h>
 
 /*

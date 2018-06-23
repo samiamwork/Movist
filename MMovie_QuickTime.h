@@ -22,7 +22,6 @@
 
 #import "MMovie.h"
 
-#import <QTKit/QTKit.h>
 #import <AVFoundation/AVFoundation.h>
 
 @interface MMovie_QuickTime : MMovie
