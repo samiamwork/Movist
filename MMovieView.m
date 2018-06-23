@@ -203,23 +203,23 @@
     BOOL shiftPressed = ([event modifierFlags] & NSShiftKeyMask) ? TRUE : FALSE;
     switch (key) {
         case ' ' :  // space: toggle play/pause
-            [[NSApp delegate] playAction:self];
+            [(AppController*)[NSApp delegate] playAction:self];
             break;
         case NSCarriageReturnCharacter :    // return : toggle full-screen
         case NSEnterCharacter :             // enter (in keypad)
             if (_movie) {
-                [[NSApp delegate] fullScreenAction:self];
+                [(AppController*)[NSApp delegate] fullScreenAction:self];
             }
             break;
         case 27 :   // escape
-            if ([[NSApp delegate] isFullScreen]) {
-                [[NSApp delegate] fullScreenAction:self];
+            if ([(AppController*)[NSApp delegate] isFullScreen]) {
+                [(AppController*)[NSApp delegate] fullScreenAction:self];
             }
-            else if ([[NSApp delegate] isDesktopBackground]) {
-                [[NSApp delegate] desktopBackgroundAction:self];
+            else if ([(AppController*)[NSApp delegate] isDesktopBackground]) {
+                [(AppController*)[NSApp delegate] desktopBackgroundAction:self];
             }
             else if (_movie) {
-                [[NSApp delegate] closeMovie];
+                [(AppController*)[NSApp delegate] closeMovie];
                 [self showLogo];
             }
             else {
@@ -227,26 +227,26 @@
             }
             break;
 
-        case 'n' : case 'N' : [[NSApp delegate] fullNavigationAction:self];         break;
+        case 'n' : case 'N' : [(AppController*)[NSApp delegate] fullNavigationAction:self];         break;
 
-        case '[' : case '{' : [[NSApp delegate] stepBackward];                      break;
-        case ']' : case '}' : [[NSApp delegate] stepForward];                       break;
+        case '[' : case '{' : [(AppController*)[NSApp delegate] stepBackward];                      break;
+        case ']' : case '}' : [(AppController*)[NSApp delegate] stepForward];                       break;
 
-        case 'c' : case 'C' : [[NSApp delegate] changePlayRate:+1];                 break;
-        case 'x' : case 'X' : [[NSApp delegate] changePlayRate:-1];                 break;
-        case 'z' : case 'Z' : [[NSApp delegate] changePlayRate: 0];                 break;
+        case 'c' : case 'C' : [(AppController*)[NSApp delegate] changePlayRate:+1];                 break;
+        case 'x' : case 'X' : [(AppController*)[NSApp delegate] changePlayRate:-1];                 break;
+        case 'z' : case 'Z' : [(AppController*)[NSApp delegate] changePlayRate: 0];                 break;
 
-        case 'v' : case 'V' : [[NSApp delegate] changeSubtitleVisible];             break;
-        case 's' : case 'S' : [[NSApp delegate] changeSubtitleLanguage:-1];         break;
+        case 'v' : case 'V' : [(AppController*)[NSApp delegate] changeSubtitleVisible];             break;
+        case 's' : case 'S' : [(AppController*)[NSApp delegate] changeSubtitleLanguage:-1];         break;
 
-        case 'l' : case 'L' : [[NSApp delegate] changeLetterBoxHeight];             break;
-        case 'p' : case 'P' : [[NSApp delegate] changeSubtitlePosition];   break;
+        case 'l' : case 'L' : [(AppController*)[NSApp delegate] changeLetterBoxHeight];             break;
+        case 'p' : case 'P' : [(AppController*)[NSApp delegate] changeSubtitlePosition];   break;
 
-        case ',' : case '<' : [[NSApp delegate] changeSubtitleSync:-1];   break;
-        case '.' : case '>' : [[NSApp delegate] changeSubtitleSync:+1];   break;
-        case '/' : case '?' : [[NSApp delegate] changeSubtitleSync: 0];   break;
+        case ',' : case '<' : [(AppController*)[NSApp delegate] changeSubtitleSync:-1];   break;
+        case '.' : case '>' : [(AppController*)[NSApp delegate] changeSubtitleSync:+1];   break;
+        case '/' : case '?' : [(AppController*)[NSApp delegate] changeSubtitleSync: 0];   break;
 
-        case 'm' : case 'M' : [[NSApp delegate] setMuted:![_movie muted]];          break;
+        case 'm' : case 'M' : [(AppController*)[NSApp delegate] setMuted:![_movie muted]];          break;
 
         case 'i' : case 'I' : [self saveCurrentImage:shiftPressed];                 break;
     }
@@ -256,12 +256,12 @@
 {
     //TRACE(@"%s clickCount=%d", __PRETTY_FUNCTION__, [event clickCount]);
     if (2 <= [event clickCount]) {
-        [[NSApp delegate] fullScreenAction:self];
+        [(AppController*)[NSApp delegate] fullScreenAction:self];
     }
     else {
         int action = [self viewDragActionWithModifierFlags:[event modifierFlags]];
         if (action == VIEW_DRAG_ACTION_MOVE_WINDOW) {
-            if (![[NSApp delegate] isFullScreen]) {
+            if (![(AppController*)[NSApp delegate] isFullScreen]) {
                 [[self window] mouseDown:event];
             }
         }
@@ -271,7 +271,7 @@
 - (void)scrollWheel:(NSEvent*)event
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
-    [[NSApp delegate] scrollWheelAction:event];
+    [(AppController*)[NSApp delegate] scrollWheelAction:event];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -288,7 +288,7 @@
         _displayID = displayID;
         TRACE(@"main window moved: display changed");
         [self updateLetterBoxHeight];
-        [[NSApp delegate] updateLetterBoxHeightMenuItems];
+        [(AppController*)[NSApp delegate] updateLetterBoxHeightMenuItems];
     }
 }
 

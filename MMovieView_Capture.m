@@ -118,7 +118,7 @@
 
 - (NSString*)capturePathAtDirectory:(NSString*)directory
 {
-    NSString* name = [[[[NSApp delegate] movieURL] path] lastPathComponent];
+    NSString* name = [[[(AppController*)[NSApp delegate] movieURL] path] lastPathComponent];
     NSString* ext = [self fileExtensionForCaptureFormat:_captureFormat];
     directory = [[directory stringByExpandingTildeInPath]
                  stringByAppendingPathComponent:[name stringByDeletingPathExtension]];
@@ -180,7 +180,7 @@
 {
     int action = [self viewDragActionWithModifierFlags:[event modifierFlags]];
     if (action == VIEW_DRAG_ACTION_MOVE_WINDOW) {
-        if (![[NSApp delegate] isFullScreen]) {
+        if (![(AppController*)[NSApp delegate] isFullScreen]) {
             [[self window] mouseDragged:event];
         }
     }
