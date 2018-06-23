@@ -14,6 +14,13 @@ then
 	exit 0
 fi
 
+`git status > /dev/null 2>&1`
+if [ $? -ne 0 ]; then
+	echo "You're missing your git repo for Movist and it needs the submodule to get libav."
+	echo "To work around this you can just download libav at the same version as the submodule"
+	echo "and put it into contrib/libav folder"
+	exit 1
+fi
 if [[ ! -e "libav/configure" ]]
 then
 	echo init libav submodule
