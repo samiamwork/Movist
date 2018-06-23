@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none">
     <dependencies>
-        <deployment version="1050" defaultVersion="1070" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -11,7 +13,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <menu title="MainMenu" systemMenu="main" id="29" userLabel="MainMenu">
             <items>
                 <menuItem title="Movist" id="56">
@@ -1150,19 +1152,13 @@
                             <action selector="controlPanelAction:" target="206" id="537"/>
                         </connections>
                     </button>
-                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="1185">
+                    <box verticalHuggingPriority="750" boxType="separator" id="1185">
                         <rect key="frame" x="0.0" y="337" width="640" height="5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <font key="titleFont" metaFont="system"/>
                     </box>
-                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="1187">
+                    <box verticalHuggingPriority="750" boxType="separator" id="1187">
                         <rect key="frame" x="0.0" y="64" width="640" height="5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <font key="titleFont" metaFont="system"/>
                     </box>
                     <button toolTip="上一個影片" tag="-1" id="1327" customClass="HoverButton">
                         <rect key="frame" x="568" y="25" width="24" height="24"/>
@@ -1223,10 +1219,10 @@
                             </slider>
                         </subviews>
                     </customView>
-                    <box title="Title" boxType="oldStyle" borderType="none" titlePosition="noTitle" id="1539">
+                    <box boxType="oldStyle" borderType="none" title="Title" titlePosition="noTitle" id="1539">
                         <rect key="frame" x="269" y="7" width="103" height="45"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <view key="contentView">
+                        <view key="contentView" id="0cr-Ff-BQ0">
                             <rect key="frame" x="0.0" y="0.0" width="103" height="45"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
@@ -1242,7 +1238,7 @@
                                     </connections>
                                 </button>
                                 <button toolTip="往後" tag="-10" id="1527" customClass="HoverButton">
-                                    <rect key="frame" x="0.0" y="9" width="22" height="24"/>
+                                    <rect key="frame" x="81" y="9" width="22" height="24"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="MainPrevSeek" imagePosition="only" alignment="left" continuous="YES" tag="-10" inset="2" id="2911">
                                         <behavior key="behavior" lightByContents="YES"/>
@@ -1265,8 +1261,6 @@
                                 </button>
                             </subviews>
                         </view>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <font key="titleFont" size="11" name="LucidaGrande"/>
                     </box>
                 </subviews>
@@ -1401,10 +1395,10 @@
                             <action selector="prevNextMovieAction:" target="206" id="1336"/>
                         </connections>
                     </button>
-                    <box title="Title" boxType="oldStyle" borderType="none" titlePosition="noTitle" id="1547">
+                    <box boxType="oldStyle" borderType="none" title="Title" titlePosition="noTitle" id="1547">
                         <rect key="frame" x="198" y="15" width="106" height="36"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <view key="contentView">
+                        <view key="contentView" id="ur9-Vh-yFv">
                             <rect key="frame" x="0.0" y="0.0" width="106" height="36"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
@@ -1443,8 +1437,6 @@
                                 </button>
                             </subviews>
                         </view>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <font key="titleFont" size="11" name="LucidaGrande"/>
                     </box>
                 </subviews>
@@ -1477,7 +1469,7 @@
                                         <box title="影片" id="1344">
                                             <rect key="frame" x="10" y="98" width="136" height="203"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
+                                            <view key="contentView" id="bn1-4Q-YPh">
                                                 <rect key="frame" x="2" y="2" width="132" height="186"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -1603,14 +1595,12 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="11" name="STHeitiTC-Light"/>
                                         </box>
                                         <box title="聲音" id="1358">
                                             <rect key="frame" x="153" y="98" width="136" height="203"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
+                                            <view key="contentView" id="reM-Vz-Iqd">
                                                 <rect key="frame" x="2" y="2" width="132" height="186"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -1652,14 +1642,12 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="11" name="STHeitiTC-Light"/>
                                         </box>
                                         <box title="字幕" id="1360">
                                             <rect key="frame" x="296" y="7" width="136" height="294"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
+                                            <view key="contentView" id="A1c-ze-QGG">
                                                 <rect key="frame" x="2" y="2" width="132" height="277"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -1868,12 +1856,9 @@
                                                             <action selector="subtitleSyncAction:" target="206" id="1462"/>
                                                         </connections>
                                                     </button>
-                                                    <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" id="1880">
+                                                    <box verticalHuggingPriority="750" boxType="separator" id="1880">
                                                         <rect key="frame" x="4" y="51" width="123" height="5"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                        <font key="titleFont" metaFont="system"/>
                                                     </box>
                                                     <textField verticalHuggingPriority="750" id="1893">
                                                         <rect key="frame" x="1" y="234" width="129" height="14"/>
@@ -1887,7 +1872,7 @@
                                                     <segmentedControl verticalHuggingPriority="750" id="1894">
                                                         <rect key="frame" x="16" y="248" width="100" height="20"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <segmentedCell key="cell" controlSize="small" state="on" alignment="left" style="rounded" trackingMode="selectOne" id="2962">
+                                                        <segmentedCell key="cell" controlSize="small" state="on" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="2962">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <segments>
                                                                 <segment label="*" selected="YES" tag="-1"/>
@@ -1902,14 +1887,12 @@
                                                     </segmentedControl>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="11" name="STHeitiTC-Light"/>
                                         </box>
                                         <box title="播放" id="1384">
                                             <rect key="frame" x="10" y="7" width="279" height="87"/>
                                             <autoresizingMask key="autoresizingMask"/>
-                                            <view key="contentView">
+                                            <view key="contentView" id="nRE-8A-vGY">
                                                 <rect key="frame" x="2" y="2" width="275" height="70"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -2041,8 +2024,6 @@
                                                     </textField>
                                                 </subviews>
                                             </view>
-                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                             <font key="titleFont" size="11" name="STHeitiTC-Light"/>
                                         </box>
                                     </subviews>
@@ -2057,7 +2038,7 @@
                                             <rect key="frame" x="16" y="14" width="411" height="204"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <clipView key="contentView" id="w7N-Ge-jB8">
-                                                <rect key="frame" x="0.0" y="17" width="411" height="187"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="411" height="204"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" headerView="2988" id="1425" customClass="HUDTableView">
@@ -2123,7 +2104,6 @@
                                                         </connections>
                                                     </tableView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </clipView>
                                             <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" controlSize="small" horizontal="YES" id="2987">
                                                 <rect key="frame" x="0.0" y="193" width="400" height="11"/>
@@ -2231,7 +2211,7 @@
                     <segmentedControl verticalHuggingPriority="750" id="1572">
                         <rect key="frame" x="157" y="308" width="128" height="24"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <segmentedCell key="cell" state="on" alignment="left" style="automatic" trackingMode="selectOne" id="2985">
+                        <segmentedCell key="cell" state="on" borderStyle="border" alignment="left" style="automatic" trackingMode="selectOne" id="2985">
                             <font key="font" metaFont="system"/>
                             <segments>
                                 <segment label="A/V 控制" imageScaling="none" selected="YES"/>
