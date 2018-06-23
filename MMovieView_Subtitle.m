@@ -21,7 +21,7 @@
 //
 
 #import "MMovieView.h"
-#import "MMOvieViewLayer.h"
+#import "MMovieViewLayer.h"
 #import "MMovieLayer.h"
 #import "MMovieOSDLayer.h"
 

@@ -23,7 +23,7 @@
 #import "MainWindow.h"
 
 #import "MMovie_QuickTime.h"
-#import "MMovie_FFmpeg.h"
+#import "MMovie_FFMPEG.h"
 #import "AppController.h"       // for NSApp's delegate
 #import "UserDefaults.h"
 

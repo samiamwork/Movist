@@ -26,7 +26,7 @@
 // Authors: Derk-Jan Hartman <hartman at videolan dot org>
 
 #import "FFTrack.h"
-#import "MMovie_FFmpeg.h"
+#import "MMovie_FFMPEG.h"
 
 OSStatus digitalAudioProc(AudioDeviceID           device,
                           const AudioTimeStamp*   now,

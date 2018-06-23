@@ -24,7 +24,7 @@
 #import "UserDefaults.h"
 
 #import "MMovie_QuickTime.h"
-#import "MMovie_FFmpeg.h"
+#import "MMovie_FFMPEG.h"
 
 @implementation PreferenceController (Advanced_CodecBinding)
 

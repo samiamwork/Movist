@@ -24,7 +24,7 @@
 #import "UpdateChecker.h"
 #import "UserDefaults.h"
 
-#import "MMovie_FFmpeg.h"
+#import "MMovie_FFMPEG.h"
 #import "MMovie_QuickTime.h"
 #import "Playlist.h"
 #import "PlaylistController.h"
