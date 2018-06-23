@@ -39,6 +39,7 @@
     }
 }
 
+// TODO: this is broken
 - (NSImage*)captureRect:(NSRect)rect
 {
     float width = MAX(rect.size.width, _movieRect.size.width);
@@ -58,15 +59,7 @@
     NSImage* image = [[NSImage alloc] initWithSize:rect.size];
     [image addRepresentation:imageRep];
 
-    // image is flipped. so, flip again. teach me better idea...
-    NSImage* imageFlipped = [[NSImage alloc] initWithSize:rect.size];
-    [imageFlipped lockFocus];
-        [image setFlipped:TRUE];
-        [image drawAtPoint:NSMakePoint(0, 0) fromRect:NSZeroRect
-                 operation:NSCompositeSourceOver fraction:1.0];
-        [image release];
-    [imageFlipped unlockFocus];
-    return [imageFlipped autorelease];
+    return [image autorelease];
 }
 
 - (NSData*)dataWithImage:(NSImage*)image

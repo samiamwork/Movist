@@ -123,9 +123,7 @@
 {
     // hide original drawing...
     if (_bgImage) {
-        [_bgImage setFlipped:flipped];
-        [_bgImage drawInRect:rect fromRect:NSZeroRect
-                   operation:NSCompositeSourceOver fraction:1.0];
+        [_bgImage drawInRect:rect];
     }
     else {
         [HUDBackgroundColor set];
@@ -141,40 +139,28 @@
     }
 
     NSRect rc = rect;
-    [_lImage setFlipped:flipped];
-    [_lImage drawAtPoint:rc.origin fromRect:NSZeroRect
-               operation:NSCompositeSourceOver fraction:1.0];
+    [_lImage drawAtPointRespectFlip:rc.origin];
 
     rc.origin.x += [_lImage size].width;
     if (_indexedDuration == 0 || _indexedDuration == [self maxValue]) {
         rc.size.width = NSMaxX(rect) - rc.origin.x - [_rImage size].width;
-        [_cImage setFlipped:flipped];
-        [_cImage drawInRect:rc fromRect:NSZeroRect
-                  operation:NSCompositeSourceOver fraction:1.0];
+        [_cImage drawInRect:rc];
         rc.origin.x += rc.size.width;
-        [_rImage setFlipped:flipped];
-        [_rImage drawAtPoint:rc.origin fromRect:NSZeroRect
-                   operation:NSCompositeSourceOver fraction:1.0];
+        [_rImage drawAtPointRespectFlip:rc.origin];
     }
     else {
         float ux = [self positionOfTime:_indexedDuration];
         rc.size.width = ux - rc.origin.x;
-        [_cImage setFlipped:flipped];
-        [_cImage drawInRect:rc fromRect:NSZeroRect
-                   operation:NSCompositeSourceOver fraction:1.0];
+        [_cImage drawInRect:rc];
 
-        [_ucImage setFlipped:flipped];
         rc.size.width = [_ucImage size].width;
         rc.origin.x = (int)ux - (int)ux % (int)rc.size.width;
         float ex = NSMaxX(rect) - [_urImage size].width;
         for (; rc.origin.x < ex; rc.origin.x += rc.size.width) {
-            [_ucImage drawInRect:rc fromRect:NSZeroRect
-                        operation:NSCompositeSourceOver fraction:1.0];
+            [_ucImage drawInRect:rc];
         }
         rc.origin.x = NSMaxX(rect) - [_urImage size].width;
-        [_urImage setFlipped:flipped];
-        [_urImage drawAtPoint:rc.origin fromRect:NSZeroRect
-                    operation:NSCompositeSourceOver fraction:1.0];
+        [_urImage drawAtPointRespectFlip:rc.origin];
     }
 
     // repeat range

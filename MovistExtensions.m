@@ -25,6 +25,20 @@
 
 #import <Carbon/Carbon.h>   // for kHIWindowVisibleInAllSpaces
 
+@implementation NSImage (Movist)
+
+- (void)drawAtPointRespectFlip:(NSPoint)point
+{
+	[self drawInRect:(NSRect){.origin = point, .size = self.size}
+			fromRect:NSZeroRect
+		   operation:NSCompositeSourceOver
+			fraction:1.0
+	  respectFlipped:YES
+			   hints:nil];
+}
+
+@end
+
 @implementation NSCell (Movist)
 
 - (void)copyAttributesFromCell:(NSCell*)cell
@@ -72,23 +86,17 @@
           midImage:(NSImage*)mImage rightImage:(NSImage*)rImage
 {
     NSPoint p = rect.origin;
-    [lImage setFlipped:TRUE];
-    [lImage drawAtPoint:p fromRect:NSZeroRect
-              operation:NSCompositeSourceOver fraction:1.0];
+    [lImage drawAtPointRespectFlip:p];
 
     NSRect rc = rect;
     rc.origin.x    = rect.origin.x + [lImage size].width;
     rc.origin.y    = rect.origin.y;
     rc.size.width  = rect.size.width - [lImage size].width - [rImage size].width;
     rc.size.height = [mImage size].height;
-    [mImage setFlipped:TRUE];
-    [mImage drawInRect:rc fromRect:NSZeroRect
-             operation:NSCompositeSourceOver fraction:1.0];
-    
+    [mImage drawInRect:rc];
+
     p.x = NSMaxX(rect) - [rImage size].width;
-    [rImage setFlipped:TRUE];
-    [rImage drawAtPoint:p fromRect:NSZeroRect
-              operation:NSCompositeSourceOver fraction:1.0];
+    [rImage drawAtPointRespectFlip:p];
 }
 
 @end

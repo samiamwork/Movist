@@ -67,9 +67,7 @@
     rect.origin.y += (rect.size.height- 16) / 2;
     rect.size.width = 16;
     rect.size.height= 16;
-    [icon setFlipped:TRUE];
-    [icon drawInRect:rect fromRect:NSZeroRect
-           operation:NSCompositeSourceOver fraction:1.0];
+    [icon drawInRect:rect];
 }
 
 - (void)drawString:(NSString*)s inRect:(NSRect)rect isSubtitle:(BOOL)isSubtitle

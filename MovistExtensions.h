@@ -22,6 +22,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+@interface NSImage (Movist)
+
+- (void)drawAtPointRespectFlip:(NSPoint)point;
+
+@end
+
 @interface NSCell (Movist)
 
 - (void)copyAttributesFromCell:(NSCell*)cell;

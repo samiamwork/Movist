@@ -82,9 +82,7 @@
     NSRect bgRect = cellFrame;
     bgRect.origin.x -= 17, bgRect.size.width  += 17 + 3;
     bgRect.origin.y -= 1,  bgRect.size.height += 2;
-    [image setFlipped:TRUE];
-    [image drawInRect:bgRect fromRect:NSZeroRect
-            operation:NSCompositeSourceOver fraction:1.0];
+    [image drawInRect:bgRect];
 
     float fontSize = [NSFont smallSystemFontSize];
     cellFrame.origin.x += 2, cellFrame.size.width  -= 2;

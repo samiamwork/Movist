@@ -268,9 +268,7 @@
                 ([self isHighlighted]) ? _offImagePressed : _offImage;
     }
     frame.origin.y++;
-    [image setFlipped:TRUE];
-    [image drawAtPoint:frame.origin fromRect:NSZeroRect
-             operation:NSCompositeSourceOver fraction:1.0];
+    [image drawAtPointRespectFlip:frame.origin];
 }
 
 @end
@@ -538,9 +536,7 @@
         }
     }
     rect = NSIntegralRect(rect);
-    [track setFlipped:flipped];
-    [track drawAtPoint:rect.origin fromRect:NSZeroRect
-             operation:NSCompositeSourceOver fraction:1.0];
+    [track drawAtPointRespectFlip:rect.origin];
 }
 
 - (NSRect)knobRectFlipped:(BOOL)flipped
@@ -555,9 +551,7 @@
 {
     NSImage* knob = (![self isEnabled]) ? _knobImageDisabled :
                     (_scFlags.isPressed) ? _knobImagePressed : _knobImage;
-    [knob setFlipped:TRUE];
-    [knob drawAtPoint:knobRect.origin fromRect:NSZeroRect
-            operation:NSCompositeSourceOver fraction:1.0];
+    [knob drawAtPointRespectFlip:knobRect.origin];
 }
 
 @end
