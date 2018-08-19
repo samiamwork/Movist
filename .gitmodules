@@ -1,3 +1,9 @@
 [submodule "contrib/libav"]
 	path = contrib/libav
 	url = git://git.libav.org/libav.git
+[submodule "contrib/libebml"]
+	path = contrib/libebml
+	url = https://github.com/Matroska-Org/libebml.git
+[submodule "contrib/libmatroska"]
+	path = contrib/libmatroska
+	url = https://github.com/Matroska-Org/libmatroska.git
