@@ -11,7 +11,9 @@ fi
 
 # build libmatroska
 echo Build Matroska libs
-make -C $CONTRIB_PATH -f Makefile.matroska
+pushd .
+cd "$CONTRIB_PATH" && sh build_libmatroska.sh
+popd
 
 #build yasm (for libav)
 echo Build yasm
