@@ -9,7 +9,7 @@ warn_about_submodules_and_exit() {
 build_ebml() {
     mkdir -p "$BUILD_DIR/build_libebml"
     cd "$BUILD_DIR/build_libebml"
-    cmake -DCMAKE_OSX_ARCHITECTURES='i386;x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET="$MACOSX_DEPLOYMENT_TARGET" -DDISABLE_PKGCONFIG=YES -DCMAKE_INSTALL_PREFIX="$BUILD_DIR" "$CONTRIB_DIR/libebml"
+    $CMAKE -DCMAKE_OSX_ARCHITECTURES='i386;x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET="$MACOSX_DEPLOYMENT_TARGET" -DDISABLE_PKGCONFIG=YES -DCMAKE_INSTALL_PREFIX="$BUILD_DIR" "$CONTRIB_DIR/libebml"
     make
     make install
     echo `git rev-parse --revs-only --prefix $GIT_PREFIX @:./libebml` > "$BUILD_DIR/ebml.stamp"
@@ -18,7 +18,7 @@ build_ebml() {
 build_mkv() {
     mkdir -p "$BUILD_DIR/build_libmatroska"
     cd "$BUILD_DIR/build_libmatroska"
-    cmake -DCMAKE_OSX_ARCHITECTURES='i386;x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET="$MACOSX_DEPLOYMENT_TARGET" -DDISABLE_PKGCONFIG=YES -DCMAKE_INSTALL_PREFIX="$BUILD_DIR" "$CONTRIB_DIR/libmatroska"
+    $CMAKE -DCMAKE_OSX_ARCHITECTURES='i386;x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET="$MACOSX_DEPLOYMENT_TARGET" -DDISABLE_PKGCONFIG=YES -DCMAKE_INSTALL_PREFIX="$BUILD_DIR" "$CONTRIB_DIR/libmatroska"
     make
     make install
     echo `git rev-parse --revs-only --prefix $GIT_PREFIX @:./libmatroska` > "$BUILD_DIR/mkv.stamp"
@@ -37,6 +37,8 @@ BUILD_EBML=0
 BUILD_MKV=0
 
 GIT_PREFIX=`git rev-parse --show-prefix`
+
+CMAKE=${BUILD_DIR}/bin/cmake
 
 EBML_HEAD=`git rev-parse --revs-only --prefix $GIT_PREFIX @:./libebml`
 if [ $? -ne 0 ]; then

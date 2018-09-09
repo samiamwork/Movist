@@ -7,34 +7,11 @@ then
 	exit 1
 fi
 
-GUARD_FILE=build/guard_4
+GUARD_FILE=build/guard_5
 if [[ -e $GUARD_FILE ]]
 then
 	echo libav is up to date
 	exit 0
-fi
-
-`git status > /dev/null 2>&1`
-if [ $? -ne 0 ]; then
-	echo "You're missing your git repo for Movist and it needs the submodule to get libav."
-	echo "To work around this you can just download libav at the same version as the submodule"
-	echo "and put it into contrib/libav folder"
-	exit 1
-fi
-if [[ ! -e "libav/configure" ]]
-then
-	echo init libav submodule
-	pushd ..
-	git submodule init
-	git submodule update
-	popd
-else
-	# Even if we have the files it's possible that
-	# we've moved to a new commit for the submodule
-	echo update libav submodule
-	pushd ..
-	git submodule update
-	popd
 fi
 
 ORIGINAL_PATH="$PATH"
