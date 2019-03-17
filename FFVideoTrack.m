@@ -89,11 +89,14 @@
 - (BOOL)putPacket:(const AVPacket*)packet
 {
     //TRACE(@"%s", __PRETTY_FUNCTION__);
+    [_mutex lock];
     if ([self isFull]) {
+        [_mutex unlock];
         return FALSE;
     }
     _packet[_rear] = *packet;
     _rear = (_rear + 1) % _capacity;
+    [_mutex unlock];
     return TRUE;
 }
 
