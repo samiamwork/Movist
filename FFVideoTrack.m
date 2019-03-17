@@ -78,7 +78,9 @@
     [_mutex lock];
     unsigned int i;
     for (i = _front; i != _rear; i = (i + 1) % _capacity) {
-        av_free_packet(&_packet[i]);
+        if (_packet[i].data != s_flushPacket.data) {
+            av_free_packet(&_packet[i]);
+        }
     }
     _rear = _front; 
     [_mutex unlock];
