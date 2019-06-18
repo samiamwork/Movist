@@ -479,4 +479,27 @@
     [_movieView saveCurrentImage:[sender tag] != 0];
 }
 
+- (IBAction)revealInFinder:(id)sender
+{
+    [_movie revealInFinder];
+}
+
+/** Moves the current movie to the trash.
+ *
+ * Also skips to the next item in the playlist and updates it to avoid going
+ * back to the deleted entry.
+ */
+- (IBAction)moveToTrash:(id)sender
+{
+    PlaylistItem *current = [_playlist currentItem];
+    NSAssert(current, @"Playlist should have at least current movie!");
+    int currentIndex = [_playlist indexOfItem:current];
+
+    if (![_movie moveToTrash])
+        return;
+
+    [self openNextPlaylistItem];
+    [_playlist removeItemAtIndex:currentIndex];
+}
+
 @end

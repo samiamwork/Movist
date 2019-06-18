@@ -793,6 +793,12 @@ NSString* videoCodecName(int codecId);
     if ([menuItem action] == @selector(saveCurrentImage:)) {
         return (_movie != nil);
     }
+    if ([menuItem action] == @selector(revealInFinder:)) {
+        return (_movie != nil);
+    }
+    if ([menuItem action] == @selector(moveToTrash:)) {
+        return (_movie != nil);
+    }
 
     // Subtitle
     if ([menuItem action] == @selector(openSubtitleFileAction:) ||
